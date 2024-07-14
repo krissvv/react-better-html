@@ -1,0 +1,33 @@
+{
+  "name": "react-better-html",
+  "version": "1.0.0",
+  "description": "A component library for react that is as close to plane html as possible",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "publish": "npm run build && npm publish"
+  },
+  "keywords": [
+    "component",
+    "react",
+    "html",
+    "better"
+  ],
+  "author": "kriss.vv",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.5.3"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0"
+  }
+}
