@@ -4,7 +4,8 @@ import { Div } from "react-better-html";
 function App() {
    return (
       <>
-         <Div>Hello there</Div>
+         Free text
+         <Div>react-better-html Div</Div>
       </>
    );
 }
