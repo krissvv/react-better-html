@@ -12,7 +12,7 @@
       "react-dom": "^18.0.0"
    },
    "dependencies": {
-      "react-better-html": "^1.0.4",
+      "react-better-html": "^1.0.5",
       "react-scripts": "^5.0.1"
    }
 }

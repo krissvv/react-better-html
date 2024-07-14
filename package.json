@@ -1,6 +1,6 @@
 {
    "name": "react-better-html",
-   "version": "1.0.5",
+   "version": "1.0.6",
    "description": "A component library for react that is as close to plane html as possible",
    "main": "dist/index.js",
    "files": [
@@ -36,12 +36,10 @@
       "@types/react-dom": "^18.3.0",
       "react": "^18.0.0",
       "react-dom": "^18.0.0",
+      "rimraf": "^6.0.1",
       "typescript": "^5.5.3"
    },
    "peerDependencies": {
       "react": "^18.0.0"
-   },
-   "dependencies": {
-      "rimraf": "^6.0.1"
    }
 }
