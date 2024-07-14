@@ -1,0 +1,18 @@
+{
+   "name": "example",
+   "version": "0.1.0",
+   "private": true,
+   "scripts": {
+      "start": "parcel src/index.html"
+   },
+   "devDependencies": {
+      "@types/react": "^18.3.3",
+      "@types/react-dom": "^18.3.0",
+      "parcel": "^2.12.0",
+      "react": "^18.0.0",
+      "react-dom": "^18.0.0"
+   },
+   "dependencies": {
+      "react-better-html": "^1.0.2"
+   }
+}

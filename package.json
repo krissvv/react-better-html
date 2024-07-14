@@ -1,33 +1,41 @@
 {
-  "name": "react-better-html",
-  "version": "1.0.0",
-  "description": "A component library for react that is as close to plane html as possible",
-  "main": "dist/index.js",
-  "files": [
-    "dist"
-  ],
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    }
-  },
-  "scripts": {
-    "build": "tsc",
-    "publish": "npm run build && npm publish"
-  },
-  "keywords": [
-    "component",
-    "react",
-    "html",
-    "better"
-  ],
-  "author": "kriss.vv",
-  "license": "ISC",
-  "devDependencies": {
-    "typescript": "^5.5.3"
-  },
-  "peerDependencies": {
-    "react": "^18.2.0"
-  }
+   "name": "react-better-html",
+   "version": "1.0.2",
+   "description": "A component library for react that is as close to plane html as possible",
+   "main": "dist/index.js",
+   "files": [
+      "dist"
+   ],
+   "exports": {
+      ".": {
+         "types": "./dist/index.d.ts",
+         "default": "./dist/index.js"
+      }
+   },
+   "repository": {
+      "type": "git",
+      "url": "git+https://github.com/krissvv/react-better-html.git"
+   },
+   "scripts": {
+      "build": "tsc",
+      "deploy": "npm run build && npm publish"
+   },
+   "keywords": [
+      "component",
+      "react",
+      "html",
+      "better"
+   ],
+   "author": "Kristiyan Valchev (kriss.vv)",
+   "license": "ISC",
+   "devDependencies": {
+      "@types/react": "^18.3.3",
+      "@types/react-dom": "^18.3.0",
+      "react": "^18.0.0",
+      "react-dom": "^18.0.0",
+      "typescript": "^5.5.3"
+   },
+   "peerDependencies": {
+      "react": "^18.0.0"
+   }
 }

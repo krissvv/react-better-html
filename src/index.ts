@@ -1,3 +1,3 @@
-export const testPackage = () => {
-   return "Hello World!";
-};
+import Div from "./components/Div";
+
+export { Div };
