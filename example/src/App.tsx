@@ -4,7 +4,7 @@ import { Div } from "react-better-html";
 function App() {
    return (
       <>
-         <Div />
+         <Div>Hello there</Div>
       </>
    );
 }

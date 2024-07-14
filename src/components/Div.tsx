@@ -5,7 +5,7 @@ type DivProps = {
 };
 
 function Div({ children }: DivProps) {
-   return <>{children}</>;
+   return <div>{children}</div>;
 }
 
 export default memo(Div);
