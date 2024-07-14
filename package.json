@@ -1,6 +1,6 @@
 {
    "name": "react-better-html",
-   "version": "1.0.4",
+   "version": "1.0.5",
    "description": "A component library for react that is as close to plane html as possible",
    "main": "dist/index.js",
    "files": [
@@ -17,8 +17,11 @@
       "url": "git+https://github.com/krissvv/react-better-html.git"
    },
    "scripts": {
+      "clean": "rimraf dist",
+      "prebuild": "npm run clean",
       "build": "tsc",
-      "deploy": "npm run build && npm publish"
+      "predeploy": "npm run build",
+      "deploy": "npm publish"
    },
    "keywords": [
       "component",
@@ -37,5 +40,8 @@
    },
    "peerDependencies": {
       "react": "^18.0.0"
+   },
+   "dependencies": {
+      "rimraf": "^6.0.1"
    }
 }
