@@ -8,7 +8,9 @@ import { OmitProps } from "../types/app";
 
 import { useStyledComponentStyles, useComponentPropsWithPrefix, useComponentPropsWithoutStyle } from "../utils/hooks";
 
-const DivElement = styled.div.withConfig({
+import { useTheme } from "./BetterHtmlProvider";
+
+const DivStylesComponent = styled.div.withConfig({
    shouldForwardProp: (prop) => !["normalStyle", "hoverStyle"].includes(prop),
 })<{ normalStyle: ComponentStyle; hoverStyle: ComponentStyle }>`
    ${(props) => props.normalStyle as any}
@@ -26,28 +28,43 @@ type DivProps<Value> = {
 } & OmitProps<React.ComponentProps<"div">, "style"> &
    ComponentStyle;
 
-type DivComponent = {
-   <Value>(props: DivProps<Value> & { ref?: React.Ref<HTMLDivElement> }): React.ReactElement;
-   row: <Value>(
+type DivComponentType = {
+   <Value>(
       props: DivProps<Value> & {
          ref?: React.Ref<HTMLDivElement>;
+      },
+   ): React.ReactElement;
+   row: <Value>(
+      props: OmitProps<DivProps<Value>, "display" | "flexDirection"> & {
          invertFlexDirection?: boolean;
+         ref?: React.Ref<HTMLDivElement>;
       },
    ) => React.ReactElement;
    column: <Value>(
-      props: DivProps<Value> & {
-         ref?: React.Ref<HTMLDivElement>;
+      props: OmitProps<DivProps<Value>, "display" | "flexDirection"> & {
          invertFlexDirection?: boolean;
+         ref?: React.Ref<HTMLDivElement>;
       },
    ) => React.ReactElement;
-   grid: <Value>(props: DivProps<Value> & { ref?: React.Ref<HTMLDivElement> }) => React.ReactElement;
+   grid: <Value>(
+      props: OmitProps<DivProps<Value>, "display" | "flexDirection"> & {
+         ref?: React.Ref<HTMLDivElement>;
+      },
+   ) => React.ReactElement;
+   box: <Value>(
+      props: DivProps<Value> & {
+         ref?: React.Ref<HTMLDivElement>;
+      },
+   ) => React.ReactElement;
 };
 
-const Div: DivComponent = forwardRef(function Div<Value>(
-   { value, as, isTabAccessed, onClickWithValue, role, onClick, onKeyDown, ...props }: DivProps<Value>,
+const DivComponent: DivComponentType = forwardRef(function Div<Value>(
+   { value, as, isTabAccessed, onClickWithValue, role, onClick, onKeyDown, children, ...props }: DivProps<Value>,
    ref: React.ForwardedRef<HTMLDivElement>,
 ) {
-   const styledComponentStyles = useStyledComponentStyles(props);
+   const theme = useTheme();
+
+   const styledComponentStyles = useStyledComponentStyles(props, theme);
    const dataProps = useComponentPropsWithPrefix(props, "data");
    const ariaProps = useComponentPropsWithPrefix(props, "aria");
    const restProps = useComponentPropsWithoutStyle(props);
@@ -74,7 +91,7 @@ const Div: DivComponent = forwardRef(function Div<Value>(
    );
 
    return (
-      <DivElement
+      <DivStylesComponent
          as={as}
          tabIndex={isTabAccessed && !isMobileDevice ? 0 : undefined}
          role={role ?? (onClick ? "button" : undefined)}
@@ -85,8 +102,54 @@ const Div: DivComponent = forwardRef(function Div<Value>(
          {...ariaProps}
          {...restProps}
          ref={ref}
-      />
+      >
+         {children}
+      </DivStylesComponent>
    );
 }) as any;
 
-export default memo(Div);
+DivComponent.row = forwardRef(function Row(props, ref) {
+   return (
+      <DivComponent display="flex" flexDirection={props.invertFlexDirection ? "column" : "row"} ref={ref} {...props} />
+   );
+}) as DivComponentType["row"];
+
+DivComponent.column = forwardRef(function Column(props, ref) {
+   return (
+      <DivComponent display="flex" flexDirection={props.invertFlexDirection ? "row" : "column"} ref={ref} {...props} />
+   );
+}) as DivComponentType["column"];
+
+DivComponent.grid = forwardRef(function (props, ref) {
+   return <DivComponent display="grid" ref={ref} {...props} />;
+}) as DivComponentType["grid"];
+
+DivComponent.box = forwardRef(function (props, ref) {
+   const theme = useTheme();
+
+   return (
+      <DivComponent
+         backgroundColor={theme.colors.backgroundContent}
+         border={`1px solid ${theme.colors.border}`}
+         borderRadius={theme.styles.borderRadius}
+         paddingBlock={theme.styles.gap}
+         paddingInline={theme.styles.space}
+         ref={ref}
+         {...props}
+      />
+   );
+}) as DivComponentType["box"];
+
+const Div = memo(DivComponent) as any as typeof DivComponent & {
+   row: typeof DivComponent.row;
+   column: typeof DivComponent.column;
+   grid: typeof DivComponent.grid;
+   box: typeof DivComponent.box;
+};
+
+Div.row = DivComponent.row;
+Div.column = DivComponent.column;
+Div.grid = DivComponent.grid;
+Div.box = DivComponent.box;
+
+export default Div;

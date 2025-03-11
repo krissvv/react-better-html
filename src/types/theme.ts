@@ -1,9 +1,7 @@
 export type Styles = {
-   sideSpace: number;
-   borderRadius: number;
-   borderRadiusSmall?: number;
+   space: number;
    gap: number;
-   fontSize?: number;
+   borderRadius: number;
    fontFamily: string;
    transition: string;
 };
@@ -12,16 +10,16 @@ export type Color = `#${string}` | "transparent";
 export type Colors = Record<
    | "textPrimary"
    | "textSecondary"
-   | "brand"
-   | "brandSecondary"
+   | "label"
+   | "primary"
+   | "secondary"
    | "success"
    | "info"
    | "warn"
    | "error"
-   | "errorSecondary"
    | "backgroundBase"
    | "backgroundSecondary"
-   | "backgroundTertiary"
+   | "backgroundContent"
    | "border",
    Color
 >;
