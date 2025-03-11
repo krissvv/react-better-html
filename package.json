@@ -1,6 +1,6 @@
 {
    "name": "react-better-html",
-   "version": "1.1.8",
+   "version": "1.1.9",
    "description": "A component library for react that is as close to plane html as possible",
    "main": "dist/index.js",
    "files": [
@@ -35,11 +35,9 @@
    ],
    "author": "Kristiyan Valchev (kriss.vv)",
    "license": "ISC",
-   "dependencies": {
-      "rimraf": "^6.0.1"
-   },
    "devDependencies": {
       "@types/react": "^19.0.10",
+      "rimraf": "^6.0.1",
       "typescript": "^5.5.3"
    },
    "peerDependencies": {
