@@ -5,7 +5,13 @@ function App() {
    return (
       <>
          Free text
-         <Div>react-better-html Div</Div>
+         <Div
+            onClick={() => {
+               console.log("Div clicked");
+            }}
+         >
+            react-better-html Div
+         </Div>
       </>
    );
 }
