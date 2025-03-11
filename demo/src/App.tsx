@@ -1,12 +1,13 @@
 import { memo } from "react";
 
-import Div from "../../src/components/Div";
+import { Div, Text, Loader } from "../../src";
 
 function App() {
    return (
       <>
-         <Div>App</Div>
+         <Text as="h1">Hello</Text>
          <Div.box>App</Div.box>
+         <Loader />
       </>
    );
 }

@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 import { isMobileDevice } from "../constants";
 
-import { ComponentStyle } from "../types/components";
+import { ComponentHoverStyle, ComponentStyle } from "../types/components";
 import { OmitProps } from "../types/app";
 
 import { useStyledComponentStyles, useComponentPropsWithPrefix, useComponentPropsWithoutStyle } from "../utils/hooks";
@@ -20,13 +20,15 @@ const DivStylesComponent = styled.div.withConfig({
    }
 `;
 
-type DivProps<Value> = {
+export type DivProps<Value> = {
    value?: Value;
+   /** @default "div" */
    as?: keyof JSX.IntrinsicElements;
    isTabAccessed?: boolean;
    onClickWithValue?: (value: Value) => void;
 } & OmitProps<React.ComponentProps<"div">, "style"> &
-   ComponentStyle;
+   ComponentStyle &
+   ComponentHoverStyle;
 
 type DivComponentType = {
    <Value>(
@@ -120,11 +122,11 @@ DivComponent.column = forwardRef(function Column(props, ref) {
    );
 }) as DivComponentType["column"];
 
-DivComponent.grid = forwardRef(function (props, ref) {
+DivComponent.grid = forwardRef(function Grid(props, ref) {
    return <DivComponent display="grid" ref={ref} {...props} />;
 }) as DivComponentType["grid"];
 
-DivComponent.box = forwardRef(function (props, ref) {
+DivComponent.box = forwardRef(function Box(props, ref) {
    const theme = useTheme();
 
    return (

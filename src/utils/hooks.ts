@@ -4,7 +4,7 @@ import { ComponentHoverStyle, ComponentStyle } from "../types/components";
 import { Theme } from "../types/theme";
 
 const cssProps = Object.keys(document.documentElement.style).reduce((previousValue, currentValue) => {
-   previousValue[currentValue as keyof React.CSSProperties] = true;
+   previousValue[currentValue.toLowerCase() as keyof React.CSSProperties] = true;
 
    return previousValue;
 }, {} as Record<keyof React.CSSProperties, boolean>);
@@ -29,7 +29,7 @@ export function useStyledComponentStyles(
             const normalKey = key.slice(0, -5) as keyof ComponentStyle;
             (hoverStyle[normalKey] as any) = props[key as keyof ComponentStyle];
          } else {
-            if (key.startsWith("data-") || key.startsWith("aria-")) continue;
+            if (!cssProps[key.toLowerCase() as keyof React.CSSProperties]) continue;
 
             (normalStyle[key as keyof ComponentStyle] as any) = props[key as keyof ComponentStyle];
          }
@@ -67,7 +67,7 @@ export function useComponentPropsWithoutStyle<Props extends Record<string, any>>
    return useMemo(
       () =>
          Object.keys(props).reduce((previousValue, currentValue) => {
-            if (!cssProps[currentValue as keyof React.CSSProperties])
+            if (!cssProps[currentValue.toLowerCase() as keyof React.CSSProperties])
                previousValue[currentValue as keyof Props] = props[currentValue];
 
             return previousValue;
