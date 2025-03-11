@@ -4,9 +4,12 @@ import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 
 import "./main.css";
+import BetterHtmlProvider from "../../src/components/BetterHtmlProvider.tsx";
 
 createRoot(document.getElementById("root")!).render(
    <StrictMode>
-      <App />
+      <BetterHtmlProvider>
+         <App />
+      </BetterHtmlProvider>
    </StrictMode>,
 );

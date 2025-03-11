@@ -18,7 +18,7 @@ body {
 
 ::selection {
    color: #ffffff;
-   background: #007bff;
+   background: #6d466b;
 }
 
 ::-webkit-scrollbar {
@@ -27,7 +27,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-   background-color: #007bff;
+   background-color: #6d466b;
 }
 
 a {
