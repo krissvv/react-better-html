@@ -1,4 +1,4 @@
-import { forwardRef, memo, useCallback } from "react";
+import { forwardRef, JSX, memo, useCallback } from "react";
 import styled from "styled-components";
 
 import { isMobileDevice } from "../constants";
