@@ -32,3 +32,7 @@
 [data-theme="dark"] .hero__subtitle {
    color: #ffffff;
 }
+
+[data-theme="dark"] .button--primary {
+   color: #ffffff;
+}

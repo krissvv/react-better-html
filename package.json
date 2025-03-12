@@ -34,7 +34,7 @@
       "better"
    ],
    "author": "Kristiyan Valchev (kriss.vv)",
-   "license": "ISC",
+   "license": "MIT",
    "devDependencies": {
       "@types/react": "^19.0.10",
       "rimraf": "^6.0.1",

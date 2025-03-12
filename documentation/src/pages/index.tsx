@@ -24,6 +24,9 @@ function HomepageHeader() {
                <Link className="button button--secondary button--lg" to="/docs/getting-started">
                   Getting Started
                </Link>
+               <Link className="button button--primary button--lg" to="/docs/getting-started">
+                  Docs
+               </Link>
             </div>
          </div>
       </header>
@@ -34,7 +37,7 @@ export default function Home(): ReactNode {
    const { siteConfig } = useDocusaurusContext();
 
    return (
-      <Layout title={`${siteConfig.title} Docs`} description={siteConfig.tagline}>
+      <Layout title="Docs" description={siteConfig.tagline}>
          <HomepageHeader />
 
          <main>

@@ -1,6 +1,11 @@
-# react-better-html
+---
+title: Installation
+description: How to install react-better-html, and start using it.
+sidebar_position: 1
+---
 
-A component library for react that is as close to plane html as possible
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 ![npm](https://img.shields.io/npm/v/react-calendar.svg)
 ![NPM Version](https://img.shields.io/npm/v/react-better-html)
@@ -13,6 +18,8 @@ A component library for react that is as close to plane html as possible
 ![NPM License](https://img.shields.io/npm/l/react-better-html)<br/>
 ![React dep](https://img.shields.io/badge/React-v19-9b6499)
 
+Welcome to the installation guide for `react-better-html`. This guide will help you get started with installing and using the library in your React projects.
+
 ## Requirements
 
 -  [React](https://react.dev) version 19.0 or above.
@@ -23,9 +30,13 @@ The library uses [styles-components](https://styled-components.com) under the ho
 
 To install `react-better-html` run the following command in your project directory:
 
-```bash
-npm install react-better-html
-```
+<Tabs>
+   <TabItem value="npm" label="npm" default>
+      ```bash
+      npm install react-better-html
+      ```
+   </TabItem>
+</Tabs>
 
 ## Problems?
 
