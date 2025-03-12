@@ -20,6 +20,8 @@ jobs:
               node-version: 18
               cache: npm
 
+         - name: Navigate to documentation directory
+           run: cd documentation
          - name: Install dependencies
            run: npm ci
          - name: Test build website
