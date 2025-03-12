@@ -14,6 +14,6 @@ Welcome to the documentation for the `react-better-html` library! This library p
 
 ## Getting Started
 
-To get started with `react-better-html`, check out the [installation guide](installation.md) and explore the [API documentation](api.md) for detailed information on how to use the library.
+To get started with `react-better-html`, check out the [installation guide](getting-started/instalation) and explore the docs for detailed information on how to use the library.
 
 We hope you find `react-better-html` useful and it helps you build better React applications. Happy coding!

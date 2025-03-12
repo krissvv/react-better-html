@@ -10,7 +10,7 @@ const config: Config = {
    favicon: "img/favicon.ico",
 
    // Set the production url of your site here
-   url: "https://krissvv.github.io/react-better-html",
+   url: "https://krissvv.github.io",
    // Set the /<baseUrl>/ pathname under which your site is served
    // For GitHub pages deployment, it is often '/<projectName>/'
    baseUrl: "/react-better-html",
@@ -77,11 +77,15 @@ const config: Config = {
          items: [
             {
                type: "docSidebar",
+               label: "Docs",
                sidebarId: "tutorialSidebar",
                position: "left",
-               label: "Docs",
             },
-            { to: "/blog", label: "Blog", position: "left" },
+            {
+               to: "/blog",
+               label: "Blog",
+               position: "left",
+            },
             {
                href: "https://github.com/krissvv/react-better-html",
                label: "GitHub",
@@ -96,8 +100,12 @@ const config: Config = {
                title: "Docs",
                items: [
                   {
+                     label: "Introduction",
+                     to: "/docs/introduction",
+                  },
+                  {
                      label: "Getting Started",
-                     to: "/docs/getting-started",
+                     to: "/docs/category/getting-started",
                   },
                ],
             },
