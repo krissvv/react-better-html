@@ -20,17 +20,17 @@ jobs:
               node-version: 18
               cache: npm
 
-         - name: Navigate to ./documentation directory
-           run: cd ./documentation
          - name: Install dependencies
+           working-directory: ./documentation
            run: npm ci
          - name: Build website
+           working-directory: ./documentation
            run: npm run build
 
          - name: Upload Build Artifact
            uses: actions/upload-pages-artifact@v3
            with:
-              path: ./documentation/build
+              path: documentation/build
 
    deploy:
       name: Deploy to GitHub Pages
