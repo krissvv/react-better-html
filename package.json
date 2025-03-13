@@ -1,6 +1,6 @@
 {
    "name": "react-better-html",
-   "version": "1.1.9",
+   "version": "1.1.10",
    "description": "A component library for react that is as close to plane html as possible",
    "main": "dist/index.js",
    "files": [
@@ -16,7 +16,7 @@
       "type": "git",
       "url": "git+https://github.com/krissvv/react-better-html.git"
    },
-   "homepage": "https://github.com/krissvv/react-better-html",
+   "homepage": "https://krissvv.github.io/react-better-html",
    "bugs": {
       "url": "https://github.com/krissvv/react-better-html/issues"
    },
@@ -33,7 +33,7 @@
       "html",
       "better"
    ],
-   "author": "Kristiyan Valchev (kriss.vv)",
+   "author": "Kristiyan Valchev (krissvv)",
    "license": "MIT",
    "devDependencies": {
       "@types/react": "^19.0.10",
