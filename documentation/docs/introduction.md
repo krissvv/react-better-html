@@ -13,6 +13,10 @@ sidebar_position: 1
 ![NPM License](https://img.shields.io/npm/l/react-better-html)<br/>
 ![React dep](https://img.shields.io/badge/React-v19-9b6499)
 
+# 🚧 Work in progress 🚧
+
+🔴 The library is not yet ready for use - development is actively in progress 🔴
+
 Welcome to the documentation for the `react-better-html` library! This library provides a set of utilities and components to enhance your React applications with better HTML handling and manipulation. Whether you are building a complex web application or a simple static site, `react-better-html` aims to simplify your development process by offering reusable and efficient solutions with as little lines of code as possible.
 
 ## Key Features

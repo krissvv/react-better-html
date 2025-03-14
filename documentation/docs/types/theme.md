@@ -4,6 +4,8 @@ description: Theme types and their use
 sidebar_position: 1
 ---
 
+# Theme Type
+
 This section documents the TypeScript types related to the theme configuration in the library.
 
 ## `Styles`
@@ -34,7 +36,7 @@ The `Color` type represents a valid CSS color value.
 type Color = `#${string}` | "transparent";
 ```
 
-It can be a hexadecimal color code or the string `"transparent"`.
+It can be a hexadecimal color code or the string `transparent`.
 
 ## `Colors`
 
@@ -64,6 +66,8 @@ type Theme = {
    colors: Colors;
 };
 ```
+
+You can check out the [default configuration](../getting-started/configuration#theme) to see the initial values applied.
 
 ## Usage
 

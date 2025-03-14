@@ -26,7 +26,7 @@ export type DivProps<Value> = {
    as?: keyof JSX.IntrinsicElements;
    isTabAccessed?: boolean;
    onClickWithValue?: (value: Value) => void;
-} & OmitProps<React.ComponentProps<"div">, "style"> &
+} & OmitProps<React.ComponentProps<"div">, "style" | "defaultValue"> &
    ComponentStyle &
    ComponentHoverStyle;
 

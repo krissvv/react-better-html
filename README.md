@@ -12,6 +12,10 @@ A component library for react that is as close to plane html as possible
 ![NPM License](https://img.shields.io/npm/l/react-better-html)<br/>
 ![React dep](https://img.shields.io/badge/React-v19-9b6499)
 
+# 🚧 Work in progress 🚧
+
+🔴 The library is not yet ready for use - development is actively in progress 🔴
+
 ## Requirements
 
 -  [React](https://react.dev) version 19.0 or above.
@@ -28,7 +32,7 @@ npm install react-better-html
 
 ## Configuration
 
-The `BetterHtmlProvider` component should wrap your application's root component to apply the configuration.
+The `<BetterHtmlProvider>` component should wrap your application's root component to apply the configuration.
 
 ```jsx
 import { createRoot } from "react-dom/client";
