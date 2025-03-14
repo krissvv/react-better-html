@@ -26,6 +26,26 @@ To install `react-better-html` run the following command in your project directo
 npm install react-better-html
 ```
 
+## Configuration
+
+The `BetterHtmlProvider` component should wrap your application's root component to apply the configuration.
+
+```jsx
+import { createRoot } from "react-dom/client";
+import { BetterHtmlProvider } from "react-better-html";
+
+import App from "./App";
+
+const root = document.getElementById("root");
+createRoot(root).render(
+   <BetterHtmlProvider>
+      <App />
+   </BetterHtmlProvider>,
+);
+```
+
+This is enough for the components to work with the default configurations that the library comes with. They can be overridden when passing `value` prop to the `<BetterHtmlProvider>` tag.
+
 ## Problems?
 
 Ask for help on [Stack Overflow](https://stackoverflow.com/questions/ask), on our [GitHub repository](https://github.com/krissvv/react-better-html/issues/new) or contact the contributors.

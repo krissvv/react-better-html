@@ -29,7 +29,7 @@ createRoot(root).render(
 );
 ```
 
-This is enough for the components to work with the default configurations that the library comes with. They can be overridden when passing `value` prop to the `<BetterHtmlProvider>` tag.
+This is enough for the components to work with the [default configuration](#default-configuration) that the library comes with. They can be overridden by passing `value` prop to the `<BetterHtmlProvider>` tag.
 
 :::note
 If no value is provided, then all components in the library will use the default configuration that comes with the library. Check out the [default configuration](#default-configuration)
@@ -37,7 +37,7 @@ If no value is provided, then all components in the library will use the default
 
 ## Theme configuration
 
-You can customize the theme by providing a `value` prop to the `<BetterHtmlProvider>`. The theme includes `styles` and `colors`.
+It accepts object of type [`Theme`](../types/theme) and can customize the `styles` and `colors`.
 
 ```jsx
 <BetterHtmlProvider
@@ -60,7 +60,11 @@ You can customize the theme by providing a `value` prop to the `<BetterHtmlProvi
 </BetterHtmlProvider>
 ```
 
-No properties are required. The [default configuration](#default-configuration) values will be used otherwise. Check out the [`Theme`](../types/theme) type for full details on what can be configured.
+All properties are optional - the [default configuration](#default-configuration) values will be used otherwise.
+
+:::tip
+We recommend using the default values initially and change them only if needed by your special use-cases.
+:::
 
 ## Icons configuration
 
