@@ -2,7 +2,6 @@
 
 A component library for react that is as close to plane html as possible
 
-![npm](https://img.shields.io/npm/v/react-calendar.svg)
 ![NPM Version](https://img.shields.io/npm/v/react-better-html)
 ![GitHub Repo stars](https://img.shields.io/github/stars/krissvv/react-better-html?style=flat)
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/krissvv/react-better-html)

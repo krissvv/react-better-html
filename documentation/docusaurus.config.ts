@@ -111,8 +111,7 @@ const config: Config = {
          copyright: `Copyright © ${new Date().getFullYear()} react-better-html.`,
       },
       prism: {
-         theme: prismThemes.github,
-         darkTheme: prismThemes.dracula,
+         theme: prismThemes.dracula,
       },
       colorMode: {
          defaultMode: "dark",

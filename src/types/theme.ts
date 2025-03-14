@@ -1,13 +1,5 @@
-export type Styles = {
-   space: number;
-   gap: number;
-   borderRadius: number;
-   fontFamily: string;
-   transition: string;
-};
-
 export type Color = `#${string}` | "transparent";
-export type Colors = Record<
+export type ColorName =
    | "textPrimary"
    | "textSecondary"
    | "label"
@@ -20,9 +12,16 @@ export type Colors = Record<
    | "backgroundBase"
    | "backgroundSecondary"
    | "backgroundContent"
-   | "border",
-   Color
->;
+   | "border";
+
+export type Styles = {
+   space: number;
+   gap: number;
+   borderRadius: number;
+   fontFamily: string;
+   transition: string;
+};
+export type Colors = Record<ColorName, Color>;
 
 export type Theme = {
    styles: Styles;
