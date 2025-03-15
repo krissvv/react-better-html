@@ -52,3 +52,22 @@
 [data-theme="dark"] .button--primary {
    color: #ffffff;
 }
+
+.divBox {
+   color: #111111;
+   background-color: #ffffff;
+   border: 1px solid #ced4da;
+   border-radius: 10px;
+   padding-block: 8px;
+   padding-inline: 16px;
+}
+
+.divBox p {
+   margin: 0;
+}
+
+[data-theme="dark"] .divBox {
+   color: #f8f8f8;
+   background-color: #333333;
+   border-color: #777777;
+}

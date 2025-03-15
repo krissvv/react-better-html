@@ -16,19 +16,43 @@ The `<Div>` component is a highly versatile container element that provides enha
 
 ## Basic Usage
 
-All of the `React.CSSProperties` are valid prop with the benefit of passing just the number without unit (`px` are used by default).
+All of the `React.CSSProperties` are valid prop with the benefit of passing just the number without unit (`px` are used by default). The library extents the CSS properties and adds all of them with `Hover` suffix that will take affect only when the component is hovered by the device pointer.
 
-```jsx
-import { Div } from "react-better-html";
+<Tabs>
+   <TabItem value="basic" label="Basic" default>
 
-function App() {
-   return (
-      <Div padding={20} backgroundColor="#f8f8f8">
-         This is a Div component.
-      </Div>
-   );
-}
-```
+      ```jsx
+      import { Div } from "react-better-html";
+
+      function App() {
+         return (
+            <Div backgroundColor="#f8f8f8" padding={20}>
+               This is a Div component.
+            </Div>
+         );
+      }
+      ```
+
+   </TabItem>
+
+   <TabItem value="withHover" label="With Hover" default>
+
+      ```jsx
+      import { Div } from "react-better-html";
+
+      function App() {
+         return (
+            <Div backgroundColor="#f8f8f8" padding={20} colorHover="#ff0000">
+               This is a Div component.
+            </Div>
+         );
+      }
+      ```
+
+      When hovering the component the text inside will become red.
+
+   </TabItem>
+</Tabs>
 
 ## Common Props
 
@@ -101,7 +125,7 @@ function App() {
 
 ### Semantic DOM
 
-By default the `<Div>` component renders (you guessed it) a `div` element in the DOM. To keep the semantic HTML you can pass an `as` props with the name of the tag you want to render
+By default the `<Div>` component renders (you guessed it) a `<div>` element in the DOM. To keep the semantic HTML you can pass an `as` props with the name of the tag you want to render
 
 ```jsx
 import { Div } from "react-better-html";
@@ -205,8 +229,8 @@ function App() {
 }
 ```
 
-<BetterHtmlProvider>
+That renders to:
 
-<Div.box>This is a Div component.</Div.box>
-
-</BetterHtmlProvider>
+<div class="divBox">
+   This is a Div component.
+</div>
