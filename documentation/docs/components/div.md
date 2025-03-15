@@ -7,9 +7,6 @@ sidebar_position: 1
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-import BetterHtmlProvider from '../../../src/components/BetterHtmlProvider';
-import Div from '../../../src/components/Div';
-
 # Div Component
 
 The `<Div>` component is a highly versatile container element that provides enhanced styling capabilities and supports various layout options. It's designed to be as close to a standard HTML `div` element as possible, but with additional features and simplified syntax.
