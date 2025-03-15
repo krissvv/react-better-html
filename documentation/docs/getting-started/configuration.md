@@ -39,7 +39,7 @@ If no value is provided, then all components in the library will use the default
 
 ## Theme configuration
 
-It accepts object of type [`Theme`](../types/theme) and can customize the `styles` and `colors`.
+It accepts object of type [`Theme`](../types/theme) and can customize the `styles` and `colors`. Colors support theme management.
 
 ```jsx
 <BetterHtmlProvider
@@ -47,8 +47,10 @@ It accepts object of type [`Theme`](../types/theme) and can customize the `style
       ...
       // highlight-start
       theme: {
-         colors: {
-            backgroundBase: "#f0f0f0",
+         light: {
+            colors: {
+               backgroundBase: "#f0f0f0"
+            }
          },
          styles: {
             gap: 20

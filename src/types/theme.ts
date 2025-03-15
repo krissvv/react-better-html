@@ -13,6 +13,7 @@ export type ColorName =
    | "backgroundSecondary"
    | "backgroundContent"
    | "border";
+export type ColorTheme = "light" | "dark";
 
 export type Styles = {
    space: number;
@@ -27,8 +28,7 @@ export type Theme = {
    styles: Styles;
    colors: Colors;
 };
-
-export type PartialTheme = {
-   styles?: Partial<Styles>;
-   colors?: Partial<Colors>;
+export type ThemeConfig = {
+   styles: Styles;
+   colors: Record<ColorTheme, Colors>;
 };

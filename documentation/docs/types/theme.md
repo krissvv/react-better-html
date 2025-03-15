@@ -38,7 +38,7 @@ type Color = `#${string}` | "transparent";
 
 It can be a hexadecimal color code or the string `transparent`.
 
-## `Colors`
+## `ColorName`
 
 Those are the possible predefined colors in the library:
 
@@ -56,6 +56,12 @@ Those are the possible predefined colors in the library:
 -  **`backgroundContent`**: The content background color.
 -  **`border`**: The border color.
 
+## `ColorTheme`
+
+The color theme supports multiple themes that are controlled by the `data-theme` attribute on the `<html>` tag
+
+The possible values are `light` and `dark`
+
 ## `Theme`
 
 The `Theme` type combines `Styles` and `Colors` to define the overall theme structure.
@@ -63,7 +69,7 @@ The `Theme` type combines `Styles` and `Colors` to define the overall theme stru
 ```typescript
 type Theme = {
    styles: Styles;
-   colors: Colors;
+   colors: Record<ColorTheme, Record<ColorName, Color>>;
 };
 ```
 
