@@ -102,28 +102,48 @@ A number of components in the library have that _subcomponent_ feature witch is 
 
 This component renders with lighter color and in italic font style for `caption` use.
 
-```jsx
-import { Text } from "react-better-html";
+```jsx {8}
+import { Div, Text } from "react-better-html";
 
 function App() {
    return (
-      // highlight-next-line
-      <Text.unknown>No list items yet</Text.unknown>
+      <Div.box width="50%">
+         <Text as="h2">Items:</Text>
+
+         <Text.unknown>No items yet</Text.unknown>
+      </Div.box>
    );
 }
 ```
+
+That renders to:
+
+<div className="divBox w50p">
+   <h2 className="text">Items:</h2>
+   <p className="textUnknown">No items yet</p>
+</div>
 
 ### Text.oneLine
 
-This component renders the text in the available space and then truncates to `...`.
+This component renders the text in the available space and then truncates to `...`
 
-```jsx
-import { Text } from "react-better-html";
+```jsx {6-9}
+import { Div, Text } from "react-better-html";
 
 function App() {
    return (
-      // highlight-next-line
-      <Text.oneLine>This is really long text that is not going to be rendered fully</Text.oneLine>
+      <Div.box>
+         <Text.oneLine>
+            This is really long text that is not going to be rendered fully because it is oneLine subcomponent and the
+            holder component is not wide enough to render the long text
+         </Text.oneLine>
+      </Div.box>
    );
 }
 ```
+
+That renders to:
+
+<div className="divBox">
+   <p className="textOneLine">This is really long text that is not going to be rendered fully because it is oneLine subcomponent and the holder component is not wide enough to render the long text</p>
+</div>

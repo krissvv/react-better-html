@@ -228,6 +228,6 @@ function App() {
 
 That renders to:
 
-<div class="divBox">
+<div className="divBox">
    This is a Div component.
 </div>

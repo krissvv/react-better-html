@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { ComponentHoverStyle, ComponentStyle } from "../types/components";
 import { Theme } from "../types/theme";
@@ -74,4 +74,48 @@ export function useComponentPropsWithoutStyle<Props extends Record<string, any>>
          }, {} as Partial<Props>),
       [props],
    );
+}
+
+export function usePageResize() {
+   const [width, setWidth] = useState<number>(window.innerWidth);
+   const [height, setHeight] = useState<number>(window.innerHeight);
+
+   useEffect(() => {
+      const onResize = () => {
+         setWidth(window.innerWidth);
+         setHeight(window.innerHeight);
+      };
+
+      window.addEventListener("resize", onResize);
+
+      return () => {
+         window.removeEventListener("resize", onResize);
+      };
+   }, []);
+
+   return {
+      width,
+      height,
+   };
+}
+
+export function useMediaQuery() {
+   const { width } = usePageResize();
+
+   return {
+      size320: width <= 320,
+      size400: width <= 400,
+      size500: width <= 500,
+      size600: width <= 600,
+      size700: width <= 700,
+      size800: width <= 800,
+      size900: width <= 900,
+      size1000: width <= 1000,
+      size1100: width <= 1100,
+      size1200: width <= 1200,
+      size1300: width <= 1300,
+      size1400: width <= 1400,
+      size1500: width <= 1500,
+      size1600: width <= 1600,
+   };
 }

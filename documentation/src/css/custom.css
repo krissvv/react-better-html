@@ -62,6 +62,10 @@
    padding-inline: 16px;
 }
 
+.divBox.w50p {
+   width: 50%;
+}
+
 .divBox p {
    margin: 0;
 }
@@ -70,4 +74,28 @@
    color: #f8f8f8;
    background-color: #333333;
    border-color: #777777;
+}
+
+.text {
+   color: #111111;
+}
+
+[data-theme="dark"] .text {
+   color: #f8f8f8;
+}
+
+.textUnknown {
+   font-style: italic;
+   text-align: center;
+   color: #777777;
+}
+
+[data-theme="dark"] .textUnknown {
+   color: #e8e8e8;
+}
+
+.textOneLine {
+   text-overflow: ellipsis;
+   white-space: nowrap;
+   overflow: hidden;
 }
