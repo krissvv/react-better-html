@@ -11,3 +11,5 @@ export type ComponentPaddingProps = Pick<
    ComponentStyle,
    "padding" | "paddingTop" | "paddingBottom" | "paddingLeft" | "paddingRight" | "paddingBlock" | "paddingInline"
 >;
+
+export type ComponentPropWithRef<ComponentRef, ComponentProps> = ComponentProps & { ref?: React.Ref<ComponentRef> };

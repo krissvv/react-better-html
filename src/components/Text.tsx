@@ -1,7 +1,7 @@
 import { forwardRef, memo } from "react";
 import styled from "styled-components";
 
-import { ComponentHoverStyle, ComponentStyle } from "../types/components";
+import { ComponentHoverStyle, ComponentPropWithRef, ComponentStyle } from "../types/components";
 import { OmitProps } from "../types/app";
 
 import { useComponentPropsWithoutStyle, useComponentPropsWithPrefix, useStyledComponentStyles } from "../utils/hooks";
@@ -21,26 +21,14 @@ const TextStyledComponent = styled.div.withConfig({
 export type TextProps = {
    /** @default "p" */
    as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "p" | "span" | "label";
-} & OmitProps<React.ComponentProps<"div">, "style"> &
+} & OmitProps<React.ComponentProps<"p">, "style"> &
    ComponentStyle &
    ComponentHoverStyle;
 
 type TextComponentType = {
-   (
-      props: TextProps & {
-         ref?: React.Ref<HTMLDivElement>;
-      },
-   ): React.ReactElement;
-   unknown: (
-      props: TextProps & {
-         ref?: React.Ref<HTMLDivElement>;
-      },
-   ) => React.ReactElement;
-   oneLine: (
-      props: TextProps & {
-         ref?: React.Ref<HTMLDivElement>;
-      },
-   ) => React.ReactElement;
+   (props: ComponentPropWithRef<HTMLParagraphElement, TextProps>): React.ReactElement;
+   unknown: (props: ComponentPropWithRef<HTMLParagraphElement, TextProps>) => React.ReactElement;
+   oneLine: (props: ComponentPropWithRef<HTMLParagraphElement, TextProps>) => React.ReactElement;
 };
 
 const TextComponent: TextComponentType = forwardRef(function Text(

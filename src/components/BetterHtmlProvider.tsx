@@ -1,6 +1,10 @@
 import { createContext, memo, useContext, useEffect, useMemo, useState } from "react";
 import { createGlobalStyle } from "styled-components";
 
+import { theme } from "../constants/theme";
+import { icons } from "../constants/icons";
+import { assets } from "../constants/assets";
+
 import { BetterHtmlConfig } from "../types/config";
 import { DeepPartialRecord } from "../types/app";
 import { ColorTheme } from "../types/theme";
@@ -106,52 +110,26 @@ function BetterHtmlProvider({ value, children }: BetterHtmlProviderProps) {
       () => ({
          theme: {
             styles: {
-               space: 16,
-               gap: 8,
-               borderRadius: 10,
-               fontFamily: "Arial, sans-serif",
-               transition: "ease 0.2s",
+               ...theme.styles,
                ...value?.theme?.styles,
             },
             colors: {
                light: {
-                  textPrimary: "#111111",
-                  textSecondary: "#777777",
-                  label: "#111111",
-                  primary: "#6d466b",
-                  secondary: "#412234",
-                  success: "#28a745",
-                  info: "#17a2b8",
-                  warn: "#ffc107",
-                  error: "#dc3545",
-                  backgroundBase: "#f8f8f8",
-                  backgroundSecondary: "#e8e8e8",
-                  backgroundContent: "#ffffff",
-                  border: "#ced4da",
+                  ...theme.colors.light,
                   ...value?.theme?.colors?.light,
                },
                dark: {
-                  textPrimary: "#f8f8f8",
-                  textSecondary: "#e8e8e8",
-                  label: "#111111",
-                  primary: "#9b6499",
-                  secondary: "#6c466b",
-                  success: "#28a745",
-                  info: "#17a2b8",
-                  warn: "#ffc107",
-                  error: "#dc3545",
-                  backgroundBase: "#111111",
-                  backgroundSecondary: "#222222",
-                  backgroundContent: "#333333",
-                  border: "#777777",
+                  ...theme.colors.dark,
                   ...value?.theme?.colors?.dark,
                },
             },
          },
          icons: {
+            ...icons,
             ...value?.icons,
          },
          assets: {
+            ...assets,
             ...value?.assets,
          },
       }),

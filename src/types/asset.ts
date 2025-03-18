@@ -1,3 +1,5 @@
-export type AssetsConfig = Record<AssetName, string>;
+export type AssetName = "logo";
 
-export type AssetName = "";
+export type AssetsConfig = Record<AssetName, string> & {
+   [key: string]: string;
+};

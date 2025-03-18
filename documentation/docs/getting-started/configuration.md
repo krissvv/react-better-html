@@ -72,11 +72,57 @@ We recommend using the default values initially and change them only if needed b
 
 ## Icons configuration
 
-TODO
+It accepts object of type [`IconConfig`](../types/icon-config) and can customize the already predefined ones. You can also define your own icons and use them by name in the [Icon](../components/icon) component.
+
+```jsx
+<BetterHtmlProvider
+   value={{
+      ...
+      // highlight-start
+      icons: {
+         XMark: { // `XMark` is the name of the icon
+            width: 384,
+            height: 512,
+            paths: [
+               {
+                  d: "M342.6 150.6c12.5-12.5 ...",
+                  type: "fill"
+               }
+            ]
+         },
+         ...
+      },
+      // highlight-end
+      ...
+   }}
+>
+   <App />
+</BetterHtmlProvider>
+```
 
 ## Assets configuration
 
-TODO
+It accepts object of type [`AssetConfig`](../types/asset-config) and can override the already predefined ones. You can also define your own images/assets and use them by name in the [Image](../components/image) component.
+
+```jsx
+// highlight-next-line
+import logoAsset from "../assets/logo.svg";
+
+<BetterHtmlProvider
+   value={{
+      ...
+      // highlight-start
+      assets: {
+         logo: logoAsset, // `logo` is the name of the asset
+         ...
+      },
+      // highlight-end
+      ...
+   }}
+>
+   <App />
+</BetterHtmlProvider>
+```
 
 ## Default Configuration
 
@@ -84,7 +130,7 @@ Here are the default values used in the global configuration of the components
 
 ### Theme
 
-the default colors used in the library are
+the default colors used in the library are:
 
 -  textPrimary - <HighlightedText color="#111111">#111111</HighlightedText>
 -  textSecondary - <HighlightedText color="#777777">#777777</HighlightedText>
@@ -101,7 +147,7 @@ the default colors used in the library are
 -  border - <HighlightedText color="#ced4da" isLight>#ced4da</HighlightedText>
 
 <br />
-the default styles used in the library are
+the default styles used in the library are:
 
 -  space - `16px`
 -  gap - `8px`
@@ -115,8 +161,12 @@ Those styles are tested in different projects and UI layouts and fit 85% of the 
 
 ### Icons
 
-TODO
+the default icons used in the library are:
+
+-  XMark - The symbol `X`
 
 ### Assets
 
-TODO
+the default assets used in the library are:
+
+-  logo - The logo of the project (you can override it with your own logo)

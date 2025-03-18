@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 import { isMobileDevice } from "../constants";
 
-import { ComponentHoverStyle, ComponentStyle } from "../types/components";
+import { ComponentHoverStyle, ComponentPropWithRef, ComponentStyle } from "../types/components";
 import { OmitProps } from "../types/app";
 
 import { useStyledComponentStyles, useComponentPropsWithPrefix, useComponentPropsWithoutStyle } from "../utils/hooks";
@@ -31,33 +31,27 @@ export type DivProps<Value> = {
    ComponentHoverStyle;
 
 type DivComponentType = {
-   <Value>(
-      props: DivProps<Value> & {
-         ref?: React.Ref<HTMLDivElement>;
-      },
-   ): React.ReactElement;
+   <Value>(props: ComponentPropWithRef<HTMLDivElement, DivProps<Value>>): React.ReactElement;
    row: <Value>(
-      props: OmitProps<DivProps<Value>, "display" | "flexDirection"> & {
-         invertFlexDirection?: boolean;
-         ref?: React.Ref<HTMLDivElement>;
-      },
+      props: ComponentPropWithRef<
+         HTMLDivElement,
+         OmitProps<DivProps<Value>, "display" | "flexDirection"> & {
+            invertFlexDirection?: boolean;
+         }
+      >,
    ) => React.ReactElement;
    column: <Value>(
-      props: OmitProps<DivProps<Value>, "display" | "flexDirection"> & {
-         invertFlexDirection?: boolean;
-         ref?: React.Ref<HTMLDivElement>;
-      },
+      props: ComponentPropWithRef<
+         HTMLDivElement,
+         OmitProps<DivProps<Value>, "display" | "flexDirection"> & {
+            invertFlexDirection?: boolean;
+         }
+      >,
    ) => React.ReactElement;
    grid: <Value>(
-      props: OmitProps<DivProps<Value>, "display" | "flexDirection"> & {
-         ref?: React.Ref<HTMLDivElement>;
-      },
+      props: ComponentPropWithRef<HTMLDivElement, OmitProps<DivProps<Value>, "display">>,
    ) => React.ReactElement;
-   box: <Value>(
-      props: DivProps<Value> & {
-         ref?: React.Ref<HTMLDivElement>;
-      },
-   ) => React.ReactElement;
+   box: <Value>(props: ComponentPropWithRef<HTMLDivElement, DivProps<Value>>) => React.ReactElement;
 };
 
 const DivComponent: DivComponentType = forwardRef(function Div<Value>(

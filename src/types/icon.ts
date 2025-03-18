@@ -1,10 +1,11 @@
-export type IconsConfig = Record<
-   IconName,
-   {
-      width: number;
-      height: number;
-      paths: (React.ComponentProps<"path"> & { type: "fill" | "stroke" })[];
-   }
->;
+export type IconName = "XMark";
 
-export type IconName = "";
+export type IconData = {
+   width: number;
+   height: number;
+   paths: (React.ComponentProps<"path"> & { type: "fill" | "stroke" })[];
+};
+
+export type IconsConfig = Record<IconName, IconData> & {
+   [key: string]: IconData;
+};
