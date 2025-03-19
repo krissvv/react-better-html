@@ -16,6 +16,10 @@ A component library for react that is as close to plane html as possible
 
 🔴 The library is not yet ready for use - development is actively in progress 🔴
 
+## Documentation
+
+You can fined the full documentation on the home page of the official [Docs](https://krissvv.github.io/react-better-html) website.
+
 ## Requirements
 
 -  [React](https://react.dev) version 19.0 or above.
