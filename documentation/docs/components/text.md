@@ -53,7 +53,7 @@ All of the `React.CSSProperties` are valid prop with the benefit of passing just
 
 ## Common Props
 
-All standard text attributes are valid props in the library.
+All standard text attributes are valid props for this component.
 
 ```jsx
 import { Text } from "react-better-html";

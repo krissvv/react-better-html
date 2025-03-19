@@ -69,7 +69,7 @@ Ensure that the `assets` object in the `<BetterHtmlProvider>` value prop contain
 
 ## Common Props
 
-All standard `<img>` attributes are valid props in the library.
+All standard `<img>` attributes are valid props for this component.
 
 ```jsx
 import { Image } from "react-better-html";

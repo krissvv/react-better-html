@@ -4,6 +4,7 @@ import { createGlobalStyle } from "styled-components";
 import { theme } from "../constants/theme";
 import { icons } from "../constants/icons";
 import { assets } from "../constants/assets";
+import { appConfig } from "../constants/app";
 
 import { BetterHtmlConfig } from "../types/config";
 import { AnyOtherString, DeepPartialRecord } from "../types/app";
@@ -87,7 +88,7 @@ export const useTheme = () => {
    };
 };
 
-export const useLoader = (loaderName?: LoaderName): boolean => {
+export const useLoader = (loaderName?: LoaderName | AnyOtherString): boolean => {
    const context = useContext(betterHtmlContext);
 
    if (context === undefined)
@@ -95,7 +96,7 @@ export const useLoader = (loaderName?: LoaderName): boolean => {
          "`useLoader()` must be used within a `<BetterHtmlProvider>`. Make sure to add one at the root of your component tree.",
       );
 
-   return loaderName ? context.loaders[loaderName] ?? false : false;
+   return loaderName ? context.loaders[loaderName.toString()] ?? false : false;
 };
 
 export const useLoaderControls = () => {
@@ -155,6 +156,10 @@ function BetterHtmlProvider({ value, children }: BetterHtmlProviderProps) {
 
    const readyValue = useMemo<BetterHtmlInternalConfig>(
       () => ({
+         app: {
+            ...appConfig,
+            ...value?.app,
+         },
          theme: {
             styles: {
                ...theme.styles,

@@ -135,7 +135,7 @@ All of the `React.CSSProperties` are valid prop with the benefit of passing just
 
 ## Common Props
 
-All standard `<button>` attributes are valid props in the library.
+All standard `<button>` attributes are valid props for this component.
 
 ```jsx
 import { Button } from "react-better-html";

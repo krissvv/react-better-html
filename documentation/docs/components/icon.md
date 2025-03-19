@@ -55,7 +55,7 @@ Ensure that the `icons` object in the `<BetterHtmlProvider>` value prop contains
 
 ## Common Props
 
-All standard `<svg>` attributes are valid props in the library.
+All standard `<svg>` attributes are valid props for this component.
 
 ```jsx
 import { Icon } from "react-better-html";

@@ -4,7 +4,7 @@ import styled, { css } from "styled-components";
 import { IconName } from "../types/icon";
 import { AssetName } from "../types/asset";
 import { LoaderName } from "../types/loader";
-import { OmitProps } from "../types/app";
+import { AnyOtherString, OmitProps } from "../types/app";
 import { ComponentHoverStyle, ComponentStyle } from "../types/components";
 import { Color, Theme } from "../types/theme";
 
@@ -37,7 +37,7 @@ type ButtonProps<Value> = {
    /** @default undefined */
    imageHeight?: number;
 
-   loaderName?: LoaderName;
+   loaderName?: LoaderName | AnyOtherString;
    /** @default 16 */
    loaderSize?: number;
    /** @default false */
@@ -138,10 +138,10 @@ const ButtonElement = styled.button.withConfig({
    &.secondary {
       padding-block: ${(props) =>
          props.isSmall ? props.theme.styles.gap : (props.theme.styles.space + props.theme.styles.gap) / 2}px;
-
       border: solid 1px ${(props) => props.theme.colors.border};
       background-color: ${(props) => props.theme.colors.backgroundContent};
       background-image: none;
+
       ${(props) => props.normalStyle as any}
    }
 
@@ -180,13 +180,14 @@ const ButtonComponent: ButtonComponent = function Button<Value>({
    ...props
 }: ButtonProps<Value>) {
    const theme = useTheme();
+   const isLoadingHook = useLoader(loaderName);
+
+   const isLoadingElement = isLoading ?? isLoadingHook;
 
    const styledComponentStyles = useStyledComponentStyles(props, theme);
    const dataProps = useComponentPropsWithPrefix(props, "data");
    const ariaProps = useComponentPropsWithPrefix(props, "aria");
    const restProps = useComponentPropsWithoutStyle(props);
-
-   const isLoadingHook = useLoader(loaderName);
 
    const onClickElement = useCallback(
       (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -213,8 +214,6 @@ const ButtonComponent: ButtonComponent = function Button<Value>({
          height={imageHeight}
       />
    ) : undefined;
-
-   const isLoadingElement = isLoading ?? isLoadingHook;
 
    return (
       <ButtonElement

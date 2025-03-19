@@ -10,7 +10,7 @@ import { useStyledComponentStyles, useComponentPropsWithPrefix, useComponentProp
 
 import { useTheme } from "./BetterHtmlProvider";
 
-const DivStylesComponent = styled.div.withConfig({
+const DivStyledComponent = styled.div.withConfig({
    shouldForwardProp: (prop) => !["normalStyle", "hoverStyle"].includes(prop),
 })<{ normalStyle: ComponentStyle; hoverStyle: ComponentStyle }>`
    ${(props) => props.normalStyle as any}
@@ -87,7 +87,7 @@ const DivComponent: DivComponentType = forwardRef(function Div<Value>(
    );
 
    return (
-      <DivStylesComponent
+      <DivStyledComponent
          as={as}
          tabIndex={isTabAccessed && !isMobileDevice ? 0 : undefined}
          role={role ?? (onClick ? "button" : undefined)}
@@ -100,7 +100,7 @@ const DivComponent: DivComponentType = forwardRef(function Div<Value>(
          ref={ref}
       >
          {children}
-      </DivStylesComponent>
+      </DivStyledComponent>
    );
 }) as any;
 

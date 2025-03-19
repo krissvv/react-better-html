@@ -33,6 +33,10 @@ function App() {
 }
 ```
 
+:::danger
+Be careful and do not call `startLoading` and `stopLoading` at the root of the component. Only call the functions conditionally or inside another function. Calling the same function on every rerender of the component will cause `Maximum update depth exceeded` error.
+:::
+
 ### Return Value
 
 The hook returns an object with two functions:

@@ -1,4 +1,4 @@
-export type IconName = "XMark" | "uploadCloud";
+export type IconName = "XMark" | "uploadCloud" | "trash";
 
 export type IconData = {
    width: number;

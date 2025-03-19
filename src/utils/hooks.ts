@@ -5,6 +5,7 @@ import { Theme } from "../types/theme";
 
 const cssProps = Object.keys(document.documentElement.style).reduce((previousValue, currentValue) => {
    previousValue[currentValue.toLowerCase() as keyof React.CSSProperties] = true;
+   previousValue[`${currentValue}Hover`.toLowerCase() as keyof React.CSSProperties] = true;
 
    return previousValue;
 }, {} as Record<keyof React.CSSProperties, boolean>);

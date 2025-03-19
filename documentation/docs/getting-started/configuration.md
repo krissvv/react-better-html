@@ -37,6 +37,26 @@ This is enough for the components to work with the [default configuration](#defa
 If no value is provided, then all components in the library will use the default configuration that comes with the library. Check out the [default configuration](#default-configuration)
 :::
 
+### App configuration
+
+There are some configuration properties for the whole app that can be set from the `app` object
+
+```jsx
+<BetterHtmlProvider
+   value={{
+      ...
+      // highlight-start
+      app: {
+         contentMaxWidth: 1200
+      },
+      // highlight-end
+      ...
+   }}
+>
+   <App />
+</BetterHtmlProvider>
+```
+
 ### Theme configuration
 
 It accepts object of type [`Theme`](../types/theme) and can customize the `styles` and `colors`. Colors support theme management.
@@ -151,6 +171,12 @@ You can access the value of the loaders using the [useLoader](../hooks/use-loade
 
 Here are the default values used in the global configuration of the components.
 
+### App
+
+The default values for the app constants in the library are:
+
+-  **`contentMaxWidth`** - 1100px
+
 ### Theme
 
 The default colors used in the library are (More on the [Theme](../types/theme) type page):
@@ -195,3 +221,7 @@ The default icons used in the library are (More on the [Icons](../types/icon-con
 The default assets used in the library are (More on the [Assets](../types/asset-config) type page):
 
 -  **`logo`** - The logo of the project (you can override it with your own logo)
+
+### Loaders
+
+There are no default loaders predetermined in the library.

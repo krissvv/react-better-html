@@ -1,7 +1,7 @@
 ---
 title: LoaderConfig
 description: LoaderConfig type and its use
-sidebar_position: 2
+sidebar_position: 4
 ---
 
 # LoaderConfig Type
