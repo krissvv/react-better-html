@@ -13,7 +13,7 @@ This document describes the `IconConfig` which defines the configuration for SVG
 ### `IconName`
 
 ```typescript
-type IconName = "XMark";
+type IconName = "XMark" | "uploadCloud";
 ```
 
 This type defines the allowed names for icons. When using the [Icon](../components/icon) component you pass a `name` props witch is of that type. You can pass other values different from the predefined names but you will need to define them in the `value` prop of the `<BetterHtmlProvider>` also. Check out the [Configuration](../getting-started/configuration#icons-configuration) page for more details.

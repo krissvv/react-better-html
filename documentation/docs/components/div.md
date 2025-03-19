@@ -32,7 +32,7 @@ All of the `React.CSSProperties` are valid prop with the benefit of passing just
 
    </TabItem>
 
-   <TabItem value="withHover" label="With Hover" default>
+   <TabItem value="withHover" label="With Hover">
 
       ```jsx
       import { Div } from "react-better-html";
@@ -46,14 +46,14 @@ All of the `React.CSSProperties` are valid prop with the benefit of passing just
       }
       ```
 
-      When hovering the component the text inside will become red.
+      When hovering the component the text inside will change to red.
 
    </TabItem>
 </Tabs>
 
 ## Common Props
 
-All props in HTML are a valid prop in the library.
+All standard `<div>` attributes are valid props in the library.
 
 ```jsx
 import { Div } from "react-better-html";
@@ -74,7 +74,7 @@ function App() {
 
 ### Value click
 
-The library provides a new click event called `onClickWithValue` that is of type `(value: Value) => void` and is used together with the `value` prop. The `Value` type is generic and will automatically inherit the value prop type.
+The library provides a new click event called `onClickWithValue` that is of type `(value: Value) => void` and is used together with the `value` prop. The `Value` type is generic and will automatically inherit the `value` prop type.
 
 ```jsx
 import { Div } from "react-better-html";
@@ -82,11 +82,12 @@ import { Div } from "react-better-html";
 function App() {
    return (
       <Div
-         // highlight-next-line
+         // highlight-start
          value={12}
          onClickWithValue={(value) => {
             console.log(value); // Will log to the console "12"
          }}
+         // highlight-end
       >
          This is a Div component.
       </Div>
@@ -144,7 +145,7 @@ In the above example the component will be rendered as `<main>` component in the
 
 ## Subcomponents
 
-A number of components in the library have that _subcomponent_ feature witch is like a preset of the same component that is frequently used.
+A number of components in the library have a _subcomponent_ feature witch is like a preset of the same component that is frequently used.
 
 ### Div.row
 

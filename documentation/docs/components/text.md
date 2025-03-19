@@ -32,7 +32,7 @@ All of the `React.CSSProperties` are valid prop with the benefit of passing just
 
    </TabItem>
 
-   <TabItem value="withHover" label="With Hover" default>
+   <TabItem value="withHover" label="With Hover">
 
       ```jsx
       import { Text } from "react-better-html";
@@ -46,14 +46,14 @@ All of the `React.CSSProperties` are valid prop with the benefit of passing just
       }
       ```
 
-      When hovering the component the text inside will become red.
+      When hovering the component the text inside will change to red.
 
    </TabItem>
 </Tabs>
 
 ## Common Props
 
-All props in HTML are a valid prop in the library.
+All standard text attributes are valid props in the library.
 
 ```jsx
 import { Text } from "react-better-html";
@@ -96,7 +96,7 @@ In the above example the component will be rendered as `<h1>` component in the D
 
 ## Subcomponents
 
-A number of components in the library have that _subcomponent_ feature witch is like a preset of the same component that is frequently used.
+A number of components in the library have a _subcomponent_ feature witch is like a preset of the same component that is frequently used.
 
 ### Text.unknown
 

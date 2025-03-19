@@ -1,7 +1,7 @@
 ---
 title: useMediaQuery
 description: The hook that makes everything responsive and mobile-friendly
-sidebar_position: 2
+sidebar_position: 4
 ---
 
 # useMediaQuery Hook
@@ -32,7 +32,7 @@ function App() {
 
 ## Return Value
 
-The `useMediaQuery()` hook returns an object with boolean properties representing various screen size breakpoints.
+The hook returns an object with boolean properties representing various screen size breakpoints.
 
 -  The breakpoint values are fixed and represent common screen sizes.
 

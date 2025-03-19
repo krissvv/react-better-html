@@ -1,4 +1,4 @@
-import { createContext, memo, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, memo, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { createGlobalStyle } from "styled-components";
 
 import { theme } from "../constants/theme";
@@ -6,8 +6,9 @@ import { icons } from "../constants/icons";
 import { assets } from "../constants/assets";
 
 import { BetterHtmlConfig } from "../types/config";
-import { DeepPartialRecord } from "../types/app";
+import { AnyOtherString, DeepPartialRecord } from "../types/app";
 import { ColorTheme } from "../types/theme";
+import { LoaderConfig, LoaderName } from "../types/loader";
 
 const GlobalStyle = createGlobalStyle<{ fontFamily: string; color: string; backgroundColor: string }>`
    body {
@@ -29,9 +30,13 @@ const GlobalStyle = createGlobalStyle<{ fontFamily: string; color: string; backg
    }
 `;
 
-const betterHtmlContext = createContext<BetterHtmlConfig | undefined>(undefined);
+type BetterHtmlInternalConfig = BetterHtmlConfig & {
+   setLoaders: React.Dispatch<React.SetStateAction<Partial<LoaderConfig>>>;
+};
 
-export const useBetterHtmlContext = () => {
+const betterHtmlContext = createContext<BetterHtmlInternalConfig | undefined>(undefined);
+
+export const useBetterHtmlContext = (): BetterHtmlConfig => {
    const context = useContext(betterHtmlContext);
 
    if (context === undefined)
@@ -39,7 +44,9 @@ export const useBetterHtmlContext = () => {
          "`useBetterHtmlContext()` must be used within a `<BetterHtmlProvider>`. Make sure to add one at the root of your component tree.",
       );
 
-   return context;
+   const { setLoaders, ...rest } = context;
+
+   return rest;
 };
 
 export const useTheme = () => {
@@ -80,6 +87,44 @@ export const useTheme = () => {
    };
 };
 
+export const useLoader = (loaderName?: LoaderName): boolean => {
+   const context = useContext(betterHtmlContext);
+
+   if (context === undefined)
+      throw new Error(
+         "`useLoader()` must be used within a `<BetterHtmlProvider>`. Make sure to add one at the root of your component tree.",
+      );
+
+   return loaderName ? context.loaders[loaderName] ?? false : false;
+};
+
+export const useLoaderControls = () => {
+   const context = useContext(betterHtmlContext);
+
+   if (context === undefined)
+      throw new Error(
+         "`useLoaderControls()` must be used within a `<BetterHtmlProvider>`. Make sure to add one at the root of your component tree.",
+      );
+
+   const startLoading = useCallback((loaderName: LoaderName | AnyOtherString) => {
+      context.setLoaders((oldValue) => ({
+         ...oldValue,
+         [loaderName.toString()]: true,
+      }));
+   }, []);
+   const stopLoading = useCallback((loaderName: LoaderName | AnyOtherString) => {
+      context.setLoaders((oldValue) => ({
+         ...oldValue,
+         [loaderName.toString()]: false,
+      }));
+   }, []);
+
+   return {
+      startLoading,
+      stopLoading,
+   };
+};
+
 type BetterHtmlProviderContentProps = {
    children?: React.ReactNode;
 };
@@ -106,7 +151,9 @@ type BetterHtmlProviderProps = {
 };
 
 function BetterHtmlProvider({ value, children }: BetterHtmlProviderProps) {
-   const readyValue = useMemo<BetterHtmlConfig>(
+   const [loaders, setLoaders] = useState<Partial<LoaderConfig>>(value?.loaders ?? {});
+
+   const readyValue = useMemo<BetterHtmlInternalConfig>(
       () => ({
          theme: {
             styles: {
@@ -132,8 +179,10 @@ function BetterHtmlProvider({ value, children }: BetterHtmlProviderProps) {
             ...assets,
             ...value?.assets,
          },
+         loaders,
+         setLoaders,
       }),
-      [value],
+      [value, loaders],
    );
 
    return (

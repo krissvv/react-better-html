@@ -1,14 +1,14 @@
 import { forwardRef, memo, useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 
-import { OmitProps } from "../types/app";
+import { AnyOtherString, OmitProps } from "../types/app";
 import { ComponentHoverStyle, ComponentPropWithRef, ComponentStyle } from "../types/components";
 import { AssetName } from "../types/asset";
 import { useBetterHtmlContext, useTheme } from "./BetterHtmlProvider";
 import { useComponentPropsWithoutStyle, useComponentPropsWithPrefix, useStyledComponentStyles } from "../utils/hooks";
 
 type ImageProps = {
-   name?: AssetName | Omit<string & {}, "">;
+   name?: AssetName | AnyOtherString;
 } & OmitProps<React.ComponentProps<"img">, "style"> &
    ComponentStyle &
    ComponentHoverStyle;
@@ -75,7 +75,7 @@ const Image: ImageComponent = forwardRef(function Image(
 }) as any;
 
 Image.profileImage = forwardRef(function ProfileImage({ size = 40, ...props }, ref) {
-   return <Image width={size} height={size} borderRadius={999} objectFit="cover" ref={ref} {...props} />;
+   return <Image width={size} height={size} borderRadius="50%" objectFit="cover" ref={ref} {...props} />;
 }) as ImageComponent["profileImage"];
 
 const MemoizedImage = memo(Image) as any as typeof Image & {

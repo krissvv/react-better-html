@@ -9,6 +9,7 @@ export type ColorName =
    | "info"
    | "warn"
    | "error"
+   | "base"
    | "backgroundBase"
    | "backgroundSecondary"
    | "backgroundContent"

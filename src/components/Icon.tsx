@@ -1,7 +1,7 @@
 import { forwardRef, memo, useEffect } from "react";
 import styled from "styled-components";
 
-import { OmitProps } from "../types/app";
+import { AnyOtherString, OmitProps } from "../types/app";
 import { ComponentHoverStyle, ComponentPropWithRef, ComponentStyle } from "../types/components";
 import { IconName } from "../types/icon";
 
@@ -10,7 +10,7 @@ import { useComponentPropsWithoutStyle, useComponentPropsWithPrefix, useStyledCo
 import { useBetterHtmlContext, useTheme } from "./BetterHtmlProvider";
 
 type IconProps = {
-   name: IconName | Omit<string & {}, "">;
+   name: IconName | AnyOtherString;
    /** @default 16 */
    size?: number;
 } & OmitProps<React.ComponentProps<"svg">, "style" | "width" | "height" | "viewBox" | "fill" | "xmlns"> &

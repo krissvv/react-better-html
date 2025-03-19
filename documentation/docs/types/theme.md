@@ -44,13 +44,14 @@ This type defines the allowed names for colors within the theme.
 
 -  **`textPrimary`**: The primary text color.
 -  **`textSecondary`**: The secondary text color.
--  **`label`**: The label text color (That remains light even on dark theme).
+-  **`label`**: The label text color (That remains dark even on dark theme).
 -  **`primary`**: The primary (brand) color.
 -  **`secondary`**: The secondary color.
 -  **`success`**: The color used for success events.
 -  **`info`**: The color used for info events.
 -  **`warn`**: The color used for success warning events.
 -  **`error`**: The color used for success error events.
+-  **`base`**: The base background color (That remains light even on dark theme).
 -  **`backgroundBase`**: The base background color.
 -  **`backgroundSecondary`**: The secondary background color.
 -  **`backgroundContent`**: The content background color.

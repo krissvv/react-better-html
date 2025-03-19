@@ -17,3 +17,5 @@ export type DeepPartialRecord<T> = {
 
 /** returns only the required props */
 export type PickAllRequired<T, K extends keyof T> = Required<Pick<T, K>>;
+
+export type AnyOtherString = Omit<string & {}, "">;

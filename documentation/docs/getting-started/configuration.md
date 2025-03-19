@@ -37,7 +37,7 @@ This is enough for the components to work with the [default configuration](#defa
 If no value is provided, then all components in the library will use the default configuration that comes with the library. Check out the [default configuration](#default-configuration)
 :::
 
-## Theme configuration
+### Theme configuration
 
 It accepts object of type [`Theme`](../types/theme) and can customize the `styles` and `colors`. Colors support theme management.
 
@@ -70,7 +70,7 @@ All properties are optional - the [default configuration](#default-configuration
 We recommend using the default values initially and change them only if needed by your special use-cases.
 :::
 
-## Icons configuration
+### Icons configuration
 
 It accepts object of type [`IconConfig`](../types/icon-config) and can customize the already predefined ones. You can also define your own icons and use them by name in the [Icon](../components/icon) component.
 
@@ -100,7 +100,7 @@ It accepts object of type [`IconConfig`](../types/icon-config) and can customize
 </BetterHtmlProvider>
 ```
 
-## Assets configuration
+### Assets configuration
 
 It accepts object of type [`AssetConfig`](../types/asset-config) and can override the already predefined ones. You can also define your own images/assets and use them by name in the [Image](../components/image) component.
 
@@ -124,13 +124,36 @@ import logoAsset from "../assets/logo.svg";
 </BetterHtmlProvider>
 ```
 
+### Loaders configuration
+
+It accepts object of type [`LoaderConfig`](../types/loader-config) and can override the already predefined ones. You can also define your own loaders and use them by name in the app.
+
+```jsx
+<BetterHtmlProvider
+   value={{
+      ...
+      // highlight-start
+      loaders: {
+         testLoader: false, // `testLoader` is the name of the loader
+         ...
+      },
+      // highlight-end
+      ...
+   }}
+>
+   <App />
+</BetterHtmlProvider>
+```
+
+You can access the value of the loaders using the [useLoader](../hooks/use-loader) hook. To change the values dynamically you can use the [useLoaderControls](../hooks/use-loader-controls) hook.
+
 ## Default Configuration
 
-Here are the default values used in the global configuration of the components
+Here are the default values used in the global configuration of the components.
 
 ### Theme
 
-the default colors used in the library are:
+The default colors used in the library are (More on the [Theme](../types/theme) type page):
 
 -  textPrimary - <HighlightedText color="#111111">#111111</HighlightedText>
 -  textSecondary - <HighlightedText color="#777777">#777777</HighlightedText>
@@ -141,19 +164,20 @@ the default colors used in the library are:
 -  info - <HighlightedText color="#17a2b8">#17a2b8</HighlightedText>
 -  warn - <HighlightedText color="#ffc107">#ffc107</HighlightedText>
 -  error - <HighlightedText color="#dc3545">#dc3545</HighlightedText>
+-  base - <HighlightedText color="#f8f8f8" isLight>#f8f8f8</HighlightedText>
 -  backgroundBase - <HighlightedText color="#f8f8f8" isLight>#f8f8f8</HighlightedText>
 -  backgroundSecondary - <HighlightedText color="#e8e8e8" isLight>#e8e8e8</HighlightedText>
 -  backgroundContent - <HighlightedText color="#ffffff" isLight>#ffffff</HighlightedText>
 -  border - <HighlightedText color="#ced4da" isLight>#ced4da</HighlightedText>
 
 <br />
-the default styles used in the library are:
+The default styles used in the library are:
 
--  space - `16px`
--  gap - `8px`
--  borderRadius - `10px`
--  fontFamily - `Arial, sans-serif`
--  transition - `ease 0.2s`
+-  **`space`** - 16px
+-  **`gap`** - 8px
+-  **`borderRadius`** - 10px
+-  **`fontFamily`** - Arial, sans-serif
+-  **`transition`** - ease 0.2s
 
 :::tip
 Those styles are tested in different projects and UI layouts and fit 85% of the use-cases, so you are not likely to change them.
@@ -161,12 +185,13 @@ Those styles are tested in different projects and UI layouts and fit 85% of the 
 
 ### Icons
 
-the default icons used in the library are:
+The default icons used in the library are (More on the [Icons](../types/icon-config) type page):
 
--  XMark - The symbol `X`
+-  **`XMark`** - the symbol `X`
+-  **`uploadCloud`** - a cloud with an arrow pointing up
 
 ### Assets
 
-the default assets used in the library are:
+The default assets used in the library are (More on the [Assets](../types/asset-config) type page):
 
--  logo - The logo of the project (you can override it with your own logo)
+-  **`logo`** - The logo of the project (you can override it with your own logo)
