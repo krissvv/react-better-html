@@ -1,6 +1,19 @@
 import { memo, useRef } from "react";
 
-import { Div, Text, Loader, Icon, Image, Button, Divider, Modal, ModalRef, PageHolder, useTheme } from "../../src";
+import {
+   Div,
+   Text,
+   Loader,
+   Icon,
+   Image,
+   Button,
+   Divider,
+   Modal,
+   ModalRef,
+   PageHolder,
+   useTheme,
+   Chip,
+} from "../../src";
 
 function App() {
    const theme = useTheme();
@@ -30,6 +43,9 @@ function App() {
                <Div height={100}>
                   <Divider.vertical />
                </Div>
+
+               <Chip text="Some text" />
+               <Chip.circle text="Some text" backgroundColor="red" color="white" />
 
                <Button text="Open modal" onClick={() => modalRef.current?.open()} />
                <Button text="Open modal with title" onClick={() => modalWithTitleRef.current?.open()} />
@@ -63,6 +79,7 @@ function App() {
          <Modal ref={modalRef}>
             Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae cumque tempore qui?
          </Modal>
+
          <Modal title="My Modal" description="Lorem ipsum dolor sit amet" ref={modalWithTitleRef}>
             Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae cumque tempore qui?
          </Modal>
