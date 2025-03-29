@@ -32,6 +32,7 @@ type DropdownProps<Value> = {
    leftIcon?: IconName;
    withSearch?: boolean;
    onChange?: (value: Value | undefined) => void;
+   renderOption?: (option: DropdownOption<Value>, index: number) => React.ReactNode;
 } & OmitProps<DivProps<unknown>, "onChange">;
 
 type DropdownComponentType = {
@@ -47,10 +48,11 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
       disabled,
       options,
       value: controlledValue,
-      onChange,
       placeholder = "Select an option",
       leftIcon,
       withSearch,
+      onChange,
+      renderOption,
       ...props
    }: DropdownProps<Value>,
    ref: React.ForwardedRef<HTMLDivElement>,
@@ -276,7 +278,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
                               aria-disabled={isDisabled}
                               key={JSON.stringify(option)}
                            >
-                              <Text>{option.label}</Text>
+                              {renderOption ? renderOption(option, index) : <Text>{option.label}</Text>}
                            </Div>
                         );
                      })}

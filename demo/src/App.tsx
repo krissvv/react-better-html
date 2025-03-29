@@ -108,6 +108,17 @@ function App() {
                   ]}
                   label="Label"
                   placeholder="Placeholder"
+                  renderOption={(option) => (
+                     <Div.row alignItems="center" gap={theme.styles.gap}>
+                        <Div
+                           width={20}
+                           height={20}
+                           borderRadius={theme.styles.borderRadius / 2}
+                           backgroundColor="red"
+                        />
+                        <Text>{option.label}</Text>
+                     </Div.row>
+                  )}
                />
                <Dropdown
                   options={[
