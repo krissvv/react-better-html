@@ -51,11 +51,20 @@ function App() {
 
                <InputField placeholder="Placeholder" />
                <InputField placeholder="Placeholder" disabled />
-               <InputField label="Label" placeholder="Placeholder" />
-               <InputField label="Label" required placeholder="Placeholder" />
-               <InputField label="Label" required errorText="This is an error" placeholder="Placeholder" />
+               <InputField label="Label" leftIcon="uploadCloud" placeholder="Placeholder" />
+               <InputField label="Label" rightIcon="uploadCloud" required placeholder="Placeholder" />
+               <InputField
+                  label="Label"
+                  rightIcon="uploadCloud"
+                  onClickRightIcon={() => {}}
+                  required
+                  errorText="This is an error"
+                  placeholder="Placeholder"
+               />
                <InputField label="Label" required infoText="Here is a helper message" placeholder="Placeholder" />
                <InputField.email />
+               <InputField.password />
+               <InputField.search />
 
                <InputField.multiline placeholder="Placeholder" />
 
@@ -89,6 +98,7 @@ function App() {
                      { label: "Option 3", value: "3" },
                   ]}
                   label="Label"
+                  leftIcon="uploadCloud"
                />
                <Dropdown
                   options={[

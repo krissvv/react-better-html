@@ -2,6 +2,7 @@ import { forwardRef, memo, useCallback, useEffect, useMemo, useRef, useState } f
 
 import { ComponentPropWithRef } from "../types/components";
 import { OmitProps } from "../types/app";
+import { IconName } from "../types/icon";
 
 import { useBooleanState } from "../utils/hooks";
 
@@ -28,6 +29,7 @@ type DropdownProps<Value> = {
    options: DropdownOption<Value>[];
    value?: Value;
    placeholder?: string;
+   leftIcon?: IconName;
    withSearch?: boolean;
    onChange?: (value: Value | undefined) => void;
 } & OmitProps<DivProps<unknown>, "onChange">;
@@ -47,6 +49,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
       value: controlledValue,
       onChange,
       placeholder = "Select an option",
+      leftIcon,
       withSearch,
       ...props
    }: DropdownProps<Value>,
@@ -204,7 +207,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
 
    return (
       <Div.column position="relative" userSelect="none" {...props} ref={dropdownHolderRef}>
-         <Div.row position="relative" width="100%" zIndex={isOpen || isOpenLate ? 1001 : undefined}>
+         <Div.row position="relative" width="100%">
             <InputField
                label={label}
                errorText={errorText}
@@ -214,12 +217,71 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
                readOnly={!withSearch}
                value={displayValue}
                placeholder={withSearch ? (selectedOption ? selectedOption.label : placeholder) : placeholder}
-               className={isOpen ? "react-better-html-dropdown-open" : ""}
+               leftIcon={leftIcon}
+               className={`react-better-html-dropdown${isOpen ? " react-better-html-dropdown-open" : ""}`}
+               zIndex={isOpen || isOpenLate ? 1001 : undefined}
                onClick={!disabled ? setIsOpen.toggle : undefined}
                onFocus={setIsFocused.setTrue}
                onBlur={setIsFocused.setFalse}
                onKeyDown={onKeyDownInputField}
                onChangeText={withSearch ? setSearchQuery : undefined}
+               insideInputFieldComponent={
+                  <Div
+                     position="absolute"
+                     top="100%"
+                     left={0}
+                     width="100%"
+                     maxHeight={300}
+                     backgroundColor={theme.colors.backgroundContent}
+                     border={`1px solid ${isFocused ? theme.colors.primary : theme.colors.border}`}
+                     borderTop="none"
+                     borderBottomLeftRadius={theme.styles.borderRadius}
+                     borderBottomRightRadius={theme.styles.borderRadius}
+                     boxShadow="0px 10px 20px #00000020"
+                     zIndex={1000}
+                     overflowY="auto"
+                     opacity={!isOpen ? 0 : undefined}
+                     pointerEvents={!isOpen ? "none" : undefined}
+                     transform={`translateY(${!isOpen ? -10 : 0}px)`}
+                     transition={theme.styles.transition}
+                     role="listbox"
+                     aria-label={label}
+                  >
+                     {filteredOptions.map((option, index) => {
+                        const isSelected = option.value === value;
+                        const isDisabled = option.disabled;
+                        const isFocused = index === focusedOptionIndex;
+
+                        return (
+                           <Div
+                              color={
+                                 isDisabled
+                                    ? theme.colors.textSecondary + "80"
+                                    : isSelected
+                                    ? theme.colors.base
+                                    : theme.colors.textPrimary
+                              }
+                              backgroundColor={isSelected ? theme.colors.primary : theme.colors.backgroundContent}
+                              filter={isFocused ? (isDisabled ? "brightness(0.95)" : "brightness(0.9)") : undefined}
+                              filterHover={
+                                 focusedOptionIndex === undefined && !isDisabled ? "brightness(0.9)" : undefined
+                              }
+                              cursor={isDisabled ? "not-allowed" : "pointer"}
+                              padding={`${theme.styles.space / 2}px ${theme.styles.space + theme.styles.gap}px`}
+                              value={option}
+                              onClickWithValue={onClickOption}
+                              onMouseMove={() => setFocusedOptionIndex(undefined)}
+                              role="option"
+                              aria-selected={isSelected}
+                              aria-disabled={isDisabled}
+                              key={JSON.stringify(option)}
+                           >
+                              <Text>{option.label}</Text>
+                           </Div>
+                        );
+                     })}
+                  </Div>
+               }
                role="combobox"
                aria-expanded={isOpen}
                aria-controls="dropdown-list"
@@ -231,16 +293,18 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
             <Div.row
                position="absolute"
                top={46 / 2 + (label ? 16 + theme.styles.gap / 2 : 0)}
-               right={theme.styles.space}
+               right={theme.styles.space + 1}
                alignItems="center"
                gap={theme.styles.gap}
                transform="translateY(-50%)"
                pointerEvents="none"
                filter={disabled ? "brightness(0.9)" : undefined}
                opacity={disabled ? 0.6 : undefined}
+               zIndex={isOpen || isOpenLate ? 1001 : undefined}
             >
                <Button.icon
                   icon="XMark"
+                  position="relative"
                   size={10}
                   iconSize={14}
                   opacity={!withClearButton ? 0 : undefined}
@@ -251,67 +315,15 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
 
                <Icon
                   name="chevronDown"
+                  position="relative"
                   size={16}
                   color={theme.colors.textSecondary}
                   transform={`rotate(${isOpen ? 180 : 0}deg)`}
                   transition={theme.styles.transition}
+                  pointerEvents="none"
                />
             </Div.row>
          </Div.row>
-
-         <Div
-            position="absolute"
-            top={46 + (label ? 16 + theme.styles.gap / 2 : 0)}
-            left={0}
-            width="100%"
-            maxHeight={300}
-            backgroundColor={theme.colors.backgroundContent}
-            border={`1px solid ${isFocused ? theme.colors.primary : theme.colors.border}`}
-            borderTop="none"
-            borderBottomLeftRadius={theme.styles.borderRadius}
-            borderBottomRightRadius={theme.styles.borderRadius}
-            boxShadow="0px 10px 20px #00000020"
-            zIndex={1000}
-            overflowY="auto"
-            opacity={!isOpen ? 0 : undefined}
-            pointerEvents={!isOpen ? "none" : undefined}
-            transform={`translateY(${!isOpen ? -10 : 0}px)`}
-            transition={theme.styles.transition}
-            role="listbox"
-            aria-label={label}
-         >
-            {filteredOptions.map((option, index) => {
-               const isSelected = option.value === value;
-               const isDisabled = option.disabled;
-               const isFocused = index === focusedOptionIndex;
-
-               return (
-                  <Div
-                     color={
-                        isDisabled
-                           ? theme.colors.textSecondary + "80"
-                           : isSelected
-                           ? theme.colors.base
-                           : theme.colors.textPrimary
-                     }
-                     backgroundColor={isSelected ? theme.colors.primary : theme.colors.backgroundContent}
-                     filter={isFocused ? (isDisabled ? "brightness(0.95)" : "brightness(0.9)") : undefined}
-                     filterHover={focusedOptionIndex === undefined && !isDisabled ? "brightness(0.9)" : undefined}
-                     cursor={isDisabled ? "not-allowed" : "pointer"}
-                     padding={`${theme.styles.space / 2}px ${theme.styles.space + theme.styles.gap}px`}
-                     value={option}
-                     onClickWithValue={onClickOption}
-                     onMouseMove={() => setFocusedOptionIndex(undefined)}
-                     role="option"
-                     aria-selected={isSelected}
-                     aria-disabled={isDisabled}
-                     key={JSON.stringify(option)}
-                  >
-                     <Text>{option.label}</Text>
-                  </Div>
-               );
-            })}
-         </Div>
       </Div.column>
    );
 }) as any;
