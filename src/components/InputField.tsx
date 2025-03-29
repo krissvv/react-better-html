@@ -8,6 +8,7 @@ import { IconName } from "../types/icon";
 
 import {
    useBooleanState,
+   useComponentPropsWithExcludedStyle,
    useComponentPropsWithoutStyle,
    useComponentPropsWithPrefix,
    useStyledComponentStyles,
@@ -152,7 +153,8 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
 ) {
    const theme = useTheme();
 
-   const styledComponentStyles = useStyledComponentStyles(props, theme);
+   const styledComponentStylesWithoutExcluded = useStyledComponentStyles(props, theme, true);
+   const styledComponentStylesWithExcluded = useComponentPropsWithExcludedStyle(props);
    const dataProps = useComponentPropsWithPrefix(props, "data");
    const ariaProps = useComponentPropsWithPrefix(props, "aria");
    const restProps = useComponentPropsWithoutStyle(props);
@@ -166,7 +168,7 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
    );
 
    return (
-      <Div.column width="100%" gap={theme.styles.gap / 2}>
+      <Div.column width="100%" gap={theme.styles.gap / 2} {...styledComponentStylesWithExcluded}>
          {label && (
             <Text
                as="label"
@@ -203,7 +205,7 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
                withLeftIcon={leftIcon !== undefined}
                withRightIcon={rightIcon !== undefined}
                onChange={onChangeElement}
-               {...styledComponentStyles}
+               {...styledComponentStylesWithoutExcluded}
                {...dataProps}
                {...ariaProps}
                {...restProps}

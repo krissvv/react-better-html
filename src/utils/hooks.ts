@@ -9,10 +9,26 @@ const cssProps = Object.keys(document.documentElement.style).reduce((previousVal
 
    return previousValue;
 }, {} as Record<keyof React.CSSProperties, boolean>);
+const cssPropsToExclude: (keyof React.CSSProperties)[] = [
+   "margin",
+   "marginTop",
+   "marginBottom",
+   "marginLeft",
+   "marginRight",
+   "marginBlock",
+   "marginInline",
+   "marginBlockStart",
+   "marginBlockEnd",
+   "marginInlineStart",
+   "marginInlineEnd",
+   "marginTrim",
+];
 
 export function useStyledComponentStyles(
    props: ComponentStyle & ComponentHoverStyle,
    theme?: Theme,
+   /** @default false */
+   excludeProps?: boolean,
 ): {
    normalStyle: ComponentStyle;
    hoverStyle: ComponentStyle;
@@ -32,7 +48,11 @@ export function useStyledComponentStyles(
          } else {
             if (!cssProps[key.toLowerCase() as keyof React.CSSProperties]) continue;
 
-            (normalStyle[key as keyof ComponentStyle] as any) = props[key as keyof ComponentStyle];
+            const readyKey = key as keyof ComponentStyle;
+
+            if (excludeProps && cssPropsToExclude.includes(readyKey)) continue;
+
+            (normalStyle[readyKey] as any) = props[readyKey];
          }
       }
 
@@ -62,6 +82,22 @@ export function useComponentPropsWithPrefix<Props extends Record<string, any>, P
 
       return returnValue;
    }, [props, prefix]);
+}
+
+export function useComponentPropsWithExcludedStyle<Props extends Record<string, any>>(props: Props) {
+   return useMemo(
+      () =>
+         Object.keys(props).reduce((previousValue, currentValue) => {
+            if (!cssProps[currentValue.toLowerCase() as keyof React.CSSProperties]) {
+               if (cssPropsToExclude.includes(currentValue as keyof React.CSSProperties)) return previousValue;
+
+               previousValue[currentValue as keyof Props] = props[currentValue];
+            }
+
+            return previousValue;
+         }, {} as Partial<Props>),
+      [props],
+   );
 }
 
 export function useComponentPropsWithoutStyle<Props extends Record<string, any>>(props: Props) {

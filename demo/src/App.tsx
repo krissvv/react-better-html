@@ -60,6 +60,7 @@ function App() {
                   required
                   errorText="This is an error"
                   placeholder="Placeholder"
+                  marginBottom={20}
                />
                <InputField label="Label" required infoText="Here is a helper message" placeholder="Placeholder" />
                <InputField.email />
@@ -140,6 +141,7 @@ function App() {
                   placeholder="Placeholder"
                   required
                   errorText="This is an error"
+                  marginBottom={20}
                />
 
                <Button text="Open modal" onClick={() => modalRef.current?.open()} />
