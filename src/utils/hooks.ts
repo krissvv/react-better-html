@@ -33,13 +33,15 @@ export function useStyledComponentStyles(
    normalStyle: ComponentStyle;
    hoverStyle: ComponentStyle;
 } {
-   const styles = useMemo(() => {
+   return useMemo(() => {
       const normalStyle: ComponentStyle = {};
       const hoverStyle: ComponentStyle = {};
 
       let haveHover = false;
 
       for (const key in props) {
+         if (excludeProps && cssPropsToExclude.includes(key as keyof React.CSSProperties)) continue;
+
          if (key.endsWith("Hover")) {
             haveHover = true;
 
@@ -48,11 +50,7 @@ export function useStyledComponentStyles(
          } else {
             if (!cssProps[key.toLowerCase() as keyof React.CSSProperties]) continue;
 
-            const readyKey = key as keyof ComponentStyle;
-
-            if (excludeProps && cssPropsToExclude.includes(readyKey)) continue;
-
-            (normalStyle[readyKey] as any) = props[readyKey];
+            (normalStyle[key as keyof ComponentStyle] as any) = props[key as keyof ComponentStyle];
          }
       }
 
@@ -63,8 +61,6 @@ export function useStyledComponentStyles(
          hoverStyle,
       };
    }, [props, theme]);
-
-   return styles;
 }
 
 export function useComponentPropsWithPrefix<Props extends Record<string, any>, Prefix extends string>(
@@ -88,11 +84,11 @@ export function useComponentPropsWithExcludedStyle<Props extends Record<string, 
    return useMemo(
       () =>
          Object.keys(props).reduce((previousValue, currentValue) => {
-            if (!cssProps[currentValue.toLowerCase() as keyof React.CSSProperties]) {
-               if (cssPropsToExclude.includes(currentValue as keyof React.CSSProperties)) return previousValue;
+            const key = currentValue as keyof React.CSSProperties;
 
-               previousValue[currentValue as keyof Props] = props[currentValue];
-            }
+            if (!cssPropsToExclude.includes(key)) return previousValue;
+
+            (previousValue[key] as any) = props[key];
 
             return previousValue;
          }, {} as Partial<Props>),
