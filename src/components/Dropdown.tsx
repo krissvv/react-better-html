@@ -13,33 +13,34 @@ import Icon from "./Icon";
 import Button from "./Button";
 import { useTheme } from "./BetterHtmlProvider";
 
-export type DropdownOption<Value> = {
+export type DropdownOption<Value, Data = unknown> = {
    label: string;
    value: Value;
    disabled?: boolean;
    searchValues?: string[];
+   data?: Data;
 };
 
-type DropdownProps<Value> = {
+type DropdownProps<Value, Data> = {
    label?: string;
    errorText?: string;
    infoText?: string;
    required?: boolean;
    disabled?: boolean;
-   options: DropdownOption<Value>[];
+   options: DropdownOption<Value, Data>[];
    value?: Value;
    placeholder?: string;
    leftIcon?: IconName;
    withSearch?: boolean;
    onChange?: (value: Value | undefined) => void;
-   renderOption?: (option: DropdownOption<Value>, index: number) => React.ReactNode;
+   renderOption?: (option: DropdownOption<Value, Data>, index: number) => React.ReactNode;
 } & OmitProps<DivProps<unknown>, "onChange">;
 
 type DropdownComponentType = {
-   <Value>(props: ComponentPropWithRef<HTMLDivElement, DropdownProps<Value>>): React.ReactElement;
+   <Value, Data>(props: ComponentPropWithRef<HTMLDivElement, DropdownProps<Value, Data>>): React.ReactElement;
 };
 
-const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Value>(
+const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Value, Data>(
    {
       label,
       errorText,
@@ -54,7 +55,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
       onChange,
       renderOption,
       ...props
-   }: DropdownProps<Value>,
+   }: DropdownProps<Value, Data>,
    ref: React.ForwardedRef<HTMLDivElement>,
 ) {
    const theme = useTheme();
@@ -138,7 +139,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
       [disabled, withSearch, isOpen, filteredOptions, focusedOptionIndex, controlledValue, onChange],
    );
    const onClickOption = useCallback(
-      (option: DropdownOption<Value>) => {
+      (option: DropdownOption<Value, Data>) => {
          if (!option.disabled) {
             if (controlledValue === undefined) setInternalValue(option.value);
 
@@ -226,7 +227,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
                onFocus={setIsFocused.setTrue}
                onBlur={setIsFocused.setFalse}
                onKeyDown={onKeyDownInputField}
-               onChangeText={withSearch ? setSearchQuery : undefined}
+               onChangeValue={withSearch ? setSearchQuery : undefined}
                insideInputFieldComponent={
                   <Div
                      position="absolute"

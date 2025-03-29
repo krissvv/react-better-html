@@ -120,7 +120,7 @@ type InputFieldProps = {
    leftIcon?: IconName;
    rightIcon?: IconName;
    insideInputFieldComponent?: React.ReactNode;
-   onChangeText?: (text: string) => void;
+   onChangeValue?: (value: string) => void;
    onClickRightIcon?: () => void;
 } & OmitProps<React.ComponentProps<"input">, "style"> &
    ComponentStyle &
@@ -143,7 +143,7 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
       rightIcon,
       insideInputFieldComponent,
       onChange,
-      onChangeText,
+      onChangeValue,
       onClickRightIcon,
       required,
       ...props
@@ -160,9 +160,9 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
    const onChangeElement = useCallback(
       (event: React.ChangeEvent<HTMLInputElement>) => {
          onChange?.(event);
-         onChangeText?.(event.target.value);
+         onChangeValue?.(event.target.value);
       },
-      [onChange, onChangeText],
+      [onChange, onChangeValue],
    );
 
    return (
@@ -252,7 +252,7 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
 type TextareaFieldProps = OmitProps<InputFieldProps, "type"> & OmitProps<React.ComponentProps<"textarea">, "style">;
 
 InputFieldComponent.multiline = forwardRef(function Textarea(
-   { label, errorText, infoText, onChange, onChangeText, required, ...props }: TextareaFieldProps,
+   { label, errorText, infoText, onChange, onChangeValue, required, ...props }: TextareaFieldProps,
    ref: React.ForwardedRef<HTMLTextAreaElement>,
 ) {
    const theme = useTheme();
@@ -265,9 +265,9 @@ InputFieldComponent.multiline = forwardRef(function Textarea(
    const onChangeElement = useCallback(
       (event: React.ChangeEvent<HTMLTextAreaElement>) => {
          onChange?.(event);
-         onChangeText?.(event.target.value);
+         onChangeValue?.(event.target.value);
       },
-      [onChange, onChangeText],
+      [onChange, onChangeValue],
    );
 
    return (

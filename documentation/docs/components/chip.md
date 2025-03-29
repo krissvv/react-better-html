@@ -1,7 +1,7 @@
 ---
 title: Chip
 description: A component to render customizable chip elements with text.
-sidebar_position: 10
+sidebar_position: 12
 ---
 
 import Tabs from '@theme/Tabs';

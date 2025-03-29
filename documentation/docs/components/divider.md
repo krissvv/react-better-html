@@ -1,7 +1,7 @@
 ---
 title: Divider
 description: A component to render vertical and horizontal dividers.
-sidebar_position: 6
+sidebar_position: 8
 ---
 
 import Tabs from '@theme/Tabs';

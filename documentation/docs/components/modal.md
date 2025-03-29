@@ -1,7 +1,7 @@
 ---
 title: Modal
 description: A customizable modal component with header, title, and content.
-sidebar_position: 8
+sidebar_position: 10
 ---
 
 import Tabs from '@theme/Tabs';
@@ -129,7 +129,7 @@ import { useRef } from "react";
 import { Div, Button, Modal, ModalRef } from "react-better-html";
 
 function App() {
-   const confirmationModalRef = useRef<ModalRef>(null);
+   const confirmationModalRef = useRef < ModalRef > null;
 
    return (
       <Div>
@@ -160,7 +160,7 @@ import { useRef } from "react";
 import { Div, Button, Modal, ModalRef } from "react-better-html";
 
 function App() {
-   const deleteModalRef = useRef<ModalRef>(null);
+   const deleteModalRef = useRef < ModalRef > null;
 
    return (
       <Div>

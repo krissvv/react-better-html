@@ -1,7 +1,7 @@
 ---
 title: PageHolder
 description: A component to hold page content with optional maximum width and padding.
-sidebar_position: 9
+sidebar_position: 11
 ---
 
 import Tabs from '@theme/Tabs';
