@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { ComponentHoverStyle, ComponentStyle } from "../types/components";
 import { Theme } from "../types/theme";
@@ -119,4 +119,22 @@ export function useMediaQuery() {
       size1500: width <= 1500,
       size1600: width <= 1600,
    };
+}
+
+export function useBooleanState(initialValue = false): [
+   boolean,
+   {
+      setState: React.Dispatch<React.SetStateAction<boolean>>;
+      setTrue: () => void;
+      setFalse: () => void;
+      toggle: () => void;
+   },
+] {
+   const [state, setState] = useState<boolean>(initialValue);
+
+   const setTrue = useCallback(() => setState(true), []);
+   const setFalse = useCallback(() => setState(false), []);
+   const toggle = useCallback(() => setState((oldValue) => !oldValue), []);
+
+   return [state, { setState, setTrue, setFalse, toggle }];
 }

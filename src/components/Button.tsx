@@ -117,8 +117,8 @@ const ButtonElement = styled.button.withConfig({
               opacity: 0.6;
               cursor: not-allowed;
 
-              &.secondary.disabled {
-                 opacity: 0.4;
+              &.secondary:disabled {
+                 filter: brightness(0.9);
               }
            `
          : !props.isLoading

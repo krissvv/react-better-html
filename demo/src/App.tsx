@@ -13,6 +13,8 @@ import {
    PageHolder,
    useTheme,
    Chip,
+   InputField,
+   Dropdown,
 } from "../../src";
 
 function App() {
@@ -47,6 +49,78 @@ function App() {
                <Chip text="Some text" />
                <Chip.circle text="Some text" backgroundColor="red" color="white" />
 
+               <InputField placeholder="Placeholder" />
+               <InputField placeholder="Placeholder" disabled />
+               <InputField label="Label" placeholder="Placeholder" />
+               <InputField label="Label" required placeholder="Placeholder" />
+               <InputField label="Label" required errorText="This is an error" placeholder="Placeholder" />
+               <InputField label="Label" required infoText="Here is a helper message" placeholder="Placeholder" />
+               <InputField.email />
+
+               <InputField.multiline placeholder="Placeholder" />
+
+               <Dropdown
+                  options={[
+                     { label: "Option 1", value: "1" },
+                     { label: "Option 2", value: "2" },
+                     { label: "Option 3", value: "3", disabled: true },
+                  ]}
+               />
+               <Dropdown
+                  options={[
+                     { label: "Option 1 hello", value: "1" },
+                     { label: "Option 2 this", value: "2" },
+                     { label: "Option 3 ll", value: "3" },
+                  ]}
+                  withSearch
+               />
+               <Dropdown
+                  options={[
+                     { label: "Option 1", value: "1" },
+                     { label: "Option 2", value: "2" },
+                     { label: "Option 3", value: "3" },
+                  ]}
+                  disabled
+               />
+               <Dropdown
+                  options={[
+                     { label: "Option 1", value: "1" },
+                     { label: "Option 2", value: "2" },
+                     { label: "Option 3", value: "3" },
+                  ]}
+                  label="Label"
+               />
+               <Dropdown
+                  options={[
+                     { label: "Option 1", value: "1" },
+                     { label: "Option 2", value: "2" },
+                     { label: "Option 3", value: "3" },
+                  ]}
+                  label="Label"
+                  placeholder="Placeholder"
+               />
+               <Dropdown
+                  options={[
+                     { label: "Option 1", value: "1" },
+                     { label: "Option 2", value: "2" },
+                     { label: "Option 3", value: "3" },
+                  ]}
+                  label="Label"
+                  placeholder="Placeholder"
+                  required
+               />
+               <Dropdown
+                  options={[
+                     { label: "Option 1", value: "1" },
+                     { label: "Option 2", value: "2" },
+                     { label: "Option 3", value: "3" },
+                  ]}
+                  label="Label"
+                  placeholder="Placeholder"
+                  required
+                  errorText="This is an error"
+               />
+
                <Button text="Open modal" onClick={() => modalRef.current?.open()} />
                <Button text="Open modal with title" onClick={() => modalWithTitleRef.current?.open()} />
                <Button text="Open confirmation modal" onClick={() => confirmationModalRef.current?.open()} />
@@ -62,6 +136,7 @@ function App() {
                <Div.row alignItems="center" gap={theme.styles.gap}>
                   <Button text="Hello there" isSmall />
                   <Button.secondary text="Hello there" isSmall />
+                  <Button.secondary text="Hello there" isSmall disabled />
                   <Button.destructive text="Hello there" isSmall />
                   <Button.icon icon="XMark" />
                   <Button.upload isSmall />
