@@ -186,6 +186,9 @@ function BetterHtmlProvider({ value, children }: BetterHtmlProviderProps) {
          },
          loaders,
          setLoaders,
+         components: {
+            ...value?.components,
+         },
       }),
       [value, loaders],
    );

@@ -14,9 +14,9 @@ import Div from "./Div";
 import Icon from "./Icon";
 import Loader from "./Loader";
 import Image from "./Image";
-import { useTheme, useLoader } from "./BetterHtmlProvider";
+import { useTheme, useLoader, useBetterHtmlContext } from "./BetterHtmlProvider";
 
-type ButtonProps<Value> = {
+export type ButtonProps<Value> = {
    href?: string;
    text?: string;
    value?: Value;
@@ -51,7 +51,7 @@ type ButtonProps<Value> = {
    isSubmit?: boolean;
 
    onClickWithValue?: (value: Value) => void;
-} & OmitProps<React.ComponentProps<"button">, "style" | "defaultValue"> &
+} & OmitProps<React.ComponentProps<"button">, "style" | "defaultValue" | "translate"> &
    ComponentStyle &
    ComponentHoverStyle;
 
@@ -181,10 +181,17 @@ const ButtonComponent: ButtonComponent = function Button<Value>({
 }: ButtonProps<Value>) {
    const theme = useTheme();
    const isLoadingHook = useLoader(loaderName);
+   const betterHtmlContext = useBetterHtmlContext();
 
    const isLoadingElement = isLoading ?? isLoadingHook;
 
-   const styledComponentStyles = useStyledComponentStyles(props, theme);
+   const styledComponentStyles = useStyledComponentStyles(
+      {
+         ...betterHtmlContext.components.button?.default,
+         ...props,
+      },
+      theme,
+   );
    const dataProps = useComponentPropsWithPrefix(props, "data");
    const ariaProps = useComponentPropsWithPrefix(props, "aria");
    const restProps = useComponentPropsWithoutStyle(props);
@@ -217,7 +224,7 @@ const ButtonComponent: ButtonComponent = function Button<Value>({
 
    return (
       <ButtonElement
-         as={href ? "a" : "button"}
+         as={(href ? "a" : "button") as any}
          theme={theme}
          isSmall={isSmall}
          withText={text !== undefined}
@@ -272,9 +279,11 @@ const ButtonComponent: ButtonComponent = function Button<Value>({
 
 ButtonComponent.secondary = function Secondary({ className, ...props }) {
    const theme = useTheme();
+   const betterHtmlContext = useBetterHtmlContext();
 
    return (
       <ButtonComponent
+         {...betterHtmlContext.components.button?.secondary}
          className={`secondary${className ? ` ${className}` : ""}`}
          color={theme.colors.textPrimary}
          {...props}
@@ -284,18 +293,28 @@ ButtonComponent.secondary = function Secondary({ className, ...props }) {
 
 ButtonComponent.destructive = function Destructive(props) {
    const theme = useTheme();
+   const betterHtmlContext = useBetterHtmlContext();
 
-   return <ButtonComponent backgroundColor={theme.colors.error} color={theme.colors.base} {...props} />;
+   return (
+      <ButtonComponent
+         {...betterHtmlContext.components.button?.destructive}
+         backgroundColor={theme.colors.error}
+         color={theme.colors.base}
+         {...props}
+      />
+   );
 } as ButtonComponent["destructive"];
 
 ButtonComponent.icon = function Icon({ size = 16, backgroundButtonColor, ...props }) {
    const theme = useTheme();
+   const betterHtmlContext = useBetterHtmlContext();
 
    const buttonSize = size + theme.styles.space;
    const backgroundButtonColorReady = backgroundButtonColor ?? theme.colors.textPrimary;
 
    return (
       <ButtonComponent
+         {...betterHtmlContext.components.button?.icon}
          width={buttonSize}
          height={buttonSize}
          color={theme.colors.textPrimary}
@@ -314,6 +333,8 @@ ButtonComponent.icon = function Icon({ size = 16, backgroundButtonColor, ...prop
 } as ButtonComponent["icon"];
 
 ButtonComponent.upload = function Upload({ accept, multiple, onUpload, ...props }) {
+   const betterHtmlContext = useBetterHtmlContext();
+
    const onClickElement = useCallback(() => {
       const input = document.createElement("input");
       input.setAttribute("type", "file");
@@ -327,7 +348,15 @@ ButtonComponent.upload = function Upload({ accept, multiple, onUpload, ...props 
       input.click();
    }, [accept]);
 
-   return <ButtonComponent text="Upload" icon="uploadCloud" onClick={onClickElement} {...props} />;
+   return (
+      <ButtonComponent
+         {...betterHtmlContext.components.button?.upload}
+         text="Upload"
+         icon="uploadCloud"
+         onClick={onClickElement}
+         {...props}
+      />
+   );
 } as ButtonComponent["upload"];
 
 const Button = memo(ButtonComponent) as any as typeof ButtonComponent & {

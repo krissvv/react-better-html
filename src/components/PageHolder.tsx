@@ -19,8 +19,7 @@ function PageHolder({ noMaxContentWidth, children }: PageHolderProps) {
          width="100%"
          maxWidth={!noMaxContentWidth ? app.contentMaxWidth : undefined}
          margin="0px auto"
-         paddingBlock={theme.styles.gap}
-         paddingInline={theme.styles.space}
+         padding={theme.styles.space}
       >
          {children}
       </Div>
