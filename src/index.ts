@@ -10,6 +10,7 @@ import PageHolder from "./components/PageHolder";
 import Chip from "./components/Chip";
 import InputField from "./components/InputField";
 import Dropdown from "./components/Dropdown";
+import ToggleInput from "./components/ToggleInput";
 
 import { useBetterHtmlContext, useTheme, useLoader, useLoaderControls } from "./components/BetterHtmlProvider";
 import { usePageResize, useMediaQuery } from "./utils/hooks";
@@ -29,6 +30,7 @@ export {
    Chip,
    InputField,
    Dropdown,
+   ToggleInput,
    // Hooks
    useBetterHtmlContext,
    useTheme,

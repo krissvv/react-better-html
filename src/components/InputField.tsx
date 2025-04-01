@@ -1,4 +1,4 @@
-import React, { forwardRef, memo, useCallback } from "react";
+import React, { forwardRef, memo, useCallback, useState, useEffect } from "react";
 import styled from "styled-components";
 
 import { ComponentHoverStyle, ComponentPropWithRef, ComponentStyle } from "../types/components";
@@ -11,6 +11,7 @@ import {
    useComponentPropsWithExcludedStyle,
    useComponentPropsWithoutStyle,
    useComponentPropsWithPrefix,
+   useDebounceState,
    useStyledComponentStyles,
 } from "../utils/hooks";
 
@@ -121,6 +122,9 @@ type InputFieldProps = {
    leftIcon?: IconName;
    rightIcon?: IconName;
    insideInputFieldComponent?: React.ReactNode;
+   withDebounce?: boolean;
+   /** @default 0.5s */
+   debounceDelay?: number;
    onChangeValue?: (value: string) => void;
    onClickRightIcon?: () => void;
 } & OmitProps<React.ComponentProps<"input">, "style"> &
@@ -143,6 +147,8 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
       leftIcon,
       rightIcon,
       insideInputFieldComponent,
+      withDebounce,
+      debounceDelay = 0.5,
       onChange,
       onChangeValue,
       onClickRightIcon,
@@ -152,6 +158,10 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
    ref: React.ForwardedRef<HTMLInputElement>,
 ) {
    const theme = useTheme();
+   const [_, debouncedValue, setDebouncedValue] = useDebounceState<string>(
+      props.value?.toString() ?? "",
+      debounceDelay,
+   );
 
    const styledComponentStylesWithoutExcluded = useStyledComponentStyles(props, theme, true);
    const styledComponentStylesWithExcluded = useComponentPropsWithExcludedStyle(props);
@@ -161,11 +171,24 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
 
    const onChangeElement = useCallback(
       (event: React.ChangeEvent<HTMLInputElement>) => {
-         onChange?.(event);
-         onChangeValue?.(event.target.value);
+         const newValue = event.target.value;
+
+         if (withDebounce) {
+            onChange?.(event);
+            setDebouncedValue(newValue);
+         } else {
+            onChange?.(event);
+            onChangeValue?.(newValue);
+         }
       },
-      [onChange, onChangeValue],
+      [onChange, onChangeValue, withDebounce],
    );
+
+   useEffect(() => {
+      if (!withDebounce) return;
+
+      onChangeValue?.(debouncedValue);
+   }, [withDebounce, onChangeValue, debouncedValue]);
 
    return (
       <Div.column width="100%" gap={theme.styles.gap / 2} {...styledComponentStylesWithExcluded}>

@@ -5,6 +5,7 @@ import { OmitProps } from "../types/app";
 import { IconName } from "../types/icon";
 
 import { useBooleanState } from "../utils/hooks";
+import { useDebounceState } from "../utils/hooks";
 
 import Text from "./Text";
 import Div, { DivProps } from "./Div";
@@ -12,6 +13,7 @@ import InputField from "./InputField";
 import Icon from "./Icon";
 import Button from "./Button";
 import { useTheme } from "./BetterHtmlProvider";
+import Loader from "./Loader";
 
 export type DropdownOption<Value, Data = unknown> = {
    label: string;
@@ -32,7 +34,12 @@ type DropdownProps<Value, Data> = {
    placeholder?: string;
    leftIcon?: IconName;
    withSearch?: boolean;
+   withDebounce?: boolean;
+   /** @default 0.5s */
+   debounceDelay?: number;
+   debounceIsLoading?: number;
    onChange?: (value: Value | undefined) => void;
+   onChangeSearch?: (query: string) => void;
    renderOption?: (option: DropdownOption<Value, Data>, index: number) => React.ReactNode;
 } & OmitProps<DivProps<unknown>, "onChange">;
 
@@ -52,7 +59,11 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
       placeholder = "Select an option",
       leftIcon,
       withSearch,
+      withDebounce,
+      debounceDelay = 0.5,
+      debounceIsLoading,
       onChange,
+      onChangeSearch,
       renderOption,
       ...props
    }: DropdownProps<Value, Data>,
@@ -68,6 +79,10 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
    const [isFocused, setIsFocused] = useBooleanState();
 
    const [searchQuery, setSearchQuery] = useState("");
+   const [_, debouncedSearchQuery, setDebouncedSearchQuery, isLoadingDebouncedSearchQuery] = useDebounceState<string>(
+      "",
+      debounceDelay,
+   );
    const [focusedOptionIndex, setFocusedOptionIndex] = useState<number | undefined>();
 
    const [internalValue, setInternalValue] = useState<Value | undefined>();
@@ -168,6 +183,15 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
       },
       [controlledValue, onChange],
    );
+   const onChangeValue = useCallback(
+      (newValue: string) => {
+         setSearchQuery(newValue);
+
+         if (withDebounce) setDebouncedSearchQuery(newValue);
+         else onChangeSearch?.(newValue);
+      },
+      [withDebounce, onChangeSearch],
+   );
 
    const selectedOption = useMemo(() => options.find((option) => option.value === value), [options, value]);
 
@@ -204,6 +228,11 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
          document.removeEventListener("mousedown", handleClickOutside);
       };
    }, [isOpen]);
+   useEffect(() => {
+      if (!withDebounce) return;
+
+      onChangeSearch?.(debouncedSearchQuery);
+   }, [withDebounce, onChangeSearch, debouncedSearchQuery]);
 
    const displayValue = withSearch && isFocused ? searchQuery : selectedOption?.label ?? "";
    const withClearButton = isOpen && selectedOption;
@@ -227,7 +256,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
                onFocus={setIsFocused.setTrue}
                onBlur={setIsFocused.setFalse}
                onKeyDown={onKeyDownInputField}
-               onChangeValue={withSearch ? setSearchQuery : undefined}
+               onChangeValue={withSearch ? onChangeValue : undefined}
                insideInputFieldComponent={
                   <Div
                      position="absolute"
@@ -250,39 +279,49 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
                      role="listbox"
                      aria-label={label}
                   >
-                     {filteredOptions.map((option, index) => {
-                        const isSelected = option.value === value;
-                        const isDisabled = option.disabled;
-                        const isFocused = index === focusedOptionIndex;
+                     {isLoadingDebouncedSearchQuery || debounceIsLoading ? (
+                        <Div padding={`${theme.styles.space / 2}px ${theme.styles.space + theme.styles.gap}px`}>
+                           <Loader.text />
+                        </Div>
+                     ) : filteredOptions.length ? (
+                        filteredOptions.map((option, index) => {
+                           const isSelected = option.value === value;
+                           const isDisabled = option.disabled;
+                           const isFocused = index === focusedOptionIndex;
 
-                        return (
-                           <Div
-                              color={
-                                 isDisabled
-                                    ? theme.colors.textSecondary + "80"
-                                    : isSelected
-                                    ? theme.colors.base
-                                    : theme.colors.textPrimary
-                              }
-                              backgroundColor={isSelected ? theme.colors.primary : theme.colors.backgroundContent}
-                              filter={isFocused ? (isDisabled ? "brightness(0.95)" : "brightness(0.9)") : undefined}
-                              filterHover={
-                                 focusedOptionIndex === undefined && !isDisabled ? "brightness(0.9)" : undefined
-                              }
-                              cursor={isDisabled ? "not-allowed" : "pointer"}
-                              padding={`${theme.styles.space / 2}px ${theme.styles.space + theme.styles.gap}px`}
-                              value={option}
-                              onClickWithValue={onClickOption}
-                              onMouseMove={() => setFocusedOptionIndex(undefined)}
-                              role="option"
-                              aria-selected={isSelected}
-                              aria-disabled={isDisabled}
-                              key={JSON.stringify(option)}
-                           >
-                              {renderOption ? renderOption(option, index) : <Text>{option.label}</Text>}
-                           </Div>
-                        );
-                     })}
+                           return (
+                              <Div
+                                 color={
+                                    isDisabled
+                                       ? theme.colors.textSecondary + "80"
+                                       : isSelected
+                                       ? theme.colors.base
+                                       : theme.colors.textPrimary
+                                 }
+                                 backgroundColor={isSelected ? theme.colors.primary : theme.colors.backgroundContent}
+                                 filter={isFocused ? (isDisabled ? "brightness(0.95)" : "brightness(0.9)") : undefined}
+                                 filterHover={
+                                    focusedOptionIndex === undefined && !isDisabled ? "brightness(0.9)" : undefined
+                                 }
+                                 cursor={isDisabled ? "not-allowed" : "pointer"}
+                                 padding={`${theme.styles.space / 2}px ${theme.styles.space + theme.styles.gap}px`}
+                                 value={option}
+                                 onClickWithValue={onClickOption}
+                                 onMouseMove={() => setFocusedOptionIndex(undefined)}
+                                 role="option"
+                                 aria-selected={isSelected}
+                                 aria-disabled={isDisabled}
+                                 key={JSON.stringify(option)}
+                              >
+                                 {renderOption ? renderOption(option, index) : <Text>{option.label}</Text>}
+                              </Div>
+                           );
+                        })
+                     ) : (
+                        <Div padding={`${theme.styles.space / 2}px ${theme.styles.space + theme.styles.gap}px`}>
+                           <Text.unknown textAlign="left">No options</Text.unknown>
+                        </Div>
+                     )}
                   </Div>
                }
                role="combobox"

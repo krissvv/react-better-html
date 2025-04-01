@@ -10,6 +10,17 @@ const cssProps = Object.keys(document.documentElement.style).reduce((previousVal
    return previousValue;
 }, {} as Record<keyof React.CSSProperties, boolean>);
 const cssPropsToExclude: (keyof React.CSSProperties)[] = [
+   "position",
+   "top",
+   "right",
+   "bottom",
+   "left",
+   "width",
+   "height",
+   "minWidth",
+   "minHeight",
+   "maxWidth",
+   "maxHeight",
    "margin",
    "marginTop",
    "marginBottom",
@@ -22,6 +33,7 @@ const cssPropsToExclude: (keyof React.CSSProperties)[] = [
    "marginInlineStart",
    "marginInlineEnd",
    "marginTrim",
+   "zIndex",
 ];
 
 export function useStyledComponentStyles(
@@ -154,8 +166,8 @@ export function useMediaQuery() {
 }
 
 export function useBooleanState(initialValue = false): [
-   boolean,
-   {
+   state: boolean,
+   actions: {
       setState: React.Dispatch<React.SetStateAction<boolean>>;
       setTrue: () => void;
       setFalse: () => void;
@@ -169,4 +181,28 @@ export function useBooleanState(initialValue = false): [
    const toggle = useCallback(() => setState((oldValue) => !oldValue), []);
 
    return [state, { setState, setTrue, setFalse, toggle }];
+}
+
+export function useDebounceState<Value>(
+   initialValue: Value,
+   delay = 0.5,
+): [value: Value, debouncedValue: Value, setValue: React.Dispatch<React.SetStateAction<Value>>, isLoading: boolean] {
+   const [value, setValue] = useState<Value>(initialValue);
+   const [debouncedValue, setDebouncedValue] = useState<Value>(initialValue);
+   const [isLoading, setIsLoading] = useBooleanState();
+
+   useEffect(() => {
+      setIsLoading.setTrue();
+
+      const timer = setTimeout(() => {
+         setDebouncedValue(value);
+         setIsLoading.setFalse();
+      }, delay * 1000);
+
+      return () => {
+         clearTimeout(timer);
+      };
+   }, [value, delay]);
+
+   return [value, debouncedValue, setValue, isLoading];
 }

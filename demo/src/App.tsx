@@ -15,6 +15,7 @@ import {
    Chip,
    InputField,
    Dropdown,
+   ToggleInput,
 } from "../../src";
 
 function App() {
@@ -60,12 +61,14 @@ function App() {
                   required
                   errorText="This is an error"
                   placeholder="Placeholder"
+                  width={300}
                   marginBottom={20}
                />
                <InputField label="Label" required infoText="Here is a helper message" placeholder="Placeholder" />
                <InputField.email />
                <InputField.password />
                <InputField.search />
+               <InputField.search label="With Debounce" withDebounce onChangeValue={(value) => console.log(value)} />
 
                <InputField.multiline placeholder="Placeholder" />
 
@@ -100,6 +103,7 @@ function App() {
                   ]}
                   label="Label"
                   leftIcon="uploadCloud"
+                  width={300}
                />
                <Dropdown
                   options={[
@@ -143,6 +147,38 @@ function App() {
                   errorText="This is an error"
                   marginBottom={20}
                />
+               <Dropdown
+                  options={[
+                     { label: "Option 1", value: "1" },
+                     { label: "Option 2", value: "2" },
+                     { label: "Option 3", value: "3" },
+                  ]}
+                  label="With debounce"
+                  withSearch
+                  withDebounce
+                  onChangeSearch={(value) => console.log(value)}
+               />
+
+               <ToggleInput.checkbox />
+               <ToggleInput.checkbox label="Label" />
+               <ToggleInput.checkbox text="Some text here" />
+               <ToggleInput.checkbox label="Label" text="Some text here" />
+               <ToggleInput.checkbox label="Label" text="Some text here" errorText="This is an error" />
+               <ToggleInput.checkbox label="Label" text="Some text here" disabled />
+
+               <ToggleInput.radiobutton />
+               <ToggleInput.radiobutton label="Label" />
+               <ToggleInput.radiobutton text="Some text here" />
+               <ToggleInput.radiobutton label="Label" text="Some text here" />
+               <ToggleInput.radiobutton label="Label" text="Some text here" errorText="This is an error" />
+               <ToggleInput.radiobutton label="Label" text="Some text here" disabled />
+
+               <ToggleInput.switch />
+               <ToggleInput.switch label="Label" />
+               <ToggleInput.switch text="Some text here" />
+               <ToggleInput.switch label="Label" text="Some text here" />
+               <ToggleInput.switch label="Label" text="Some text here" errorText="This is an error" />
+               <ToggleInput.switch label="Label" text="Some text here" disabled />
 
                <Button text="Open modal" onClick={() => modalRef.current?.open()} />
                <Button text="Open modal with title" onClick={() => modalWithTitleRef.current?.open()} />
