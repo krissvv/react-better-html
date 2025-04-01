@@ -21,7 +21,7 @@ type ButtonProps<Value> = {
    text?: string;
    value?: Value;
 
-   icon?: IconName;
+   icon?: IconName | AnyOtherString;
    /** @default "left" */
    iconPosition?: "left" | "right";
    /** @default Same as text color */
@@ -29,7 +29,7 @@ type ButtonProps<Value> = {
    /** @default 16 */
    iconSize?: number;
 
-   image?: AssetName;
+   image?: AssetName | AnyOtherString;
    /** @default "left" */
    imagePosition?: "left" | "right";
    /** @default 16 */
@@ -61,7 +61,7 @@ type ButtonComponent = {
    destructive: <Value>(props: ButtonProps<Value>) => React.ReactElement;
    icon: <Value>(
       props: OmitProps<ButtonProps<Value>, "icon" | "width" | "height" | "isSmall"> & {
-         icon: IconName;
+         icon: IconName | AnyOtherString;
          /** @default 16 */
          size?: number;
          /** @default "#000000" */

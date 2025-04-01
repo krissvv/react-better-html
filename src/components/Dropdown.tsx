@@ -1,7 +1,7 @@
 import { forwardRef, memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { ComponentPropWithRef } from "../types/components";
-import { OmitProps } from "../types/app";
+import { AnyOtherString, OmitProps } from "../types/app";
 import { IconName } from "../types/icon";
 
 import { useBooleanState } from "../utils/hooks";
@@ -32,7 +32,7 @@ type DropdownProps<Value, Data> = {
    options: DropdownOption<Value, Data>[];
    value?: Value;
    placeholder?: string;
-   leftIcon?: IconName;
+   leftIcon?: IconName | AnyOtherString;
    withSearch?: boolean;
    withDebounce?: boolean;
    /** @default 0.5s */

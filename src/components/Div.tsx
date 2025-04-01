@@ -1,5 +1,5 @@
-import { forwardRef, JSX, memo, useCallback } from "react";
-import styled from "styled-components";
+import { forwardRef, memo, useCallback } from "react";
+import styled, { WebTarget } from "styled-components";
 
 import { isMobileDevice } from "../constants";
 
@@ -23,7 +23,7 @@ const DivStyledComponent = styled.div.withConfig({
 export type DivProps<Value> = {
    value?: Value;
    /** @default "div" */
-   as?: keyof JSX.IntrinsicElements;
+   as?: WebTarget;
    isTabAccessed?: boolean;
    onClickWithValue?: (value: Value) => void;
 } & OmitProps<React.ComponentProps<"div">, "style" | "defaultValue"> &

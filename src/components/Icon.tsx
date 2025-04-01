@@ -13,7 +13,7 @@ type IconProps = {
    name: IconName | AnyOtherString;
    /** @default 16 */
    size?: number;
-} & OmitProps<React.ComponentProps<"svg">, "style" | "width" | "height" | "viewBox" | "fill" | "xmlns"> &
+} & OmitProps<React.ComponentProps<"svg">, "style" | "width" | "height" | "viewBox" | "fill" | "xmlns" | "name"> &
    ComponentStyle &
    ComponentHoverStyle;
 
@@ -46,7 +46,7 @@ const Icon: IconComponent = forwardRef(function Icon(
    const svgColor = props.color ?? theme.colors.textPrimary;
 
    useEffect(() => {
-      if (!icons[name])
+      if (!icons[name.toString()])
          console.warn(
             `The icon \`${name}\` you are trying to use does not exist. Make sure to add it to the \`icons\` object in \`<BetterHtmlProvider>\` config value prop.`,
          );
@@ -56,7 +56,7 @@ const Icon: IconComponent = forwardRef(function Icon(
       <IconElement
          width={size}
          height={size}
-         viewBox={`0 0 ${icons[name]?.width ?? 0} ${icons[name]?.height ?? 0}`}
+         viewBox={`0 0 ${icons[name.toString()]?.width ?? 0} ${icons[name.toString()]?.height ?? 0}`}
          fill="none"
          xmlns="http://www.w3.org/2000/svg"
          {...styledComponentStyles}
@@ -65,7 +65,7 @@ const Icon: IconComponent = forwardRef(function Icon(
          {...restProps}
          ref={ref}
       >
-         {icons[name]?.paths.map((path) => (
+         {icons[name.toString()]?.paths.map((path) => (
             <path
                {...path}
                fill={path.type === "fill" ? svgColor : undefined}

@@ -2,7 +2,7 @@ import React, { forwardRef, memo, useCallback, useState, useEffect } from "react
 import styled from "styled-components";
 
 import { ComponentHoverStyle, ComponentPropWithRef, ComponentStyle } from "../types/components";
-import { OmitProps } from "../types/app";
+import { AnyOtherString, OmitProps } from "../types/app";
 import { Theme } from "../types/theme";
 import { IconName } from "../types/icon";
 
@@ -119,8 +119,8 @@ type InputFieldProps = {
    label?: string;
    errorText?: string;
    infoText?: string;
-   leftIcon?: IconName;
-   rightIcon?: IconName;
+   leftIcon?: IconName | AnyOtherString;
+   rightIcon?: IconName | AnyOtherString;
    insideInputFieldComponent?: React.ReactNode;
    withDebounce?: boolean;
    /** @default 0.5s */
