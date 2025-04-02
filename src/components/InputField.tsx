@@ -277,7 +277,8 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
    );
 }) as any;
 
-type TextareaFieldProps = OmitProps<InputFieldProps, "type"> & OmitProps<React.ComponentProps<"textarea">, "style">;
+export type TextareaFieldProps = OmitProps<InputFieldProps, "type"> &
+   OmitProps<React.ComponentProps<"textarea">, "style" | "ref">;
 
 InputFieldComponent.multiline = forwardRef(function Textarea(
    { label, errorText, infoText, onChange, onChangeValue, required, ...props }: TextareaFieldProps,

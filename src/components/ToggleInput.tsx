@@ -23,8 +23,8 @@ const InputElement = styled.input.withConfig({
 })<{ theme: Theme; normalStyle: ComponentStyle; hoverStyle: ComponentStyle }>`
    position: relative;
    appearance: none;
-   width: 24px;
-   height: 24px;
+   width: 26px;
+   height: 26px;
    background-color: ${(props) => props.theme.colors.backgroundContent};
    border: 1px solid ${(props) => props.theme.colors.border};
    border-radius: ${(props) => props.theme.styles.borderRadius / 2}px;
@@ -104,7 +104,10 @@ type InternalToggleInputProps<Value> = {
    ComponentStyle &
    ComponentHoverStyle;
 
-type ToggleInputProps<Value> = ComponentPropWithRef<ToggleInputRef, OmitProps<InternalToggleInputProps<Value>, "type">>;
+export type ToggleInputProps<Value> = ComponentPropWithRef<
+   ToggleInputRef,
+   OmitProps<InternalToggleInputProps<Value>, "type">
+>;
 type ToggleInputComponentType = <Value>(props: ToggleInputProps<Value>) => React.ReactElement;
 
 const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
@@ -138,10 +141,17 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
          if (controlledChecked === undefined) setInternalChecked(newValue);
          onChange?.(newValue, value);
       },
-      [onChange, controlledChecked, value, props.type],
+      [onChange, controlledChecked, value],
    );
 
    const checked = controlledChecked ?? internalChecked;
+
+   const onClickText = useCallback(() => {
+      const newValue = !checked;
+
+      if (controlledChecked === undefined) setInternalChecked(newValue);
+      onChange?.(newValue, value);
+   }, [checked, controlledChecked, onChange, value]);
 
    return (
       <Div.column width="100%" gap={theme.styles.gap / 2} {...styledComponentStylesWithExcluded}>
@@ -205,7 +215,11 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
                ) : undefined}
             </Div.row>
 
-            {text && <Text>{text}</Text>}
+            {text && (
+               <Text userSelect="none" cursor="pointer" onClick={onClickText}>
+                  {text}
+               </Text>
+            )}
          </Div.row>
 
          {(errorText || infoText) && (

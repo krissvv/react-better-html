@@ -3,7 +3,9 @@ import styled from "styled-components";
 
 import { Theme } from "../types/theme";
 import { ComponentPropWithRef } from "../types/components";
-import { OmitProps } from "../types/app";
+import { AnyOtherString, OmitProps } from "../types/app";
+import { LoaderName } from "../types/loader";
+
 import { useUrlQuery } from "../utils/hooks";
 
 import Div from "./Div";
@@ -44,7 +46,8 @@ type ModalComponent = {
       props: ComponentPropWithRef<
          ModalRef,
          OmitProps<ModalProps, "maxWidth" | "children" | "overflow"> & {
-            onConfirm?: () => void;
+            continueButtonLoaderName?: LoaderName | AnyOtherString;
+            onContinue?: () => void;
             onCancel?: () => void;
          }
       >,
@@ -53,6 +56,7 @@ type ModalComponent = {
       props: ComponentPropWithRef<
          ModalRef,
          OmitProps<ModalProps, "maxWidth" | "children" | "overflow"> & {
+            deleteButtonLoaderName?: LoaderName | AnyOtherString;
             onDelete?: () => void;
             onCancel?: () => void;
          }
@@ -238,7 +242,10 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
    );
 }) as any;
 
-ModalComponent.confirmation = forwardRef(function Confirmation({ onConfirm, onCancel, ...props }, ref) {
+ModalComponent.confirmation = forwardRef(function Confirmation(
+   { continueButtonLoaderName, onContinue, onCancel, ...props },
+   ref,
+) {
    const theme = useTheme();
 
    return (
@@ -254,13 +261,16 @@ ModalComponent.confirmation = forwardRef(function Confirmation({ onConfirm, onCa
             marginTop={theme.styles.space * 2}
          >
             <Button.secondary text="Cancel" onClick={onCancel} />
-            <Button text="Continue" onClick={onConfirm} />
+            <Button text="Continue" loaderName={continueButtonLoaderName} onClick={onContinue} />
          </Div.row>
       </Modal>
    );
 }) as ModalComponent["confirmation"];
 
-ModalComponent.destructive = forwardRef(function Destructive({ onDelete, onCancel, ...props }, ref) {
+ModalComponent.destructive = forwardRef(function Destructive(
+   { deleteButtonLoaderName, onDelete, onCancel, ...props },
+   ref,
+) {
    const theme = useTheme();
 
    return (
@@ -276,7 +286,7 @@ ModalComponent.destructive = forwardRef(function Destructive({ onDelete, onCance
             marginTop={theme.styles.space * 2}
          >
             <Button.secondary text="Cancel" onClick={onCancel} />
-            <Button.destructive icon="trash" text="Delete" onClick={onDelete} />
+            <Button.destructive icon="trash" text="Delete" loaderName={deleteButtonLoaderName} onClick={onDelete} />
          </Div.row>
       </Modal>
    );

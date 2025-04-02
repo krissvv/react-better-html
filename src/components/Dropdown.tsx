@@ -37,10 +37,11 @@ export type DropdownProps<Value, Data> = {
    withDebounce?: boolean;
    /** @default 0.5s */
    debounceDelay?: number;
-   debounceIsLoading?: number;
+   debounceIsLoading?: boolean;
+   debounceMinimumSymbolsRequired?: string;
    onChange?: (value: Value | undefined) => void;
    onChangeSearch?: (query: string) => void;
-   renderOption?: (option: DropdownOption<Value, Data>, index: number) => React.ReactNode;
+   renderOption?: (option: DropdownOption<Value, Data>, index: number, isSelected: boolean) => React.ReactNode;
 } & OmitProps<DivProps<unknown>, "onChange">;
 
 type DropdownComponentType = {
@@ -62,6 +63,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
       withDebounce,
       debounceDelay = 0.5,
       debounceIsLoading,
+      debounceMinimumSymbolsRequired,
       onChange,
       onChangeSearch,
       renderOption,
@@ -312,13 +314,17 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
                                  aria-disabled={isDisabled}
                                  key={JSON.stringify(option)}
                               >
-                                 {renderOption ? renderOption(option, index) : <Text>{option.label}</Text>}
+                                 {renderOption ? renderOption(option, index, isSelected) : <Text>{option.label}</Text>}
                               </Div>
                            );
                         })
                      ) : (
                         <Div padding={`${theme.styles.space / 2}px ${theme.styles.space + theme.styles.gap}px`}>
-                           <Text.unknown textAlign="left">No options</Text.unknown>
+                           <Text.unknown textAlign="left">
+                              {debounceMinimumSymbolsRequired !== undefined
+                                 ? `Enter at least ${debounceMinimumSymbolsRequired} characters`
+                                 : "No options"}
+                           </Text.unknown>
                         </Div>
                      )}
                   </Div>

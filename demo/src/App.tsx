@@ -33,6 +33,8 @@ function App() {
          name: undefined as number | undefined,
          email: "",
          option: undefined as 1 | 2 | 3 | undefined,
+         // withSurprise: false as boolean,
+         withSurprise: true as boolean,
       },
       onSubmit: (values) => {
          console.log(values);
@@ -205,12 +207,14 @@ function App() {
                      withSearch
                      {...form.getDropdownFieldProps("option")}
                   />
+
+                  <ToggleInput.checkbox label="Label" text="With Surprise" {...form.getCheckboxProps("withSurprise")} />
                </Form>
 
-               <Button text="Open modal" onClick={() => modalRef.current?.open()} />
-               <Button text="Open modal with title" onClick={() => modalWithTitleRef.current?.open()} />
-               <Button text="Open confirmation modal" onClick={() => confirmationModalRef.current?.open()} />
-               <Button text="Open destructive modal" onClick={() => destructiveModalRef.current?.open()} />
+               <Button text="Open modal" onClick={modalRef.current?.open} />
+               <Button text="Open modal with title" onClick={modalWithTitleRef.current?.open} />
+               <Button text="Open confirmation modal" onClick={confirmationModalRef.current?.open} />
+               <Button text="Open destructive modal" onClick={destructiveModalRef.current?.open} />
 
                <Div.row alignItems="center" gap={theme.styles.gap}>
                   <Button text="Hello there" />

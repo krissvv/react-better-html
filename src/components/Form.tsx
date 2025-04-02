@@ -11,6 +11,7 @@ import { useTheme } from "./BetterHtmlProvider";
 type FormProps = {
    submitButtonText?: string;
    submitButtonLoaderName?: LoaderName | AnyOtherString;
+   submitButtonId?: string;
    /** @default "right" */
    actionButtonsLocation?: "left" | "center" | "right";
    gap?: React.CSSProperties["gap"];
@@ -24,6 +25,7 @@ type FormProps = {
 function Form({
    submitButtonText,
    submitButtonLoaderName,
+   submitButtonId,
    actionButtonsLocation = "right",
    gap,
    isSubmitting,
@@ -61,6 +63,7 @@ function Form({
                      text={submitButtonText}
                      isLoading={isSubmitting}
                      loaderName={submitButtonLoaderName}
+                     id={submitButtonId}
                      isSubmit
                   />
                </Div.row>

@@ -104,16 +104,12 @@ const DivComponent: DivComponentType = forwardRef(function Div<Value>(
    );
 }) as any;
 
-DivComponent.row = forwardRef(function Row(props, ref) {
-   return (
-      <DivComponent display="flex" flexDirection={props.invertFlexDirection ? "column" : "row"} ref={ref} {...props} />
-   );
+DivComponent.row = forwardRef(function Row({ invertFlexDirection, ...props }, ref) {
+   return <DivComponent display="flex" flexDirection={invertFlexDirection ? "column" : "row"} ref={ref} {...props} />;
 }) as DivComponentType["row"];
 
-DivComponent.column = forwardRef(function Column(props, ref) {
-   return (
-      <DivComponent display="flex" flexDirection={props.invertFlexDirection ? "row" : "column"} ref={ref} {...props} />
-   );
+DivComponent.column = forwardRef(function Column({ invertFlexDirection, ...props }, ref) {
+   return <DivComponent display="flex" flexDirection={invertFlexDirection ? "row" : "column"} ref={ref} {...props} />;
 }) as DivComponentType["column"];
 
 DivComponent.grid = forwardRef(function Grid(props, ref) {

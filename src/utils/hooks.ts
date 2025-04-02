@@ -7,8 +7,9 @@ import { ComponentHoverStyle, ComponentPropWithRef, ComponentStyle } from "../ty
 import { Theme } from "../types/theme";
 import { OmitProps, PartialRecord } from "../types/app";
 
-import { InputFieldProps } from "../components/InputField";
+import { InputFieldProps, TextareaFieldProps } from "../components/InputField";
 import { DropdownProps } from "../components/Dropdown";
+import { ToggleInputProps, ToggleInputRef } from "../components/ToggleInput";
 import { usePlugin } from "../components/BetterHtmlProvider";
 
 const cssPropsToExclude: (keyof React.CSSProperties)[] = [
@@ -242,6 +243,20 @@ export function useForm<FormFields extends Record<string, string | number | bool
       },
       [],
    );
+   const setFieldsValue = useCallback((values: Partial<FormFields>) => {
+      setValues((oldValue) => ({
+         ...oldValue,
+         ...values,
+      }));
+
+      setErrors((oldValue) => {
+         const newErrors: typeof oldValue = {};
+
+         for (const key in values) newErrors[key] = undefined;
+
+         return newErrors;
+      });
+   }, []);
    const getInputFieldProps = useCallback(
       <FieldName extends keyof FormFields>(
          field: FieldName,
@@ -255,7 +270,7 @@ export function useForm<FormFields extends Record<string, string | number | bool
 
                setFieldValue(field, readyValue as FormFields[FieldName]);
             },
-            ref: (element: HTMLInputElement | null) => {
+            ref: (element) => {
                if (!element) return;
 
                inputFieldRefs.current[field] = element;
@@ -266,9 +281,26 @@ export function useForm<FormFields extends Record<string, string | number | bool
                      [field]: element.getAttribute("type"),
                   }));
             },
+            errorText: errors[field],
          };
       },
-      [values, setFieldValue, inputTypes],
+      [values, setFieldValue, inputTypes, errors],
+   );
+   const getTextAreaProps = useCallback(
+      <FieldName extends keyof FormFields>(
+         field: FieldName,
+      ): ComponentPropWithRef<HTMLTextAreaElement, TextareaFieldProps> => {
+         const type = inputTypes[field] ?? "text";
+
+         return {
+            value: values[field]?.toString() ?? "",
+            onChangeValue: (newValue) => {
+               setFieldValue(field, newValue as FormFields[FieldName]);
+            },
+            errorText: errors[field],
+         };
+      },
+      [values, setFieldValue, inputTypes, errors],
    );
    const getDropdownFieldProps = useCallback(
       <FieldName extends keyof FormFields>(
@@ -278,6 +310,20 @@ export function useForm<FormFields extends Record<string, string | number | bool
             value: values[field],
             onChange: (value) => {
                setFieldValue(field, value);
+            },
+            errorText: errors[field],
+         };
+      },
+      [values, errors, setFieldValue],
+   );
+   const getCheckboxProps = useCallback(
+      <FieldName extends keyof FormFields>(
+         field: FieldName,
+      ): ComponentPropWithRef<ToggleInputRef, ToggleInputProps<FormFields[FieldName]>> => {
+         return {
+            checked: values[field] as boolean,
+            onChange: (checked: boolean) => {
+               setFieldValue(field, checked as FormFields[FieldName]);
             },
             errorText: errors[field],
          };
@@ -318,8 +364,11 @@ export function useForm<FormFields extends Record<string, string | number | bool
       errors,
       isSubmitting,
       setFieldValue,
+      setFieldsValue,
       getInputFieldProps,
+      getTextAreaProps,
       getDropdownFieldProps,
+      getCheckboxProps,
       focusField,
       onSubmit: onSubmitFunction,
       reset,
