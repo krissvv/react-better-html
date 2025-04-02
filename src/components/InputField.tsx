@@ -153,6 +153,7 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
       onChangeValue,
       onClickRightIcon,
       required,
+      placeholder,
       ...props
    }: InputFieldProps,
    ref: React.ForwardedRef<HTMLInputElement>,
@@ -228,6 +229,7 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
                withLeftIcon={leftIcon !== undefined}
                withRightIcon={rightIcon !== undefined}
                required={required}
+               placeholder={placeholder ?? label}
                onChange={onChangeElement}
                {...styledComponentStylesWithoutExcluded}
                {...dataProps}

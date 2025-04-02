@@ -237,7 +237,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
    const withClearButton = isOpen && selectedOption;
 
    return (
-      <Div.column position="relative" userSelect="none" {...props} ref={dropdownHolderRef}>
+      <Div.column width="100%" position="relative" userSelect="none" {...props} ref={dropdownHolderRef}>
          <Div.row position="relative" width="100%">
             <InputField
                label={label}

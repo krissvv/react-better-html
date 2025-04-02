@@ -27,6 +27,7 @@ type FormProps = {
    actionButtonsLocation?: "left" | "center" | "right";
    actionButtonLoaderName?: LoaderName | AnyOtherString;
    gap?: React.CSSProperties["gap"];
+   isSubmitting?: boolean;
    onClickCancel?: () => void;
    onSubmit?: (value: React.FormEvent<HTMLFormElement>) => void;
    children?: React.ReactNode;
@@ -37,6 +38,7 @@ function Form({
    actionButtonsLocation = "right",
    actionButtonLoaderName,
    gap,
+   isSubmitting,
    onClickCancel,
    onSubmit,
    children,
@@ -66,7 +68,12 @@ function Form({
                >
                   {onClickCancel && <Button.secondary text="Cancel" onClick={onClickCancel} />}
 
-                  <SubmitButtonTag text={formTypesText[type]} loaderName={actionButtonLoaderName} isSubmit />
+                  <SubmitButtonTag
+                     text={formTypesText[type]}
+                     isLoading={isSubmitting}
+                     loaderName={actionButtonLoaderName}
+                     isSubmit
+                  />
                </Div.row>
             )}
          </form>

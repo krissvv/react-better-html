@@ -33,6 +33,7 @@ import { type AppConfig, type BetterHtmlConfig } from "./types/config";
 import { type AssetName, type AssetsConfig } from "./types/asset";
 import { type IconName, type IconsConfig } from "./types/icon";
 import { type LoaderName, type LoaderConfig } from "./types/loader";
+import { type PluginName, type BetterHtmlPlugin } from "./types/plugin";
 import {
    type Color,
    type ColorName,
@@ -91,6 +92,8 @@ export {
    IconName,
    IconsConfig,
    LoaderName,
+   PluginName,
+   BetterHtmlPlugin,
    LoaderConfig,
    Color,
    ColorName,
