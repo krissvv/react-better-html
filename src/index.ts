@@ -19,7 +19,7 @@ import BetterHtmlProvider, {
    useLoader,
    useLoaderControls,
 } from "./components/BetterHtmlProvider";
-import { usePageResize, useMediaQuery, useBooleanState, useDebounceState, useForm } from "./utils/hooks";
+import { usePageResize, useMediaQuery, useBooleanState, useDebounceState, useForm, useUrlQuery } from "./utils/hooks";
 
 import {
    type OmitProps,
@@ -44,6 +44,8 @@ import {
 } from "./types/theme";
 
 import { isMobileDevice } from "./constants";
+
+export * from "./plugins";
 
 export {
    BetterHtmlProvider,
@@ -74,6 +76,7 @@ export {
    useBooleanState,
    useDebounceState,
    useForm,
+   useUrlQuery,
    // Types
    OmitProps,
    ExcludeOptions,

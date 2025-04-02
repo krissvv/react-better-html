@@ -10,6 +10,7 @@ import { BetterHtmlConfig } from "../types/config";
 import { AnyOtherString, DeepPartialRecord } from "../types/app";
 import { ColorTheme } from "../types/theme";
 import { LoaderConfig, LoaderName } from "../types/loader";
+import { BetterHtmlPlugin, PluginName } from "../types/plugin";
 
 const GlobalStyle = createGlobalStyle<{ fontFamily: string; color: string; backgroundColor: string }>`
    body {
@@ -33,6 +34,7 @@ const GlobalStyle = createGlobalStyle<{ fontFamily: string; color: string; backg
 
 type BetterHtmlInternalConfig = BetterHtmlConfig & {
    setLoaders: React.Dispatch<React.SetStateAction<Partial<LoaderConfig>>>;
+   plugins: BetterHtmlPlugin[];
 };
 
 const betterHtmlContext = createContext<BetterHtmlInternalConfig | undefined>(undefined);
@@ -126,6 +128,18 @@ export const useLoaderControls = () => {
    };
 };
 
+export const usePlugin = (pluginName: PluginName): BetterHtmlPlugin | undefined => {
+   const context = useContext(betterHtmlContext);
+
+   if (context === undefined) {
+      throw new Error(
+         "`usePlugin()` must be used within a `<BetterHtmlProvider>`. Make sure to add one at the root of your component tree.",
+      );
+   }
+
+   return context.plugins.find((plugin: BetterHtmlPlugin) => plugin.name === pluginName);
+};
+
 type BetterHtmlProviderContentProps = {
    children?: React.ReactNode;
 };
@@ -148,11 +162,13 @@ function BetterHtmlProviderContent({ children }: BetterHtmlProviderContentProps)
 
 type BetterHtmlProviderProps = {
    value?: DeepPartialRecord<BetterHtmlConfig>;
+   plugins?: BetterHtmlPlugin[];
    children?: React.ReactNode;
 };
 
-function BetterHtmlProvider({ value, children }: BetterHtmlProviderProps) {
+function BetterHtmlProvider({ value, plugins: pluginsToUse, children }: BetterHtmlProviderProps) {
    const [loaders, setLoaders] = useState<Partial<LoaderConfig>>(value?.loaders ?? {});
+   const [plugins] = useState<BetterHtmlPlugin[]>(pluginsToUse ?? []);
 
    const readyValue = useMemo<BetterHtmlInternalConfig>(
       () => ({
@@ -189,9 +205,16 @@ function BetterHtmlProvider({ value, children }: BetterHtmlProviderProps) {
          components: {
             ...value?.components,
          },
+         plugins,
       }),
-      [value, loaders],
+      [value, loaders, plugins],
    );
+
+   useEffect(() => {
+      plugins.forEach((plugin) => {
+         plugin.initialize?.();
+      });
+   }, [plugins]);
 
    return (
       <betterHtmlContext.Provider value={readyValue}>

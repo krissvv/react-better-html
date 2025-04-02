@@ -9,7 +9,8 @@ import Div from "./Div";
 import Button from "./Button";
 import Text from "./Text";
 import Divider from "./Divider";
-import { useBetterHtmlContext, useTheme } from "./BetterHtmlProvider";
+import { useBetterHtmlContext, usePlugin, useTheme } from "./BetterHtmlProvider";
+import { useUrlQuery } from "../utils/hooks";
 
 type ModalProps = {
    /**
@@ -23,6 +24,8 @@ type ModalProps = {
    description?: string;
    descriptionColor?: string;
    headerBackgroundColor?: string;
+   /** @requires ReactRouterDomPlugin */
+   name?: string;
    overflow?: React.CSSProperties["overflow"];
    onOpen?: () => void;
    onClose?: () => void;
@@ -105,6 +108,7 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
       description,
       descriptionColor,
       headerBackgroundColor,
+      name,
       overflow,
       onOpen,
       onClose,
@@ -112,6 +116,9 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
    }: ModalProps,
    ref: React.ForwardedRef<ModalRef>,
 ) {
+   const reactRouterDomPlugin = usePlugin("react-router-dom");
+   const urlQuery = reactRouterDomPlugin ? useUrlQuery() : undefined;
+
    const theme = useTheme();
    const { app } = useBetterHtmlContext();
 
@@ -126,17 +133,27 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
       setIsOpened(true);
       setIsOpenedLate(true);
 
+      if (urlQuery && name)
+         urlQuery.setQuery(
+            {
+               [`${name}-modal`]: "opened",
+            },
+            false,
+         );
+
       onOpen?.();
-   }, [onOpen]);
+   }, [onOpen, urlQuery, name]);
    const onClickClose = useCallback(() => {
       setIsOpened(false);
       onClose?.();
+
+      if (urlQuery && name) urlQuery.removeQuery(`${name}-modal`, false);
 
       setTimeout(() => {
          dialogRef.current?.close();
          setIsOpenedLate(false);
       }, 0.2 * 1000);
-   }, [onClose]);
+   }, [onClose, urlQuery, name]);
 
    useImperativeHandle(
       ref,

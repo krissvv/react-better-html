@@ -1,3 +1,5 @@
+import { BetterHtmlPlugin } from "./plugin";
+
 export type ComponentStyle = React.CSSProperties;
 export type ComponentHoverStyle = {
    [CSSProperty in keyof ComponentStyle as `${CSSProperty & string}Hover`]: ComponentStyle[CSSProperty];
@@ -13,3 +15,6 @@ export type ComponentPaddingProps = Pick<
 >;
 
 export type ComponentPropWithRef<ComponentRef, ComponentProps> = ComponentProps & { ref?: React.Ref<ComponentRef> };
+export type ComponentPropWithPlugin<ComponentProps> = ComponentProps & {
+   plugin: BetterHtmlPlugin;
+};

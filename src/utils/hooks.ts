@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createSearchParams, useNavigate, useSearchParams } from "react-router-dom";
 
 import { cssProps } from "../constants/css";
 
@@ -8,6 +9,7 @@ import { OmitProps, PartialRecord } from "../types/app";
 
 import { InputFieldProps } from "../components/InputField";
 import { DropdownProps } from "../components/Dropdown";
+import { usePlugin } from "../components/BetterHtmlProvider";
 
 const cssPropsToExclude: (keyof React.CSSProperties)[] = [
    "position",
@@ -321,5 +323,62 @@ export function useForm<FormFields extends Record<string, string | number | bool
       focusField,
       onSubmit: onSubmitFunction,
       reset,
+   };
+}
+
+export function useUrlQuery() {
+   const reactRouterDomPlugin = usePlugin("react-router-dom");
+
+   if (!reactRouterDomPlugin) {
+      throw new Error(
+         "`useUrlQuery` hook requires the `react-router-dom` plugin to be added to the `plugins` prop in `<BetterHtmlProvider>`.",
+      );
+   }
+
+   const navigate = useNavigate();
+   const [searchParams] = useSearchParams();
+
+   const setQuery = useCallback(
+      (query: Record<string, string>, keepHistory = true) => {
+         const currentSearchParams: Record<string, string> = {};
+         searchParams.forEach((value, key) => {
+            (currentSearchParams as any)[key] = value;
+         });
+
+         navigate(
+            {
+               search: createSearchParams({
+                  ...currentSearchParams,
+                  ...query,
+               }).toString(),
+            },
+            {
+               replace: !keepHistory,
+            },
+         );
+      },
+      [navigate, searchParams],
+   );
+   const getQuery = useCallback((name: string) => searchParams.get(name), [searchParams]);
+   const removeQuery = useCallback(
+      (name: string, keepHistory = true) => {
+         searchParams.delete(name);
+
+         navigate(
+            {
+               search: searchParams.toString(),
+            },
+            {
+               replace: !keepHistory,
+            },
+         );
+      },
+      [navigate, searchParams],
+   );
+
+   return {
+      setQuery,
+      getQuery,
+      removeQuery,
    };
 }
