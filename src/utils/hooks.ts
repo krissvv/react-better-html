@@ -1,9 +1,13 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { cssProps } from "../constants/css";
 
-import { ComponentHoverStyle, ComponentStyle } from "../types/components";
+import { ComponentHoverStyle, ComponentPropWithRef, ComponentStyle } from "../types/components";
 import { Theme } from "../types/theme";
+import { OmitProps, PartialRecord } from "../types/app";
+
+import { InputFieldProps } from "../components/InputField";
+import { DropdownProps } from "../components/Dropdown";
 
 const cssPropsToExclude: (keyof React.CSSProperties)[] = [
    "position",
@@ -200,4 +204,122 @@ export function useDebounceState<Value>(
    }, [value, delay]);
 
    return [value, debouncedValue, setValue, isLoading];
+}
+
+export function useForm<FormFields extends Record<string, string | number | boolean | undefined>>({
+   defaultValues,
+   onSubmit,
+   validate,
+}: {
+   defaultValues: FormFields;
+   onSubmit?: (values: FormFields) => void | Promise<void>;
+   validate?: (values: FormFields) => PartialRecord<keyof FormFields, string>;
+}) {
+   const inputFieldRefs = useRef<Record<keyof FormFields, HTMLInputElement | undefined>>(
+      {} as Record<keyof FormFields, HTMLInputElement | undefined>,
+   );
+   const [inputTypes, setInputTypes] = useState<Record<keyof FormFields, React.HTMLInputTypeAttribute>>(
+      {} as Record<keyof FormFields, React.HTMLInputTypeAttribute>,
+   );
+
+   const [values, setValues] = useState<FormFields>(defaultValues);
+   const [errors, setErrors] = useState<PartialRecord<keyof FormFields, string>>({});
+   const [isSubmitting, setIsSubmitting] = useBooleanState();
+
+   const setFieldValue = useCallback(
+      <FieldName extends keyof FormFields>(field: FieldName, value: FormFields[FieldName] | undefined) => {
+         setValues((oldValue) => ({
+            ...oldValue,
+            [field]: value,
+         }));
+
+         setErrors((oldValue) => ({
+            ...oldValue,
+            [field]: undefined,
+         }));
+      },
+      [],
+   );
+   const getInputFieldProps = useCallback(
+      <FieldName extends keyof FormFields>(
+         field: FieldName,
+      ): ComponentPropWithRef<HTMLInputElement, InputFieldProps> => {
+         const type = inputTypes[field] ?? "text";
+
+         return {
+            value: values[field]?.toString() ?? "",
+            onChangeValue: (newValue) => {
+               const readyValue = type === "number" ? (newValue ? Number(newValue) : undefined) : newValue;
+
+               setFieldValue(field, readyValue as FormFields[FieldName]);
+            },
+            ref: (element: HTMLInputElement | null) => {
+               if (!element) return;
+
+               inputFieldRefs.current[field] = element;
+
+               if (inputTypes[field] === undefined)
+                  setInputTypes((oldValue) => ({
+                     ...oldValue,
+                     [field]: element.getAttribute("type"),
+                  }));
+            },
+         };
+      },
+      [values, setFieldValue, inputTypes],
+   );
+   const getDropdownFieldProps = useCallback(
+      <FieldName extends keyof FormFields>(
+         field: FieldName,
+      ): OmitProps<ComponentPropWithRef<HTMLDivElement, DropdownProps<FormFields[FieldName], unknown>>, "options"> => {
+         return {
+            value: values[field],
+            onChange: (value) => {
+               setFieldValue(field, value);
+            },
+            errorText: errors[field],
+         };
+      },
+      [values, errors, setFieldValue],
+   );
+   const focusField = useCallback((field: keyof FormFields) => {
+      inputFieldRefs.current[field]?.focus();
+   }, []);
+   const onSubmitFunction = useCallback(
+      async (event: React.FormEvent<HTMLFormElement>) => {
+         event.preventDefault();
+         setIsSubmitting.setTrue();
+
+         try {
+            const validationErrors = validate?.(values) || {};
+            setErrors(validationErrors);
+
+            if (Object.keys(validationErrors).length === 0) {
+               await onSubmit?.(values);
+            } else {
+               const firstErrorField = Object.keys(validationErrors)[0] as keyof FormFields;
+               focusField(firstErrorField);
+            }
+         } finally {
+            setIsSubmitting.setFalse();
+         }
+      },
+      [values, validate, onSubmit, focusField],
+   );
+   const reset = useCallback(() => {
+      setValues(defaultValues);
+      setErrors({});
+   }, [defaultValues]);
+
+   return {
+      values,
+      errors,
+      isSubmitting,
+      setFieldValue,
+      getInputFieldProps,
+      getDropdownFieldProps,
+      focusField,
+      onSubmit: onSubmitFunction,
+      reset,
+   };
 }

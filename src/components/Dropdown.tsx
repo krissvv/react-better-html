@@ -23,7 +23,7 @@ export type DropdownOption<Value, Data = unknown> = {
    data?: Data;
 };
 
-type DropdownProps<Value, Data> = {
+export type DropdownProps<Value, Data> = {
    label?: string;
    errorText?: string;
    infoText?: string;
@@ -172,8 +172,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
       (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
          event.stopPropagation();
 
-         if (controlledValue === undefined) setInternalValue(undefined);
-
+         setInternalValue(undefined);
          onChange?.(undefined);
 
          setIsOpen.setFalse();
@@ -181,7 +180,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
          setSearchQuery("");
          setFocusedOptionIndex(undefined);
       },
-      [controlledValue, onChange],
+      [onChange],
    );
    const onChangeValue = useCallback(
       (newValue: string) => {

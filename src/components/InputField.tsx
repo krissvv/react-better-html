@@ -115,7 +115,7 @@ const TextareaElement = styled.textarea.withConfig({
    }
 `;
 
-type InputFieldProps = {
+export type InputFieldProps = {
    label?: string;
    errorText?: string;
    infoText?: string;
@@ -127,7 +127,7 @@ type InputFieldProps = {
    debounceDelay?: number;
    onChangeValue?: (value: string) => void;
    onClickRightIcon?: () => void;
-} & OmitProps<React.ComponentProps<"input">, "style"> &
+} & OmitProps<React.ComponentProps<"input">, "style" | "ref"> &
    ComponentStyle &
    ComponentHoverStyle;
 
@@ -227,6 +227,7 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
                theme={theme}
                withLeftIcon={leftIcon !== undefined}
                withRightIcon={rightIcon !== undefined}
+               required={required}
                onChange={onChangeElement}
                {...styledComponentStylesWithoutExcluded}
                {...dataProps}
@@ -312,6 +313,7 @@ InputFieldComponent.multiline = forwardRef(function Textarea(
 
          <TextareaElement
             theme={theme}
+            required={required}
             onChange={onChangeElement}
             {...styledComponentStyles}
             {...dataProps}
@@ -336,7 +338,7 @@ InputFieldComponent.multiline = forwardRef(function Textarea(
 }) as InputFieldComponentType["multiline"];
 
 InputFieldComponent.email = forwardRef(function Email(
-   { ...props }: TextareaFieldProps,
+   { ...props }: InputFieldProps,
    ref: React.ForwardedRef<HTMLInputElement>,
 ) {
    return (
@@ -353,7 +355,7 @@ InputFieldComponent.email = forwardRef(function Email(
 }) as InputFieldComponentType["email"];
 
 InputFieldComponent.password = forwardRef(function Email(
-   { ...props }: TextareaFieldProps,
+   { ...props }: InputFieldProps,
    ref: React.ForwardedRef<HTMLInputElement>,
 ) {
    const [isPassword, setIsPassword] = useBooleanState(true);
@@ -374,7 +376,7 @@ InputFieldComponent.password = forwardRef(function Email(
 }) as InputFieldComponentType["password"];
 
 InputFieldComponent.search = forwardRef(function Email(
-   { ...props }: TextareaFieldProps,
+   { ...props }: InputFieldProps,
    ref: React.ForwardedRef<HTMLInputElement>,
 ) {
    return <InputFieldComponent leftIcon="magnifyingGlass" placeholder="Search..." ref={ref} {...props} />;

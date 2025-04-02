@@ -16,6 +16,8 @@ import {
    InputField,
    Dropdown,
    ToggleInput,
+   Form,
+   useForm,
 } from "../../src";
 
 function App() {
@@ -25,6 +27,17 @@ function App() {
    const modalWithTitleRef = useRef<ModalRef>(null);
    const confirmationModalRef = useRef<ModalRef>(null);
    const destructiveModalRef = useRef<ModalRef>(null);
+
+   const form = useForm({
+      defaultValues: {
+         name: undefined as number | undefined,
+         email: "",
+         option: undefined as 1 | 2 | 3 | undefined,
+      },
+      onSubmit: (values) => {
+         console.log(values);
+      },
+   });
 
    return (
       <>
@@ -68,7 +81,7 @@ function App() {
                <InputField.email />
                <InputField.password />
                <InputField.search />
-               <InputField.search label="With Debounce" withDebounce onChangeValue={(value) => console.log(value)} />
+               <InputField.search label="With Debounce" withDebounce />
 
                <InputField.multiline placeholder="Placeholder" />
 
@@ -156,7 +169,6 @@ function App() {
                   label="With debounce"
                   withSearch
                   withDebounce
-                  onChangeSearch={(value) => console.log(value)}
                />
 
                <ToggleInput.checkbox />
@@ -179,6 +191,21 @@ function App() {
                <ToggleInput.switch label="Label" text="Some text here" />
                <ToggleInput.switch label="Label" text="Some text here" errorText="This is an error" />
                <ToggleInput.switch label="Label" text="Some text here" disabled />
+
+               <Form onSubmit={form.onSubmit} gap={theme.styles.gap} type="create" onClickCancel={() => {}}>
+                  <InputField placeholder="Name" type="number" {...form.getInputFieldProps("name")} />
+                  <InputField.email {...form.getInputFieldProps("email")} />
+
+                  <Dropdown
+                     options={[
+                        { label: "Option 1 hello", value: 1 },
+                        { label: "Option 2 this", value: 2 },
+                        { label: "Option 3 ll", value: 3 },
+                     ]}
+                     withSearch
+                     {...form.getDropdownFieldProps("option")}
+                  />
+               </Form>
 
                <Button text="Open modal" onClick={() => modalRef.current?.open()} />
                <Button text="Open modal with title" onClick={() => modalWithTitleRef.current?.open()} />

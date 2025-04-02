@@ -6,9 +6,17 @@ import App from "./App.tsx";
 import "./main.css";
 import BetterHtmlProvider from "../../src/components/BetterHtmlProvider.tsx";
 
+import vite from "./assets/vite.svg";
+
 createRoot(document.getElementById("root")!).render(
    <StrictMode>
-      <BetterHtmlProvider>
+      <BetterHtmlProvider
+         value={{
+            assets: {
+               logo: vite,
+            },
+         }}
+      >
          <App />
       </BetterHtmlProvider>
    </StrictMode>,
