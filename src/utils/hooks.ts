@@ -1,14 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { cssProps } from "../constants/css";
+
 import { ComponentHoverStyle, ComponentStyle } from "../types/components";
 import { Theme } from "../types/theme";
 
-const cssProps = Object.keys(document.documentElement.style).reduce((previousValue, currentValue) => {
-   previousValue[currentValue.toLowerCase() as keyof React.CSSProperties] = true;
-   previousValue[`${currentValue}Hover`.toLowerCase() as keyof React.CSSProperties] = true;
-
-   return previousValue;
-}, {} as Record<keyof React.CSSProperties, boolean>);
 const cssPropsToExclude: (keyof React.CSSProperties)[] = [
    "position",
    "top",
@@ -60,7 +56,7 @@ export function useStyledComponentStyles(
             const normalKey = key.slice(0, -5) as keyof ComponentStyle;
             (hoverStyle[normalKey] as any) = props[key as keyof ComponentStyle];
          } else {
-            if (!cssProps[key.toLowerCase() as keyof React.CSSProperties]) continue;
+            if (!cssProps[key.toLowerCase()]) continue;
 
             (normalStyle[key as keyof ComponentStyle] as any) = props[key as keyof ComponentStyle];
          }
@@ -112,8 +108,7 @@ export function useComponentPropsWithoutStyle<Props extends Record<string, any>>
    return useMemo(
       () =>
          Object.keys(props).reduce((previousValue, currentValue) => {
-            if (!cssProps[currentValue.toLowerCase() as keyof React.CSSProperties])
-               previousValue[currentValue as keyof Props] = props[currentValue];
+            if (!cssProps[currentValue.toLowerCase()]) previousValue[currentValue as keyof Props] = props[currentValue];
 
             return previousValue;
          }, {} as Partial<Props>),
