@@ -51,7 +51,7 @@ export type ButtonProps<Value> = {
    isSubmit?: boolean;
 
    onClickWithValue?: (value: Value) => void;
-} & OmitProps<React.ComponentProps<"button">, "style" | "defaultValue" | "translate"> &
+} & OmitProps<React.ComponentProps<"button">, "style" | "defaultValue" | "translate" | "value"> &
    ComponentStyle &
    ComponentHoverStyle;
 
