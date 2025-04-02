@@ -4,13 +4,13 @@ import styled from "styled-components";
 import { Theme } from "../types/theme";
 import { ComponentPropWithRef } from "../types/components";
 import { OmitProps } from "../types/app";
+import { useUrlQuery } from "../utils/hooks";
 
 import Div from "./Div";
 import Button from "./Button";
 import Text from "./Text";
 import Divider from "./Divider";
 import { useBetterHtmlContext, usePlugin, useTheme } from "./BetterHtmlProvider";
-import { useUrlQuery } from "../utils/hooks";
 
 type ModalProps = {
    /**
@@ -189,8 +189,8 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
                   minHeight={32 + theme.styles.space * 2}
                   backgroundColor={theme.colors.backgroundBase}
                   borderRadius={theme.styles.borderRadius * 2}
-                  paddingInline={!title ? theme.styles.space : undefined}
-                  paddingBlock={!title ? theme.styles.gap : undefined}
+                  paddingInline={!title ? theme.styles.space + theme.styles.gap : undefined}
+                  paddingBlock={!title ? theme.styles.space : undefined}
                   overflow={overflow}
                >
                   {title ? (
@@ -201,8 +201,8 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
                            backgroundColor={headerBackgroundColor}
                            borderTopLeftRadius={theme.styles.borderRadius * 2}
                            borderTopRightRadius={theme.styles.borderRadius * 2}
-                           paddingInline={theme.styles.space}
-                           paddingBlock={theme.styles.gap}
+                           paddingInline={theme.styles.space + theme.styles.gap}
+                           paddingBlock={theme.styles.space}
                         >
                            <Div.column flex={1} gap={theme.styles.gap / 2}>
                               <Text as="h1" color={titleColor ?? theme.colors.textPrimary}>
@@ -226,8 +226,8 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
                   )}
 
                   <Div
-                     paddingInline={title ? theme.styles.space : undefined}
-                     paddingBlock={title ? theme.styles.gap : undefined}
+                     paddingInline={title ? theme.styles.space + theme.styles.gap : undefined}
+                     paddingBlock={title ? theme.styles.space : undefined}
                   >
                      {children}
                   </Div>

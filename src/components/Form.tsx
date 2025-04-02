@@ -8,37 +8,26 @@ import Div from "./Div";
 import Button from "./Button";
 import { useTheme } from "./BetterHtmlProvider";
 
-type FormType = "default" | "submit" | "save" | "create" | "delete" | "update" | "edit";
-
-const formTypesText: Record<FormType, string> = {
-   default: "Default",
-   submit: "Submit",
-   save: "Save",
-   create: "Create",
-   delete: "Delete",
-   update: "Update",
-   edit: "Edit",
-};
-
 type FormProps = {
-   /** @default "default" */
-   type?: FormType;
+   submitButtonText?: string;
+   submitButtonLoaderName?: LoaderName | AnyOtherString;
    /** @default "right" */
    actionButtonsLocation?: "left" | "center" | "right";
-   actionButtonLoaderName?: LoaderName | AnyOtherString;
    gap?: React.CSSProperties["gap"];
    isSubmitting?: boolean;
+   isDestructive?: boolean;
    onClickCancel?: () => void;
    onSubmit?: (value: React.FormEvent<HTMLFormElement>) => void;
    children?: React.ReactNode;
 } & ComponentMarginProps;
 
 function Form({
-   type = "default",
+   submitButtonText,
+   submitButtonLoaderName,
    actionButtonsLocation = "right",
-   actionButtonLoaderName,
    gap,
    isSubmitting,
+   isDestructive,
    onClickCancel,
    onSubmit,
    children,
@@ -46,14 +35,14 @@ function Form({
 }: FormProps) {
    const theme = useTheme();
 
-   const SubmitButtonTag = type === "delete" ? Button.destructive : Button;
+   const SubmitButtonTag = isDestructive ? Button.destructive : Button;
 
    return (
       <Div {...props}>
          <form onSubmit={onSubmit}>
             {gap !== undefined ? <Div.column gap={gap}>{children}</Div.column> : children}
 
-            {type !== "default" && (
+            {submitButtonText && (
                <Div.row
                   alignItems="center"
                   justifyContent={
@@ -69,9 +58,9 @@ function Form({
                   {onClickCancel && <Button.secondary text="Cancel" onClick={onClickCancel} />}
 
                   <SubmitButtonTag
-                     text={formTypesText[type]}
+                     text={submitButtonText}
                      isLoading={isSubmitting}
-                     loaderName={actionButtonLoaderName}
+                     loaderName={submitButtonLoaderName}
                      isSubmit
                   />
                </Div.row>

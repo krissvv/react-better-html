@@ -192,7 +192,7 @@ function App() {
                <ToggleInput.switch label="Label" text="Some text here" errorText="This is an error" />
                <ToggleInput.switch label="Label" text="Some text here" disabled />
 
-               <Form onSubmit={form.onSubmit} gap={theme.styles.gap} type="create" onClickCancel={() => {}}>
+               <Form onSubmit={form.onSubmit} gap={theme.styles.gap} submitButtonText="Create" onClickCancel={() => {}}>
                   <InputField placeholder="Name" type="number" {...form.getInputFieldProps("name")} />
                   <InputField.email {...form.getInputFieldProps("email")} />
 
@@ -237,7 +237,7 @@ function App() {
             </Div.column>
          </PageHolder>
 
-         <Modal ref={modalRef}>
+         <Modal name="awd" ref={modalRef}>
             Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae cumque tempore qui?
          </Modal>
 
