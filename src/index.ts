@@ -12,6 +12,7 @@ import InputField from "./components/InputField";
 import Dropdown, { type DropdownOption } from "./components/Dropdown";
 import ToggleInput from "./components/ToggleInput";
 import Form from "./components/Form";
+import Label from "./components/Label";
 
 import BetterHtmlProvider, {
    useBetterHtmlContext,
@@ -67,6 +68,7 @@ export {
    DropdownOption,
    ToggleInput,
    Form,
+   Label,
    // Hooks
    useBetterHtmlContext,
    useTheme,

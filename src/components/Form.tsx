@@ -15,6 +15,7 @@ type FormProps = {
    submitButtonText?: string;
    submitButtonLoaderName?: LoaderName | AnyOtherString;
    submitButtonId?: string;
+   submitButtonIsDisabled?: boolean;
    /** @default "right" */
    actionButtonsLocation?: "left" | "center" | "right";
    gap?: React.CSSProperties["gap"];
@@ -30,6 +31,7 @@ function Form({
    submitButtonText,
    submitButtonLoaderName,
    submitButtonId,
+   submitButtonIsDisabled,
    actionButtonsLocation = "right",
    gap,
    isSubmitting,
@@ -41,7 +43,7 @@ function Form({
 }: FormProps) {
    const theme = useTheme();
 
-   const submitIsDisabled = useMemo<boolean>(() => {
+   const submitButtonIsDisabledInternal = useMemo<boolean>(() => {
       if (!form || !form.requiredFields) return false;
 
       return Object.entries(form.values).some(
@@ -52,6 +54,7 @@ function Form({
    }, [form]);
 
    const SubmitButtonTag = isDestructive ? Button.destructive : Button;
+   const submitButtonIsDisabledFinal = submitButtonIsDisabled || submitButtonIsDisabledInternal;
 
    return (
       <Div {...props}>
@@ -77,7 +80,7 @@ function Form({
                      text={submitButtonText}
                      isLoading={isSubmitting}
                      loaderName={submitButtonLoaderName}
-                     disabled={submitIsDisabled}
+                     disabled={submitButtonIsDisabledFinal}
                      id={submitButtonId}
                      isSubmit
                   />

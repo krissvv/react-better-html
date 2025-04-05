@@ -19,6 +19,7 @@ import Text from "./Text";
 import Div from "./Div";
 import Icon from "./Icon";
 import Button from "./Button";
+import Label from "./Label";
 import { useTheme } from "./BetterHtmlProvider";
 
 const InputElement = styled.input.withConfig({
@@ -193,23 +194,7 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
 
    return (
       <Div.column width="100%" gap={theme.styles.gap / 2} {...styledComponentStylesWithExcluded}>
-         {label && (
-            <Text
-               as="label"
-               height={16}
-               fontSize={14}
-               color={errorText ? theme.colors.error : theme.colors.textSecondary}
-            >
-               {label}
-
-               {required && (
-                  <Text as="span" fontSize={16} color={theme.colors.error}>
-                     {" "}
-                     *
-                  </Text>
-               )}
-            </Text>
-         )}
+         {label && <Label text={label} required={required} isError={!!errorText} />}
 
          <Div position="relative" width="100%">
             {leftIcon && (
@@ -301,18 +286,7 @@ InputFieldComponent.multiline = forwardRef(function Textarea(
 
    return (
       <Div.column gap={theme.styles.gap / 2}>
-         {label && (
-            <Text as="label" fontSize={14} color={errorText ? theme.colors.error : theme.colors.textSecondary}>
-               {label}
-
-               {required && (
-                  <Text as="span" fontSize={16} color={theme.colors.error}>
-                     {" "}
-                     *
-                  </Text>
-               )}
-            </Text>
-         )}
+         {label && <Label text={label} required={required} isError={!!errorText} />}
 
          <TextareaElement
             theme={theme}
