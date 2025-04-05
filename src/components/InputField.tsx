@@ -1,10 +1,13 @@
-import React, { forwardRef, memo, useCallback, useState, useEffect } from "react";
+import React, { forwardRef, memo, useCallback, useState, useEffect, useMemo } from "react";
 import styled from "styled-components";
+
+import { countries } from "../constants/countries";
 
 import { ComponentHoverStyle, ComponentPropWithRef, ComponentStyle } from "../types/components";
 import { AnyOtherString, OmitProps } from "../types/app";
 import { Theme } from "../types/theme";
 import { IconName } from "../types/icon";
+import { Country } from "../types/countries";
 
 import {
    useBooleanState,
@@ -20,6 +23,8 @@ import Div from "./Div";
 import Icon from "./Icon";
 import Button from "./Button";
 import Label from "./Label";
+import Dropdown, { DropdownOption } from "./Dropdown";
+import Image from "./Image";
 import { useTheme } from "./BetterHtmlProvider";
 
 const InputElement = styled.input.withConfig({
@@ -62,6 +67,17 @@ const InputElement = styled.input.withConfig({
    &:disabled {
       filter: brightness(0.9);
       cursor: not-allowed;
+   }
+
+   &.react-better-html-phone-number-holder {
+      border-right: none;
+      border-top-right-radius: 0px;
+      border-bottom-right-radius: 0px;
+   }
+
+   &.react-better-html-phone-number {
+      border-top-left-radius: 0px;
+      border-bottom-left-radius: 0px;
    }
 
    &.react-better-html-dropdown {
@@ -138,6 +154,9 @@ type InputFieldComponentType = {
    email: (props: ComponentPropWithRef<HTMLInputElement, InputFieldProps>) => React.ReactElement;
    password: (props: ComponentPropWithRef<HTMLInputElement, InputFieldProps>) => React.ReactElement;
    search: (props: ComponentPropWithRef<HTMLInputElement, InputFieldProps>) => React.ReactElement;
+   phoneNumber: (
+      props: ComponentPropWithRef<HTMLInputElement, OmitProps<InputFieldProps, "type">>,
+   ) => React.ReactElement;
 };
 
 const InputFieldComponent: InputFieldComponentType = forwardRef(function InputField(
@@ -359,16 +378,113 @@ InputFieldComponent.search = forwardRef(function Email(
    return <InputFieldComponent leftIcon="magnifyingGlass" placeholder="Search..." ref={ref} {...props} />;
 }) as InputFieldComponentType["search"];
 
+InputFieldComponent.phoneNumber = forwardRef(function Email(
+   { value, onChangeValue, ...props }: InputFieldProps,
+   ref: React.ForwardedRef<HTMLInputElement>,
+) {
+   const theme = useTheme();
+
+   const [dropdownValue, setDropdownValue] = useState<string>();
+   const [inputFieldValue, setInputFieldValue] = useState<string>(value?.toString() ?? "");
+
+   const renderOption = useCallback(
+      (option: DropdownOption<string, Country>, index: number, isSelected: boolean): React.ReactNode => (
+         <Div.row alignItems="center" gap={theme.styles.gap}>
+            <Image src={`https://flagcdn.com/w80/${option.data?.code.toString().toLowerCase()}.webp`} width={20} />
+            <Text>{option.label}</Text>
+         </Div.row>
+      ),
+      [],
+   );
+   const onChangeValueElement = useCallback(
+      (value: string) => {
+         const readyValue = value.replace(/\D/g, "");
+
+         setInputFieldValue(readyValue);
+         onChangeValue?.(dropdownValue ? `+${dropdownValue}${readyValue}` : readyValue);
+      },
+      [onChangeValue, dropdownValue],
+   );
+
+   const options = useMemo<DropdownOption<string, Country>[]>(
+      () =>
+         countries.map((country) => ({
+            value: country.phoneNumberExtension,
+            label: `+${country.phoneNumberExtension}`,
+            data: country,
+         })),
+      [],
+   );
+   const defaultValue = useMemo<string>(() => {
+      const thisTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+      const initialDefaultValue = options.find((option) => option.data?.timeZone === thisTimeZone)?.value ?? "";
+      setDropdownValue(initialDefaultValue);
+
+      return initialDefaultValue;
+   }, [options]);
+
+   useEffect(() => {
+      if (value === undefined || value === null) return;
+
+      const newValue = value.toString();
+
+      const country = countries.find(
+         (country) =>
+            country.phoneNumberExtension ===
+            newValue.slice(
+               newValue.startsWith("+") ? 1 : 0,
+               country.phoneNumberExtension.length + (newValue.startsWith("+") ? 1 : 0),
+            ),
+      );
+
+      if (!country) {
+         setInputFieldValue(newValue);
+         return;
+      }
+
+      setDropdownValue(country.phoneNumberExtension);
+      setInputFieldValue(newValue.slice(country?.phoneNumberExtension.length + 1));
+   }, [value]);
+
+   return (
+      <Div.row>
+         <Dropdown
+            options={options}
+            renderOption={renderOption}
+            width={130}
+            withSearch
+            placeholder="+00"
+            inputFieldClassName="react-better-html-phone-number-holder"
+            defaultValue={defaultValue}
+            value={dropdownValue}
+            onChange={setDropdownValue}
+            withoutClearButton
+         />
+         <InputFieldComponent
+            placeholder="Phone number"
+            className="react-better-html-phone-number"
+            value={inputFieldValue}
+            onChangeValue={onChangeValueElement}
+            ref={ref}
+            {...props}
+         />
+      </Div.row>
+   );
+}) as InputFieldComponentType["phoneNumber"];
+
 const InputField = memo(InputFieldComponent) as any as typeof InputFieldComponent & {
    multiline: typeof InputFieldComponent.multiline;
    email: typeof InputFieldComponent.email;
    password: typeof InputFieldComponent.password;
    search: typeof InputFieldComponent.search;
+   phoneNumber: typeof InputFieldComponent.phoneNumber;
 };
 
 InputField.multiline = InputFieldComponent.multiline;
 InputField.email = InputFieldComponent.email;
 InputField.password = InputFieldComponent.password;
 InputField.search = InputFieldComponent.search;
+InputField.phoneNumber = InputFieldComponent.phoneNumber;
 
 export default InputField;

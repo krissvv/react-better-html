@@ -20,6 +20,7 @@ export type ButtonProps<Value> = {
    href?: string;
    text?: string;
    value?: Value;
+   download?: string;
 
    icon?: IconName | AnyOtherString;
    /** @default "left" */
@@ -156,6 +157,7 @@ const ButtonComponent: ButtonComponent = function Button<Value>({
    href,
    text,
    value,
+   download,
 
    icon,
    iconPosition = "left",
@@ -231,6 +233,7 @@ const ButtonComponent: ButtonComponent = function Button<Value>({
          isLoading={isLoadingElement}
          disabled={disabled}
          href={href}
+         download={download}
          type={isSubmit && !isLoadingElement ? "submit" : "button"}
          onClick={!disabled && !isLoadingElement ? onClickElement : undefined}
          {...styledComponentStyles}

@@ -16,8 +16,8 @@ import Loader from "./Loader";
 import { useTheme } from "./BetterHtmlProvider";
 
 export type DropdownOption<Value, Data = unknown> = {
-   label: string;
    value: Value;
+   label: string;
    disabled?: boolean;
    searchValues?: string[];
    data?: Data;
@@ -31,10 +31,13 @@ export type DropdownProps<Value, Data> = {
    disabled?: boolean;
    options: DropdownOption<Value, Data>[];
    value?: Value;
+   defaultValue?: Value;
    placeholder?: string;
    leftIcon?: IconName | AnyOtherString;
+   inputFieldClassName?: string;
    withSearch?: boolean;
    withDebounce?: boolean;
+   withoutClearButton?: boolean;
    /** @default 0.5s */
    debounceDelay?: number;
    debounceIsLoading?: boolean;
@@ -42,7 +45,7 @@ export type DropdownProps<Value, Data> = {
    onChange?: (value: Value | undefined) => void;
    onChangeSearch?: (query: string) => void;
    renderOption?: (option: DropdownOption<Value, Data>, index: number, isSelected: boolean) => React.ReactNode;
-} & OmitProps<DivProps<unknown>, "onChange">;
+} & OmitProps<DivProps<unknown>, "onChange" | "defaultChecked">;
 
 type DropdownComponentType = {
    <Value, Data>(props: ComponentPropWithRef<HTMLDivElement, DropdownProps<Value, Data>>): React.ReactElement;
@@ -57,10 +60,13 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
       disabled,
       options,
       value: controlledValue,
+      defaultValue,
       placeholder = "Select an option",
       leftIcon,
+      inputFieldClassName,
       withSearch,
       withDebounce,
+      withoutClearButton,
       debounceDelay = 0.5,
       debounceIsLoading,
       debounceMinimumSymbolsRequired,
@@ -87,7 +93,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
    );
    const [focusedOptionIndex, setFocusedOptionIndex] = useState<number | undefined>();
 
-   const [internalValue, setInternalValue] = useState<Value | undefined>();
+   const [internalValue, setInternalValue] = useState<Value | undefined>(defaultValue);
 
    const value = controlledValue ?? internalValue;
 
@@ -251,7 +257,9 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
                value={displayValue}
                placeholder={withSearch ? (selectedOption ? selectedOption.label : placeholder) : placeholder}
                leftIcon={leftIcon}
-               className={`react-better-html-dropdown${isOpen ? " react-better-html-dropdown-open" : ""}`}
+               className={`react-better-html-dropdown${isOpen ? " react-better-html-dropdown-open" : ""}${
+                  inputFieldClassName ? ` ${inputFieldClassName}` : ""
+               }`}
                zIndex={isOpen || isOpenLate ? 1001 : undefined}
                onClick={!disabled ? setIsOpen.toggle : undefined}
                onFocus={setIsFocused.setTrue}
@@ -350,16 +358,18 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
                opacity={disabled ? 0.6 : undefined}
                zIndex={isOpen || isOpenLate ? 1001 : undefined}
             >
-               <Button.icon
-                  icon="XMark"
-                  position="relative"
-                  size={10}
-                  iconSize={14}
-                  opacity={!withClearButton ? 0 : undefined}
-                  pointerEvents={withClearButton ? "all" : undefined}
-                  onClick={onClickClearButton}
-                  disabled={!withClearButton}
-               />
+               {!withoutClearButton && (
+                  <Button.icon
+                     icon="XMark"
+                     position="relative"
+                     size={10}
+                     iconSize={14}
+                     opacity={!withClearButton ? 0 : undefined}
+                     pointerEvents={withClearButton ? "all" : undefined}
+                     onClick={onClickClearButton}
+                     disabled={!withClearButton}
+                  />
+               )}
 
                <Icon
                   name="chevronDown"

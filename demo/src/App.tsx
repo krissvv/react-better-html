@@ -32,6 +32,7 @@ function App() {
       defaultValues: {
          name: undefined as number | undefined,
          email: "",
+         phone: "",
          option: undefined as 1 | 2 | 3 | undefined,
          withSurprise: false as boolean,
       },
@@ -84,6 +85,7 @@ function App() {
                <InputField.password />
                <InputField.search />
                <InputField.search label="With Debounce" withDebounce />
+               <InputField.phoneNumber />
 
                <InputField.multiline placeholder="Placeholder" />
 
@@ -203,6 +205,7 @@ function App() {
                >
                   <InputField placeholder="Name" type="number" {...form.getInputFieldProps("name")} />
                   <InputField.email {...form.getInputFieldProps("email")} />
+                  <InputField.phoneNumber {...form.getInputFieldProps("phone")} />
 
                   <Dropdown
                      options={[
