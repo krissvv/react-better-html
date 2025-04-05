@@ -12,8 +12,8 @@ import Div, { DivProps } from "./Div";
 import InputField from "./InputField";
 import Icon from "./Icon";
 import Button from "./Button";
-import { useTheme } from "./BetterHtmlProvider";
 import Loader from "./Loader";
+import { useTheme } from "./BetterHtmlProvider";
 
 export type DropdownOption<Value, Data = unknown> = {
    label: string;
@@ -38,7 +38,7 @@ export type DropdownProps<Value, Data> = {
    /** @default 0.5s */
    debounceDelay?: number;
    debounceIsLoading?: boolean;
-   debounceMinimumSymbolsRequired?: string;
+   debounceMinimumSymbolsRequired?: number;
    onChange?: (value: Value | undefined) => void;
    onChangeSearch?: (query: string) => void;
    renderOption?: (option: DropdownOption<Value, Data>, index: number, isSelected: boolean) => React.ReactNode;
@@ -321,7 +321,8 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
                      ) : (
                         <Div padding={`${theme.styles.space / 2}px ${theme.styles.space + theme.styles.gap}px`}>
                            <Text.unknown textAlign="left">
-                              {debounceMinimumSymbolsRequired !== undefined
+                              {debounceMinimumSymbolsRequired !== undefined &&
+                              searchQuery.length < debounceMinimumSymbolsRequired
                                  ? `Enter at least ${debounceMinimumSymbolsRequired} characters`
                                  : "No options"}
                            </Text.unknown>

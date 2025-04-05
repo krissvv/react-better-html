@@ -1,14 +1,17 @@
-import { memo } from "react";
+import { memo, useMemo } from "react";
 
 import { ComponentMarginProps } from "../types/components";
 import { LoaderName } from "../types/loader";
-import { AnyOtherString } from "../types/app";
+import { AnyOtherString, OmitProps } from "../types/app";
+
+import { useForm } from "../utils/hooks";
 
 import Div from "./Div";
 import Button from "./Button";
 import { useTheme } from "./BetterHtmlProvider";
 
 type FormProps = {
+   form?: OmitProps<ReturnType<typeof useForm>, "focusField">;
    submitButtonText?: string;
    submitButtonLoaderName?: LoaderName | AnyOtherString;
    submitButtonId?: string;
@@ -23,6 +26,7 @@ type FormProps = {
 } & ComponentMarginProps;
 
 function Form({
+   form,
    submitButtonText,
    submitButtonLoaderName,
    submitButtonId,
@@ -36,6 +40,16 @@ function Form({
    ...props
 }: FormProps) {
    const theme = useTheme();
+
+   const submitIsDisabled = useMemo<boolean>(() => {
+      if (!form || !form.requiredFields) return false;
+
+      return Object.entries(form.values).some(
+         ([key, value]) =>
+            form.requiredFields?.includes(key) &&
+            (value === undefined || value === null || value?.toString().trim() === ""),
+      );
+   }, [form]);
 
    const SubmitButtonTag = isDestructive ? Button.destructive : Button;
 
@@ -63,6 +77,7 @@ function Form({
                      text={submitButtonText}
                      isLoading={isSubmitting}
                      loaderName={submitButtonLoaderName}
+                     disabled={submitIsDisabled}
                      id={submitButtonId}
                      isSubmit
                   />

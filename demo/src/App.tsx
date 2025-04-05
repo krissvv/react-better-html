@@ -33,9 +33,9 @@ function App() {
          name: undefined as number | undefined,
          email: "",
          option: undefined as 1 | 2 | 3 | undefined,
-         // withSurprise: false as boolean,
-         withSurprise: true as boolean,
+         withSurprise: false as boolean,
       },
+      requiredFields: ["name", "email"],
       onSubmit: (values) => {
          console.log(values);
       },
@@ -194,7 +194,13 @@ function App() {
                <ToggleInput.switch label="Label" text="Some text here" errorText="This is an error" />
                <ToggleInput.switch label="Label" text="Some text here" disabled />
 
-               <Form onSubmit={form.onSubmit} gap={theme.styles.gap} submitButtonText="Create" onClickCancel={() => {}}>
+               <Form
+                  form={form}
+                  onSubmit={form.onSubmit}
+                  gap={theme.styles.gap}
+                  submitButtonText="Create"
+                  onClickCancel={() => {}}
+               >
                   <InputField placeholder="Name" type="number" {...form.getInputFieldProps("name")} />
                   <InputField.email {...form.getInputFieldProps("email")} />
 

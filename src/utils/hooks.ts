@@ -211,10 +211,12 @@ export function useDebounceState<Value>(
 
 export function useForm<FormFields extends Record<string, string | number | boolean | undefined>>({
    defaultValues,
+   requiredFields,
    onSubmit,
    validate,
 }: {
    defaultValues: FormFields;
+   requiredFields?: (keyof FormFields)[];
    onSubmit?: (values: FormFields) => void | Promise<void>;
    validate?: (values: FormFields) => PartialRecord<keyof FormFields, string>;
 }) {
@@ -372,6 +374,7 @@ export function useForm<FormFields extends Record<string, string | number | bool
       focusField,
       onSubmit: onSubmitFunction,
       reset,
+      requiredFields,
    };
 }
 
