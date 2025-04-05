@@ -284,7 +284,7 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
 export type TextareaFieldProps = OmitProps<InputFieldProps, "type"> &
    OmitProps<React.ComponentProps<"textarea">, "style" | "ref">;
 
-InputFieldComponent.multiline = forwardRef(function Textarea(
+InputFieldComponent.multiline = forwardRef(function Multiline(
    { label, errorText, infoText, onChange, onChangeValue, required, ...props }: TextareaFieldProps,
    ref: React.ForwardedRef<HTMLTextAreaElement>,
 ) {
@@ -350,7 +350,7 @@ InputFieldComponent.email = forwardRef(function Email(
    );
 }) as InputFieldComponentType["email"];
 
-InputFieldComponent.password = forwardRef(function Email(
+InputFieldComponent.password = forwardRef(function Password(
    { ...props }: InputFieldProps,
    ref: React.ForwardedRef<HTMLInputElement>,
 ) {
@@ -371,15 +371,15 @@ InputFieldComponent.password = forwardRef(function Email(
    );
 }) as InputFieldComponentType["password"];
 
-InputFieldComponent.search = forwardRef(function Email(
+InputFieldComponent.search = forwardRef(function Search(
    { ...props }: InputFieldProps,
    ref: React.ForwardedRef<HTMLInputElement>,
 ) {
    return <InputFieldComponent leftIcon="magnifyingGlass" placeholder="Search..." ref={ref} {...props} />;
 }) as InputFieldComponentType["search"];
 
-InputFieldComponent.phoneNumber = forwardRef(function Email(
-   { value, onChangeValue, ...props }: InputFieldProps,
+InputFieldComponent.phoneNumber = forwardRef(function PhoneNumber(
+   { label, value, onChangeValue, ...props }: InputFieldProps,
    ref: React.ForwardedRef<HTMLInputElement>,
 ) {
    const theme = useTheme();
@@ -448,28 +448,32 @@ InputFieldComponent.phoneNumber = forwardRef(function Email(
    }, [value]);
 
    return (
-      <Div.row>
-         <Dropdown
-            options={options}
-            renderOption={renderOption}
-            width={130}
-            withSearch
-            placeholder="+00"
-            inputFieldClassName="react-better-html-phone-number-holder"
-            defaultValue={defaultValue}
-            value={dropdownValue}
-            onChange={setDropdownValue}
-            withoutClearButton
-         />
-         <InputFieldComponent
-            placeholder="Phone number"
-            className="react-better-html-phone-number"
-            value={inputFieldValue}
-            onChangeValue={onChangeValueElement}
-            ref={ref}
-            {...props}
-         />
-      </Div.row>
+      <Div>
+         {label && <Label text={label} required={props.required} isError={!!props.errorText} />}
+
+         <Div.row>
+            <Dropdown
+               options={options}
+               renderOption={renderOption}
+               width={130}
+               withSearch
+               placeholder="+00"
+               inputFieldClassName="react-better-html-phone-number-holder"
+               defaultValue={defaultValue}
+               value={dropdownValue}
+               onChange={setDropdownValue}
+               withoutClearButton
+            />
+            <InputFieldComponent
+               placeholder="Phone number"
+               className="react-better-html-phone-number"
+               value={inputFieldValue}
+               onChangeValue={onChangeValueElement}
+               ref={ref}
+               {...props}
+            />
+         </Div.row>
+      </Div>
    );
 }) as InputFieldComponentType["phoneNumber"];
 

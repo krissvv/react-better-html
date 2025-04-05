@@ -86,6 +86,7 @@ function App() {
                <InputField.search />
                <InputField.search label="With Debounce" withDebounce />
                <InputField.phoneNumber />
+               <InputField.phoneNumber label="Phone number" />
 
                <InputField.multiline placeholder="Placeholder" />
 
