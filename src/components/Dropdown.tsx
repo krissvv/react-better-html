@@ -258,9 +258,8 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
                placeholder={withSearch ? (selectedOption ? selectedOption.label : placeholder) : placeholder}
                leftIcon={leftIcon}
                className={`react-better-html-dropdown${isOpen ? " react-better-html-dropdown-open" : ""}${
-                  inputFieldClassName ? ` ${inputFieldClassName}` : ""
-               }`}
-               zIndex={isOpen || isOpenLate ? 1001 : undefined}
+                  isOpenLate ? " react-better-html-dropdown-open-late" : ""
+               }${inputFieldClassName ? ` ${inputFieldClassName}` : ""}`}
                onClick={!disabled ? setIsOpen.toggle : undefined}
                onFocus={setIsFocused.setTrue}
                onBlur={setIsFocused.setFalse}

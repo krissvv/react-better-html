@@ -21,6 +21,7 @@ import BetterHtmlProvider, {
    useLoaderControls,
 } from "./components/BetterHtmlProvider";
 import { usePageResize, useMediaQuery, useBooleanState, useDebounceState, useForm, useUrlQuery } from "./utils/hooks";
+import { generateRandomString, getBrowser, formatPhoneNumber } from "./utils/functions";
 
 import {
    type OmitProps,
@@ -80,6 +81,10 @@ export {
    useDebounceState,
    useForm,
    useUrlQuery,
+   // Functions
+   generateRandomString,
+   getBrowser,
+   formatPhoneNumber,
    // Types
    OmitProps,
    ExcludeOptions,

@@ -87,6 +87,10 @@ const InputElement = styled.input.withConfig({
          border-bottom-left-radius: 0px;
          border-bottom-right-radius: 0px;
       }
+
+      &.react-better-html-dropdown-open-late {
+         z-index: 1001;
+      }
    }
 
    ${(props) => props.normalStyle as any}

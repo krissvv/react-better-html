@@ -1,5 +1,7 @@
 import { memo } from "react";
 
+import { ComponentMarginProps } from "../types/components";
+
 import Div from "./Div";
 import Text from "./Text";
 import { useTheme } from "./BetterHtmlProvider";
@@ -9,8 +11,7 @@ type DividerProps = {
    width?: number;
    /** @default border */
    backgroundColor?: string;
-   paddingBlock?: number;
-};
+} & ComponentMarginProps;
 
 type VerticalDividerProps = DividerProps & {
    /** @default "100%" */
@@ -24,7 +25,7 @@ type HorizontalDividerProps = DividerProps & {
 };
 
 export default {
-   vertical: memo(function Divider({ width = 1, backgroundColor, paddingBlock, height }: VerticalDividerProps) {
+   vertical: memo(function Divider({ width = 1, backgroundColor, height, ...props }: VerticalDividerProps) {
       const theme = useTheme();
 
       return (
@@ -33,21 +34,21 @@ export default {
             height={height ?? "100%"}
             flexShrink={0}
             backgroundColor={backgroundColor ?? theme.colors.border}
-            paddingBlock={paddingBlock}
+            {...props}
          />
       );
    }),
    horizontal: memo(function Divider({
       width = 1,
       backgroundColor,
-      paddingBlock,
       text,
       textColor,
+      ...props
    }: HorizontalDividerProps) {
       const theme = useTheme();
 
       return (
-         <Div.row alignItems="center" gap={text ? theme.styles.space : undefined} paddingBlock={paddingBlock}>
+         <Div.row alignItems="center" gap={text ? theme.styles.space : undefined} {...props}>
             <Div flex={1} height={width} flexShrink={0} backgroundColor={backgroundColor ?? theme.colors.border} />
 
             {text && <Text color={textColor ?? theme.colors.textSecondary}>{text}</Text>}
