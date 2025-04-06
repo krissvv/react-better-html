@@ -18,6 +18,8 @@ import {
    ToggleInput,
    Form,
    useForm,
+   PageHeader,
+   FormRow,
 } from "../../src";
 
 function App() {
@@ -45,6 +47,24 @@ function App() {
    return (
       <>
          <PageHolder>
+            <PageHeader
+               title="Hello there"
+               description="Lorem, ipsum dolor sit amet consectetur adipisicing elit. Commodi ipsa nobis aspernatur."
+            />
+
+            <PageHeader
+               title="Hello there"
+               description="Lorem, ipsum dolor sit amet consectetur adipisicing elit. Commodi ipsa nobis aspernatur."
+               rightElement={<Button text="Hello there" />}
+            />
+
+            <PageHeader
+               imageUrl="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg"
+               title="Hello there"
+               description="Lorem, ipsum dolor sit amet consectetur adipisicing elit. Commodi ipsa nobis aspernatur."
+               rightElement={<Button text="Hello there" />}
+            />
+
             <Div.column gap={theme.styles.space}>
                <Text as="h1">Hello</Text>
 
@@ -89,6 +109,19 @@ function App() {
                <InputField.phoneNumber label="Phone number" />
 
                <InputField.multiline placeholder="Placeholder" />
+
+               <FormRow>
+                  <InputField placeholder="Hello" />
+                  <InputField placeholder="Hello" />
+               </FormRow>
+
+               <FormRow.withTitle title="Title" description="Description">
+                  <InputField placeholder="Hello" />
+               </FormRow.withTitle>
+
+               <FormRow.withTitle icon="trash" title="Title" description="Description">
+                  <InputField placeholder="Hello" />
+               </FormRow.withTitle>
 
                <Dropdown
                   options={[

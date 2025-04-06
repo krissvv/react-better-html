@@ -18,9 +18,11 @@ const TextStyledComponent = styled.div.withConfig({
    }
 `;
 
+export type TextAs = "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "p" | "span" | "label";
+
 export type TextProps = {
    /** @default "p" */
-   as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "p" | "span" | "label";
+   as?: TextAs;
 } & OmitProps<React.ComponentProps<"p">, "style"> &
    ComponentStyle &
    ComponentHoverStyle;

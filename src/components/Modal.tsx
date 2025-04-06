@@ -248,8 +248,21 @@ ModalComponent.confirmation = forwardRef(function Confirmation(
 ) {
    const theme = useTheme();
 
+   const modalRef = useRef<ModalRef>(null);
+
+   const onCancelElement = useCallback(() => {
+      onCancel?.();
+      modalRef.current?.close();
+   }, [onCancel]);
+   const onContinueElement = useCallback(() => {
+      onContinue?.();
+      modalRef.current?.close();
+   }, [onContinue]);
+
+   useImperativeHandle(ref, (): ModalRef => modalRef.current as ModalRef, []);
+
    return (
-      <Modal title="Are you sure?" maxWidth={660} {...props} ref={ref}>
+      <Modal title="Are you sure?" maxWidth={660} {...props} ref={modalRef}>
          <Text color={theme.colors.textSecondary}>
             Do you really want to continue? This action may be irreversible.
          </Text>
@@ -260,8 +273,8 @@ ModalComponent.confirmation = forwardRef(function Confirmation(
             gap={theme.styles.gap}
             marginTop={theme.styles.space * 2}
          >
-            <Button.secondary text="Cancel" onClick={onCancel} />
-            <Button text="Continue" loaderName={continueButtonLoaderName} onClick={onContinue} />
+            <Button.secondary text="Cancel" onClick={onCancelElement} />
+            <Button text="Continue" loaderName={continueButtonLoaderName} onClick={onContinueElement} />
          </Div.row>
       </Modal>
    );
@@ -273,8 +286,21 @@ ModalComponent.destructive = forwardRef(function Destructive(
 ) {
    const theme = useTheme();
 
+   const modalRef = useRef<ModalRef>(null);
+
+   const onCancelElement = useCallback(() => {
+      onCancel?.();
+      modalRef.current?.close();
+   }, [onCancel]);
+   const onDeleteElement = useCallback(() => {
+      onDelete?.();
+      modalRef.current?.close();
+   }, [onDelete]);
+
+   useImperativeHandle(ref, (): ModalRef => modalRef.current as ModalRef, []);
+
    return (
-      <Modal title="Are you sure?" maxWidth={660} {...props} ref={ref}>
+      <Modal title="Are you sure?" maxWidth={660} {...props} ref={modalRef}>
          <Text color={theme.colors.textSecondary}>
             Do you really want to continue with the deleting of the item? This action may be irreversible.
          </Text>
@@ -285,8 +311,13 @@ ModalComponent.destructive = forwardRef(function Destructive(
             gap={theme.styles.gap}
             marginTop={theme.styles.space * 2}
          >
-            <Button.secondary text="Cancel" onClick={onCancel} />
-            <Button.destructive icon="trash" text="Delete" loaderName={deleteButtonLoaderName} onClick={onDelete} />
+            <Button.secondary text="Cancel" onClick={onCancelElement} />
+            <Button.destructive
+               icon="trash"
+               text="Delete"
+               loaderName={deleteButtonLoaderName}
+               onClick={onDeleteElement}
+            />
          </Div.row>
       </Modal>
    );

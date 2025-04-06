@@ -7,12 +7,14 @@ import Button from "./components/Button";
 import Divider from "./components/Divider";
 import Modal, { type ModalRef } from "./components/Modal";
 import PageHolder from "./components/PageHolder";
+import PageHeader from "./components/PageHeader";
 import Chip from "./components/Chip";
 import InputField from "./components/InputField";
 import Dropdown, { type DropdownOption } from "./components/Dropdown";
 import ToggleInput from "./components/ToggleInput";
 import Form from "./components/Form";
 import Label from "./components/Label";
+import FormRow from "./components/FormRow";
 
 import BetterHtmlProvider, {
    useBetterHtmlContext,
@@ -63,6 +65,7 @@ export {
    Modal,
    ModalRef,
    PageHolder,
+   PageHeader,
    Chip,
    InputField,
    Dropdown,
@@ -70,6 +73,7 @@ export {
    ToggleInput,
    Form,
    Label,
+   FormRow,
    // Hooks
    useBetterHtmlContext,
    useTheme,
