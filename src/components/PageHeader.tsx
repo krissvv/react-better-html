@@ -14,6 +14,7 @@ type PageHeaderProps = {
    imageSize?: number;
    title?: string;
    titleAs?: TextAs;
+   titleRightElement?: React.ReactNode;
    description?: string;
    textAlign?: React.CSSProperties["textAlign"];
    rightElement?: React.ReactNode;
@@ -25,6 +26,7 @@ function PageHeader({
    imageSize = 60,
    title,
    titleAs,
+   titleRightElement,
    description,
    textAlign,
    rightElement,
@@ -39,13 +41,17 @@ function PageHeader({
          {imageUrl && <Image.profileImage src={imageUrl} size={imageSize ?? (mediaQuery.size600 ? 46 : 60)} />}
 
          <Div.column flex={1} gap={theme.styles.gap / 2}>
-            <Text
-               as={titleAs ?? "h1"}
-               textAlign={textAlign}
-               color={lightMode ? theme.colors.base : theme.colors.textPrimary}
-            >
-               {title}
-            </Text>
+            <Div.row alignItems="center" gap={theme.styles.space}>
+               <Text
+                  as={titleAs ?? "h1"}
+                  textAlign={textAlign}
+                  color={lightMode ? theme.colors.base : theme.colors.textPrimary}
+               >
+                  {title}
+               </Text>
+
+               {titleRightElement}
+            </Div.row>
             <Text
                textAlign={textAlign}
                color={lightMode ? theme.colors.base : theme.colors.textSecondary}
