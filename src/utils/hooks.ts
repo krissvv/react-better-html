@@ -266,6 +266,7 @@ export function useForm<FormFields extends Record<string, string | number | bool
          const type = inputTypes[field] ?? "text";
 
          return {
+            required: requiredFields?.includes(field),
             value: values[field]?.toString() ?? "",
             onChangeValue: (newValue) => {
                const readyValue = type === "number" ? (newValue ? Number(newValue) : undefined) : newValue;
@@ -292,9 +293,8 @@ export function useForm<FormFields extends Record<string, string | number | bool
       <FieldName extends keyof FormFields>(
          field: FieldName,
       ): ComponentPropWithRef<HTMLTextAreaElement, TextareaFieldProps> => {
-         const type = inputTypes[field] ?? "text";
-
          return {
+            required: requiredFields?.includes(field),
             value: values[field]?.toString() ?? "",
             onChangeValue: (newValue) => {
                setFieldValue(field, newValue as FormFields[FieldName]);
@@ -309,6 +309,7 @@ export function useForm<FormFields extends Record<string, string | number | bool
          field: FieldName,
       ): OmitProps<ComponentPropWithRef<HTMLDivElement, DropdownProps<FormFields[FieldName], unknown>>, "options"> => {
          return {
+            required: requiredFields?.includes(field),
             value: values[field],
             onChange: (value) => {
                setFieldValue(field, value);
@@ -323,6 +324,7 @@ export function useForm<FormFields extends Record<string, string | number | bool
          field: FieldName,
       ): ComponentPropWithRef<ToggleInputRef, ToggleInputProps<FormFields[FieldName]>> => {
          return {
+            required: requiredFields?.includes(field),
             checked: values[field] as boolean,
             onChange: (checked: boolean) => {
                setFieldValue(field, checked as FormFields[FieldName]);

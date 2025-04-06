@@ -285,7 +285,7 @@ export type TextareaFieldProps = OmitProps<InputFieldProps, "type"> &
    OmitProps<React.ComponentProps<"textarea">, "style" | "ref">;
 
 InputFieldComponent.multiline = forwardRef(function Multiline(
-   { label, errorText, infoText, onChange, onChangeValue, required, ...props }: TextareaFieldProps,
+   { label, placeholder, errorText, infoText, onChange, onChangeValue, required, ...props }: TextareaFieldProps,
    ref: React.ForwardedRef<HTMLTextAreaElement>,
 ) {
    const theme = useTheme();
@@ -310,6 +310,7 @@ InputFieldComponent.multiline = forwardRef(function Multiline(
          <TextareaElement
             theme={theme}
             required={required}
+            placeholder={placeholder ?? label}
             onChange={onChangeElement}
             {...styledComponentStyles}
             {...dataProps}
