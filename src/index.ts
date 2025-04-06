@@ -22,7 +22,15 @@ import BetterHtmlProvider, {
    useLoader,
    useLoaderControls,
 } from "./components/BetterHtmlProvider";
-import { usePageResize, useMediaQuery, useBooleanState, useDebounceState, useForm, useUrlQuery } from "./utils/hooks";
+import {
+   usePageResize,
+   usePageScroll,
+   useMediaQuery,
+   useBooleanState,
+   useDebounceState,
+   useForm,
+   useUrlQuery,
+} from "./utils/hooks";
 import { generateRandomString, getBrowser, formatPhoneNumber } from "./utils/functions";
 
 import {
@@ -80,6 +88,7 @@ export {
    useLoader,
    useLoaderControls,
    usePageResize,
+   usePageScroll,
    useMediaQuery,
    useBooleanState,
    useDebounceState,
