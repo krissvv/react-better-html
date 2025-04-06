@@ -146,6 +146,29 @@ export function usePageResize() {
    };
 }
 
+export function usePageScroll() {
+   const [scrollX, setScrollX] = useState<number>(window.scrollX ?? 0);
+   const [scrollY, setScrollY] = useState<number>(window.scrollY ?? 0);
+
+   useEffect(() => {
+      const onScroll = () => {
+         setScrollX(window.scrollX);
+         setScrollY(window.scrollY);
+      };
+
+      window.addEventListener("scroll", onScroll);
+
+      return () => {
+         window.removeEventListener("scroll", onScroll);
+      };
+   }, []);
+
+   return {
+      scrollX,
+      scrollY,
+   };
+}
+
 export function useMediaQuery() {
    const { width } = usePageResize();
 

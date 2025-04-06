@@ -255,6 +255,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
                disabled={disabled}
                readOnly={!withSearch}
                value={displayValue}
+               cursor={!withSearch ? "pointer" : undefined}
                placeholder={withSearch ? (selectedOption ? selectedOption.label : placeholder) : placeholder}
                leftIcon={leftIcon}
                className={`react-better-html-dropdown${isOpen ? " react-better-html-dropdown-open" : ""}${
