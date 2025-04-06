@@ -12,6 +12,7 @@ import Text from "./Text";
 import { useTheme } from "./BetterHtmlProvider";
 
 type FormRowProps = {
+   oneItemOnly?: boolean;
    gap?: React.CSSProperties["gap"];
    children?: React.ReactNode;
 } & ComponentMarginProps;
@@ -31,7 +32,7 @@ type FormRowComponentType = {
 };
 
 const FormRowComponent: FormRowComponentType = forwardRef(function FormRow(
-   { gap, children, ...props }: FormRowProps,
+   { oneItemOnly, gap, children, ...props }: FormRowProps,
    ref: React.ForwardedRef<HTMLDivElement>,
 ) {
    const theme = useTheme();
@@ -43,6 +44,8 @@ const FormRowComponent: FormRowComponentType = forwardRef(function FormRow(
    return (
       <Div.row alignItems="center" gap={gap ?? readyGap} invertFlexDirection={breakingPoint} {...props} ref={ref}>
          {children}
+
+         {oneItemOnly && <Div width="100%" />}
       </Div.row>
    );
 }) as any;
