@@ -37,6 +37,8 @@ function App() {
          phone: "",
          option: undefined as 1 | 2 | 3 | undefined,
          withSurprise: false as boolean,
+         fruit: "banana" as "banana" | "apple" | "orange",
+         canDelete: false as boolean,
       },
       requiredFields: ["name", "email"],
       onSubmit: (values) => {
@@ -252,6 +254,12 @@ function App() {
                   />
 
                   <ToggleInput.checkbox label="Label" text="With Surprise" {...form.getCheckboxProps("withSurprise")} />
+
+                  <ToggleInput.radiobutton text="Apple" {...form.getRadioButtonProps("fruit", "apple")} />
+                  <ToggleInput.radiobutton text="Banana" {...form.getRadioButtonProps("fruit", "banana")} />
+                  <ToggleInput.radiobutton text="Orange" {...form.getRadioButtonProps("fruit", "orange")} />
+
+                  <ToggleInput.switch text="Can Delete" {...form.getSwitchProps("canDelete")} />
                </Form>
 
                <Button text="Open modal" onClick={modalRef.current?.open} />

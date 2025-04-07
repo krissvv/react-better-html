@@ -349,7 +349,40 @@ export function useForm<FormFields extends Record<string, string | number | bool
          return {
             required: requiredFields?.includes(field),
             checked: values[field] as boolean,
-            onChange: (checked: boolean) => {
+            onChange: (checked) => {
+               setFieldValue(field, checked as FormFields[FieldName]);
+            },
+            errorText: errors[field],
+         };
+      },
+      [values, errors, setFieldValue],
+   );
+   const getRadioButtonProps = useCallback(
+      <FieldName extends keyof FormFields>(
+         field: FieldName,
+         value: FormFields[FieldName],
+      ): ComponentPropWithRef<ToggleInputRef, ToggleInputProps<FormFields[FieldName]>> => {
+         return {
+            required: requiredFields?.includes(field),
+            checked: values[field] === value,
+            name: field.toString(),
+            value,
+            onChange: (checked, newValue) => {
+               setFieldValue(field, checked ? newValue : undefined);
+            },
+            errorText: errors[field],
+         };
+      },
+      [values, errors, setFieldValue],
+   );
+   const getSwitchProps = useCallback(
+      <FieldName extends keyof FormFields>(
+         field: FieldName,
+      ): ComponentPropWithRef<ToggleInputRef, ToggleInputProps<FormFields[FieldName]>> => {
+         return {
+            required: requiredFields?.includes(field),
+            checked: values[field] as boolean,
+            onChange: (checked) => {
                setFieldValue(field, checked as FormFields[FieldName]);
             },
             errorText: errors[field],
@@ -396,6 +429,8 @@ export function useForm<FormFields extends Record<string, string | number | bool
       getTextAreaProps,
       getDropdownFieldProps,
       getCheckboxProps,
+      getRadioButtonProps,
+      getSwitchProps,
       focusField,
       onSubmit: onSubmitFunction,
       reset,

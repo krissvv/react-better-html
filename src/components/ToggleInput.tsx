@@ -17,14 +17,19 @@ import Text from "./Text";
 import Div from "./Div";
 import Icon from "./Icon";
 import { useTheme } from "./BetterHtmlProvider";
+import Label from "./Label";
+
+const componentSize = 26;
+const switchComponentBallGap = 3;
+const switchComponentMouseDownDifference = 4;
 
 const InputElement = styled.input.withConfig({
    shouldForwardProp: (prop) => !["theme", "normalStyle", "hoverStyle"].includes(prop),
 })<{ theme: Theme; normalStyle: ComponentStyle; hoverStyle: ComponentStyle }>`
    position: relative;
    appearance: none;
-   width: 26px;
-   height: 26px;
+   width: ${componentSize}px;
+   height: ${componentSize}px;
    background-color: ${(props) => props.theme.colors.backgroundContent};
    border: 1px solid ${(props) => props.theme.colors.border};
    border-radius: ${(props) => props.theme.styles.borderRadius / 2}px;
@@ -54,19 +59,23 @@ const InputElement = styled.input.withConfig({
 `;
 
 const SwitchElement = styled.div.withConfig({
-   shouldForwardProp: (prop) => !["theme", "checked", "disabled", "normalStyle", "hoverStyle"].includes(prop),
+   shouldForwardProp: (prop) =>
+      !["theme", "checked", "disabled", "isMouseDown", "normalStyle", "hoverStyle"].includes(prop),
 })<{
    theme: Theme;
    checked: boolean;
    disabled: boolean;
+   isMouseDown: boolean;
    normalStyle: ComponentStyle;
    hoverStyle: ComponentStyle;
 }>`
+   --width: ${(props) => componentSize * 2 - props.theme.styles.gap / 2}px;
+
    position: relative;
-   width: 36px;
-   height: 20px;
+   width: var(--width);
+   height: ${componentSize}px;
    background-color: ${(props) => (props.checked ? props.theme.colors.primary : props.theme.colors.border)};
-   border-radius: 10px;
+   border-radius: 999px;
    cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
    opacity: ${(props) => (props.disabled ? 0.5 : 1)};
    transition: ${(props) => props.theme.styles.transition};
@@ -74,14 +83,22 @@ const SwitchElement = styled.div.withConfig({
    &::before {
       content: "";
       position: absolute;
-      width: 16px;
-      height: 16px;
-      background-color: white;
-      border-radius: 50%;
-      top: 2px;
-      left: 2px;
+      width: ${(props) =>
+         componentSize - switchComponentBallGap * 2 + (props.isMouseDown ? switchComponentMouseDownDifference : 0)}px;
+      height: ${componentSize - switchComponentBallGap * 2}px;
+      background-color: ${(props) => props.theme.colors.base};
+      border-radius: 999px;
+      top: ${switchComponentBallGap}px;
+      left: ${switchComponentBallGap}px;
+      transform: translateX(
+         ${(props) =>
+            props.checked
+               ? `calc(var(--width) - ${
+                    componentSize + (props.isMouseDown ? switchComponentMouseDownDifference : 0)
+                 }px)`
+               : "0px"}
+      );
       transition: ${(props) => props.theme.styles.transition};
-      transform: translateX(${(props) => (props.checked ? "16px" : "0")});
    }
 
    ${(props) => props.normalStyle as any}
@@ -100,7 +117,7 @@ type InternalToggleInputProps<Value> = {
    infoText?: string;
    value?: Value;
    onChange?: (checked: boolean, value?: Value) => void;
-} & OmitProps<React.ComponentProps<"input">, "style" | "value" | "ref" | "onChange" | "name"> &
+} & OmitProps<React.ComponentProps<"input">, "style" | "value" | "ref" | "onChange"> &
    ComponentStyle &
    ComponentHoverStyle;
 
@@ -136,10 +153,10 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
 
    const onChangeElement = useCallback(
       (event: React.ChangeEvent<HTMLInputElement>) => {
-         const newValue = event.target.checked;
+         const newIsChecked = event.target.checked;
 
-         if (controlledChecked === undefined) setInternalChecked(newValue);
-         onChange?.(newValue, value);
+         if (controlledChecked === undefined) setInternalChecked(newIsChecked);
+         onChange?.(newIsChecked, value);
       },
       [onChange, controlledChecked, value],
    );
@@ -147,31 +164,15 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
    const checked = controlledChecked ?? internalChecked;
 
    const onClickText = useCallback(() => {
-      const newValue = !checked;
+      const newIsChecked = !checked;
 
-      if (controlledChecked === undefined) setInternalChecked(newValue);
-      onChange?.(newValue, value);
+      if (controlledChecked === undefined) setInternalChecked(newIsChecked);
+      onChange?.(newIsChecked, value);
    }, [checked, controlledChecked, onChange, value]);
 
    return (
       <Div.column width="100%" gap={theme.styles.gap / 2} {...styledComponentStylesWithExcluded}>
-         {label && (
-            <Text
-               as="label"
-               height={16}
-               fontSize={14}
-               color={errorText ? theme.colors.error : theme.colors.textSecondary}
-            >
-               {label}
-
-               {required && (
-                  <Text as="span" fontSize={16} color={theme.colors.error}>
-                     {" "}
-                     *
-                  </Text>
-               )}
-            </Text>
-         )}
+         {label && <Label text={label} required={required} isError={!!errorText} />}
 
          <Div.row alignItems="center" gap={theme.styles.gap}>
             <Div.row position="relative" alignItems="center">
@@ -255,6 +256,7 @@ export default {
          errorText,
          infoText,
          disabled,
+         value,
          onChange,
          checked: controlledChecked,
          required,
@@ -271,43 +273,38 @@ export default {
       const restProps = useComponentPropsWithoutStyle(props);
 
       const [internalChecked, setInternalChecked] = useBooleanState();
+      const [isMouseDown, setIsMouseDown] = useBooleanState();
 
       const checked = controlledChecked ?? internalChecked;
 
       const onClickElement = useCallback(() => {
          if (disabled) return;
 
-         const newValue = !checked;
+         const newIsChecked = !checked;
 
-         if (controlledChecked === undefined) setInternalChecked.setState(newValue);
-         onChange?.(newValue);
-      }, [disabled, checked, onChange, controlledChecked]);
+         if (controlledChecked === undefined) setInternalChecked.setState(newIsChecked);
+         onChange?.(newIsChecked, value);
+      }, [disabled, checked, onChange, controlledChecked, value]);
 
       return (
          <Div.column width="100%" gap={theme.styles.gap / 2} {...styledComponentStylesWithExcluded}>
-            {label && (
-               <Text
-                  as="label"
-                  height={16}
-                  fontSize={14}
-                  color={errorText ? theme.colors.error : theme.colors.textSecondary}
-               >
-                  {label}
+            {label && <Label text={label} required={required} isError={!!errorText} />}
 
-                  {required && (
-                     <Text as="span" fontSize={16} color={theme.colors.error}>
-                        {" "}
-                        *
-                     </Text>
-                  )}
-               </Text>
-            )}
-
-            <Div.row alignItems="center" gap={theme.styles.gap}>
+            <Div.row
+               alignItems="center"
+               gap={theme.styles.gap}
+               onMouseDown={setIsMouseDown.setTrue}
+               onMouseUp={setIsMouseDown.setFalse}
+               onMouseOut={setIsMouseDown.setFalse}
+               onTouchStart={setIsMouseDown.setTrue}
+               onTouchEnd={setIsMouseDown.setFalse}
+               onTouchCancel={setIsMouseDown.setFalse}
+            >
                <SwitchElement
                   theme={theme}
                   checked={checked}
                   disabled={disabled ?? false}
+                  isMouseDown={isMouseDown}
                   onClick={onClickElement}
                   {...styledComponentStyles}
                   {...dataProps}
