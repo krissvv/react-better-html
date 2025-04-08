@@ -55,6 +55,7 @@ import {
    type Theme,
    type ThemeConfig,
 } from "./types/theme";
+import { type BrowserName } from "./types/other";
 
 import { isMobileDevice } from "./constants";
 
@@ -123,6 +124,7 @@ export {
    Styles,
    Theme,
    ThemeConfig,
+   BrowserName,
    // Constants
    isMobileDevice,
 };

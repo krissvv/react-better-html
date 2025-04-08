@@ -671,6 +671,7 @@ export const countries: Country[] = [
       code: "IT",
       timeZone: "Europe/Rome",
       phoneNumberExtension: "39",
+      phoneNumberFormat: "XXX XXX XXXX",
    },
    {
       name: "Jamaica",
