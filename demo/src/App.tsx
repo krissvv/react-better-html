@@ -238,13 +238,7 @@ function App() {
                <ToggleInput.switch label="Label" text="Some text here" errorText="This is an error" />
                <ToggleInput.switch label="Label" text="Some text here" disabled />
 
-               <Form
-                  form={form}
-                  onSubmit={form.onSubmit}
-                  gap={theme.styles.gap}
-                  submitButtonText="Create"
-                  onClickCancel={() => {}}
-               >
+               <Form form={form} gap={theme.styles.gap} submitButtonText="Create" onClickCancel={() => {}}>
                   <InputField placeholder="Name" type="number" {...form.getInputFieldProps("name")} />
                   <InputField.email {...form.getInputFieldProps("email")} />
                   <InputField.phoneNumber {...form.getInputFieldProps("phone")} />
