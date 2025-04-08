@@ -4,8 +4,8 @@ description: A customizable button component with various styles and functionali
 sidebar_position: 5
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 # Button Component
 
@@ -19,7 +19,7 @@ All of the `React.CSSProperties` are valid prop with the benefit of passing just
    <TabItem value="text" label="Text Button" default>
 
       ```jsx
-      import { Button } from 'react-better-html';
+      import { Button } from "react-better-html";
 
       function App() {
          return (
@@ -39,7 +39,7 @@ All of the `React.CSSProperties` are valid prop with the benefit of passing just
    <TabItem value="icon" label="Icon Button" >
 
       ```jsx
-      import { Button } from 'react-better-html';
+      import { Button } from "react-better-html";
 
       function App() {
          return (
@@ -60,7 +60,7 @@ All of the `React.CSSProperties` are valid prop with the benefit of passing just
    <TabItem value="image" label="Image Button" >
 
       ```jsx
-      import { Button } from 'react-better-html';
+      import { Button } from "react-better-html";
 
       function App() {
          return (
@@ -82,7 +82,7 @@ All of the `React.CSSProperties` are valid prop with the benefit of passing just
 
       ```jsx
       import { useState, useEffect } from "react";
-      import { Button } from 'react-better-html';
+      import { Button } from "react-better-html";
 
       function App() {
          // highlight-next-line
@@ -112,7 +112,7 @@ All of the `React.CSSProperties` are valid prop with the benefit of passing just
    <TabItem value="withHover" label="With Hover" >
 
       ```jsx
-      import { Button } from 'react-better-html';
+      import { Button } from "react-better-html";
 
       function App() {
          return (

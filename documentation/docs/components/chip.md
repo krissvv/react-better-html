@@ -1,11 +1,11 @@
 ---
 title: Chip
 description: A component to render customizable chip elements with text.
-sidebar_position: 12
+sidebar_position: 11
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 # Chip Component
 
@@ -19,7 +19,7 @@ The component renders a chip with text and customizable styling.
    <TabItem value="basic" label="Basic" default>
 
       ```jsx
-      import { Chip } from 'react-better-html';
+      import { Chip } from "react-better-html";
 
       function App() {
          return (
@@ -33,7 +33,7 @@ The component renders a chip with text and customizable styling.
    <TabItem value="custom" label="Custom">
 
       ```jsx
-      import { Chip } from 'react-better-html';
+      import { Chip } from "react-better-html";
 
       function App() {
          return (

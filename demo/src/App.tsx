@@ -20,6 +20,7 @@ import {
    useForm,
    PageHeader,
    FormRow,
+   getFormErrorObject,
 } from "../../src";
 
 function App() {
@@ -41,6 +42,11 @@ function App() {
          canDelete: false as boolean,
       },
       requiredFields: ["name", "email"],
+      validate: (values) => {
+         const errors = getFormErrorObject(values);
+
+         return errors;
+      },
       onSubmit: (values) => {
          console.log(values);
       },

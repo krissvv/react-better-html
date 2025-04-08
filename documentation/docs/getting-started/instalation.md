@@ -4,8 +4,8 @@ description: How to install react-better-html, and start using it.
 sidebar_position: 1
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 Welcome to the installation guide for `react-better-html`. This guide will help you get started with installing and using the library in your React projects.
 

@@ -4,8 +4,8 @@ description: Renders SVG icons with customizable styles and sizes.
 sidebar_position: 3
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 # Icon Component
 
@@ -21,7 +21,7 @@ The component requires a `name` prop. You can also customize the `size` and `col
    <TabItem value="basic" label="Basic" default>
 
       ```jsx
-      import { Icon } from 'react-better-html';
+      import { Icon } from "react-better-html";
 
       function App() {
          return (
@@ -35,7 +35,7 @@ The component requires a `name` prop. You can also customize the `size` and `col
    <TabItem value="withHover" label="With Hover">
 
       ```jsx
-      import { Icon } from 'react-better-html';
+      import { Icon } from "react-better-html";
 
       function App() {
          return (

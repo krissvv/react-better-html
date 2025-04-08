@@ -21,10 +21,10 @@ Welcome to the documentation for the `react-better-html` library! This library p
 
 ## Key Features
 
--  ♻️ **Reusable Components**: A collection of well-designed React components that can be easily integrated into your projects.
--  🛠️ **Utility Functions**: Handy utility functions to manipulate and handle HTML content effectively.
--  📘 **TypeScript Support**: Fully typed with TypeScript to provide a better development experience and catch errors early.
--  🔌 **Easy Integration**: Designed to be easily integrated with existing React projects with minimal configuration.
+-  ♻️ **Reusable Components** - A collection of well-designed React components that can be easily integrated into your projects.
+-  🛠️ **Utility Functions** - Handy utility functions to manipulate and handle HTML content effectively.
+-  📘 **TypeScript Support** - Fully typed with TypeScript to provide a better development experience and catch errors early.
+-  🔌 **Easy Integration** - Designed to be easily integrated with existing React projects with minimal configuration.
 
 ## Getting Started
 

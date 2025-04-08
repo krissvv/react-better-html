@@ -58,7 +58,7 @@ function Form({
 
    return (
       <Div {...props}>
-         <form onSubmit={onSubmit}>
+         <form onSubmit={onSubmit ?? form?.onSubmit}>
             {gap !== undefined ? <Div.column gap={gap}>{children}</Div.column> : children}
 
             {submitButtonText && (
@@ -78,7 +78,7 @@ function Form({
 
                   <SubmitButtonTag
                      text={submitButtonText}
-                     isLoading={isSubmitting}
+                     isLoading={isSubmitting || form?.isSubmitting}
                      loaderName={submitButtonLoaderName}
                      disabled={submitButtonIsDisabledFinal}
                      id={submitButtonId}

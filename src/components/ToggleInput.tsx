@@ -16,8 +16,8 @@ import {
 import Text from "./Text";
 import Div from "./Div";
 import Icon from "./Icon";
-import { useTheme } from "./BetterHtmlProvider";
 import Label from "./Label";
+import { useTheme } from "./BetterHtmlProvider";
 
 const componentSize = 26;
 const switchComponentBallGap = 3;

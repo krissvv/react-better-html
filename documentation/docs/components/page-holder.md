@@ -1,11 +1,11 @@
 ---
 title: PageHolder
 description: A component to hold page content with optional maximum width and padding.
-sidebar_position: 11
+sidebar_position: 12
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 # PageHolder Component
 
@@ -19,7 +19,7 @@ The component wraps the main content of a page inside a `<main>` tag, ensuring t
    <TabItem value="basic" label="Basic PageHolder" default>
 
       ```jsx {5,11}
-      import { Text, PageHolder } from 'react-better-html';
+      import { Text, PageHolder } from "react-better-html";
 
       function App() {
          return (
@@ -39,7 +39,7 @@ The component wraps the main content of a page inside a `<main>` tag, ensuring t
    <TabItem value="noMaxWidth" label="No Max Width">
 
       ```jsx {5,11}
-      import { PageHolder } from 'react-better-html';
+      import { PageHolder } from "react-better-html";
 
       function App() {
          return (

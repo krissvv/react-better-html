@@ -37,11 +37,11 @@ export type DropdownProps<Value, Data> = {
    inputFieldClassName?: string;
    withSearch?: boolean;
    withDebounce?: boolean;
-   withoutClearButton?: boolean;
    /** @default 0.5s */
    debounceDelay?: number;
    debounceIsLoading?: boolean;
    debounceMinimumSymbolsRequired?: number;
+   withoutClearButton?: boolean;
    onChange?: (value: Value | undefined) => void;
    onChangeSearch?: (query: string) => void;
    renderOption?: (option: DropdownOption<Value, Data>, index: number, isSelected: boolean) => React.ReactNode;
@@ -66,10 +66,10 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
       inputFieldClassName,
       withSearch,
       withDebounce,
-      withoutClearButton,
       debounceDelay = 0.5,
       debounceIsLoading,
       debounceMinimumSymbolsRequired,
+      withoutClearButton,
       onChange,
       onChangeSearch,
       renderOption,

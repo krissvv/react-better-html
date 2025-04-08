@@ -1,5 +1,9 @@
 import { countries } from "../constants/countries";
 
+import { PartialRecord } from "../types/app";
+
+import { useForm } from "./hooks";
+
 export const generateRandomString = (stringLength: number): string => {
    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
@@ -51,4 +55,10 @@ export const formatPhoneNumber = (phoneNumber: string): string => {
    }
 
    return `+${country.phoneNumberExtension} ${phonNumberRest}`;
+};
+
+export const getFormErrorObject = <FormFields extends ReturnType<typeof useForm>["values"]>(
+   formValues: FormFields,
+): PartialRecord<keyof FormFields, string> => {
+   return {};
 };

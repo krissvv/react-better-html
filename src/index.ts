@@ -31,7 +31,7 @@ import {
    useForm,
    useUrlQuery,
 } from "./utils/hooks";
-import { generateRandomString, getBrowser, formatPhoneNumber } from "./utils/functions";
+import { generateRandomString, getBrowser, formatPhoneNumber, getFormErrorObject } from "./utils/functions";
 
 import {
    type OmitProps,
@@ -98,6 +98,7 @@ export {
    generateRandomString,
    getBrowser,
    formatPhoneNumber,
+   getFormErrorObject,
    // Types
    OmitProps,
    ExcludeOptions,

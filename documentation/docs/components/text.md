@@ -4,8 +4,8 @@ description: The base for all texts in the library
 sidebar_position: 2
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 # Text Component
 

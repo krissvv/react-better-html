@@ -4,8 +4,8 @@ description: A customizable input field component with various styles and functi
 sidebar_position: 6
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 # InputField Component
 
@@ -19,7 +19,7 @@ All of the `React.CSSProperties` are valid props with the benefit of passing jus
    <TabItem value="basic" label="Basic Input" default>
 
       ```jsx
-      import { InputField } from 'react-better-html';
+      import { InputField } from "react-better-html";
 
       function App() {
          return (
@@ -38,7 +38,7 @@ All of the `React.CSSProperties` are valid props with the benefit of passing jus
    <TabItem value="withHover" label="With Hover">
 
       ```jsx
-      import { InputField } from 'react-better-html';
+      import { InputField } from "react-better-html";
 
       function App() {
          return (
@@ -159,6 +159,29 @@ function App() {
 }
 ```
 
+### With Debounce
+
+The prop `withDebounce` is required to turn on that feature. When `true`, the `onChangeValue` event will be called with a delay (debounce). You can change the delay by passing the `debounceDelay` prop. The default value for it is `0.5s` and it works for the most part.
+
+```jsx
+import { InputField } from "react-better-html";
+
+function App() {
+   return (
+      <InputField
+         label="Address"
+         placeholder="Enter your address"
+         // highlight-start
+         withDebounce
+         onChangeValue={(value) => {
+            console.log("Searched address:", value); // Will fire ones after the user stops typing
+         }}
+         // highlight-end
+      />
+   );
+}
+```
+
 ## Subcomponents
 
 A number of components in the library have a _subcomponent_ feature witch is like a preset of the same component that is frequently used.
@@ -233,6 +256,25 @@ function App() {
       <InputField.search
          onChangeValue={(value) => {
             console.log("Search value:", value);
+         }}
+      >
+   );
+}
+```
+
+### InputField.phoneNumber
+
+This component renders an input field with dropdown to pick the country code. Local country code is preselected by default.
+
+```jsx
+import { InputField } from "react-better-html";
+
+function App() {
+   return (
+      // highlight-next-line
+      <InputField.phoneNumber
+         onChangeValue={(value) => {
+            console.log("Ready phone number:", value);
          }}
       >
    );

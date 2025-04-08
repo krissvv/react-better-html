@@ -4,8 +4,8 @@ description: A customizable modal component with header, title, and content.
 sidebar_position: 10
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 # Modal Component
 
@@ -19,8 +19,8 @@ The modal can be controlled imperatively using a `ref`.
    <TabItem value="basic" label="Basic" default>
 
       ```jsx
-      import { useRef } from 'react';
-      import { Div, Text, Button, Modal, ModalRef } from 'react-better-html';
+      import { useRef } from "react";
+      import { Div, Text, Button, Modal, ModalRef } from "react-better-html";
 
       function App() {
          // highlight-next-line
@@ -51,8 +51,8 @@ The modal can be controlled imperatively using a `ref`.
    <TabItem value="custom" label="Customizable" default>
 
       ```jsx
-      import { useRef } from 'react';
-      import { Div, Text, Button, Modal, ModalRef } from 'react-better-html';
+      import { useRef } from "react";
+      import { Div, Text, Button, Modal, ModalRef } from "react-better-html";
 
       function App() {
          // highlight-next-line

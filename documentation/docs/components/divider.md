@@ -4,8 +4,8 @@ description: A component to render vertical and horizontal dividers.
 sidebar_position: 8
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 # Divider Component
 
@@ -19,7 +19,7 @@ The component offers two types of dividers: `vertical` and `horizontal`. You can
    <TabItem value="vertical" label="Vertical" default>
 
       ```jsx
-      import { Div, Text, Divider } from 'react-better-html';
+      import { Div, Text, Divider } from "react-better-html";
 
       function App() {
          return (
@@ -42,7 +42,7 @@ The component offers two types of dividers: `vertical` and `horizontal`. You can
    <TabItem value="horizontal" label="Horizontal">
 
       ```jsx
-      import { Div, Text, Divider } from 'react-better-html';
+      import { Div, Text, Divider } from "react-better-html";
 
       function App() {
          return (

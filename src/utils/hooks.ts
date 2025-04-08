@@ -232,17 +232,14 @@ export function useDebounceState<Value>(
    return [value, debouncedValue, setValue, isLoading];
 }
 
-export function useForm<FormFields extends Record<string, string | number | boolean | undefined>>({
-   defaultValues,
-   requiredFields,
-   onSubmit,
-   validate,
-}: {
+export function useForm<FormFields extends Record<string, string | number | boolean | undefined>>(options: {
    defaultValues: FormFields;
    requiredFields?: (keyof FormFields)[];
    onSubmit?: (values: FormFields) => void | Promise<void>;
    validate?: (values: FormFields) => PartialRecord<keyof FormFields, string>;
 }) {
+   const { defaultValues, requiredFields, onSubmit, validate } = options;
+
    const inputFieldRefs = useRef<Record<keyof FormFields, HTMLInputElement | undefined>>(
       {} as Record<keyof FormFields, HTMLInputElement | undefined>,
    );

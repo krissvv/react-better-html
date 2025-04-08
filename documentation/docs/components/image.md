@@ -4,8 +4,8 @@ description: All the assets and images in the library
 sidebar_position: 4
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 # Image Component
 
@@ -21,7 +21,7 @@ The component can render images from your asset configuration using the `name` p
    <TabItem value="asset" label="Asset Name" default>
 
       ```jsx
-      import { Image } from 'react-better-html';
+      import { Image } from "react-better-html";
 
       function App() {
          return (
@@ -35,7 +35,7 @@ The component can render images from your asset configuration using the `name` p
    <TabItem value="src" label="Direct URL" default>
 
       ```jsx
-      import { Image } from 'react-better-html';
+      import { Image } from "react-better-html";
 
       function App() {
          return (
@@ -49,7 +49,7 @@ The component can render images from your asset configuration using the `name` p
    <TabItem value="withHover" label="With Hover" default>
 
       ```jsx
-      import { Image } from 'react-better-html';
+      import { Image } from "react-better-html";
 
       function App() {
          return (
