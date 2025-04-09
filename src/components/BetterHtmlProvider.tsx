@@ -33,6 +33,7 @@ const GlobalStyle = createGlobalStyle<{ fontFamily: string; color: string; backg
 `;
 
 type BetterHtmlInternalConfig = BetterHtmlConfig & {
+   colorTheme: ColorTheme;
    setLoaders: React.Dispatch<React.SetStateAction<Partial<LoaderConfig>>>;
    plugins: BetterHtmlPlugin[];
 };
@@ -55,38 +56,14 @@ export const useBetterHtmlContext = (): BetterHtmlConfig => {
 export const useTheme = () => {
    const context = useContext(betterHtmlContext);
 
-   const [currentTheme, setCurrentTheme] = useState<ColorTheme>("light");
-
    if (context === undefined)
       throw new Error(
          "`useTheme()` must be used within a `<BetterHtmlProvider>`. Make sure to add one at the root of your component tree.",
       );
 
-   useEffect(() => {
-      const html = document.querySelector("html");
-
-      if (!html) return;
-
-      const observer = new MutationObserver((mutations) => {
-         mutations.forEach((mutation) => {
-            if (mutation.type === "attributes") {
-               setCurrentTheme(html.getAttribute("data-theme") as ColorTheme);
-            }
-         });
-      });
-
-      observer.observe(html, {
-         attributes: true,
-      });
-
-      return () => {
-         observer.disconnect();
-      };
-   }, []);
-
    return {
       ...context.theme,
-      colors: context.theme.colors[currentTheme] ?? context.theme.colors.light,
+      colors: context.theme.colors[context.colorTheme] ?? context.theme.colors.light,
    };
 };
 
@@ -169,6 +146,9 @@ type BetterHtmlProviderProps = {
 function BetterHtmlProvider({ value, plugins: pluginsToUse, children }: BetterHtmlProviderProps) {
    const [loaders, setLoaders] = useState<Partial<LoaderConfig>>(value?.loaders ?? {});
    const [plugins] = useState<BetterHtmlPlugin[]>(pluginsToUse ?? []);
+   const [colorTheme, setColorTheme] = useState<ColorTheme>(
+      localStorage.getItem("theme") === "dark" ? "dark" : "light",
+   );
 
    const readyValue = useMemo<BetterHtmlInternalConfig>(
       () => ({
@@ -192,6 +172,7 @@ function BetterHtmlProvider({ value, plugins: pluginsToUse, children }: BetterHt
                },
             },
          },
+         colorTheme,
          icons: {
             ...icons,
             ...value?.icons,
@@ -207,7 +188,7 @@ function BetterHtmlProvider({ value, plugins: pluginsToUse, children }: BetterHt
          },
          plugins,
       }),
-      [value, loaders, plugins],
+      [value, colorTheme, loaders, plugins],
    );
 
    useEffect(() => {
@@ -215,6 +196,27 @@ function BetterHtmlProvider({ value, plugins: pluginsToUse, children }: BetterHt
          plugin.initialize?.();
       });
    }, [plugins]);
+   useEffect(() => {
+      const html = document.querySelector("html");
+
+      if (!html) return;
+
+      const observer = new MutationObserver((mutations) => {
+         mutations.forEach((mutation) => {
+            if (mutation.type === "attributes") {
+               setColorTheme(html.getAttribute("data-theme") === "dark" ? "dark" : "light");
+            }
+         });
+      });
+
+      observer.observe(html, {
+         attributes: true,
+      });
+
+      return () => {
+         observer.disconnect();
+      };
+   }, []);
 
    return (
       <betterHtmlContext.Provider value={readyValue}>

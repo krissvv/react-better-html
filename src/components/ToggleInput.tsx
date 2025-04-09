@@ -70,6 +70,7 @@ const SwitchElement = styled.div.withConfig({
    hoverStyle: ComponentStyle;
 }>`
    --width: ${(props) => componentSize * 2 - props.theme.styles.gap / 2}px;
+   --ball-size: ${componentSize - switchComponentBallGap * 2}px;
 
    position: relative;
    width: var(--width);
@@ -99,6 +100,31 @@ const SwitchElement = styled.div.withConfig({
                : "0px"}
       );
       transition: ${(props) => props.theme.styles.transition};
+   }
+
+   &.react-better-html-color-theme-switch-with-moon {
+      &::after {
+         content: "";
+         position: absolute;
+         width: ${(props) =>
+            componentSize -
+            switchComponentBallGap * 2 +
+            (props.isMouseDown ? switchComponentMouseDownDifference : 0)}px;
+         height: ${componentSize - switchComponentBallGap * 2}px;
+         background-color: ${(props) => (props.checked ? props.theme.colors.primary : "transparent")};
+         border-radius: 999px;
+         top: ${switchComponentBallGap}px;
+         left: ${switchComponentBallGap}px;
+         transform: translateX(
+            ${(props) =>
+               props.checked
+                  ? `calc(var(--width) - ${
+                       componentSize + (props.isMouseDown ? switchComponentMouseDownDifference * 2 : 0)
+                    }px - calc(var(--ball-size) / 3))`
+                  : "0px"}
+         );
+         transition: ${(props) => props.theme.styles.transition};
+      }
    }
 
    ${(props) => props.normalStyle as any}

@@ -15,6 +15,7 @@ import ToggleInput from "./components/ToggleInput";
 import Form from "./components/Form";
 import Label from "./components/Label";
 import FormRow from "./components/FormRow";
+import ColorThemeSwitch from "./components/ColorThemeSwitch";
 
 import BetterHtmlProvider, {
    useBetterHtmlContext,
@@ -83,6 +84,7 @@ export {
    Form,
    Label,
    FormRow,
+   ColorThemeSwitch,
    // Hooks
    useBetterHtmlContext,
    useTheme,

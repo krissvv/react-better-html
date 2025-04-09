@@ -21,6 +21,7 @@ import {
    PageHeader,
    FormRow,
    getFormErrorObject,
+   ColorThemeSwitch,
 } from "../../src";
 
 function App() {
@@ -55,25 +56,29 @@ function App() {
    return (
       <>
          <PageHolder>
-            <PageHeader
-               title="Hello there"
-               description="Lorem, ipsum dolor sit amet consectetur adipisicing elit. Commodi ipsa nobis aspernatur."
-            />
-
-            <PageHeader
-               title="Hello there"
-               description="Lorem, ipsum dolor sit amet consectetur adipisicing elit. Commodi ipsa nobis aspernatur."
-               rightElement={<Button text="Hello there" />}
-            />
-
-            <PageHeader
-               imageUrl="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg"
-               title="Hello there"
-               description="Lorem, ipsum dolor sit amet consectetur adipisicing elit. Commodi ipsa nobis aspernatur."
-               rightElement={<Button text="Hello there" />}
-            />
-
             <Div.column gap={theme.styles.space}>
+               <ColorThemeSwitch />
+               <ColorThemeSwitch.withText />
+               <ColorThemeSwitch.withText withMoon />
+
+               <PageHeader
+                  title="Hello there"
+                  description="Lorem, ipsum dolor sit amet consectetur adipisicing elit. Commodi ipsa nobis aspernatur."
+               />
+
+               <PageHeader
+                  title="Hello there"
+                  description="Lorem, ipsum dolor sit amet consectetur adipisicing elit. Commodi ipsa nobis aspernatur."
+                  rightElement={<Button text="Hello there" />}
+               />
+
+               <PageHeader
+                  imageUrl="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg"
+                  title="Hello there"
+                  description="Lorem, ipsum dolor sit amet consectetur adipisicing elit. Commodi ipsa nobis aspernatur."
+                  rightElement={<Button text="Hello there" />}
+               />
+
                <Text as="h1">Hello</Text>
 
                <Div.box>App</Div.box>
