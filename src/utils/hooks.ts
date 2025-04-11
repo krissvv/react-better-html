@@ -232,7 +232,7 @@ export function useDebounceState<Value>(
    return [value, debouncedValue, setValue, isLoading];
 }
 
-export function useForm<FormFields extends Record<string, string | number | boolean | undefined>>(options: {
+export function useForm<FormFields extends Record<string | number, string | number | boolean | undefined>>(options: {
    defaultValues: FormFields;
    requiredFields?: (keyof FormFields)[];
    onSubmit?: (values: FormFields) => void | Promise<void>;
