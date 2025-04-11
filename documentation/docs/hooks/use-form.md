@@ -68,6 +68,7 @@ All of the field names and value type are TypeScript safe and will suggest an au
 -  **`onSubmit`** - an event handler function that should be attached to the `<form>` element's `onSubmit` event. It prevents the default form submission, triggers validation, and calls the `onSubmit` callback if validation passes.
 -  **`reset`** - a function to reset the form values to their `defaultValues` and clear any errors.
 -  **`requiredFields`** - the array of required fields passed to the hook.
+-  **`isDirty`** - a boolean indicating if the user changed something from teh initialValues.
 
 ## Usage Notes
 
