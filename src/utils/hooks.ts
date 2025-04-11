@@ -416,6 +416,11 @@ export function useForm<FormFields extends Record<string, string | number | bool
       setErrors({});
    }, [defaultValues]);
 
+   const isDirty = useMemo(
+      () => Object.keys(defaultValues).some((key) => defaultValues[key] !== values[key]),
+      [defaultValues, values],
+   );
+
    return {
       values,
       errors,
@@ -432,6 +437,7 @@ export function useForm<FormFields extends Record<string, string | number | bool
       onSubmit: onSubmitFunction,
       reset,
       requiredFields,
+      isDirty,
    };
 }
 
