@@ -7,7 +7,7 @@ import { assets } from "../constants/assets";
 import { appConfig } from "../constants/app";
 
 import { BetterHtmlConfig } from "../types/config";
-import { AnyOtherString, DeepPartialRecord } from "../types/app";
+import { AnyOtherString, DeepPartialRecord, OmitProps } from "../types/app";
 import { ColorTheme } from "../types/theme";
 import { LoaderConfig, LoaderName } from "../types/loader";
 import { BetterHtmlPlugin, PluginName } from "../types/plugin";
@@ -33,7 +33,6 @@ const GlobalStyle = createGlobalStyle<{ fontFamily: string; color: string; backg
 `;
 
 type BetterHtmlInternalConfig = BetterHtmlConfig & {
-   colorTheme: ColorTheme;
    setLoaders: React.Dispatch<React.SetStateAction<Partial<LoaderConfig>>>;
    plugins: BetterHtmlPlugin[];
 };
@@ -48,7 +47,7 @@ export const useBetterHtmlContext = (): BetterHtmlConfig => {
          "`useBetterHtmlContext()` must be used within a `<BetterHtmlProvider>`. Make sure to add one at the root of your component tree.",
       );
 
-   const { setLoaders, ...rest } = context;
+   const { setLoaders, plugins, ...rest } = context;
 
    return rest;
 };
@@ -137,8 +136,10 @@ function BetterHtmlProviderContent({ children }: BetterHtmlProviderContentProps)
    );
 }
 
+export type BetterHtmlProviderValue = DeepPartialRecord<OmitProps<BetterHtmlConfig, "colorTheme">>;
+
 type BetterHtmlProviderProps = {
-   value?: DeepPartialRecord<BetterHtmlConfig>;
+   value?: BetterHtmlProviderValue;
    plugins?: BetterHtmlPlugin[];
    children?: React.ReactNode;
 };

@@ -1,7 +1,7 @@
 import { memo, useCallback, forwardRef, useImperativeHandle, useRef, useState } from "react";
 import styled from "styled-components";
 
-import { Theme } from "../types/theme";
+import { ColorTheme, Theme } from "../types/theme";
 import { ComponentPropWithRef } from "../types/components";
 import { AnyOtherString, OmitProps } from "../types/app";
 import { LoaderName } from "../types/loader";
@@ -65,12 +65,13 @@ type ModalComponent = {
 };
 
 const DialogStylesElement = styled.dialog.withConfig({
-   shouldForwardProp: (prop) => !["theme", "opacity"].includes(prop),
-})<{ theme: Theme; opacity?: number }>`
+   shouldForwardProp: (prop) => !["theme", "colorTheme", "opacity"].includes(prop),
+})<{ theme: Theme; colorTheme: ColorTheme; opacity?: number }>`
    width: 100%;
    max-width: none;
    height: 100%;
    max-height: none;
+   color: ${(props) => props.theme.colors.textPrimary};
    border: none;
    outline: none;
    background-color: transparent;
@@ -80,7 +81,7 @@ const DialogStylesElement = styled.dialog.withConfig({
    transition: ${(props) => props.theme.styles.transition};
 
    &::backdrop {
-      background-color: #000000a0;
+      background-color: ${(props) => (props.colorTheme === "light" ? "#000000a0" : "#000000e0")};
       opacity: ${(props) => props.opacity};
       transition: ${(props) => props.theme.styles.transition};
    }
@@ -124,7 +125,7 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
    const urlQuery = reactRouterDomPlugin ? useUrlQuery() : undefined;
 
    const theme = useTheme();
-   const { app } = useBetterHtmlContext();
+   const { app, colorTheme } = useBetterHtmlContext();
 
    const dialogRef = useRef<HTMLDialogElement>(null);
 
@@ -172,7 +173,13 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
    );
 
    return (
-      <DialogStylesElement theme={theme} opacity={!isOpened ? 0 : 1} onClose={onClickClose} ref={dialogRef}>
+      <DialogStylesElement
+         theme={theme}
+         colorTheme={colorTheme}
+         opacity={!isOpened ? 0 : 1}
+         onClose={onClickClose}
+         ref={dialogRef}
+      >
          {isOpenedLate ? (
             <Div.column
                position="relative"
