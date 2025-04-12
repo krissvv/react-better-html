@@ -23,7 +23,7 @@ export type DropdownOption<Value, Data = unknown> = {
    data?: Data;
 };
 
-export type DropdownProps<Value, Data> = {
+export type DropdownProps<Value, Data = unknown> = {
    label?: string;
    errorText?: string;
    infoText?: string;

@@ -1,5 +1,5 @@
 import Div, { type DivProps } from "./components/Div";
-import Text, { type TextProps, TextAs } from "./components/Text";
+import Text, { type TextProps, type TextAs } from "./components/Text";
 import Loader, { type LoaderProps } from "./components/Loader";
 import Icon, { type IconProps } from "./components/Icon";
 import Image, { type ImageProps } from "./components/Image";

@@ -122,6 +122,8 @@ function App() {
                <InputField.phoneNumber label="Phone number" />
 
                <InputField.multiline placeholder="Placeholder" />
+               <InputField.multiline leftIcon="uploadCloud" placeholder="Placeholder" />
+               <InputField.multiline rightIcon="uploadCloud" placeholder="Placeholder" />
 
                <FormRow>
                   <InputField placeholder="Hello" />
@@ -207,6 +209,7 @@ function App() {
                   ]}
                   label="Label"
                   placeholder="Placeholder"
+                  leftIcon="uploadCloud"
                   required
                   errorText="This is an error"
                   marginBottom={20}

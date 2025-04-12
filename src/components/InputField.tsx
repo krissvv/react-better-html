@@ -101,8 +101,14 @@ const InputElement = styled.input.withConfig({
 `;
 
 const TextareaElement = styled.textarea.withConfig({
-   shouldForwardProp: (prop) => !["normalStyle", "hoverStyle"].includes(prop),
-})<{ normalStyle: ComponentStyle; hoverStyle: ComponentStyle }>`
+   shouldForwardProp: (prop) => !["theme", "withLeftIcon", "withRightIcon", "normalStyle", "hoverStyle"].includes(prop),
+})<{
+   theme: Theme;
+   withLeftIcon?: boolean;
+   withRightIcon?: boolean;
+   normalStyle: ComponentStyle;
+   hoverStyle: ComponentStyle;
+}>`
    width: 100%;
    min-height: 3lh;
    max-height: 8lh;
@@ -118,6 +124,10 @@ const TextareaElement = styled.textarea.withConfig({
       `${(props.theme.styles.gap + props.theme.styles.space) / 2}px ${
          props.theme.styles.space + props.theme.styles.gap
       }px`};
+   padding-left: ${(props) =>
+      props.withLeftIcon ? `${props.theme.styles.space + 16 + props.theme.styles.space - 1}px` : undefined};
+   padding-right: ${(props) =>
+      props.withRightIcon ? `${props.theme.styles.space + 16 + props.theme.styles.space - 1}px` : undefined};
    resize: vertical;
    transition: border-color ${(props) => props.theme.styles.transition};
 
@@ -228,7 +238,7 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
                   left={theme.styles.space + 1}
                   transform="translateY(-50%)"
                   pointerEvents="none"
-                  zIndex={1002}
+                  zIndex={props.className?.includes("react-better-html-dropdown-open-late") ? 1002 : 1}
                />
             )}
 
@@ -289,7 +299,19 @@ export type TextareaFieldProps = OmitProps<InputFieldProps, "type"> &
    OmitProps<React.ComponentProps<"textarea">, "style" | "ref">;
 
 InputFieldComponent.multiline = forwardRef(function Multiline(
-   { label, placeholder, errorText, infoText, onChange, onChangeValue, required, ...props }: TextareaFieldProps,
+   {
+      label,
+      placeholder,
+      errorText,
+      infoText,
+      leftIcon,
+      rightIcon,
+      onChange,
+      onChangeValue,
+      onClickRightIcon,
+      required,
+      ...props
+   }: TextareaFieldProps,
    ref: React.ForwardedRef<HTMLTextAreaElement>,
 ) {
    const theme = useTheme();
@@ -311,17 +333,54 @@ InputFieldComponent.multiline = forwardRef(function Multiline(
       <Div.column gap={theme.styles.gap / 2}>
          {label && <Label text={label} required={required} isError={!!errorText} />}
 
-         <TextareaElement
-            theme={theme}
-            required={required}
-            placeholder={placeholder ?? label}
-            onChange={onChangeElement}
-            {...styledComponentStyles}
-            {...dataProps}
-            {...ariaProps}
-            {...restProps}
-            ref={ref}
-         />
+         <Div position="relative" width="100%">
+            {leftIcon && (
+               <Icon
+                  name={leftIcon}
+                  position="absolute"
+                  top={46 / 2}
+                  left={theme.styles.space + 1}
+                  transform="translateY(-50%)"
+                  pointerEvents="none"
+               />
+            )}
+
+            <TextareaElement
+               theme={theme}
+               withLeftIcon={leftIcon !== undefined}
+               withRightIcon={rightIcon !== undefined}
+               required={required}
+               placeholder={placeholder ?? label}
+               onChange={onChangeElement}
+               {...styledComponentStyles}
+               {...dataProps}
+               {...ariaProps}
+               {...restProps}
+               ref={ref}
+            />
+
+            {rightIcon ? (
+               onClickRightIcon ? (
+                  <Button.icon
+                     icon={rightIcon}
+                     position="absolute"
+                     top={46 / 2}
+                     right={theme.styles.space + 1 - theme.styles.space / 2}
+                     transform="translateY(-50%)"
+                     onClick={onClickRightIcon}
+                  />
+               ) : (
+                  <Icon
+                     name={rightIcon}
+                     position="absolute"
+                     top={46 / 2}
+                     right={theme.styles.space + 1}
+                     transform="translateY(-50%)"
+                     pointerEvents="none"
+                  />
+               )
+            ) : undefined}
+         </Div>
 
          {(errorText || infoText) && (
             <Text
