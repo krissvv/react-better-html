@@ -9,7 +9,7 @@ import { useComponentPropsWithoutStyle, useComponentPropsWithPrefix, useStyledCo
 
 import { useBetterHtmlContext, useTheme } from "./BetterHtmlProvider";
 
-type IconProps = {
+export type IconProps = {
    name: IconName | AnyOtherString;
    /** @default 16 */
    size?: number;

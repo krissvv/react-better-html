@@ -7,7 +7,7 @@ import { AssetName } from "../types/asset";
 import { useBetterHtmlContext, useTheme } from "./BetterHtmlProvider";
 import { useComponentPropsWithoutStyle, useComponentPropsWithPrefix, useStyledComponentStyles } from "../utils/hooks";
 
-type ImageProps = {
+export type ImageProps = {
    name?: AssetName | AnyOtherString;
 } & OmitProps<React.ComponentProps<"img">, "style"> &
    ComponentStyle &

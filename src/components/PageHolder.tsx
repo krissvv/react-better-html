@@ -3,7 +3,7 @@ import { memo } from "react";
 import Div from "./Div";
 import { useBetterHtmlContext, useTheme } from "./BetterHtmlProvider";
 
-type PageHolderProps = {
+export type PageHolderProps = {
    /** @default false */
    noMaxContentWidth?: boolean;
    children?: React.ReactNode;

@@ -9,7 +9,7 @@ import Text, { TextAs } from "./Text";
 import Image from "./Image";
 import { useTheme } from "./BetterHtmlProvider";
 
-type PageHeaderProps = {
+export type PageHeaderProps = {
    imageUrl?: string;
    imageSize?: number;
    title?: string;

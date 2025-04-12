@@ -8,7 +8,7 @@ import Div, { DivProps } from "./Div";
 import Text from "./Text";
 import { useTheme } from "./BetterHtmlProvider";
 
-type LoaderProps = {
+export type LoaderProps = {
    /** @default textPrimary */
    color?: Color;
    /** @default 16 */

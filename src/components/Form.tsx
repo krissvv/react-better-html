@@ -10,7 +10,7 @@ import Div from "./Div";
 import Button from "./Button";
 import { useTheme } from "./BetterHtmlProvider";
 
-type FormProps = {
+export type FormProps = {
    form?: OmitProps<ReturnType<typeof useForm>, "focusField">;
    submitButtonText?: string;
    submitButtonLoaderName?: LoaderName | AnyOtherString;

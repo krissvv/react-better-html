@@ -9,7 +9,7 @@ import Text from "./Text";
 import ToggleInput from "./ToggleInput";
 import { useTheme } from "./BetterHtmlProvider";
 
-type ColorThemeSwitchProps = {
+export type ColorThemeSwitchProps = {
    withMoon?: boolean;
    className?: string;
 } & ComponentMarginProps;

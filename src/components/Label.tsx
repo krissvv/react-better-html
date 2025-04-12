@@ -3,7 +3,7 @@ import { memo } from "react";
 import Text from "./Text";
 import { useTheme } from "./BetterHtmlProvider";
 
-type LabelProps = {
+export type LabelProps = {
    text?: string;
    required?: boolean;
    isError?: boolean;

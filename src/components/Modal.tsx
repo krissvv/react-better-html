@@ -14,7 +14,7 @@ import Text from "./Text";
 import Divider from "./Divider";
 import { useBetterHtmlContext, usePlugin, useTheme } from "./BetterHtmlProvider";
 
-type ModalProps = {
+export type ModalProps = {
    /**
     * If you want to have a small modal, you can use 660px as it looks good on most screens.
     *
@@ -81,7 +81,7 @@ const DialogStylesElement = styled.dialog.withConfig({
    transition: ${(props) => props.theme.styles.transition};
 
    &::backdrop {
-      background-color: ${(props) => (props.colorTheme === "light" ? "#000000a0" : "#000000e0")};
+      background-color: ${(props) => (props.colorTheme === "light" ? "#000000a0" : "#222222e0")};
       opacity: ${(props) => props.opacity};
       transition: ${(props) => props.theme.styles.transition};
    }

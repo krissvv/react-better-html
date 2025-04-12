@@ -11,7 +11,7 @@ import Icon from "./Icon";
 import Text from "./Text";
 import { useTheme } from "./BetterHtmlProvider";
 
-type FormRowProps = {
+export type FormRowProps = {
    oneItemOnly?: boolean;
    gap?: React.CSSProperties["gap"];
    children?: React.ReactNode;

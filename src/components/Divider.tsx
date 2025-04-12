@@ -13,12 +13,12 @@ type DividerProps = {
    backgroundColor?: string;
 } & ComponentMarginProps;
 
-type VerticalDividerProps = DividerProps & {
+export type VerticalDividerProps = DividerProps & {
    /** @default "100%" */
    height?: number;
 };
 
-type HorizontalDividerProps = DividerProps & {
+export type HorizontalDividerProps = DividerProps & {
    text?: string;
    /** @default textSecondary */
    textColor?: string;

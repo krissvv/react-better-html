@@ -1,21 +1,21 @@
-import Div from "./components/Div";
-import Text from "./components/Text";
-import Loader from "./components/Loader";
-import Icon from "./components/Icon";
-import Image from "./components/Image";
-import Button from "./components/Button";
-import Divider from "./components/Divider";
-import Modal, { type ModalRef } from "./components/Modal";
-import PageHolder from "./components/PageHolder";
-import PageHeader from "./components/PageHeader";
-import Chip from "./components/Chip";
-import InputField from "./components/InputField";
-import Dropdown, { type DropdownOption } from "./components/Dropdown";
-import ToggleInput from "./components/ToggleInput";
-import Form from "./components/Form";
-import Label from "./components/Label";
-import FormRow from "./components/FormRow";
-import ColorThemeSwitch from "./components/ColorThemeSwitch";
+import Div, { type DivProps } from "./components/Div";
+import Text, { type TextProps, TextAs } from "./components/Text";
+import Loader, { type LoaderProps } from "./components/Loader";
+import Icon, { type IconProps } from "./components/Icon";
+import Image, { type ImageProps } from "./components/Image";
+import Button, { type ButtonProps } from "./components/Button";
+import Divider, { type HorizontalDividerProps, type VerticalDividerProps } from "./components/Divider";
+import Modal, { type ModalRef, type ModalProps } from "./components/Modal";
+import PageHolder, { type PageHolderProps } from "./components/PageHolder";
+import PageHeader, { type PageHeaderProps } from "./components/PageHeader";
+import Chip, { type ChipProps } from "./components/Chip";
+import InputField, { type InputFieldProps, type TextareaFieldProps } from "./components/InputField";
+import Dropdown, { type DropdownOption, type DropdownProps } from "./components/Dropdown";
+import ToggleInput, { type ToggleInputRef, type ToggleInputProps } from "./components/ToggleInput";
+import Form, { type FormProps } from "./components/Form";
+import Label, { type LabelProps } from "./components/Label";
+import FormRow, { type FormRowProps } from "./components/FormRow";
+import ColorThemeSwitch, { type ColorThemeSwitchProps } from "./components/ColorThemeSwitch";
 
 import BetterHtmlProvider, {
    useBetterHtmlContext,
@@ -68,25 +68,47 @@ export {
    BetterHtmlProviderValue,
    // Components
    Div,
+   DivProps,
    Text,
+   TextProps,
+   TextAs,
    Loader,
+   LoaderProps,
    Icon,
+   IconProps,
    Image,
+   ImageProps,
    Button,
+   ButtonProps,
    Divider,
+   HorizontalDividerProps,
+   VerticalDividerProps,
    Modal,
+   ModalProps,
    ModalRef,
    PageHolder,
+   PageHolderProps,
    PageHeader,
+   PageHeaderProps,
    Chip,
+   ChipProps,
    InputField,
+   InputFieldProps,
+   TextareaFieldProps,
    Dropdown,
    DropdownOption,
+   DropdownProps,
    ToggleInput,
+   ToggleInputRef,
+   ToggleInputProps,
    Form,
+   FormProps,
    Label,
+   LabelProps,
    FormRow,
+   FormRowProps,
    ColorThemeSwitch,
+   ColorThemeSwitchProps,
    // Hooks
    useBetterHtmlContext,
    useTheme,

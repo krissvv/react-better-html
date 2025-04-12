@@ -7,7 +7,7 @@ import Div from "./Div";
 import Text from "./Text";
 import { useTheme } from "./BetterHtmlProvider";
 
-type ChipProps = {
+export type ChipProps = {
    text: string;
    /** @default theme.colors.textPrimary */
    color?: string;
