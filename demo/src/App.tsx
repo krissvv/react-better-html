@@ -34,7 +34,8 @@ function App() {
 
    const form = useForm({
       defaultValues: {
-         name: undefined as number | undefined,
+         name: "",
+         number: undefined as number | undefined,
          email: "",
          phone: "",
          option: undefined as 1 | 2 | 3 | undefined,
@@ -247,9 +248,11 @@ function App() {
                <ToggleInput.switch label="Label" text="Some text here" disabled />
 
                <Form form={form} gap={theme.styles.gap} submitButtonText="Create" onClickCancel={() => {}}>
-                  <InputField placeholder="Name" type="number" {...form.getInputFieldProps("name")} />
+                  <InputField placeholder="Name" {...form.getInputFieldProps("name")} />
                   <InputField.email {...form.getInputFieldProps("email")} />
                   <InputField.phoneNumber {...form.getInputFieldProps("phone")} />
+
+                  <InputField placeholder="Name" type="number" {...form.getInputFieldProps("number")} />
 
                   <Dropdown
                      options={[
@@ -268,6 +271,10 @@ function App() {
                   <ToggleInput.radiobutton text="Orange" {...form.getRadioButtonProps("fruit", "orange")} />
 
                   <ToggleInput.switch text="Can Delete" {...form.getSwitchProps("canDelete")} />
+
+                  <FormRow.withTitle title="Title" description="Description" withActions={form.isDirty}>
+                     <InputField placeholder="Hello" {...form.getInputFieldProps("name")} />
+                  </FormRow.withTitle>
                </Form>
 
                <Button text="Open modal" onClick={modalRef.current?.open} />

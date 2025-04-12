@@ -78,3 +78,27 @@ function App() {
    );
 }
 ```
+
+The component has the option to render `save` and `clear` buttons if the value is changed. You can pass `withActions` prop that will render the `save` button. To capture the events `onClickSave` and `onClickReset` props can be passed. The `onClickReset` will render `clear` button.
+
+```jsx
+import { FormRow, InputField } from "react-better-html";
+
+function App() {
+   return (
+      <FormRow.withTitle
+         icon="user"
+         title="Personal Information"
+         description="Enter your personal details"
+         // highlight-start
+         withActions
+         onClickSave={() => {
+            console.log("Save button clicked");
+         }}
+         // highlight-end
+      >
+         <InputField label="Full Name" />
+      </FormRow.withTitle>
+   );
+}
+```

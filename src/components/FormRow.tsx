@@ -10,6 +10,7 @@ import Div from "./Div";
 import Icon from "./Icon";
 import Text from "./Text";
 import { useTheme } from "./BetterHtmlProvider";
+import Button from "./Button";
 
 export type FormRowProps = {
    oneItemOnly?: boolean;
@@ -26,6 +27,9 @@ type FormRowComponentType = {
             icon?: IconName | AnyOtherString;
             title?: string;
             description?: string;
+            withActions?: boolean;
+            onClickSave?: () => void;
+            onClickReset?: () => void;
          }
       >,
    ) => React.ReactElement;
@@ -50,7 +54,10 @@ const FormRowComponent: FormRowComponentType = forwardRef(function FormRow(
    );
 }) as any;
 
-FormRowComponent.withTitle = forwardRef(function WithTitle({ icon, title, description, children, ...props }, ref) {
+FormRowComponent.withTitle = forwardRef(function WithTitle(
+   { icon, title, description, withActions, onClickSave, onClickReset, children, ...props },
+   ref,
+) {
    const theme = useTheme();
 
    return (
@@ -65,7 +72,16 @@ FormRowComponent.withTitle = forwardRef(function WithTitle({ icon, title, descri
             </Div.column>
          </Div.row>
 
-         <Div width="100%">{children}</Div>
+         <Div.row width="100%" alignItems="center" gap={theme.styles.gap}>
+            {children}
+
+            {withActions && (
+               <Div.row alignItems="center" gap={theme.styles.gap}>
+                  {onClickReset && <Button.icon icon="XMark" onClick={onClickReset} />}
+                  <Button.icon icon="check" onClick={onClickSave} />
+               </Div.row>
+            )}
+         </Div.row>
       </FormRowComponent>
    );
 }) as FormRowComponentType["withTitle"];
