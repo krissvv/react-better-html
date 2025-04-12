@@ -3,14 +3,15 @@ import { forwardRef, memo } from "react";
 import { IconName } from "../types/icon";
 import { AnyOtherString } from "../types/app";
 import { ComponentMarginProps, ComponentPropWithRef } from "../types/components";
+import { LoaderName } from "../types/loader";
 
 import { useMediaQuery } from "../utils/hooks";
 
 import Div from "./Div";
 import Icon from "./Icon";
 import Text from "./Text";
-import { useTheme } from "./BetterHtmlProvider";
 import Button from "./Button";
+import { useTheme } from "./BetterHtmlProvider";
 
 export type FormRowProps = {
    oneItemOnly?: boolean;
@@ -28,6 +29,7 @@ type FormRowComponentType = {
             title?: string;
             description?: string;
             withActions?: boolean;
+            saveButtonLoaderName?: LoaderName | AnyOtherString;
             onClickSave?: () => void;
             onClickReset?: () => void;
          }
