@@ -41,7 +41,11 @@ function PageHeader({
          {imageUrl && <Image.profileImage src={imageUrl} size={imageSize ?? (mediaQuery.size600 ? 46 : 60)} />}
 
          <Div.column flex={1} gap={theme.styles.gap / 2}>
-            <Div.row alignItems="center" gap={theme.styles.space}>
+            <Div.row
+               alignItems="center"
+               justifyContent={textAlign === "center" ? "center" : textAlign === "right" ? "flex-end" : undefined}
+               gap={theme.styles.space}
+            >
                <Text
                   as={titleAs ?? "h1"}
                   textAlign={textAlign}

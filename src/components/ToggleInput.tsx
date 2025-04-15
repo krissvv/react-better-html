@@ -313,7 +313,7 @@ export default {
       }, [disabled, checked, onChange, controlledChecked, value]);
 
       return (
-         <Div.column width="100%" gap={theme.styles.gap / 2} {...styledComponentStylesWithExcluded}>
+         <Div.column width="fit-content" gap={theme.styles.gap / 2} {...styledComponentStylesWithExcluded}>
             {label && <Label text={label} required={required} isError={!!errorText} />}
 
             <Div.row

@@ -214,18 +214,34 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
                            borderTopRightRadius={theme.styles.borderRadius * 2}
                            paddingInline={theme.styles.space + theme.styles.gap}
                            paddingBlock={theme.styles.space}
+                           transition={theme.styles.transition}
                         >
                            <Div.column flex={1} gap={theme.styles.gap / 2}>
-                              <Text as="h1" color={titleColor ?? theme.colors.textPrimary}>
+                              <Text
+                                 as="h1"
+                                 color={titleColor ?? theme.colors.textPrimary}
+                                 transition={theme.styles.transition}
+                              >
                                  {title}
                               </Text>
 
                               {description && (
-                                 <Text color={descriptionColor ?? theme.colors.textSecondary}>{description}</Text>
+                                 <Text
+                                    color={descriptionColor ?? theme.colors.textSecondary}
+                                    transition={theme.styles.transition}
+                                 >
+                                    {description}
+                                 </Text>
                               )}
                            </Div.column>
 
-                           <Button.icon icon="XMark" marginTop={1} iconColor={titleColor} onClick={onClickClose} />
+                           <Button.icon
+                              icon="XMark"
+                              marginTop={1}
+                              iconColor={titleColor}
+                              onClick={onClickClose}
+                              transition={theme.styles.transition}
+                           />
                         </Div.row>
 
                         <Divider.horizontal />

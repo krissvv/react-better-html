@@ -70,6 +70,18 @@ function App() {
                <PageHeader
                   title="Hello there"
                   description="Lorem, ipsum dolor sit amet consectetur adipisicing elit. Commodi ipsa nobis aspernatur."
+                  textAlign="center"
+               />
+
+               <PageHeader
+                  title="Hello there"
+                  description="Lorem, ipsum dolor sit amet consectetur adipisicing elit. Commodi ipsa nobis aspernatur."
+                  textAlign="right"
+               />
+
+               <PageHeader
+                  title="Hello there"
+                  description="Lorem, ipsum dolor sit amet consectetur adipisicing elit. Commodi ipsa nobis aspernatur."
                   rightElement={<Button text="Hello there" />}
                />
 
