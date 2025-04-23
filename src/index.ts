@@ -34,6 +34,7 @@ import {
    useUrlQuery,
 } from "./utils/hooks";
 import { generateRandomString, getBrowser, formatPhoneNumber, getFormErrorObject } from "./utils/functions";
+import { loaderControls } from "./utils/variableFunctions";
 
 import {
    type OmitProps,
@@ -126,6 +127,8 @@ export {
    getBrowser,
    formatPhoneNumber,
    getFormErrorObject,
+   // Variable Functions
+   loaderControls,
    // Types
    OmitProps,
    ExcludeOptions,

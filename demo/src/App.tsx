@@ -22,10 +22,14 @@ import {
    FormRow,
    getFormErrorObject,
    ColorThemeSwitch,
+   loaderControls,
+   useLoader,
 } from "../../src";
 
 function App() {
    const theme = useTheme();
+
+   const testLoaderIsLoading = useLoader("testLoader");
 
    const modalRef = useRef<ModalRef>(null);
    const modalWithTitleRef = useRef<ModalRef>(null);
@@ -315,6 +319,18 @@ function App() {
                   <Button.destructive text="Hello there" isLoading />
                   <Button.icon icon="XMark" isLoading />
                   <Button.upload isLoading />
+               </Div.row>
+
+               <Div.row alignItems="center" gap={theme.styles.gap}>
+                  <Button
+                     text="Start loading from function"
+                     onClick={() => {
+                        if (testLoaderIsLoading) loaderControls.stopLoading("testLoader");
+                        else loaderControls.startLoading("testLoader");
+                     }}
+                  />
+
+                  {testLoaderIsLoading && <Loader />}
                </Div.row>
             </Div.column>
          </PageHolder>

@@ -32,12 +32,14 @@ const GlobalStyle = createGlobalStyle<{ fontFamily: string; color: string; backg
    }
 `;
 
-type BetterHtmlInternalConfig = BetterHtmlConfig & {
+export type BetterHtmlInternalConfig = BetterHtmlConfig & {
    setLoaders: React.Dispatch<React.SetStateAction<Partial<LoaderConfig>>>;
    plugins: BetterHtmlPlugin[];
 };
 
 const betterHtmlContext = createContext<BetterHtmlInternalConfig | undefined>(undefined);
+
+export let externalBetterHtmlContextValue: BetterHtmlInternalConfig | undefined;
 
 export const useBetterHtmlContext = (): BetterHtmlConfig => {
    const context = useContext(betterHtmlContext);
@@ -218,6 +220,8 @@ function BetterHtmlProvider({ value, plugins: pluginsToUse, children }: BetterHt
          observer.disconnect();
       };
    }, []);
+
+   externalBetterHtmlContextValue = readyValue;
 
    return (
       <betterHtmlContext.Provider value={readyValue}>
