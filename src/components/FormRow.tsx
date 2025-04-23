@@ -15,6 +15,11 @@ import { useTheme } from "./BetterHtmlProvider";
 
 export type FormRowProps = {
    oneItemOnly?: boolean;
+   /**
+    * @description Weather to break the two items into two separate lines on mobile or not
+    * @default false
+    */
+   noBreakingPoint?: boolean;
    gap?: React.CSSProperties["gap"];
    children?: React.ReactNode;
 } & ComponentMarginProps;
@@ -30,6 +35,7 @@ type FormRowComponentType = {
             description?: string;
             withActions?: boolean;
             saveButtonLoaderName?: LoaderName | AnyOtherString;
+            resetButtonLoaderName?: LoaderName | AnyOtherString;
             onClickSave?: () => void;
             onClickReset?: () => void;
          }
@@ -38,14 +44,15 @@ type FormRowComponentType = {
 };
 
 const FormRowComponent: FormRowComponentType = forwardRef(function FormRow(
-   { oneItemOnly, gap, children, ...props }: FormRowProps,
+   { oneItemOnly, noBreakingPoint, gap, children, ...props }: FormRowProps,
    ref: React.ForwardedRef<HTMLDivElement>,
 ) {
    const theme = useTheme();
    const mediaQuery = useMediaQuery();
 
-   const breakingPoint = mediaQuery.size900;
-   const readyGap = breakingPoint ? theme.styles.gap : theme.styles.space * 2;
+   const breakingPoint = !noBreakingPoint ? mediaQuery.size900 : false;
+   const readyGap =
+      breakingPoint || (noBreakingPoint && mediaQuery.size900) ? theme.styles.gap : theme.styles.space * 2;
 
    return (
       <Div.row alignItems="center" gap={gap ?? readyGap} invertFlexDirection={breakingPoint} {...props} ref={ref}>
@@ -57,7 +64,18 @@ const FormRowComponent: FormRowComponentType = forwardRef(function FormRow(
 }) as any;
 
 FormRowComponent.withTitle = forwardRef(function WithTitle(
-   { icon, title, description, withActions, onClickSave, onClickReset, children, ...props },
+   {
+      icon,
+      title,
+      description,
+      withActions,
+      saveButtonLoaderName,
+      resetButtonLoaderName,
+      onClickSave,
+      onClickReset,
+      children,
+      ...props
+   },
    ref,
 ) {
    const theme = useTheme();
@@ -79,8 +97,10 @@ FormRowComponent.withTitle = forwardRef(function WithTitle(
 
             {withActions && (
                <Div.row alignItems="center" gap={theme.styles.gap}>
-                  {onClickReset && <Button.icon icon="XMark" onClick={onClickReset} />}
-                  <Button.icon icon="check" onClick={onClickSave} />
+                  {onClickReset && (
+                     <Button.icon icon="XMark" loaderName={resetButtonLoaderName} onClick={onClickReset} />
+                  )}
+                  <Button.icon icon="check" loaderName={saveButtonLoaderName} onClick={onClickSave} />
                </Div.row>
             )}
          </Div.row>
