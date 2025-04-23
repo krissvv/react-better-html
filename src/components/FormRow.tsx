@@ -79,6 +79,7 @@ FormRowComponent.withTitle = forwardRef(function WithTitle(
    ref,
 ) {
    const theme = useTheme();
+   const mediaQuery = useMediaQuery();
 
    return (
       <FormRowComponent {...props} ref={ref}>
@@ -92,7 +93,11 @@ FormRowComponent.withTitle = forwardRef(function WithTitle(
             </Div.column>
          </Div.row>
 
-         <Div.row width="100%" alignItems="center" gap={theme.styles.gap}>
+         <Div.row
+            width={props.noBreakingPoint && mediaQuery.size900 ? undefined : "100%"}
+            alignItems="center"
+            gap={theme.styles.gap}
+         >
             {children}
 
             {withActions && (
