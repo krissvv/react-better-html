@@ -1,7 +1,7 @@
 ---
 title: Label
 description: A component to render a label with optional required indicator and error styling.
-sidebar_position: 14
+sidebar_position: 6
 ---
 
 import Tabs from "@theme/Tabs";

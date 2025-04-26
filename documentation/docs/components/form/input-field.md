@@ -1,7 +1,7 @@
 ---
 title: InputField
 description: A customizable input field component with various styles and functionalities.
-sidebar_position: 6
+sidebar_position: 3
 ---
 
 import Tabs from "@theme/Tabs";

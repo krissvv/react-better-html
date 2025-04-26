@@ -1,7 +1,7 @@
 ---
 title: Form
 description: A layout component for forms, integrating with the useForm hook
-sidebar_position: 17
+sidebar_position: 1
 ---
 
 import Tabs from '@theme/Tabs';

@@ -61,7 +61,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
       options,
       value: controlledValue,
       defaultValue,
-      placeholder = "Select an option",
+      placeholder,
       leftIcon,
       inputFieldClassName,
       withSearch,
@@ -243,6 +243,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
 
    const displayValue = withSearch && isFocused ? searchQuery : selectedOption?.label ?? "";
    const withClearButton = isOpen && selectedOption;
+   const readyPlaceholder = placeholder ? placeholder : `Select an ${label?.toLowerCase() ?? "option"}`;
 
    return (
       <Div.column width="100%" position="relative" userSelect="none" {...props} ref={dropdownHolderRef}>
@@ -256,7 +257,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
                readOnly={!withSearch}
                value={displayValue}
                cursor={!withSearch ? "pointer" : undefined}
-               placeholder={withSearch ? (selectedOption ? selectedOption.label : placeholder) : placeholder}
+               placeholder={withSearch ? (selectedOption ? selectedOption.label : readyPlaceholder) : readyPlaceholder}
                leftIcon={leftIcon}
                className={`react-better-html-dropdown${isOpen ? " react-better-html-dropdown-open" : ""}${
                   isOpenLate ? " react-better-html-dropdown-open-late" : ""

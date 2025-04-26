@@ -1,7 +1,7 @@
 ---
 title: FormRow
 description: A layout component for organizing form elements in rows, with an optional title and description.
-sidebar_position: 18
+sidebar_position: 2
 ---
 
 import Tabs from "@theme/Tabs";

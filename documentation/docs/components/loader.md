@@ -1,7 +1,7 @@
 ---
 title: Loader
 description: A customizable loader component.
-sidebar_position: 9
+sidebar_position: 7
 ---
 
 import Tabs from "@theme/Tabs";

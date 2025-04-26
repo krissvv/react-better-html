@@ -1,7 +1,7 @@
 ---
 title: Icon
 description: Renders SVG icons with customizable styles and sizes.
-sidebar_position: 3
+sidebar_position: 5
 ---
 
 import Tabs from "@theme/Tabs";

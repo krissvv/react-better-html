@@ -1,7 +1,7 @@
 ---
 title: Dropdown
 description: A customizable dropdown component with search functionality and keyboard navigation.
-sidebar_position: 7
+sidebar_position: 4
 ---
 
 import Tabs from "@theme/Tabs";

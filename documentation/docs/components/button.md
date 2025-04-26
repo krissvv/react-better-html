@@ -1,7 +1,7 @@
 ---
 title: Button
 description: A customizable button component with various styles and functionalities.
-sidebar_position: 5
+sidebar_position: 3
 ---
 
 import Tabs from "@theme/Tabs";

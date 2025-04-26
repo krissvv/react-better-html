@@ -1,7 +1,7 @@
 ---
 title: PageHeader
 description: A component to render a page/section header with an optional image, title, description and more.
-sidebar_position: 13
+sidebar_position: 2
 ---
 
 import Tabs from "@theme/Tabs";

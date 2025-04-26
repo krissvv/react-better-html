@@ -1,7 +1,7 @@
 ---
 title: Modal
 description: A customizable modal component with header, title, and content.
-sidebar_position: 10
+sidebar_position: 6
 ---
 
 import Tabs from "@theme/Tabs";

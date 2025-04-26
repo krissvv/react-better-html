@@ -1,7 +1,7 @@
 ---
 title: ToggleInput
 description: A versatile component for creating checkboxes, radio buttons, and switches
-sidebar_position: 15
+sidebar_position: 5
 ---
 
 import Tabs from "@theme/Tabs";
