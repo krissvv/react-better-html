@@ -454,7 +454,7 @@ export function useUrlQuery() {
    const [searchParams] = useSearchParams();
 
    const setQuery = useCallback(
-      (query: Record<string, string>, keepHistory = true) => {
+      (query: Record<string, string | number>, keepHistory = true) => {
          const currentSearchParams: Record<string, string> = {};
          searchParams.forEach((value, key) => {
             (currentSearchParams as any)[key] = value;
@@ -464,7 +464,7 @@ export function useUrlQuery() {
             {
                search: createSearchParams({
                   ...currentSearchParams,
-                  ...query,
+                  ...Object.fromEntries(Object.entries(query).map(([key, value]) => [key, value.toString()])),
                }).toString(),
             },
             {
