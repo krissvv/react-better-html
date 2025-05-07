@@ -153,6 +153,7 @@ export type InputFieldProps = {
    leftIcon?: IconName | AnyOtherString;
    rightIcon?: IconName | AnyOtherString;
    insideInputFieldComponent?: React.ReactNode;
+   /** @default false */
    withDebounce?: boolean;
    /** @default 0.5s */
    debounceDelay?: number;

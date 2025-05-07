@@ -10,6 +10,7 @@ import ToggleInput from "./ToggleInput";
 import { useTheme } from "./BetterHtmlProvider";
 
 export type ColorThemeSwitchProps = {
+   /** @default false */
    withMoon?: boolean;
    className?: string;
 } & ComponentMarginProps;

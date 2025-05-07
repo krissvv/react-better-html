@@ -24,7 +24,89 @@ import {
    ColorThemeSwitch,
    loaderControls,
    useLoader,
+   Table,
 } from "../../src";
+
+const data = [
+   {
+      id: 1,
+      name: "Kris",
+      age: 25,
+      email: "kris@kris.com",
+      image: "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg",
+   },
+   {
+      id: 2,
+      name: "John",
+      age: 30,
+      email: "john@john.com",
+      image: "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg",
+   },
+   {
+      id: 3,
+      name: "Jane",
+      age: 22,
+      email: "jane@jane.com",
+      image: "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg",
+   },
+   {
+      id: 4,
+      name: "Bob",
+      age: 28,
+      email: "bob@bob.com",
+      image: "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg",
+   },
+   {
+      id: 5,
+      name: "Alice",
+      age: 27,
+      email: "alice@alice.com",
+      image: "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg",
+   },
+];
+
+const data2 = [
+   {
+      id: 1,
+      name: "Kris",
+      age: 25,
+      email: "kris@kris.com",
+      image: "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg",
+      checked: true,
+   },
+   {
+      id: 2,
+      name: "John",
+      age: 30,
+      email: "john@john.com",
+      image: "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg",
+      checked: true,
+   },
+   {
+      id: 3,
+      name: "Jane",
+      age: 22,
+      email: "jane@jane.com",
+      image: "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg",
+      checked: true,
+   },
+   {
+      id: 4,
+      name: "Bob",
+      age: 28,
+      email: "bob@bob.com",
+      image: "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg",
+      checked: true,
+   },
+   {
+      id: 5,
+      name: "Alice",
+      age: 27,
+      email: "alice@alice.com",
+      image: "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg",
+      checked: true,
+   },
+];
 
 function App() {
    const theme = useTheme();
@@ -332,6 +414,162 @@ function App() {
 
                   {testLoaderIsLoading && <Loader />}
                </Div.row>
+
+               <Table
+                  columns={[
+                     {
+                        type: "text",
+                        label: "ID",
+                        keyName: "id",
+                        width: 52,
+                     },
+                     {
+                        type: "text",
+                        label: "Name",
+                        keyName: "name",
+                     },
+                     {
+                        type: "text",
+                        label: "Email",
+                        keyName: "email",
+                     },
+                     {
+                        type: "text",
+                        label: "Age",
+                        keyName: "age",
+                        align: "center",
+                        width: 70,
+                     },
+                  ]}
+                  data={[]}
+               />
+               <Table
+                  columns={[
+                     {
+                        type: "text",
+                        label: "ID",
+                        keyName: "id",
+                        width: 52,
+                     },
+                     {
+                        type: "text",
+                        label: "Name",
+                        keyName: "name",
+                     },
+                     {
+                        type: "text",
+                        label: "Email",
+                        keyName: "email",
+                     },
+                     {
+                        type: "text",
+                        label: "Age",
+                        keyName: "age",
+                        align: "center",
+                        width: 70,
+                     },
+                  ]}
+                  data={data}
+                  withStickyHeader
+               />
+               <Table
+                  columns={[
+                     {
+                        type: "checkbox",
+                     },
+                     {
+                        type: "text",
+                        label: "ID",
+                        keyName: "id",
+                        width: 52,
+                     },
+                     {
+                        type: "text",
+                        label: "Name",
+                        keyName: "name",
+                     },
+                     {
+                        type: "text",
+                        label: "Email",
+                        keyName: "email",
+                     },
+                     {
+                        type: "text",
+                        label: "Age",
+                        keyName: "age",
+                        align: "center",
+                        width: 70,
+                     },
+                  ]}
+                  data={data}
+               />
+               <Table
+                  columns={[
+                     {
+                        type: "checkbox",
+                        keyName: "checked",
+                     },
+                     {
+                        type: "text",
+                        label: "ID",
+                        keyName: "id",
+                        width: 52,
+                     },
+                     {
+                        type: "text",
+                        label: "Name",
+                        keyName: "name",
+                     },
+                     {
+                        type: "text",
+                        label: "Email",
+                        keyName: "email",
+                     },
+                     {
+                        type: "text",
+                        label: "Age",
+                        keyName: "age",
+                        align: "center",
+                        width: 70,
+                     },
+                  ]}
+                  data={data2}
+                  onClickRow={(item) => console.log(item.id)}
+                  onClickAllCheckboxes={() => {}}
+               />
+               <Table
+                  columns={[
+                     {
+                        type: "image",
+                        label: "Image",
+                        keyName: "image",
+                     },
+                     {
+                        type: "text",
+                        label: "ID",
+                        keyName: "id",
+                        width: 52,
+                     },
+                     {
+                        type: "text",
+                        label: "Name",
+                        keyName: "name",
+                     },
+                     {
+                        type: "text",
+                        label: "Email",
+                        keyName: "email",
+                     },
+                     {
+                        type: "text",
+                        label: "Age",
+                        keyName: "age",
+                        align: "center",
+                        width: 70,
+                     },
+                  ]}
+                  data={data}
+               />
             </Div.column>
          </PageHolder>
 

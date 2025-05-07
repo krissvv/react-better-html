@@ -18,6 +18,7 @@ import { useTheme } from "./BetterHtmlProvider";
 export type DropdownOption<Value, Data = unknown> = {
    value: Value;
    label: string;
+   /** @default false */
    disabled?: boolean;
    searchValues?: string[];
    data?: Data;
@@ -27,7 +28,9 @@ export type DropdownProps<Value, Data = unknown> = {
    label?: string;
    errorText?: string;
    infoText?: string;
+   /** @default false */
    required?: boolean;
+   /** @default false */
    disabled?: boolean;
    options: DropdownOption<Value, Data>[];
    value?: Value;
@@ -35,12 +38,16 @@ export type DropdownProps<Value, Data = unknown> = {
    placeholder?: string;
    leftIcon?: IconName | AnyOtherString;
    inputFieldClassName?: string;
+   /** @default false */
    withSearch?: boolean;
+   /** @default false */
    withDebounce?: boolean;
    /** @default 0.5s */
    debounceDelay?: number;
+   /** @default false */
    debounceIsLoading?: boolean;
    debounceMinimumSymbolsRequired?: number;
+   /** @default false */
    withoutClearButton?: boolean;
    onChange?: (value: Value | undefined) => void;
    onChangeSearch?: (query: string) => void;

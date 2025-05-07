@@ -5,7 +5,9 @@ import { useTheme } from "./BetterHtmlProvider";
 
 export type LabelProps = {
    text?: string;
+   /** @default false */
    required?: boolean;
+   /** @default false */
    isError?: boolean;
 };
 

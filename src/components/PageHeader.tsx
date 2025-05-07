@@ -18,6 +18,7 @@ export type PageHeaderProps = {
    description?: string;
    textAlign?: React.CSSProperties["textAlign"];
    rightElement?: React.ReactNode;
+   /** @default false */
    lightMode?: boolean;
 } & Pick<ComponentMarginProps, "marginBottom">;
 

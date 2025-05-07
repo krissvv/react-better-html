@@ -15,11 +15,14 @@ export type FormProps = {
    submitButtonText?: string;
    submitButtonLoaderName?: LoaderName | AnyOtherString;
    submitButtonId?: string;
+   /** @default false */
    submitButtonIsDisabled?: boolean;
    /** @default "right" */
    actionButtonsLocation?: "left" | "center" | "right";
    gap?: React.CSSProperties["gap"];
+   /** @default false */
    isSubmitting?: boolean;
+   /** @default false */
    isDestructive?: boolean;
    onClickCancel?: () => void;
    onSubmit?: (value: React.FormEvent<HTMLFormElement>) => void;

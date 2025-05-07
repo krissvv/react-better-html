@@ -24,6 +24,7 @@ export type DivProps<Value> = {
    value?: Value;
    /** @default "div" */
    as?: WebTarget;
+   /** @default false */
    isTabAccessed?: boolean;
    onClickWithValue?: (value: Value) => void;
 } & OmitProps<React.ComponentProps<"div">, "style" | "defaultValue"> &

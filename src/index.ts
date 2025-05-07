@@ -16,6 +16,7 @@ import Form, { type FormProps } from "./components/Form";
 import Label, { type LabelProps } from "./components/Label";
 import FormRow, { type FormRowProps } from "./components/FormRow";
 import ColorThemeSwitch, { type ColorThemeSwitchProps } from "./components/ColorThemeSwitch";
+import Table, { type TableColumn } from "./components/Table";
 
 import BetterHtmlProvider, {
    useBetterHtmlContext,
@@ -110,6 +111,8 @@ export {
    FormRowProps,
    ColorThemeSwitch,
    ColorThemeSwitchProps,
+   Table,
+   TableColumn,
    // Hooks
    useBetterHtmlContext,
    useTheme,
