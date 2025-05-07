@@ -6,8 +6,6 @@ sidebar_position: 2
 
 import HighlightedText from "../../src/components/HighlightedText"
 
-# Configuration
-
 The `react-better-html` library allows you to configure various aspects of its components through the `<BetterHtmlProvider>` wrapper component. This includes customizing the theme, icons, assets and more.
 
 ## BetterHtmlProvider

@@ -181,3 +181,7 @@ function App() {
    );
 }
 ```
+
+### Used With Plugins
+
+The `<Modal>` component can be used with the [`react-router-dom`](../plugins#react-router-dom) plugin to set a query parameter when the modal is opened. This is especially useful when you want the path to changed when a modal is opened for analytics purposes. The only thing you need to do beside applying the plugin is to pass a `name` prop to the modal.
