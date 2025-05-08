@@ -16,69 +16,6 @@ import Loader from "./Loader";
 import Image from "./Image";
 import { useTheme, useLoader, useBetterHtmlContext } from "./BetterHtmlProvider";
 
-export type ButtonProps<Value> = {
-   href?: string;
-   text?: string;
-   value?: Value;
-   download?: string;
-
-   icon?: IconName | AnyOtherString;
-   /** @default "left" */
-   iconPosition?: "left" | "right";
-   /** @default Same as text color */
-   iconColor?: string;
-   /** @default 16 */
-   iconSize?: number;
-
-   image?: AssetName | AnyOtherString;
-   /** @default "left" */
-   imagePosition?: "left" | "right";
-   /** @default 16 */
-   imageWidth?: number;
-   /** @default undefined */
-   imageHeight?: number;
-
-   loaderName?: LoaderName | AnyOtherString;
-   /** @default 16 */
-   loaderSize?: number;
-   /** @default false */
-   isLoading?: boolean;
-
-   /** @default false */
-   disabled?: boolean;
-   /** @default false */
-   isSmall?: boolean;
-   /** @default false */
-   isSubmit?: boolean;
-
-   onClickWithValue?: (value: Value) => void;
-} & OmitProps<React.ComponentProps<"button">, "style" | "defaultValue" | "translate" | "value"> &
-   ComponentStyle &
-   ComponentHoverStyle;
-
-type ButtonComponent = {
-   <Value>(props: ButtonProps<Value>): React.ReactElement;
-   secondary: <Value>(props: ButtonProps<Value>) => React.ReactElement;
-   destructive: <Value>(props: ButtonProps<Value>) => React.ReactElement;
-   icon: <Value>(
-      props: OmitProps<ButtonProps<Value>, "icon" | "width" | "height" | "isSmall"> & {
-         icon: IconName | AnyOtherString;
-         /** @default 16 */
-         size?: number;
-         /** @default "#000000" */
-         backgroundButtonColor?: string;
-      },
-   ) => React.ReactElement;
-   upload: <Value>(
-      props: OmitProps<ButtonProps<Value>, "onClick"> & {
-         accept?: ComponentProps<"input">["accept"];
-         /** @default false */
-         multiple?: boolean;
-         onUpload?: (files: FileList | null) => void;
-      },
-   ) => React.ReactElement;
-};
-
 const ButtonElement = styled.button.withConfig({
    shouldForwardProp: (prop) =>
       !["theme", "normalStyle", "hoverStyle", "isSmall", "withText", "isLoading"].includes(prop),
@@ -153,11 +90,77 @@ const ButtonElement = styled.button.withConfig({
    }
 `;
 
+export type ButtonProps<Value> = {
+   text?: string;
+   value?: Value;
+
+   href?: string;
+   download?: string;
+   target?: React.ComponentProps<"a">["target"];
+
+   icon?: IconName | AnyOtherString;
+   /** @default "left" */
+   iconPosition?: "left" | "right";
+   /** @default Same as text color */
+   iconColor?: string;
+   /** @default 16 */
+   iconSize?: number;
+
+   image?: AssetName | AnyOtherString;
+   /** @default "left" */
+   imagePosition?: "left" | "right";
+   /** @default 16 */
+   imageWidth?: number;
+   /** @default undefined */
+   imageHeight?: number;
+
+   loaderName?: LoaderName | AnyOtherString;
+   /** @default 16 */
+   loaderSize?: number;
+   /** @default false */
+   isLoading?: boolean;
+
+   /** @default false */
+   disabled?: boolean;
+   /** @default false */
+   isSmall?: boolean;
+   /** @default false */
+   isSubmit?: boolean;
+
+   onClickWithValue?: (value: Value) => void;
+} & OmitProps<React.ComponentProps<"button">, "style" | "defaultValue" | "translate" | "value"> &
+   ComponentStyle &
+   ComponentHoverStyle;
+
+type ButtonComponent = {
+   <Value>(props: ButtonProps<Value>): React.ReactElement;
+   secondary: <Value>(props: ButtonProps<Value>) => React.ReactElement;
+   destructive: <Value>(props: ButtonProps<Value>) => React.ReactElement;
+   icon: <Value>(
+      props: OmitProps<ButtonProps<Value>, "icon" | "width" | "height" | "isSmall"> & {
+         icon: IconName | AnyOtherString;
+         /** @default 16 */
+         size?: number;
+         /** @default "#000000" */
+         backgroundButtonColor?: string;
+      },
+   ) => React.ReactElement;
+   upload: <Value>(
+      props: OmitProps<ButtonProps<Value>, "onClick"> & {
+         accept?: ComponentProps<"input">["accept"];
+         /** @default false */
+         multiple?: boolean;
+         onUpload?: (files: FileList | null) => void;
+      },
+   ) => React.ReactElement;
+};
+
 const ButtonComponent: ButtonComponent = function Button<Value>({
    href,
    text,
    value,
    download,
+   target,
 
    icon,
    iconPosition = "left",
@@ -234,6 +237,7 @@ const ButtonComponent: ButtonComponent = function Button<Value>({
          disabled={disabled}
          href={href}
          download={download}
+         target={target}
          type={isSubmit && !isLoadingElement ? "submit" : "button"}
          onClick={!disabled && !isLoadingElement ? onClickElement : undefined}
          {...styledComponentStyles}
