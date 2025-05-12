@@ -219,6 +219,9 @@ function App() {
                <InputField.search label="With Debounce" withDebounce />
                <InputField.phoneNumber />
                <InputField.phoneNumber label="Phone number" />
+               <InputField.date label="Date" />
+               <InputField.dateTime label="Date & Time" />
+               <InputField.time label="Time" />
 
                <InputField.multiline placeholder="Placeholder" />
                <InputField.multiline leftIcon="uploadCloud" placeholder="Placeholder" />

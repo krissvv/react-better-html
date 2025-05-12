@@ -1,4 +1,4 @@
-import React, { forwardRef, memo, useCallback, useState, useEffect, useMemo } from "react";
+import React, { forwardRef, memo, useCallback, useState, useEffect, useMemo, useRef } from "react";
 import styled from "styled-components";
 
 import { countries } from "../constants/countries";
@@ -11,6 +11,7 @@ import { Country } from "../types/countries";
 
 import {
    useBooleanState,
+   useComponentInputFieldDateProps,
    useComponentPropsWithExcludedStyle,
    useComponentPropsWithoutStyle,
    useComponentPropsWithPrefix,
@@ -69,6 +70,13 @@ const InputElement = styled.input.withConfig({
       cursor: not-allowed;
    }
 
+   &[type="date"]::-webkit-calendar-picker-indicator,
+   &[type="datetime-local"]::-webkit-calendar-picker-indicator,
+   &[type="time"]::-webkit-calendar-picker-indicator {
+      display: none;
+      -webkit-appearance: none;
+   }
+
    &.react-better-html-phone-number-holder {
       border-right: none;
       border-top-right-radius: 0px;
@@ -91,6 +99,15 @@ const InputElement = styled.input.withConfig({
       &.react-better-html-dropdown-open-late {
          z-index: 1001;
       }
+   }
+
+   &.react-better-html-inputField-dateTime-opened {
+      border-bottom-left-radius: 0px;
+      border-bottom-right-radius: 0px;
+   }
+
+   &.react-better-html-inputField-dateTime-opened-late {
+      z-index: 1001;
    }
 
    ${(props) => props.normalStyle as any}
@@ -146,6 +163,9 @@ const TextareaElement = styled.textarea.withConfig({
    }
 `;
 
+const hours = Array.from({ length: 24 }, (_, index) => index);
+const minutes = Array.from({ length: 60 }, (_, index) => index);
+
 export type InputFieldProps = {
    label?: string;
    errorText?: string;
@@ -159,9 +179,13 @@ export type InputFieldProps = {
    debounceDelay?: number;
    onChangeValue?: (value: string) => void;
    onClickRightIcon?: () => void;
+   holderRef?: React.ForwardedRef<HTMLDivElement>;
 } & OmitProps<React.ComponentProps<"input">, "style" | "ref"> &
    ComponentStyle &
    ComponentHoverStyle;
+
+export type TextareaFieldProps = OmitProps<InputFieldProps, "type"> &
+   OmitProps<React.ComponentProps<"textarea">, "style" | "ref">;
 
 type InputFieldComponentType = {
    (props: ComponentPropWithRef<HTMLInputElement, InputFieldProps>): React.ReactElement;
@@ -172,6 +196,9 @@ type InputFieldComponentType = {
    phoneNumber: (
       props: ComponentPropWithRef<HTMLInputElement, OmitProps<InputFieldProps, "type">>,
    ) => React.ReactElement;
+   date: (props: ComponentPropWithRef<HTMLInputElement, InputFieldProps>) => React.ReactElement;
+   dateTime: (props: ComponentPropWithRef<HTMLInputElement, InputFieldProps>) => React.ReactElement;
+   time: (props: ComponentPropWithRef<HTMLInputElement, InputFieldProps>) => React.ReactElement;
 };
 
 const InputFieldComponent: InputFieldComponentType = forwardRef(function InputField(
@@ -187,6 +214,7 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
       onChange,
       onChangeValue,
       onClickRightIcon,
+      holderRef,
       required,
       placeholder,
       ...props
@@ -227,7 +255,7 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
    }, [withDebounce, onChangeValue, debouncedValue]);
 
    return (
-      <Div.column width="100%" gap={theme.styles.gap / 2} {...styledComponentStylesWithExcluded}>
+      <Div.column width="100%" gap={theme.styles.gap / 2} {...styledComponentStylesWithExcluded} ref={holderRef}>
          {label && <Label text={label} required={required} isError={!!errorText} />}
 
          <Div position="relative" width="100%">
@@ -296,9 +324,6 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
    );
 }) as any;
 
-export type TextareaFieldProps = OmitProps<InputFieldProps, "type"> &
-   OmitProps<React.ComponentProps<"textarea">, "style" | "ref">;
-
 InputFieldComponent.multiline = forwardRef(function Multiline(
    {
       label,
@@ -312,8 +337,8 @@ InputFieldComponent.multiline = forwardRef(function Multiline(
       onClickRightIcon,
       required,
       ...props
-   }: TextareaFieldProps,
-   ref: React.ForwardedRef<HTMLTextAreaElement>,
+   },
+   ref,
 ) {
    const theme = useTheme();
 
@@ -398,10 +423,7 @@ InputFieldComponent.multiline = forwardRef(function Multiline(
    );
 }) as InputFieldComponentType["multiline"];
 
-InputFieldComponent.email = forwardRef(function Email(
-   { ...props }: InputFieldProps,
-   ref: React.ForwardedRef<HTMLInputElement>,
-) {
+InputFieldComponent.email = forwardRef(function Email({ ...props }, ref) {
    return (
       <InputFieldComponent
          type="email"
@@ -415,10 +437,7 @@ InputFieldComponent.email = forwardRef(function Email(
    );
 }) as InputFieldComponentType["email"];
 
-InputFieldComponent.password = forwardRef(function Password(
-   { ...props }: InputFieldProps,
-   ref: React.ForwardedRef<HTMLInputElement>,
-) {
+InputFieldComponent.password = forwardRef(function Password({ ...props }, ref) {
    const [isPassword, setIsPassword] = useBooleanState(true);
 
    return (
@@ -436,17 +455,11 @@ InputFieldComponent.password = forwardRef(function Password(
    );
 }) as InputFieldComponentType["password"];
 
-InputFieldComponent.search = forwardRef(function Search(
-   { ...props }: InputFieldProps,
-   ref: React.ForwardedRef<HTMLInputElement>,
-) {
+InputFieldComponent.search = forwardRef(function Search({ ...props }, ref) {
    return <InputFieldComponent leftIcon="magnifyingGlass" placeholder="Search..." ref={ref} {...props} />;
 }) as InputFieldComponentType["search"];
 
-InputFieldComponent.phoneNumber = forwardRef(function PhoneNumber(
-   { label, value, onChangeValue, ...props }: InputFieldProps,
-   ref: React.ForwardedRef<HTMLInputElement>,
-) {
+InputFieldComponent.phoneNumber = forwardRef(function PhoneNumber({ label, value, onChangeValue, ...props }, ref) {
    const theme = useTheme();
 
    const [dropdownValue, setDropdownValue] = useState<string>();
@@ -521,6 +534,7 @@ InputFieldComponent.phoneNumber = forwardRef(function PhoneNumber(
                options={options}
                renderOption={renderOption}
                width={130}
+               minWidth={110}
                withSearch
                placeholder="+00"
                inputFieldClassName="react-better-html-phone-number-holder"
@@ -542,12 +556,206 @@ InputFieldComponent.phoneNumber = forwardRef(function PhoneNumber(
    );
 }) as InputFieldComponentType["phoneNumber"];
 
+InputFieldComponent.date = forwardRef(function Date({ className, onFocus, onBlur, ...props }, ref) {
+   const theme = useTheme();
+
+   const holderRef = useRef<HTMLDivElement>(null);
+
+   const { internalValue, setInternalValue, inputFieldProps, insideInputFieldComponentProps } =
+      useComponentInputFieldDateProps(props, holderRef);
+
+   return (
+      <InputFieldComponent
+         type="date"
+         insideInputFieldComponent={
+            <Div
+               position="absolute"
+               top="100%"
+               left={0}
+               width="100%"
+               maxHeight={300}
+               backgroundColor={theme.colors.backgroundContent}
+               borderBottomLeftRadius={theme.styles.borderRadius}
+               borderBottomRightRadius={theme.styles.borderRadius}
+               boxShadow="0px 10px 20px #00000020"
+               overflowY="auto"
+               {...insideInputFieldComponentProps}
+            >
+               Hello there
+            </Div>
+         }
+         holderRef={holderRef}
+         ref={ref}
+         {...props}
+         {...inputFieldProps}
+      />
+   );
+}) as InputFieldComponentType["date"];
+
+InputFieldComponent.dateTime = forwardRef(function DateTime({ className, onFocus, onBlur, ...props }, ref) {
+   const theme = useTheme();
+
+   const holderRef = useRef<HTMLDivElement>(null);
+
+   const { internalValue, setInternalValue, inputFieldProps, insideInputFieldComponentProps } =
+      useComponentInputFieldDateProps(props, holderRef);
+
+   return (
+      <InputFieldComponent
+         type="datetime-local"
+         insideInputFieldComponent={
+            <Div
+               position="absolute"
+               top="100%"
+               left={0}
+               width="100%"
+               maxHeight={300}
+               backgroundColor={theme.colors.backgroundContent}
+               borderBottomLeftRadius={theme.styles.borderRadius}
+               borderBottomRightRadius={theme.styles.borderRadius}
+               boxShadow="0px 10px 20px #00000020"
+               overflowY="auto"
+               {...insideInputFieldComponentProps}
+            >
+               Hello there
+            </Div>
+         }
+         holderRef={holderRef}
+         ref={ref}
+         {...props}
+         {...inputFieldProps}
+      />
+   );
+}) as InputFieldComponentType["dateTime"];
+
+InputFieldComponent.time = forwardRef(function Time({ ...props }, ref) {
+   const theme = useTheme();
+
+   const holderRef = useRef<HTMLDivElement>(null);
+   const selectedHourRef = useRef<HTMLDivElement>(null);
+   const selectedMinuteRef = useRef<HTMLDivElement>(null);
+
+   const { internalValue, setInternalValue, inputFieldProps, insideInputFieldComponentProps, isOpen } =
+      useComponentInputFieldDateProps(props, holderRef);
+
+   const onClickHour = useCallback(
+      (hour: number) => {
+         const value = `${hour.toString().padStart(2, "0")}:${internalValue?.toString().split(":")[1] || "00"}`;
+
+         inputFieldProps.onChangeValue?.(value);
+         setInternalValue(value);
+      },
+      [internalValue, inputFieldProps.onChangeValue],
+   );
+   const onClickMinute = useCallback(
+      (minute: number) => {
+         const value = `${internalValue?.toString().split(":")[0] || "00"}:${minute.toString().padStart(2, "0")}`;
+
+         inputFieldProps.onChangeValue?.(value);
+         setInternalValue(value);
+      },
+      [internalValue, inputFieldProps.onChangeValue],
+   );
+
+   useEffect(() => {
+      if (isOpen && selectedHourRef.current)
+         selectedHourRef.current.scrollIntoView({ block: "nearest", behavior: "instant" });
+
+      if (isOpen && selectedMinuteRef.current)
+         selectedMinuteRef.current.scrollIntoView({ block: "nearest", behavior: "instant" });
+   }, [isOpen]);
+
+   const valueHour = parseInt(internalValue?.toString().split(":")?.[0]).toString();
+   const valueMinute = parseInt(internalValue?.toString().split(":")?.[1]).toString();
+
+   const buttonWidth = 50;
+
+   return (
+      <InputFieldComponent
+         type="time"
+         insideInputFieldComponent={
+            <Div
+               position="absolute"
+               top="100%"
+               left={0}
+               width={buttonWidth * 2 + 2}
+               height={300}
+               backgroundColor={theme.colors.backgroundContent}
+               borderBottomLeftRadius={theme.styles.borderRadius}
+               borderBottomRightRadius={theme.styles.borderRadius}
+               boxShadow="0px 10px 20px #00000020"
+               overflowY="auto"
+               {...insideInputFieldComponentProps}
+            >
+               <Div.row height="100%">
+                  <Div className="react-better-html-no-scrollbar" width={buttonWidth} height="100%" overflowY="auto">
+                     {hours.map((hour) => {
+                        const isSelected = hour.toString() === valueHour;
+
+                        return (
+                           <Div.row
+                              alignItems="center"
+                              justifyContent="center"
+                              color={isSelected ? theme.colors.base : theme.colors.textPrimary}
+                              backgroundColor={isSelected ? theme.colors.primary : theme.colors.backgroundContent}
+                              filterHover="brightness(0.9)"
+                              cursor="pointer"
+                              padding={`${theme.styles.space / 2}px ${theme.styles.space + theme.styles.gap}px`}
+                              value={hour}
+                              onClickWithValue={onClickHour}
+                              ref={isSelected ? selectedHourRef : undefined}
+                              key={hour}
+                           >
+                              <Text textAlign="center">{hour.toString().padStart(2, "0")}</Text>
+                           </Div.row>
+                        );
+                     })}
+                  </Div>
+
+                  <Div className="react-better-html-no-scrollbar" width={buttonWidth} height="100%" overflowY="auto">
+                     {minutes.map((minute) => {
+                        const isSelected = minute.toString() === valueMinute;
+
+                        return (
+                           <Div.row
+                              alignItems="center"
+                              justifyContent="center"
+                              color={isSelected ? theme.colors.base : theme.colors.textPrimary}
+                              backgroundColor={isSelected ? theme.colors.primary : theme.colors.backgroundContent}
+                              filterHover="brightness(0.9)"
+                              cursor="pointer"
+                              padding={`${theme.styles.space / 2}px ${theme.styles.space + theme.styles.gap}px`}
+                              value={minute}
+                              onClickWithValue={onClickMinute}
+                              ref={isSelected ? selectedMinuteRef : undefined}
+                              key={minute}
+                           >
+                              <Text textAlign="center">{minute.toString().padStart(2, "0")}</Text>
+                           </Div.row>
+                        );
+                     })}
+                  </Div>
+               </Div.row>
+            </Div>
+         }
+         holderRef={holderRef}
+         ref={ref}
+         {...props}
+         {...inputFieldProps}
+         minWidth={buttonWidth * 2 + 2}
+      />
+   );
+}) as InputFieldComponentType["time"];
+
 const InputField = memo(InputFieldComponent) as any as typeof InputFieldComponent & {
    multiline: typeof InputFieldComponent.multiline;
    email: typeof InputFieldComponent.email;
    password: typeof InputFieldComponent.password;
    search: typeof InputFieldComponent.search;
    phoneNumber: typeof InputFieldComponent.phoneNumber;
+   date: typeof InputFieldComponent.date;
+   dateTime: typeof InputFieldComponent.dateTime;
+   time: typeof InputFieldComponent.time;
 };
 
 InputField.multiline = InputFieldComponent.multiline;
@@ -555,5 +763,8 @@ InputField.email = InputFieldComponent.email;
 InputField.password = InputFieldComponent.password;
 InputField.search = InputFieldComponent.search;
 InputField.phoneNumber = InputFieldComponent.phoneNumber;
+InputField.date = InputFieldComponent.date;
+InputField.dateTime = InputFieldComponent.dateTime;
+InputField.time = InputFieldComponent.time;
 
 export default InputField;

@@ -10,7 +10,7 @@ import { OmitProps, PartialRecord } from "../types/app";
 import { InputFieldProps, TextareaFieldProps } from "../components/InputField";
 import { DropdownProps } from "../components/Dropdown";
 import { ToggleInputProps, ToggleInputRef } from "../components/ToggleInput";
-import { usePlugin } from "../components/BetterHtmlProvider";
+import { usePlugin, useTheme } from "../components/BetterHtmlProvider";
 
 const cssPropsToExclude: (keyof React.CSSProperties)[] = [
    "position",
@@ -121,6 +121,105 @@ export function useComponentPropsWithoutStyle<Props extends Record<string, any>>
          }, {} as Partial<Props>),
       [props],
    );
+}
+
+export function useComponentInputFieldDateProps(
+   props: InputFieldProps,
+   holderRef: React.RefObject<HTMLDivElement | null>,
+): {
+   internalValue: string;
+   setInternalValue: React.Dispatch<React.SetStateAction<string>>;
+   inputFieldProps: InputFieldProps;
+   insideInputFieldComponentProps: InputFieldProps;
+   isOpen: boolean;
+} {
+   const theme = useTheme();
+
+   const [isOpen, setIsOpen] = useBooleanState();
+   const [isOpenLate, setIsOpenLate] = useBooleanState();
+   const [isFocused, setIsFocused] = useBooleanState();
+
+   const [internalValue, setInternalValue] = useState<string>(props.value?.toString() ?? "");
+
+   const inputFieldProps = useMemo<InputFieldProps>(
+      () => ({
+         value: internalValue,
+         className: `${isOpen ? "react-better-html-inputField-dateTime-opened" : ""}${
+            isOpenLate ? " react-better-html-inputField-dateTime-opened-late" : ""
+         }${props.className ? ` ${props.className}` : ""}`,
+         onClick: (event: React.MouseEvent<HTMLInputElement>) => {
+            if (props.disabled) return;
+
+            setIsOpen.setTrue();
+            props.onClick?.(event);
+         },
+         onFocus: (event: React.FocusEvent<HTMLInputElement>) => {
+            setIsFocused.setTrue();
+            props.onFocus?.(event);
+         },
+         onBlur: (event: React.FocusEvent<HTMLInputElement>) => {
+            setIsFocused.setFalse();
+            props.onBlur?.(event);
+         },
+         onChangeValue: (value) => {
+            setInternalValue(value);
+            props.onChangeValue?.(value);
+         },
+      }),
+      [props, internalValue, isOpen, isOpenLate],
+   );
+   const insideInputFieldComponentProps = useMemo<InputFieldProps>(
+      () => ({
+         border: `1px solid ${isFocused ? theme.colors.primary : theme.colors.border}`,
+         borderTop: "none",
+         opacity: !isOpen ? 0 : undefined,
+         pointerEvents: !isOpen ? "none" : undefined,
+         transform: `translateY(${!isOpen ? -10 : 0}px)`,
+         zIndex: 1000,
+         transition: theme.styles.transition,
+      }),
+      [isOpen, isFocused],
+   );
+
+   useEffect(() => {
+      if (props.value === undefined || props.value === null) return;
+
+      setInternalValue(props.value.toString());
+   }, [props.value]);
+   useEffect(() => {
+      if (isOpen) {
+         setIsOpenLate.setTrue();
+      } else {
+         const timeout = setTimeout(setIsOpenLate.setFalse, 0.2 * 1000);
+
+         return () => {
+            clearTimeout(timeout);
+         };
+      }
+   }, [isOpen]);
+   useEffect(() => {
+      const handleClickOutside = (event: MouseEvent) => {
+         if (holderRef.current && !holderRef.current.contains(event.target as Node)) {
+            setIsOpen.setFalse();
+         }
+      };
+
+      if (isOpen) {
+         document.addEventListener("mousedown", handleClickOutside);
+      }
+
+      return () => {
+         document.removeEventListener("mousedown", handleClickOutside);
+      };
+   }, [isOpen]);
+
+   return {
+      internalValue,
+      setInternalValue,
+      inputFieldProps,
+      insideInputFieldComponentProps,
+      isOpen,
+   };
 }
 
 export function usePageResize() {

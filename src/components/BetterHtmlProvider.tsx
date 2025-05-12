@@ -30,6 +30,10 @@ const GlobalStyle = createGlobalStyle<{ fontFamily: string; color: string; backg
       text-decoration: none;
       color: inherit;
    }
+
+   .react-better-html-no-scrollbar::-webkit-scrollbar {
+      display: none;
+   }
 `;
 
 export type BetterHtmlInternalConfig = BetterHtmlConfig & {
