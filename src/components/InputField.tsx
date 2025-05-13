@@ -526,7 +526,7 @@ InputFieldComponent.phoneNumber = forwardRef(function PhoneNumber({ label, value
    }, [value]);
 
    return (
-      <Div>
+      <Div width="100%">
          {label && <Label text={label} required={props.required} isError={!!props.errorText} />}
 
          <Div.row>
