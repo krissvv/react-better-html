@@ -534,7 +534,7 @@ InputFieldComponent.phoneNumber = forwardRef(function PhoneNumber({ label, value
                options={options}
                renderOption={renderOption}
                width={130}
-               minWidth={110}
+               minWidth={116}
                withSearch
                placeholder="+00"
                inputFieldClassName="react-better-html-phone-number-holder"
