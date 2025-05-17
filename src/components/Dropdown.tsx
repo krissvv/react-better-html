@@ -26,6 +26,7 @@ export type DropdownOption<Value, Data = unknown> = {
 
 export type DropdownProps<Value, Data = unknown> = {
    label?: string;
+   labelColor?: string;
    errorText?: string;
    infoText?: string;
    /** @default false */
@@ -61,6 +62,7 @@ type DropdownComponentType = {
 const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Value, Data>(
    {
       label,
+      labelColor,
       errorText,
       infoText,
       required,
@@ -257,6 +259,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
          <Div.row position="relative" width="100%">
             <InputField
                label={label}
+               labelColor={labelColor}
                errorText={errorText}
                infoText={infoText}
                required={required}

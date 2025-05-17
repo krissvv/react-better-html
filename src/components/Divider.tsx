@@ -48,7 +48,7 @@ export default {
       const theme = useTheme();
 
       return (
-         <Div.row alignItems="center" gap={text ? theme.styles.space : undefined} {...props}>
+         <Div.row width="100%" alignItems="center" gap={text ? theme.styles.space : undefined} {...props}>
             <Div flex={1} height={width} flexShrink={0} backgroundColor={backgroundColor ?? theme.colors.border} />
 
             {text && <Text color={textColor ?? theme.colors.textSecondary}>{text}</Text>}

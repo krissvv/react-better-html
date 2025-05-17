@@ -168,6 +168,7 @@ const minutes = Array.from({ length: 60 }, (_, index) => index);
 
 export type InputFieldProps = {
    label?: string;
+   labelColor?: string;
    errorText?: string;
    infoText?: string;
    leftIcon?: IconName | AnyOtherString;
@@ -204,6 +205,7 @@ type InputFieldComponentType = {
 const InputFieldComponent: InputFieldComponentType = forwardRef(function InputField(
    {
       label,
+      labelColor,
       errorText,
       infoText,
       leftIcon,
@@ -256,7 +258,7 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
 
    return (
       <Div.column width="100%" gap={theme.styles.gap / 2} {...styledComponentStylesWithExcluded} ref={holderRef}>
-         {label && <Label text={label} required={required} isError={!!errorText} />}
+         {label && <Label text={label} color={labelColor} required={required} isError={!!errorText} />}
 
          <Div position="relative" width="100%">
             {leftIcon && (
