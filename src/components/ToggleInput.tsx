@@ -138,6 +138,7 @@ export type ToggleInputRef = {};
 
 type InternalToggleInputProps<Value> = {
    label?: string;
+   labelColor?: string;
    text?: string;
    errorText?: string;
    infoText?: string;
@@ -156,12 +157,14 @@ type ToggleInputComponentType = <Value>(props: ToggleInputProps<Value>) => React
 const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
    {
       label,
+      labelColor,
       text,
       errorText,
       infoText,
       value,
       onChange,
       checked: controlledChecked,
+      color,
       required,
       ...props
    }: InternalToggleInputProps<Value>,
@@ -198,7 +201,7 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
 
    return (
       <Div.column width="100%" gap={theme.styles.gap / 2} {...styledComponentStylesWithExcluded}>
-         {label && <Label text={label} required={required} isError={!!errorText} />}
+         {label && <Label text={label} color={labelColor} required={required} isError={!!errorText} />}
 
          <Div.row alignItems="center" gap={theme.styles.gap}>
             <Div.row position="relative" alignItems="center">
@@ -243,7 +246,7 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
             </Div.row>
 
             {text && (
-               <Text userSelect="none" cursor="pointer" onClick={onClickText}>
+               <Text color={color} userSelect="none" cursor="pointer" onClick={onClickText}>
                   {text}
                </Text>
             )}
@@ -279,6 +282,7 @@ export default {
    switch: forwardRef(function Switch<Value>(
       {
          label,
+         labelColor,
          errorText,
          infoText,
          disabled,
@@ -286,6 +290,7 @@ export default {
          onChange,
          checked: controlledChecked,
          required,
+         color,
          ...props
       }: InternalToggleInputProps<Value>,
       ref: React.ForwardedRef<ToggleInputRef>,
@@ -314,7 +319,7 @@ export default {
 
       return (
          <Div.column width="fit-content" gap={theme.styles.gap / 2} {...styledComponentStylesWithExcluded}>
-            {label && <Label text={label} required={required} isError={!!errorText} />}
+            {label && <Label text={label} color={labelColor} required={required} isError={!!errorText} />}
 
             <Div.row
                alignItems="center"
@@ -344,7 +349,7 @@ export default {
                   as="span"
                   display="block"
                   fontSize={14}
-                  color={errorText ? theme.colors.error : theme.colors.textSecondary}
+                  color={errorText ? theme.colors.error : color ?? theme.colors.textSecondary}
                >
                   {errorText || infoText}
                </Text>
