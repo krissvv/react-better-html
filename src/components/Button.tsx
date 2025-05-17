@@ -28,6 +28,7 @@ const ButtonElement = styled.button.withConfig({
    disabled?: boolean;
    isLoading?: boolean;
 }>`
+   display: block;
    position: relative;
    width: fit-content;
    min-width: max-content;
