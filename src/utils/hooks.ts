@@ -515,10 +515,21 @@ export function useForm<FormFields extends Record<string | number, string | numb
       setErrors({});
    }, [defaultValues]);
 
-   const isDirty = useMemo(
+   const isDirty = useMemo<boolean>(
       () => Object.keys(defaultValues).some((key) => defaultValues[key] !== values[key]),
       [defaultValues, values],
    );
+   const isValid = useMemo<boolean>(() => {
+      const validationErrors = validate?.(values) || {};
+
+      return Object.keys(validationErrors).length === 0;
+   }, [validate, values]);
+   const canSubmit = useMemo<boolean>(() => {
+      const requiredFieldsHaveValues =
+         requiredFields?.every((field) => values[field] !== undefined && values[field] !== "") ?? true;
+
+      return isValid && requiredFieldsHaveValues;
+   }, [isValid, requiredFields]);
 
    return {
       values,
@@ -537,6 +548,8 @@ export function useForm<FormFields extends Record<string | number, string | numb
       reset,
       requiredFields,
       isDirty,
+      isValid,
+      canSubmit,
    };
 }
 

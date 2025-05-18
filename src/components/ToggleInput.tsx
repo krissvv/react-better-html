@@ -248,6 +248,12 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
             {text && (
                <Text color={color} userSelect="none" cursor="pointer" onClick={onClickText}>
                   {text}
+                  {required && !label && (
+                     <Text as="span" fontSize={16} color={theme.colors.error}>
+                        {" "}
+                        *
+                     </Text>
+                  )}
                </Text>
             )}
          </Div.row>
@@ -257,7 +263,7 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
                as="span"
                display="block"
                fontSize={14}
-               color={errorText ? theme.colors.error : theme.colors.textSecondary}
+               color={errorText ? theme.colors.error : labelColor ?? theme.colors.textSecondary}
             >
                {errorText || infoText}
             </Text>
@@ -290,7 +296,6 @@ export default {
          onChange,
          checked: controlledChecked,
          required,
-         color,
          ...props
       }: InternalToggleInputProps<Value>,
       ref: React.ForwardedRef<ToggleInputRef>,
@@ -349,7 +354,7 @@ export default {
                   as="span"
                   display="block"
                   fontSize={14}
-                  color={errorText ? theme.colors.error : color ?? theme.colors.textSecondary}
+                  color={errorText ? theme.colors.error : labelColor ?? theme.colors.textSecondary}
                >
                   {errorText || infoText}
                </Text>

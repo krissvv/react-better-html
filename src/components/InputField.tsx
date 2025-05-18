@@ -317,7 +317,7 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
                as="span"
                display="block"
                fontSize={14}
-               color={errorText ? theme.colors.error : theme.colors.textSecondary}
+               color={errorText ? theme.colors.error : labelColor ?? theme.colors.textSecondary}
             >
                {errorText || infoText}
             </Text>
@@ -415,7 +415,7 @@ InputFieldComponent.multiline = forwardRef(function Multiline(
                as="span"
                display="block"
                marginTop={theme.styles.gap / 2}
-               color={errorText ? theme.colors.error : theme.colors.textSecondary}
+               color={errorText ? theme.colors.error : props.labelColor ?? theme.colors.textSecondary}
                fontSize={14}
             >
                {errorText || infoText}
