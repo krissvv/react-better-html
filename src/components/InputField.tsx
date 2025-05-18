@@ -461,7 +461,10 @@ InputFieldComponent.search = forwardRef(function Search({ ...props }, ref) {
    return <InputFieldComponent leftIcon="magnifyingGlass" placeholder="Search..." ref={ref} {...props} />;
 }) as InputFieldComponentType["search"];
 
-InputFieldComponent.phoneNumber = forwardRef(function PhoneNumber({ label, value, onChangeValue, ...props }, ref) {
+InputFieldComponent.phoneNumber = forwardRef(function PhoneNumber(
+   { label, value, onChangeValue, labelColor, ...props },
+   ref,
+) {
    const theme = useTheme();
 
    const [dropdownValue, setDropdownValue] = useState<string>();
@@ -529,7 +532,7 @@ InputFieldComponent.phoneNumber = forwardRef(function PhoneNumber({ label, value
 
    return (
       <Div width="100%">
-         {label && <Label text={label} required={props.required} isError={!!props.errorText} />}
+         {label && <Label text={label} color={labelColor} required={props.required} isError={!!props.errorText} />}
 
          <Div.row>
             <Dropdown
