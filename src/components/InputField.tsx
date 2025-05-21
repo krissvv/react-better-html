@@ -257,7 +257,7 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
    }, [withDebounce, onChangeValue, debouncedValue]);
 
    return (
-      <Div.column width="100%" gap={theme.styles.gap / 2} {...styledComponentStylesWithExcluded} ref={holderRef}>
+      <Div.column width="100%" gap={theme.styles.gap} {...styledComponentStylesWithExcluded} ref={holderRef}>
          {label && <Label text={label} color={labelColor} required={required} isError={!!errorText} />}
 
          <Div position="relative" width="100%">
@@ -358,7 +358,7 @@ InputFieldComponent.multiline = forwardRef(function Multiline(
    );
 
    return (
-      <Div.column gap={theme.styles.gap / 2}>
+      <Div.column gap={theme.styles.gap}>
          {label && <Label text={label} required={required} isError={!!errorText} />}
 
          <Div position="relative" width="100%">
@@ -531,7 +531,7 @@ InputFieldComponent.phoneNumber = forwardRef(function PhoneNumber(
    }, [value]);
 
    return (
-      <Div width="100%">
+      <Div.column width="100%" gap={theme.styles.gap}>
          {label && <Label text={label} color={labelColor} required={props.required} isError={!!props.errorText} />}
 
          <Div.row>
@@ -541,7 +541,7 @@ InputFieldComponent.phoneNumber = forwardRef(function PhoneNumber(
                width={130}
                minWidth={116}
                withSearch
-               placeholder={label ?? "+00"}
+               placeholder="+00"
                inputFieldClassName="react-better-html-phone-number-holder"
                defaultValue={defaultValue}
                value={dropdownValue}
@@ -549,7 +549,7 @@ InputFieldComponent.phoneNumber = forwardRef(function PhoneNumber(
                withoutClearButton
             />
             <InputFieldComponent
-               placeholder="Phone number"
+               placeholder={label ?? "Phone number"}
                className="react-better-html-phone-number"
                value={inputFieldValue}
                onChangeValue={onChangeValueElement}
@@ -557,7 +557,7 @@ InputFieldComponent.phoneNumber = forwardRef(function PhoneNumber(
                {...props}
             />
          </Div.row>
-      </Div>
+      </Div.column>
    );
 }) as InputFieldComponentType["phoneNumber"];
 

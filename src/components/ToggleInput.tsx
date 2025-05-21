@@ -200,7 +200,7 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
    }, [checked, controlledChecked, onChange, value]);
 
    return (
-      <Div.column width="100%" gap={theme.styles.gap / 2} {...styledComponentStylesWithExcluded}>
+      <Div.column width="100%" gap={theme.styles.gap} {...styledComponentStylesWithExcluded}>
          {label && <Label text={label} color={labelColor} required={required} isError={!!errorText} />}
 
          <Div.row alignItems="center" gap={theme.styles.gap}>
@@ -323,7 +323,7 @@ export default {
       }, [disabled, checked, onChange, controlledChecked, value]);
 
       return (
-         <Div.column width="fit-content" gap={theme.styles.gap / 2} {...styledComponentStylesWithExcluded}>
+         <Div.column width="fit-content" gap={theme.styles.gap} {...styledComponentStylesWithExcluded}>
             {label && <Label text={label} color={labelColor} required={required} isError={!!errorText} />}
 
             <Div.row

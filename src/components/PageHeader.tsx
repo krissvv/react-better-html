@@ -7,7 +7,7 @@ import { useMediaQuery } from "../utils/hooks";
 import Div from "./Div";
 import Text, { TextAs } from "./Text";
 import Image from "./Image";
-import { useTheme } from "./BetterHtmlProvider";
+import { useBetterHtmlContext, useTheme } from "./BetterHtmlProvider";
 
 export type PageHeaderProps = {
    imageUrl?: string;
@@ -35,6 +35,7 @@ function PageHeader({
    marginBottom,
 }: PageHeaderProps) {
    const theme = useTheme();
+   const { app } = useBetterHtmlContext();
    const mediaQuery = useMediaQuery();
 
    return (
@@ -57,13 +58,17 @@ function PageHeader({
 
                {titleRightElement}
             </Div.row>
-            <Text
-               textAlign={textAlign}
-               color={lightMode ? theme.colors.base : theme.colors.textSecondary}
-               opacity={lightMode ? 0.7 : undefined}
-            >
-               {description}
-            </Text>
+
+            {description && (
+               <Text
+                  maxWidth={!mediaQuery.size600 ? app.contentMaxWidth * 0.6 : undefined}
+                  textAlign={textAlign}
+                  color={lightMode ? theme.colors.base : theme.colors.textSecondary}
+                  opacity={lightMode ? 0.7 : undefined}
+               >
+                  {description}
+               </Text>
+            )}
          </Div.column>
 
          {rightElement}

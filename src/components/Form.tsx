@@ -60,7 +60,7 @@ function Form({
    const submitButtonIsDisabledFinal = submitButtonIsDisabled || submitButtonIsDisabledInternal;
 
    return (
-      <Div {...props}>
+      <Div width="100%" {...props}>
          <form onSubmit={onSubmit ?? form?.onSubmit}>
             {gap !== undefined ? <Div.column gap={gap}>{children}</Div.column> : children}
 

@@ -2,9 +2,11 @@ export type Color = `#${string}` | "transparent";
 export type ColorName =
    | "textPrimary"
    | "textSecondary"
+   | "textLink"
    | "label"
    | "primary"
    | "secondary"
+   | "accent"
    | "success"
    | "info"
    | "warn"
