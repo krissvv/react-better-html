@@ -142,7 +142,7 @@ function BetterHtmlProviderContent({ children }: BetterHtmlProviderContentProps)
    );
 }
 
-export type BetterHtmlProviderValue = DeepPartialRecord<OmitProps<BetterHtmlConfig, "colorTheme">>;
+export type BetterHtmlProviderValue = DeepPartialRecord<BetterHtmlConfig>;
 
 type BetterHtmlProviderProps = {
    value?: BetterHtmlProviderValue;
@@ -154,7 +154,7 @@ function BetterHtmlProvider({ value, plugins: pluginsToUse, children }: BetterHt
    const [loaders, setLoaders] = useState<Partial<LoaderConfig>>(value?.loaders ?? {});
    const [plugins] = useState<BetterHtmlPlugin[]>(pluginsToUse ?? []);
    const [colorTheme, setColorTheme] = useState<ColorTheme>(
-      localStorage.getItem("theme") === "dark" ? "dark" : "light",
+      localStorage.getItem("theme") === "dark" ? "dark" : value?.colorTheme ?? "light",
    );
 
    const readyValue = useMemo<BetterHtmlInternalConfig>(
@@ -211,7 +211,7 @@ function BetterHtmlProvider({ value, plugins: pluginsToUse, children }: BetterHt
       const observer = new MutationObserver((mutations) => {
          mutations.forEach((mutation) => {
             if (mutation.type === "attributes") {
-               setColorTheme(html.getAttribute("data-theme") === "dark" ? "dark" : "light");
+               setColorTheme(html.getAttribute("data-theme") === "dark" ? "dark" : value?.colorTheme ?? "light");
             }
          });
       });

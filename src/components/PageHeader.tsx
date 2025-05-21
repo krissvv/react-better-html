@@ -43,7 +43,7 @@ function PageHeader({
          {imageUrl && <Image.profileImage src={imageUrl} size={imageSize ?? (mediaQuery.size600 ? 46 : 60)} />}
 
          <Div.column
-            justifyContent={textAlign === "center" ? "center" : textAlign === "right" ? "flex-end" : undefined}
+            alignItems={textAlign === "center" ? "center" : textAlign === "right" ? "flex-end" : undefined}
             flex={1}
             gap={theme.styles.gap / 2}
          >

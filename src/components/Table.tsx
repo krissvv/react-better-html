@@ -48,10 +48,10 @@ const TableStyledComponent = styled.table.withConfig({
       ${(props) =>
          props.withHover
             ? css`
-                 transition: ${(props) => props.theme.styles.transition};
+                 transition: ${props.theme.styles.transition};
 
                  &:not(.isHeader):hover {
-                    background-color: ${props.theme.colors.backgroundSecondary}20;
+                    filter: brightness(0.95);
                  }
               `
             : ""}

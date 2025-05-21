@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { createSearchParams, useNavigate, useSearchParams } from "react-router-dom";
+import { createSearchParams, useInRouterContext, useNavigate, useSearchParams } from "react-router-dom";
 
 import { cssProps } from "../constants/css";
 
@@ -559,6 +559,14 @@ export function useUrlQuery() {
    if (!reactRouterDomPlugin) {
       throw new Error(
          "`useUrlQuery` hook requires the `react-router-dom` plugin to be added to the `plugins` prop in `<BetterHtmlProvider>`.",
+      );
+   }
+
+   const isInRouterContext = useInRouterContext();
+
+   if (!isInRouterContext) {
+      throw new Error(
+         "`useUrlQuery` hook must be used inside a React Router context. Make sure your component is wrapped in a `<BrowserRouter>`, or another Router component.",
       );
    }
 
