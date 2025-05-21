@@ -75,12 +75,16 @@ const TableStyledComponent = styled.table.withConfig({
 `;
 
 const ThStyledComponent = styled.th.withConfig({
-   shouldForwardProp: (prop) => !["width", "textAlign"].includes(prop),
+   shouldForwardProp: (prop) => !["width", "minWidth", "maxWidth", "textAlign"].includes(prop),
 })<{
    width?: React.CSSProperties["width"];
+   minWidth?: React.CSSProperties["minWidth"];
+   maxWidth?: React.CSSProperties["maxWidth"];
    textAlign?: React.CSSProperties["textAlign"];
 }>`
    ${(props) => (props.width ? `width: ${props.width}px;` : "")}
+   ${(props) => (props.minWidth ? `min-width: ${props.minWidth}px;` : "")}
+   ${(props) => (props.maxWidth ? `max-width: ${props.maxWidth}px;` : "")}
    ${(props) => (props.textAlign ? `text-align: ${props.textAlign} !important;` : "")}
 `;
 
@@ -108,15 +112,17 @@ type ImageColumn<DataItem> = {
    keyName?: keyof DataItem;
 } & ImageProps;
 
-type CheckboxColumn<DataItem> = {
+type CheckboxColumn = {
    type: "checkbox";
 } & ToggleInputProps<boolean>;
 
 export type TableColumn<DataItem> = {
    label?: string;
    width?: string | number;
+   minWidth?: string | number;
+   maxWidth?: string | number;
    align?: "left" | "center" | "right";
-} & (TextColumn<DataItem> | ElementColumn<DataItem> | ImageColumn<DataItem> | CheckboxColumn<DataItem>);
+} & (TextColumn<DataItem> | ElementColumn<DataItem> | ImageColumn<DataItem> | CheckboxColumn);
 
 export type TableProps<DataItem> = {
    columns: TableColumn<DataItem>[];
@@ -241,6 +247,8 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                         width={
                            column.type === "image" ? defaultImageWidth : column.type === "checkbox" ? 26 : column.width
                         }
+                        minWidth={column.minWidth}
+                        maxWidth={column.maxWidth}
                         textAlign={column.align}
                         key={column.type + column.label + index}
                      >
