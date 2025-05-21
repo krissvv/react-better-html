@@ -29,7 +29,7 @@ export const theme: ThemeConfig = {
       },
       dark: {
          textPrimary: "#f8f8f8",
-         textSecondary: "#e8e8e8",
+         textSecondary: "#c8c8c8",
          textLink: "#0894ff",
          label: "#111111",
          primary: "#9b6499",
@@ -38,7 +38,7 @@ export const theme: ThemeConfig = {
          success: "#28a745",
          info: "#0fa0da",
          warn: "#ffc107",
-         error: "#dc3545",
+         error: "#f5384b",
          base: "#f8f8f8",
          backgroundBase: "#111111",
          backgroundSecondary: "#222222",

@@ -1,23 +1,25 @@
 import { forwardRef, memo, useCallback, ReactNode, useMemo, useState } from "react";
 import styled, { css } from "styled-components";
 
-import { Theme } from "../types/theme";
+import { ColorTheme, Theme } from "../types/theme";
 import { ComponentMarginProps, ComponentPropWithRef } from "../types/components";
 
 import Div from "./Div";
 import ToggleInput, { ToggleInputProps } from "./ToggleInput";
 import Image, { ImageProps } from "./Image";
-import { useTheme } from "./BetterHtmlProvider";
+import { useBetterHtmlContext, useTheme } from "./BetterHtmlProvider";
 import Text from "./Text";
+import Loader from "./Loader";
 
 const defaultImageWidth = 120;
 
 const TableStyledComponent = styled.table.withConfig({
-   shouldForwardProp: (prop) => !["isStriped", "withHover", "withStickyHeader", "theme"].includes(prop),
+   shouldForwardProp: (prop) => !["isStriped", "withHover", "withStickyHeader", "colorTheme", "theme"].includes(prop),
 })<{
    isStriped?: boolean;
    withHover?: boolean;
    withStickyHeader?: boolean;
+   colorTheme?: ColorTheme;
    theme: Theme;
 }>`
    width: 100%;
@@ -51,7 +53,7 @@ const TableStyledComponent = styled.table.withConfig({
                  transition: ${props.theme.styles.transition};
 
                  &:not(.isHeader):hover {
-                    filter: brightness(0.95);
+                    filter: brightness(${props.colorTheme === "light" ? "0.95" : "0.85"});
                  }
               `
             : ""}
@@ -63,7 +65,7 @@ const TableStyledComponent = styled.table.withConfig({
       }
 
       td {
-         border-top: 1px solid ${(props) => props.theme.colors.border}60;
+         border-top: 1px solid ${(props) => props.theme.colors.border + (props.colorTheme === "light" ? "60" : "40")};
          padding: ${(props) => props.theme.styles.gap}px ${(props) => props.theme.styles.space}px;
 
          &.noData {
@@ -130,6 +132,8 @@ export type TableProps<DataItem> = {
    /** @default false */
    isStriped?: boolean;
    /** @default false */
+   isLoading?: boolean;
+   /** @default false */
    withStickyHeader?: boolean;
    /** @default "No data available" */
    noDataItemsMessage?: string;
@@ -146,6 +150,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
       columns,
       data,
       isStriped,
+      isLoading,
       withStickyHeader,
       noDataItemsMessage = "No data available",
       onClickRow,
@@ -154,6 +159,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
    }: TableProps<DataItem>,
    ref: React.ForwardedRef<HTMLDivElement>,
 ) {
+   const { colorTheme } = useBetterHtmlContext();
    const theme = useTheme();
 
    const [checkedItems, setCheckedItems] = useState<boolean[]>([]);
@@ -238,6 +244,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
             isStriped={isStriped}
             withHover={onClickRow !== undefined}
             withStickyHeader={withStickyHeader}
+            colorTheme={colorTheme}
             theme={theme}
          >
             <thead>
@@ -267,7 +274,13 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
             </thead>
 
             <tbody>
-               {data.length > 0 ? (
+               {isLoading ? (
+                  <tr>
+                     <td className="noData" colSpan={columns.length}>
+                        <Loader.box />
+                     </td>
+                  </tr>
+               ) : data.length > 0 ? (
                   data.map((item, rowIndex) => (
                      <tr
                         className={onClickRow ? "isClickable" : undefined}

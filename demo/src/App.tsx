@@ -484,6 +484,35 @@ function App() {
                         width: 70,
                      },
                   ]}
+                  data={[]}
+                  isLoading
+               />
+               <Table
+                  columns={[
+                     {
+                        type: "text",
+                        label: "ID",
+                        keyName: "id",
+                        width: 52,
+                     },
+                     {
+                        type: "text",
+                        label: "Name",
+                        keyName: "name",
+                     },
+                     {
+                        type: "text",
+                        label: "Email",
+                        keyName: "email",
+                     },
+                     {
+                        type: "text",
+                        label: "Age",
+                        keyName: "age",
+                        align: "center",
+                        width: 70,
+                     },
+                  ]}
                   data={data}
                   withStickyHeader
                />
