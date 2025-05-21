@@ -27,13 +27,25 @@ import {
    Table,
 } from "../../src";
 
-const data = [
+const data: {
+   id: number;
+   name: string;
+   age: number;
+   email: string;
+   image: string;
+   data?: {
+      name: string;
+   };
+}[] = [
    {
       id: 1,
       name: "Kris",
       age: 25,
       email: "kris@kris.com",
       image: "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg",
+      data: {
+         name: "Kris",
+      },
    },
    {
       id: 2,
@@ -510,7 +522,6 @@ function App() {
                   columns={[
                      {
                         type: "checkbox",
-                        keyName: "checked",
                      },
                      {
                         type: "text",

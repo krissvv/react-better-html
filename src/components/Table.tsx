@@ -1,4 +1,4 @@
-import { forwardRef, memo, useCallback, ReactNode, useMemo } from "react";
+import { forwardRef, memo, useCallback, ReactNode, useMemo, useState } from "react";
 import styled, { css } from "styled-components";
 
 import { Theme } from "../types/theme";
@@ -94,13 +94,13 @@ const TdStyledComponent = styled.td.withConfig({
 
 type TextColumn<DataItem> = {
    type: "text";
-   keyName: keyof DataItem;
-   format?: (value: any) => string;
+   keyName?: keyof DataItem;
+   format?: (item: DataItem, index: number) => string;
 };
 
 type ElementColumn<DataItem> = {
    type: "element";
-   render: (item: DataItem, index: number) => ReactNode;
+   render?: (item: DataItem, index: number) => ReactNode;
 };
 
 type ImageColumn<DataItem> = {
@@ -110,7 +110,6 @@ type ImageColumn<DataItem> = {
 
 type CheckboxColumn<DataItem> = {
    type: "checkbox";
-   keyName?: keyof DataItem;
 } & ToggleInputProps<boolean>;
 
 export type TableColumn<DataItem> = {
@@ -129,7 +128,7 @@ export type TableProps<DataItem> = {
    /** @default "No data available" */
    noDataItemsMessage?: string;
    onClickRow?: (item: DataItem, index: number) => void;
-   onClickAllCheckboxes?: () => void;
+   onClickAllCheckboxes?: (checked: boolean) => void;
 } & ComponentMarginProps;
 
 type TableComponentType = {
@@ -151,17 +150,19 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
 ) {
    const theme = useTheme();
 
+   const [checkedItems, setCheckedItems] = useState<boolean[]>([]);
+
    const renderCellContent = useCallback(
       (column: (typeof columns)[number], item: DataItem, index: number) => {
          switch (column.type) {
             case "text": {
-               const value = item[column.keyName];
+               const value = column.keyName ? item[column.keyName] : undefined;
 
-               return column.format ? column.format(value) : String(value ?? "");
+               return column.format ? column.format(item, index) : String(value ?? "");
             }
 
             case "element": {
-               return column.render(item, index);
+               return column.render?.(item, index) ?? <></>;
             }
 
             case "image": {
@@ -175,11 +176,23 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
             }
 
             case "checkbox": {
-               const { type, keyName, ...props } = column;
+               const { type, onChange, ...props } = column;
 
-               const checked = keyName ? (item[keyName] as boolean) : false;
+               const checkedValue = checkedItems[index];
 
-               return <ToggleInput.checkbox checked={checked} {...props} />;
+               return (
+                  <ToggleInput.checkbox
+                     checked={checkedValue}
+                     onChange={(checked: boolean, value) => {
+                        setCheckedItems((oldValue) =>
+                           oldValue.map((isChecked, internalIndex) => (internalIndex === index ? checked : isChecked)),
+                        );
+
+                        onChange?.(checked, value);
+                     }}
+                     {...props}
+                  />
+               );
             }
 
             default: {
@@ -187,7 +200,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
             }
          }
       },
-      [theme],
+      [theme, checkedItems],
    );
    const onClickRowElement = useCallback(
       (item: DataItem, index: number) => {
@@ -195,15 +208,17 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
       },
       [onClickRow],
    );
+   const onClickAllCheckboxesElement = useCallback(
+      (checked: boolean) => {
+         onClickAllCheckboxes?.(checked);
+         setCheckedItems(data.map(() => checked));
+      },
+      [onClickAllCheckboxes, data],
+   );
 
    const everythingIsChecked = useMemo<boolean>(() => {
-      if (!columns.some((column) => column.type === "checkbox")) return false;
-
-      const keyName = columns.find((column) => column.type === "checkbox")?.keyName;
-      if (!keyName) return false;
-
-      return data.every((item) => item[keyName]);
-   }, [data]);
+      return checkedItems.every((checked) => checked) && checkedItems.length === data.length;
+   }, [data, checkedItems]);
 
    return (
       <Div
@@ -231,7 +246,10 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                      >
                         {column.label ??
                            (column.type === "checkbox" && onClickAllCheckboxes ? (
-                              <ToggleInput.checkbox checked={everythingIsChecked} onChange={onClickAllCheckboxes} />
+                              <ToggleInput.checkbox
+                                 checked={everythingIsChecked}
+                                 onChange={onClickAllCheckboxesElement}
+                              />
                            ) : (
                               ""
                            ))}

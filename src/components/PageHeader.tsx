@@ -42,7 +42,11 @@ function PageHeader({
       <Div.row alignItems="center" gap={theme.styles.space} marginBottom={marginBottom ?? theme.styles.space * 2}>
          {imageUrl && <Image.profileImage src={imageUrl} size={imageSize ?? (mediaQuery.size600 ? 46 : 60)} />}
 
-         <Div.column flex={1} gap={theme.styles.gap / 2}>
+         <Div.column
+            justifyContent={textAlign === "center" ? "center" : textAlign === "right" ? "flex-end" : undefined}
+            flex={1}
+            gap={theme.styles.gap / 2}
+         >
             <Div.row
                alignItems="center"
                justifyContent={textAlign === "center" ? "center" : textAlign === "right" ? "flex-end" : undefined}
