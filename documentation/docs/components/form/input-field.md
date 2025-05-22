@@ -280,3 +280,60 @@ function App() {
    );
 }
 ```
+
+### InputField.date
+
+This component renders an input field with calendar to pick a date.
+
+```jsx
+import { InputField } from "react-better-html";
+
+function App() {
+   return (
+      // highlight-next-line
+      <InputField.date
+         onChangeValue={(value) => {
+            console.log("Ready date:", value);
+         }}
+      >
+   );
+}
+```
+
+### InputField.time
+
+This component renders an input field with time picker to pick a time.
+
+```jsx
+import { InputField } from "react-better-html";
+
+function App() {
+   return (
+      // highlight-next-line
+      <InputField.time
+         onChangeValue={(value) => {
+            console.log("Ready time:", value);
+         }}
+      >
+   );
+}
+```
+
+### InputField.dateTime
+
+This component renders an input field with calendar and time picker to pick a date and time.
+
+```jsx
+import { InputField } from "react-better-html";
+
+function App() {
+   return (
+      // highlight-next-line
+      <InputField.dateTime
+         onChangeValue={(value) => {
+            console.log("Ready date and time:", value);
+         }}
+      >
+   );
+}
+```
