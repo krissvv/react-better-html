@@ -395,14 +395,14 @@ function App() {
                <Button text="Open confirmation modal" onClick={confirmationModalRef.current?.open} />
                <Button text="Open destructive modal" onClick={destructiveModalRef.current?.open} />
 
-               <Div.row alignItems="center" gap={theme.styles.gap}>
+               <Div.row alignItems="center" gap={theme.styles.gap} overflowX="auto">
                   <Button text="Hello there" />
                   <Button.secondary text="Hello there" />
                   <Button.destructive text="Hello there" />
                   <Button.icon icon="XMark" />
                   <Button.upload />
                </Div.row>
-               <Div.row alignItems="center" gap={theme.styles.gap}>
+               <Div.row alignItems="center" gap={theme.styles.gap} overflowX="auto">
                   <Button text="Hello there" isSmall />
                   <Button.secondary text="Hello there" isSmall />
                   <Button.secondary text="Hello there" isSmall disabled />
@@ -410,7 +410,7 @@ function App() {
                   <Button.icon icon="XMark" />
                   <Button.upload isSmall />
                </Div.row>
-               <Div.row alignItems="center" gap={theme.styles.gap}>
+               <Div.row alignItems="center" gap={theme.styles.gap} overflowX="auto">
                   <Button text="Hello there" isLoading />
                   <Button.secondary text="Hello there" isLoading />
                   <Button.destructive text="Hello there" isLoading />

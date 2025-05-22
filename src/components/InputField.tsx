@@ -2,6 +2,7 @@ import React, { forwardRef, memo, useCallback, useState, useEffect, useMemo, use
 import styled from "styled-components";
 
 import { countries } from "../constants/countries";
+import { isMobileDevice } from "../constants";
 
 import { ComponentHoverStyle, ComponentPropWithRef, ComponentStyle } from "../types/components";
 import { AnyOtherString, OmitProps } from "../types/app";
@@ -18,6 +19,7 @@ import {
    useDebounceState,
    useStyledComponentStyles,
 } from "../utils/hooks";
+import { getBrowser } from "../utils/functions";
 
 import Text from "./Text";
 import Div from "./Div";
@@ -27,6 +29,9 @@ import Label from "./Label";
 import Dropdown, { DropdownOption } from "./Dropdown";
 import Image from "./Image";
 import { useTheme } from "./BetterHtmlProvider";
+import Calendar from "./Calendar";
+
+const buttonWidth = 50;
 
 const InputElement = styled.input.withConfig({
    shouldForwardProp: (prop) => !["theme", "withLeftIcon", "withRightIcon", "normalStyle", "hoverStyle"].includes(prop),
@@ -70,11 +75,20 @@ const InputElement = styled.input.withConfig({
       cursor: not-allowed;
    }
 
-   &[type="date"]::-webkit-calendar-picker-indicator,
-   &[type="datetime-local"]::-webkit-calendar-picker-indicator,
-   &[type="time"]::-webkit-calendar-picker-indicator {
-      display: none;
+   &[type="date"],
+   &[type="datetime-local"],
+   &[type="time"] {
+      min-height: 48px;
       -webkit-appearance: none;
+
+      &::-webkit-calendar-picker-indicator {
+         display: none;
+         -webkit-appearance: none;
+      }
+
+      &::-webkit-date-and-time-value {
+         text-align: left !important;
+      }
    }
 
    &.react-better-html-phone-number-holder {
@@ -197,8 +211,24 @@ type InputFieldComponentType = {
    phoneNumber: (
       props: ComponentPropWithRef<HTMLInputElement, OmitProps<InputFieldProps, "type">>,
    ) => React.ReactElement;
-   date: (props: ComponentPropWithRef<HTMLInputElement, InputFieldProps>) => React.ReactElement;
-   dateTime: (props: ComponentPropWithRef<HTMLInputElement, InputFieldProps>) => React.ReactElement;
+   date: (
+      props: ComponentPropWithRef<
+         HTMLInputElement,
+         InputFieldProps & {
+            minDate?: Date;
+            maxDate?: Date;
+         }
+      >,
+   ) => React.ReactElement;
+   dateTime: (
+      props: ComponentPropWithRef<
+         HTMLInputElement,
+         InputFieldProps & {
+            minDate?: Date;
+            maxDate?: Date;
+         }
+      >,
+   ) => React.ReactElement;
    time: (props: ComponentPropWithRef<HTMLInputElement, InputFieldProps>) => React.ReactElement;
 };
 
@@ -561,33 +591,44 @@ InputFieldComponent.phoneNumber = forwardRef(function PhoneNumber(
    );
 }) as InputFieldComponentType["phoneNumber"];
 
-InputFieldComponent.date = forwardRef(function Date({ className, onFocus, onBlur, ...props }, ref) {
+InputFieldComponent.date = forwardRef(function Date({ minDate, maxDate, ...props }, ref) {
    const theme = useTheme();
 
    const holderRef = useRef<HTMLDivElement>(null);
 
+   const isMobileIOS = isMobileDevice && getBrowser() === "safari";
+
    const { internalValue, setInternalValue, inputFieldProps, insideInputFieldComponentProps } =
-      useComponentInputFieldDateProps(props, holderRef);
+      useComponentInputFieldDateProps(props, holderRef, isMobileIOS);
+
+   const onChange = useCallback(
+      (date?: string) => {
+         inputFieldProps.onChangeValue?.(date ?? "");
+         setInternalValue(date ?? "");
+      },
+      [inputFieldProps.onChangeValue],
+   );
 
    return (
       <InputFieldComponent
          type="date"
          insideInputFieldComponent={
-            <Div
-               position="absolute"
-               top="100%"
-               left={0}
-               width="100%"
-               maxHeight={300}
-               backgroundColor={theme.colors.backgroundContent}
-               borderBottomLeftRadius={theme.styles.borderRadius}
-               borderBottomRightRadius={theme.styles.borderRadius}
-               boxShadow="0px 10px 20px #00000020"
-               overflowY="auto"
-               {...insideInputFieldComponentProps}
-            >
-               Hello there
-            </Div>
+            !isMobileIOS ? (
+               <Div
+                  position="absolute"
+                  top="100%"
+                  left={0}
+                  width="fit-content"
+                  backgroundColor={theme.colors.backgroundContent}
+                  borderBottomLeftRadius={theme.styles.borderRadius}
+                  borderBottomRightRadius={theme.styles.borderRadius}
+                  boxShadow="0px 10px 20px #00000020"
+                  userSelect="none"
+                  {...insideInputFieldComponentProps}
+               >
+                  <Calendar value={internalValue} minDate={minDate} maxDate={maxDate} onChange={onChange} />
+               </Div>
+            ) : undefined
          }
          holderRef={holderRef}
          ref={ref}
@@ -597,33 +638,184 @@ InputFieldComponent.date = forwardRef(function Date({ className, onFocus, onBlur
    );
 }) as InputFieldComponentType["date"];
 
-InputFieldComponent.dateTime = forwardRef(function DateTime({ className, onFocus, onBlur, ...props }, ref) {
+InputFieldComponent.dateTime = forwardRef(function DateTime({ minDate, maxDate, ...props }, ref) {
    const theme = useTheme();
 
    const holderRef = useRef<HTMLDivElement>(null);
+   const selectedHourRef = useRef<HTMLDivElement>(null);
+   const selectedMinuteRef = useRef<HTMLDivElement>(null);
 
-   const { internalValue, setInternalValue, inputFieldProps, insideInputFieldComponentProps } =
-      useComponentInputFieldDateProps(props, holderRef);
+   const isMobileIOS = isMobileDevice && getBrowser() === "safari";
+
+   const { internalValue, setInternalValue, inputFieldProps, insideInputFieldComponentProps, isOpen } =
+      useComponentInputFieldDateProps(props, holderRef, isMobileIOS);
+
+   const onChange = useCallback(
+      (date?: string) => {
+         const newValue = date ? `${date}T${internalValue?.toString().split("T")[1] ?? "00:00"}` : "";
+
+         inputFieldProps.onChangeValue?.(newValue);
+         setInternalValue(newValue);
+      },
+      [internalValue, inputFieldProps.onChangeValue],
+   );
+   const onClickHour = useCallback(
+      (hour: number) => {
+         const newTime = `${hour.toString().padStart(2, "0")}:${internalValue?.toString().split(":")[1] || "00"}`;
+
+         const today = `${new Date().getFullYear()}-${(new Date().getMonth() + 1)
+            .toString()
+            .padStart(2, "0")}-${new Date().getDate().toString().padStart(2, "0")}`;
+
+         const newValue = `${(internalValue.trim() || today)?.toString().split("T")[0]}T${newTime}`;
+         inputFieldProps.onChangeValue?.(newValue);
+         setInternalValue(newValue);
+      },
+      [internalValue, inputFieldProps.onChangeValue],
+   );
+   const onClickMinute = useCallback(
+      (minute: number) => {
+         const newTime = `${internalValue?.toString().split("T")?.[1]?.split(":")[0] || "00"}:${minute
+            .toString()
+            .padStart(2, "0")}`;
+
+         const today = `${new Date().getFullYear()}-${(new Date().getMonth() + 1)
+            .toString()
+            .padStart(2, "0")}-${new Date().getDate().toString().padStart(2, "0")}`;
+
+         const newValue = `${(internalValue.trim() || today)?.toString().split("T")[0]}T${newTime}`;
+         console.log(newValue);
+
+         inputFieldProps.onChangeValue?.(newValue);
+         setInternalValue(newValue);
+      },
+      [internalValue, inputFieldProps.onChangeValue],
+   );
+
+   useEffect(() => {
+      if (isOpen && selectedHourRef.current)
+         selectedHourRef.current.scrollIntoView({ block: "nearest", behavior: "instant" });
+
+      if (isOpen && selectedMinuteRef.current)
+         selectedMinuteRef.current.scrollIntoView({ block: "nearest", behavior: "instant" });
+   }, [isOpen]);
+
+   const valueHour = parseInt(internalValue?.toString().split("T")?.[1]?.split(":")?.[0]).toString();
+   const valueMinute = parseInt(internalValue?.toString().split("T")?.[1]?.split(":")?.[1]).toString();
+
+   const topSpacing = 32 + theme.styles.space / 2 + theme.styles.gap;
 
    return (
       <InputFieldComponent
          type="datetime-local"
          insideInputFieldComponent={
-            <Div
-               position="absolute"
-               top="100%"
-               left={0}
-               width="100%"
-               maxHeight={300}
-               backgroundColor={theme.colors.backgroundContent}
-               borderBottomLeftRadius={theme.styles.borderRadius}
-               borderBottomRightRadius={theme.styles.borderRadius}
-               boxShadow="0px 10px 20px #00000020"
-               overflowY="auto"
-               {...insideInputFieldComponentProps}
-            >
-               Hello there
-            </Div>
+            !isMobileIOS ? (
+               <Div
+                  position="absolute"
+                  top="100%"
+                  left={0}
+                  width="fit-content"
+                  backgroundColor={theme.colors.backgroundContent}
+                  borderBottomLeftRadius={theme.styles.borderRadius}
+                  borderBottomRightRadius={theme.styles.borderRadius}
+                  boxShadow="0px 10px 20px #00000020"
+                  overflow="hidden"
+                  userSelect="none"
+                  {...insideInputFieldComponentProps}
+               >
+                  <Div.row gap={theme.styles.space}>
+                     <Calendar value={internalValue} minDate={minDate} maxDate={maxDate} onChange={onChange} />
+
+                     <Div.row
+                        height={276}
+                        gap={theme.styles.gap / 2}
+                        paddingTop={topSpacing}
+                        paddingBottom={theme.styles.space / 2}
+                        paddingRight={theme.styles.space / 2}
+                     >
+                        <Div height="100%">
+                           <Text fontSize={14} fontWeight={700} textAlign="center" marginBottom={theme.styles.gap / 2}>
+                              H
+                           </Text>
+
+                           <Div
+                              className="react-better-html-no-scrollbar"
+                              width={buttonWidth}
+                              height={`calc(100% - ${16 + theme.styles.gap / 2}px)`}
+                              overflowY="auto"
+                           >
+                              {hours.map((hour) => {
+                                 const isSelected = hour.toString() === valueHour;
+
+                                 return (
+                                    <Div.row
+                                       alignItems="center"
+                                       justifyContent="center"
+                                       color={isSelected ? theme.colors.base : theme.colors.textPrimary}
+                                       backgroundColor={
+                                          isSelected ? theme.colors.primary : theme.colors.backgroundContent
+                                       }
+                                       borderRadius={theme.styles.borderRadius / 2}
+                                       filterHover="brightness(0.9)"
+                                       cursor="pointer"
+                                       padding={`${theme.styles.space / 2}px ${
+                                          theme.styles.space + theme.styles.gap
+                                       }px`}
+                                       value={hour}
+                                       onClickWithValue={onClickHour}
+                                       ref={isSelected ? selectedHourRef : undefined}
+                                       key={hour}
+                                    >
+                                       <Text textAlign="center">{hour.toString().padStart(2, "0")}</Text>
+                                    </Div.row>
+                                 );
+                              })}
+                           </Div>
+                        </Div>
+
+                        <Div height="100%">
+                           <Text fontSize={14} fontWeight={700} textAlign="center" marginBottom={theme.styles.gap / 2}>
+                              M
+                           </Text>
+
+                           <Div
+                              className="react-better-html-no-scrollbar"
+                              width={buttonWidth}
+                              height={`calc(100% - ${16 + theme.styles.gap / 2}px)`}
+                              overflowY="auto"
+                           >
+                              {minutes.map((minute) => {
+                                 const isSelected = minute.toString() === valueMinute;
+
+                                 return (
+                                    <Div.row
+                                       alignItems="center"
+                                       justifyContent="center"
+                                       color={isSelected ? theme.colors.base : theme.colors.textPrimary}
+                                       backgroundColor={
+                                          isSelected ? theme.colors.primary : theme.colors.backgroundContent
+                                       }
+                                       borderRadius={theme.styles.borderRadius / 2}
+                                       filterHover="brightness(0.9)"
+                                       cursor="pointer"
+                                       padding={`${theme.styles.space / 2}px ${
+                                          theme.styles.space + theme.styles.gap
+                                       }px`}
+                                       value={minute}
+                                       onClickWithValue={onClickMinute}
+                                       ref={isSelected ? selectedMinuteRef : undefined}
+                                       key={minute}
+                                    >
+                                       <Text textAlign="center">{minute.toString().padStart(2, "0")}</Text>
+                                    </Div.row>
+                                 );
+                              })}
+                           </Div>
+                        </Div>
+                     </Div.row>
+                  </Div.row>
+               </Div>
+            ) : undefined
          }
          holderRef={holderRef}
          ref={ref}
@@ -640,8 +832,10 @@ InputFieldComponent.time = forwardRef(function Time({ ...props }, ref) {
    const selectedHourRef = useRef<HTMLDivElement>(null);
    const selectedMinuteRef = useRef<HTMLDivElement>(null);
 
+   const isMobileIOS = isMobileDevice && getBrowser() === "safari";
+
    const { internalValue, setInternalValue, inputFieldProps, insideInputFieldComponentProps, isOpen } =
-      useComponentInputFieldDateProps(props, holderRef);
+      useComponentInputFieldDateProps(props, holderRef, isMobileIOS);
 
    const onClickHour = useCallback(
       (hour: number) => {
@@ -673,75 +867,76 @@ InputFieldComponent.time = forwardRef(function Time({ ...props }, ref) {
    const valueHour = parseInt(internalValue?.toString().split(":")?.[0]).toString();
    const valueMinute = parseInt(internalValue?.toString().split(":")?.[1]).toString();
 
-   const buttonWidth = 50;
-
    return (
       <InputFieldComponent
          type="time"
          insideInputFieldComponent={
-            <Div
-               position="absolute"
-               top="100%"
-               left={0}
-               width={buttonWidth * 2 + 2}
-               height={300}
-               backgroundColor={theme.colors.backgroundContent}
-               borderBottomLeftRadius={theme.styles.borderRadius}
-               borderBottomRightRadius={theme.styles.borderRadius}
-               boxShadow="0px 10px 20px #00000020"
-               overflowY="auto"
-               {...insideInputFieldComponentProps}
-            >
-               <Div.row height="100%">
-                  <Div className="react-better-html-no-scrollbar" width={buttonWidth} height="100%" overflowY="auto">
-                     {hours.map((hour) => {
-                        const isSelected = hour.toString() === valueHour;
+            !isMobileIOS ? (
+               <Div
+                  position="absolute"
+                  top="100%"
+                  left={0}
+                  width={buttonWidth * 2 + 2}
+                  height={300}
+                  backgroundColor={theme.colors.backgroundContent}
+                  borderBottomLeftRadius={theme.styles.borderRadius}
+                  borderBottomRightRadius={theme.styles.borderRadius}
+                  boxShadow="0px 10px 20px #00000020"
+                  overflowY="auto"
+                  userSelect="none"
+                  {...insideInputFieldComponentProps}
+               >
+                  <Div.row height="100%">
+                     <Div className="react-better-html-no-scrollbar" width={buttonWidth} height="100%" overflowY="auto">
+                        {hours.map((hour) => {
+                           const isSelected = hour.toString() === valueHour;
 
-                        return (
-                           <Div.row
-                              alignItems="center"
-                              justifyContent="center"
-                              color={isSelected ? theme.colors.base : theme.colors.textPrimary}
-                              backgroundColor={isSelected ? theme.colors.primary : theme.colors.backgroundContent}
-                              filterHover="brightness(0.9)"
-                              cursor="pointer"
-                              padding={`${theme.styles.space / 2}px ${theme.styles.space + theme.styles.gap}px`}
-                              value={hour}
-                              onClickWithValue={onClickHour}
-                              ref={isSelected ? selectedHourRef : undefined}
-                              key={hour}
-                           >
-                              <Text textAlign="center">{hour.toString().padStart(2, "0")}</Text>
-                           </Div.row>
-                        );
-                     })}
-                  </Div>
+                           return (
+                              <Div.row
+                                 alignItems="center"
+                                 justifyContent="center"
+                                 color={isSelected ? theme.colors.base : theme.colors.textPrimary}
+                                 backgroundColor={isSelected ? theme.colors.primary : theme.colors.backgroundContent}
+                                 filterHover="brightness(0.9)"
+                                 cursor="pointer"
+                                 padding={`${theme.styles.space / 2}px ${theme.styles.space + theme.styles.gap}px`}
+                                 value={hour}
+                                 onClickWithValue={onClickHour}
+                                 ref={isSelected ? selectedHourRef : undefined}
+                                 key={hour}
+                              >
+                                 <Text textAlign="center">{hour.toString().padStart(2, "0")}</Text>
+                              </Div.row>
+                           );
+                        })}
+                     </Div>
 
-                  <Div className="react-better-html-no-scrollbar" width={buttonWidth} height="100%" overflowY="auto">
-                     {minutes.map((minute) => {
-                        const isSelected = minute.toString() === valueMinute;
+                     <Div className="react-better-html-no-scrollbar" width={buttonWidth} height="100%" overflowY="auto">
+                        {minutes.map((minute) => {
+                           const isSelected = minute.toString() === valueMinute;
 
-                        return (
-                           <Div.row
-                              alignItems="center"
-                              justifyContent="center"
-                              color={isSelected ? theme.colors.base : theme.colors.textPrimary}
-                              backgroundColor={isSelected ? theme.colors.primary : theme.colors.backgroundContent}
-                              filterHover="brightness(0.9)"
-                              cursor="pointer"
-                              padding={`${theme.styles.space / 2}px ${theme.styles.space + theme.styles.gap}px`}
-                              value={minute}
-                              onClickWithValue={onClickMinute}
-                              ref={isSelected ? selectedMinuteRef : undefined}
-                              key={minute}
-                           >
-                              <Text textAlign="center">{minute.toString().padStart(2, "0")}</Text>
-                           </Div.row>
-                        );
-                     })}
-                  </Div>
-               </Div.row>
-            </Div>
+                           return (
+                              <Div.row
+                                 alignItems="center"
+                                 justifyContent="center"
+                                 color={isSelected ? theme.colors.base : theme.colors.textPrimary}
+                                 backgroundColor={isSelected ? theme.colors.primary : theme.colors.backgroundContent}
+                                 filterHover="brightness(0.9)"
+                                 cursor="pointer"
+                                 padding={`${theme.styles.space / 2}px ${theme.styles.space + theme.styles.gap}px`}
+                                 value={minute}
+                                 onClickWithValue={onClickMinute}
+                                 ref={isSelected ? selectedMinuteRef : undefined}
+                                 key={minute}
+                              >
+                                 <Text textAlign="center">{minute.toString().padStart(2, "0")}</Text>
+                              </Div.row>
+                           );
+                        })}
+                     </Div>
+                  </Div.row>
+               </Div>
+            ) : undefined
          }
          holderRef={holderRef}
          ref={ref}

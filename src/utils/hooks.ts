@@ -126,6 +126,7 @@ export function useComponentPropsWithoutStyle<Props extends Record<string, any>>
 export function useComponentInputFieldDateProps(
    props: InputFieldProps,
    holderRef: React.RefObject<HTMLDivElement | null>,
+   disabled?: boolean,
 ): {
    internalValue: string;
    setInternalValue: React.Dispatch<React.SetStateAction<string>>;
@@ -144,8 +145,8 @@ export function useComponentInputFieldDateProps(
    const inputFieldProps = useMemo<InputFieldProps>(
       () => ({
          value: internalValue,
-         className: `${isOpen ? "react-better-html-inputField-dateTime-opened" : ""}${
-            isOpenLate ? " react-better-html-inputField-dateTime-opened-late" : ""
+         className: `${isOpen && !disabled ? "react-better-html-inputField-dateTime-opened" : ""}${
+            isOpenLate && !disabled ? " react-better-html-inputField-dateTime-opened-late" : ""
          }${props.className ? ` ${props.className}` : ""}`,
          onClick: (event: React.MouseEvent<HTMLInputElement>) => {
             if (props.disabled) return;
@@ -166,7 +167,7 @@ export function useComponentInputFieldDateProps(
             props.onChangeValue?.(value);
          },
       }),
-      [props, internalValue, isOpen, isOpenLate],
+      [props, internalValue, isOpen, isOpenLate, disabled],
    );
    const insideInputFieldComponentProps = useMemo<InputFieldProps>(
       () => ({

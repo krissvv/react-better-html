@@ -3,6 +3,8 @@ export type IconName =
    | "uploadCloud"
    | "trash"
    | "chevronDown"
+   | "chevronLeft"
+   | "chevronRight"
    | "eye"
    | "eyeDashed"
    | "magnifyingGlass"
