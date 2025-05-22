@@ -78,7 +78,7 @@ const InputElement = styled.input.withConfig({
    &[type="date"],
    &[type="datetime-local"],
    &[type="time"] {
-      min-height: 48px;
+      // min-height: 46px;
       -webkit-appearance: none;
 
       &::-webkit-calendar-picker-indicator {
@@ -280,6 +280,16 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
       [onChange, onChangeValue, withDebounce],
    );
 
+   const leftIconZIndex = useMemo(
+      () =>
+         ["react-better-html-dropdown-open-late", "react-better-html-inputField-dateTime-opened-late"].some(
+            (classNameItem) => props.className?.includes(classNameItem),
+         )
+            ? 1002
+            : 1,
+      [props.className],
+   );
+
    useEffect(() => {
       if (!withDebounce) return;
 
@@ -295,11 +305,13 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
                <Icon
                   name={leftIcon}
                   position="absolute"
-                  top={46 / 2}
+                  top={
+                     (props.type === "date" || props.type === "time" || props.type === "datetime-local" ? 48 : 46) / 2
+                  }
                   left={theme.styles.space + 1}
                   transform="translateY(-50%)"
                   pointerEvents="none"
-                  zIndex={props.className?.includes("react-better-html-dropdown-open-late") ? 1002 : 1}
+                  zIndex={leftIconZIndex}
                />
             )}
 

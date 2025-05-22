@@ -359,7 +359,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
 
             <Div.row
                position="absolute"
-               top={46 / 2 + (label ? 16 + theme.styles.gap / 2 : 0)}
+               top={46 / 2 + (label ? 16 + theme.styles.gap : 0)}
                right={theme.styles.space + 1}
                alignItems="center"
                gap={theme.styles.gap}

@@ -231,7 +231,7 @@ function App() {
                <InputField.search label="With Debounce" withDebounce />
                <InputField.phoneNumber />
                <InputField.phoneNumber label="Phone number" />
-               <InputField.date label="Date" />
+               <InputField.date label="Date" leftIcon="XMark" />
                <InputField.dateTime label="Date & Time" />
                <InputField.time label="Time" />
 
