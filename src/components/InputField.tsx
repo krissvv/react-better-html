@@ -297,10 +297,10 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
    }, [withDebounce, onChangeValue, debouncedValue]);
 
    return (
-      <Div.column width="100%" gap={theme.styles.gap} {...styledComponentStylesWithExcluded} ref={holderRef}>
+      <Div.column width="100%" gap={theme.styles.gap} {...styledComponentStylesWithExcluded}>
          {label && <Label text={label} color={labelColor} required={required} isError={!!errorText} />}
 
-         <Div position="relative" width="100%">
+         <Div position="relative" width="100%" ref={holderRef}>
             {leftIcon && (
                <Icon
                   name={leftIcon}

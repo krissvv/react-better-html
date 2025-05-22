@@ -88,7 +88,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
 ) {
    const theme = useTheme();
 
-   const dropdownHolderRef = useRef<HTMLDivElement>(null);
+   const inputFieldHolderRef = useRef<HTMLDivElement>(null);
    const inputRef = useRef<HTMLInputElement>(null);
 
    const [isOpen, setIsOpen] = useBooleanState();
@@ -229,7 +229,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
    }, [filteredOptions]);
    useEffect(() => {
       const handleClickOutside = (event: MouseEvent) => {
-         if (dropdownHolderRef.current && !dropdownHolderRef.current.contains(event.target as Node)) {
+         if (inputFieldHolderRef.current && !inputFieldHolderRef.current.contains(event.target as Node)) {
             setIsOpen.setFalse();
             setSearchQuery("");
             setFocusedOptionIndex(undefined);
@@ -255,7 +255,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
    const readyPlaceholder = placeholder ? placeholder : `Select an ${label?.toLowerCase() ?? "option"}`;
 
    return (
-      <Div.column width="100%" position="relative" userSelect="none" {...props} ref={dropdownHolderRef}>
+      <Div.column width="100%" position="relative" userSelect="none" {...props}>
          <Div.row position="relative" width="100%">
             <InputField
                label={label}
@@ -276,6 +276,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
                onFocus={setIsFocused.setTrue}
                onBlur={setIsFocused.setFalse}
                onKeyDown={onKeyDownInputField}
+               holderRef={inputFieldHolderRef}
                onChangeValue={withSearch ? onChangeValue : undefined}
                insideInputFieldComponent={
                   <Div

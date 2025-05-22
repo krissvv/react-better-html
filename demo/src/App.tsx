@@ -139,6 +139,7 @@ function App() {
          option: undefined as 1 | 2 | 3 | undefined,
          withSurprise: false as boolean,
          fruit: "banana" as "banana" | "apple" | "orange",
+         date: "2024-01-01",
          canDelete: false as boolean,
       },
       requiredFields: ["name", "email"],
@@ -366,6 +367,7 @@ function App() {
                   <InputField.phoneNumber {...form.getInputFieldProps("phone")} />
 
                   <InputField placeholder="Name" type="number" {...form.getInputFieldProps("number")} />
+                  <InputField.date label="Date" {...form.getInputFieldProps("date")} />
 
                   <Dropdown
                      options={[
