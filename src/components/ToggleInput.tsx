@@ -54,6 +54,8 @@ const InputElement = styled.input.withConfig({
    ${(props) => props.normalStyle as any}
 
    &:hover {
+      border-color: ${(props) => props.theme.colors.primary};
+
       ${(props) => props.hoverStyle as any}
    }
 `;

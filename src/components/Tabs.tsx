@@ -50,7 +50,7 @@ const TabsComponent: TabsComponent = function Tabs({
 
    const theme = useTheme();
    const urlQuery = reactRouterDomPlugin ? useUrlQuery() : undefined;
-   const { tabsComponentState } = useBetterHtmlContextInternal();
+   const { colorTheme, tabsComponentState } = useBetterHtmlContextInternal();
 
    const tabsRef = useRef<Record<string, HTMLDivElement | null>>({});
 
@@ -155,7 +155,13 @@ const TabsComponent: TabsComponent = function Tabs({
                         border={
                            style === "box" ? `1px solid ${selected ? "transparent" : theme.colors.border}` : undefined
                         }
-                        filterHover="brightness(0.9)"
+                        filterHover={
+                           colorTheme === "dark"
+                              ? style === "box"
+                                 ? "brightness(1.2)"
+                                 : "brightness(2)"
+                              : "brightness(0.9)"
+                        }
                         paddingInline={theme.styles.space}
                         paddingBlock={theme.styles.gap}
                         value={tab}

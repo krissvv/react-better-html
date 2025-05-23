@@ -6,7 +6,7 @@ import { AssetName } from "../types/asset";
 import { LoaderName } from "../types/loader";
 import { AnyOtherString, OmitProps } from "../types/app";
 import { ComponentHoverStyle, ComponentStyle } from "../types/components";
-import { Color, Theme } from "../types/theme";
+import { Color, ColorTheme, Theme } from "../types/theme";
 
 import { useComponentPropsWithoutStyle, useComponentPropsWithPrefix, useStyledComponentStyles } from "../utils/hooks";
 
@@ -18,9 +18,10 @@ import { useTheme, useLoader, useBetterHtmlContextInternal } from "./BetterHtmlP
 
 const ButtonElement = styled.button.withConfig({
    shouldForwardProp: (prop) =>
-      !["theme", "normalStyle", "hoverStyle", "isSmall", "withText", "isLoading"].includes(prop),
+      !["theme", "colorTheme", "normalStyle", "hoverStyle", "isSmall", "withText", "isLoading"].includes(prop),
 })<{
    theme: Theme;
+   colorTheme: ColorTheme;
    normalStyle: ComponentStyle;
    hoverStyle: ComponentStyle;
    isSmall?: boolean;
@@ -55,17 +56,13 @@ const ButtonElement = styled.button.withConfig({
          ? css`
               opacity: 0.6;
               cursor: not-allowed;
-
-              &.secondary:disabled {
-                 filter: brightness(0.9);
-              }
            `
          : !props.isLoading
          ? css`
               cursor: pointer;
 
               &:not(.secondary):hover {
-                 filter: brightness(0.9);
+                 filter: ${props.colorTheme === "dark" ? "brightness(1.2)" : "brightness(0.9)"};
               }
 
               &.secondary:hover {
@@ -232,6 +229,7 @@ const ButtonComponent: ButtonComponent = function Button<Value>({
       <ButtonElement
          as={(href ? "a" : "button") as any}
          theme={theme}
+         colorTheme={betterHtmlContext.colorTheme}
          isSmall={isSmall}
          withText={text !== undefined}
          isLoading={isLoadingElement}
