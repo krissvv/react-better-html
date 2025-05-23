@@ -1,7 +1,7 @@
 import { memo } from "react";
 
 import Div from "./Div";
-import { useBetterHtmlContext, useTheme } from "./BetterHtmlProvider";
+import { useBetterHtmlContextInternal, useTheme } from "./BetterHtmlProvider";
 
 export type PageHolderProps = {
    /** @default false */
@@ -11,7 +11,7 @@ export type PageHolderProps = {
 
 function PageHolder({ noMaxContentWidth, children }: PageHolderProps) {
    const theme = useTheme();
-   const { app } = useBetterHtmlContext();
+   const { app } = useBetterHtmlContextInternal();
 
    return (
       <Div

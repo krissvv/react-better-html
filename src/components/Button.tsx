@@ -14,7 +14,7 @@ import Div from "./Div";
 import Icon from "./Icon";
 import Loader from "./Loader";
 import Image from "./Image";
-import { useTheme, useLoader, useBetterHtmlContext } from "./BetterHtmlProvider";
+import { useTheme, useLoader, useBetterHtmlContextInternal } from "./BetterHtmlProvider";
 
 const ButtonElement = styled.button.withConfig({
    shouldForwardProp: (prop) =>
@@ -187,7 +187,7 @@ const ButtonComponent: ButtonComponent = function Button<Value>({
 }: ButtonProps<Value>) {
    const theme = useTheme();
    const isLoadingHook = useLoader(loaderName);
-   const betterHtmlContext = useBetterHtmlContext();
+   const betterHtmlContext = useBetterHtmlContextInternal();
 
    const isLoadingElement = isLoading ?? isLoadingHook;
 
@@ -287,7 +287,7 @@ const ButtonComponent: ButtonComponent = function Button<Value>({
 
 ButtonComponent.secondary = function Secondary({ className, ...props }) {
    const theme = useTheme();
-   const betterHtmlContext = useBetterHtmlContext();
+   const betterHtmlContext = useBetterHtmlContextInternal();
 
    return (
       <ButtonComponent
@@ -301,7 +301,7 @@ ButtonComponent.secondary = function Secondary({ className, ...props }) {
 
 ButtonComponent.destructive = function Destructive(props) {
    const theme = useTheme();
-   const betterHtmlContext = useBetterHtmlContext();
+   const betterHtmlContext = useBetterHtmlContextInternal();
 
    return (
       <ButtonComponent
@@ -315,7 +315,7 @@ ButtonComponent.destructive = function Destructive(props) {
 
 ButtonComponent.icon = function Icon({ size = 16, backgroundButtonColor, ...props }) {
    const theme = useTheme();
-   const betterHtmlContext = useBetterHtmlContext();
+   const betterHtmlContext = useBetterHtmlContextInternal();
 
    const buttonSize = size + theme.styles.space;
    const backgroundButtonColorReady = backgroundButtonColor ?? theme.colors.textPrimary;
@@ -341,7 +341,7 @@ ButtonComponent.icon = function Icon({ size = 16, backgroundButtonColor, ...prop
 } as ButtonComponent["icon"];
 
 ButtonComponent.upload = function Upload({ accept, multiple, onUpload, ...props }) {
-   const betterHtmlContext = useBetterHtmlContext();
+   const betterHtmlContext = useBetterHtmlContextInternal();
 
    const onClickElement = useCallback(() => {
       const input = document.createElement("input");

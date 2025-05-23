@@ -12,7 +12,7 @@ import Div from "./Div";
 import Button from "./Button";
 import Text from "./Text";
 import Divider from "./Divider";
-import { useBetterHtmlContext, usePlugin, useTheme } from "./BetterHtmlProvider";
+import { useBetterHtmlContextInternal, usePlugin, useTheme } from "./BetterHtmlProvider";
 
 export type ModalProps = {
    /**
@@ -125,7 +125,7 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
    const urlQuery = reactRouterDomPlugin ? useUrlQuery() : undefined;
 
    const theme = useTheme();
-   const { app, colorTheme } = useBetterHtmlContext();
+   const { app, colorTheme } = useBetterHtmlContextInternal();
 
    const dialogRef = useRef<HTMLDialogElement>(null);
 

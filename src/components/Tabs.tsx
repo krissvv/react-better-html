@@ -1,4 +1,4 @@
-import { createContext, memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { Color } from "../types/theme";
 import { ComponentMarginProps } from "../types/components";
@@ -7,7 +7,7 @@ import { useUrlQuery } from "../utils/hooks";
 
 import Div from "./Div";
 import Text from "./Text";
-import { usePlugin, useTheme } from "./BetterHtmlProvider";
+import { useBetterHtmlContextInternal, usePlugin, useTheme } from "./BetterHtmlProvider";
 
 const tabBottomLineWidth = 2;
 const tabDotSize = 6;
@@ -18,22 +18,12 @@ export type TabGroup = {
    selectedTab: string;
 };
 
-export type ContextValueType = {
+export type TabsContextValue = {
    tabGroups: TabGroup[];
+   setTabGroups: React.Dispatch<React.SetStateAction<TabGroup[]>>;
    tabsWithDots: string[];
-   setTabsWithDots?: React.Dispatch<React.SetStateAction<string[]>>;
+   setTabsWithDots: React.Dispatch<React.SetStateAction<string[]>>;
 };
-
-const context = createContext<ContextValueType>({
-   tabGroups: [
-      {
-         name: defaultTabName,
-         selectedTab: "",
-      },
-   ],
-   tabsWithDots: [],
-});
-const { Provider } = context;
 
 type TabsProps = {
    tabs: string[];
@@ -60,13 +50,23 @@ const TabsComponent: TabsComponent = function Tabs({
 
    const theme = useTheme();
    const urlQuery = reactRouterDomPlugin ? useUrlQuery() : undefined;
-   const contextData = useContext(context);
+   const { tabsComponentState } = useBetterHtmlContextInternal();
 
    const tabsRef = useRef<Record<string, HTMLDivElement | null>>({});
-   const urlSelectedTabSetRef = useRef<boolean>(false);
 
-   const [tabsWithDots, setTabsWithDots] = useState<string[]>([]);
-   const [selectedTab, setSelectedTab] = useState<string>(tabs[0] ?? "");
+   const [selectedTab, setSelectedTab] = useState<string>(() => {
+      const selectedTabValue = tabs[0] ?? "";
+
+      if (urlQuery) {
+         const tabQueryValue = urlQuery.getQuery(name ?? defaultTabName);
+
+         if (!tabQueryValue) return selectedTabValue;
+
+         if (tabs.includes(tabQueryValue)) return tabQueryValue;
+      }
+
+      return selectedTabValue;
+   });
    const [rerenderState, setRerenderState] = useState<number>(0);
 
    const tabsGap = style === "box" ? theme.styles.gap / 2 : 0;
@@ -98,65 +98,42 @@ const TabsComponent: TabsComponent = function Tabs({
 
       return totalWidth;
    }, [selectedTab, tabs, tabsGap]);
-   const contextValue = useMemo<ContextValueType>(() => {
-      const thisTabGroup = contextData.tabGroups.find((item) => item.name === (name ?? defaultTabName));
-
-      return {
-         tabGroups: thisTabGroup
-            ? contextData.tabGroups.map((tab) =>
-                 tab.name === (name ?? defaultTabName)
-                    ? {
-                         ...tab,
-                         selectedTab: selectedTab,
-                      }
-                    : tab,
-              )
-            : [
-                 ...contextData.tabGroups,
-                 {
-                    name: name ?? defaultTabName,
-                    selectedTab: selectedTab,
-                 },
-              ],
-         tabsWithDots,
-         setTabsWithDots,
-      };
-   }, [contextData, name, selectedTab, tabsWithDots]);
 
    useEffect(() => {
-      if (!urlQuery) return;
-      if (urlSelectedTabSetRef.current) return;
-
-      const tabQueryValue = urlQuery.getQuery(name ?? defaultTabName);
-
-      if (!tabQueryValue) return;
-
-      if (tabs.includes(tabQueryValue)) setSelectedTab(tabQueryValue);
-      else {
-         urlQuery.setQuery({
-            [name ?? defaultTabName]: selectedTab,
-         });
-      }
-
-      urlSelectedTabSetRef.current = true;
-   }, [name, tabs, selectedTab, urlQuery]);
-   useEffect(() => {
-      const timeout = setTimeout(() => setRerenderState(Math.random()), 0.1 * 1000);
+      const timeout = setTimeout(() => setRerenderState(Math.random()), 0.01 * 1000);
 
       return () => {
          clearTimeout(timeout);
       };
    }, []);
+   useEffect(() => {
+      tabsComponentState.setTabGroups((oldValue) => {
+         const thisTabGroup = oldValue.find((item) => item.name === (name ?? defaultTabName));
+
+         if (thisTabGroup) {
+            return oldValue.map((item) =>
+               item.name === (name ?? defaultTabName)
+                  ? {
+                       ...item,
+                       selectedTab,
+                    }
+                  : item,
+            );
+         } else {
+            return [
+               ...oldValue,
+               {
+                  name: name ?? defaultTabName,
+                  selectedTab,
+               },
+            ];
+         }
+      });
+   }, [selectedTab, name]);
 
    return (
-      <Provider value={contextValue}>
-         <Div
-            position="relative"
-            className="react-better-html-no-scrollbar"
-            overflowY="auto"
-            marginBottom={theme.styles.space}
-            {...props}
-         >
+      <Div.column width="100%" gap={theme.styles.space} {...props}>
+         <Div position="relative" className="react-better-html-no-scrollbar" overflowY="auto">
             <Div.row position="relative" width="fit-content" gap={tabsGap} userSelect="none">
                {tabs.map((tab) => {
                   const selected = tab === selectedTab;
@@ -190,15 +167,16 @@ const TabsComponent: TabsComponent = function Tabs({
                         }}
                         key={tab}
                      >
-                        {tabsWithDots.includes(tab) && (
+                        {tabsComponentState.tabsWithDots.includes(tab) && (
                            <Div
                               position="absolute"
-                              top={(theme.styles.gap - tabDotSize / 2) / 2}
-                              right={(theme.styles.space - tabDotSize / 2) / 2}
+                              top={(theme.styles.space - tabDotSize) / 2}
+                              right={(theme.styles.space - tabDotSize) / 2}
                               width={tabDotSize}
                               height={tabDotSize}
-                              backgroundColor={theme.colors.primary}
+                              backgroundColor={style === "box" && selected ? theme.colors.base : theme.colors.primary}
                               borderRadius={999}
+                              transition={theme.styles.transition}
                            />
                         )}
 
@@ -230,8 +208,8 @@ const TabsComponent: TabsComponent = function Tabs({
             )}
          </Div>
 
-         {children}
-      </Provider>
+         <Div width="100%">{children}</Div>
+      </Div.column>
    );
 };
 
@@ -243,22 +221,22 @@ type TabsContentProps = {
 };
 
 TabsComponent.content = function Content({ tab, tabWithDot, tabsGroupName, children }) {
-   const contextData = useContext(context);
+   const { tabsComponentState } = useBetterHtmlContextInternal();
 
    const thisTabGroupData = useMemo<TabGroup | undefined>(
-      () => contextData.tabGroups.find((item) => item.name === (tabsGroupName ?? defaultTabName)),
-      [contextData, tabsGroupName],
+      () => tabsComponentState.tabGroups.find((item) => item.name === (tabsGroupName ?? defaultTabName)),
+      [tabsComponentState, tabsGroupName],
    );
 
    useEffect(() => {
       if (tabWithDot) {
-         contextData.setTabsWithDots?.((oldValue) => (oldValue.includes(tab) ? oldValue : [...oldValue, tab]));
+         tabsComponentState.setTabsWithDots?.((oldValue) => (oldValue.includes(tab) ? oldValue : [...oldValue, tab]));
       } else {
-         contextData.setTabsWithDots?.((oldValue) =>
+         tabsComponentState.setTabsWithDots?.((oldValue) =>
             oldValue.includes(tab) ? oldValue.filter((tab) => tab !== tab) : oldValue,
          );
       }
-   }, [tabWithDot, contextData.tabsWithDots]);
+   }, [tabWithDot]);
 
    return thisTabGroupData?.selectedTab === tab ? <Div width="100%">{children}</Div> : undefined;
 } as TabsComponent["content"];

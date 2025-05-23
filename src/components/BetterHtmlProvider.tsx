@@ -12,6 +12,8 @@ import { ColorTheme } from "../types/theme";
 import { LoaderConfig, LoaderName } from "../types/loader";
 import { BetterHtmlPlugin, PluginName } from "../types/plugin";
 
+import { TabGroup, TabsContextValue } from "./Tabs";
+
 const GlobalStyle = createGlobalStyle<{ fontFamily: string; color: string; backgroundColor: string }>`
    body {
       font-family: ${(props) => props.fontFamily};
@@ -39,6 +41,7 @@ const GlobalStyle = createGlobalStyle<{ fontFamily: string; color: string; backg
 export type BetterHtmlInternalConfig = BetterHtmlConfig & {
    setLoaders: React.Dispatch<React.SetStateAction<Partial<LoaderConfig>>>;
    plugins: BetterHtmlPlugin[];
+   tabsComponentState: TabsContextValue;
 };
 
 const betterHtmlContext = createContext<BetterHtmlInternalConfig | undefined>(undefined);
@@ -53,9 +56,20 @@ export const useBetterHtmlContext = (): BetterHtmlConfig => {
          "`useBetterHtmlContext()` must be used within a `<BetterHtmlProvider>`. Make sure to add one at the root of your component tree.",
       );
 
-   const { setLoaders, plugins, ...rest } = context;
+   const { setLoaders, plugins, tabsComponentState, ...rest } = context;
 
    return rest;
+};
+
+export const useBetterHtmlContextInternal = (): BetterHtmlInternalConfig => {
+   const context = useContext(betterHtmlContext);
+
+   if (context === undefined)
+      throw new Error(
+         "`useBetterHtmlContextInternal()` must be used within a `<BetterHtmlProvider>`. Make sure to add one at the root of your component tree.",
+      );
+
+   return context;
 };
 
 export const useTheme = () => {
@@ -151,11 +165,13 @@ type BetterHtmlProviderProps = {
 };
 
 function BetterHtmlProvider({ value, plugins: pluginsToUse, children }: BetterHtmlProviderProps) {
-   const [loaders, setLoaders] = useState<Partial<LoaderConfig>>(value?.loaders ?? {});
-   const [plugins] = useState<BetterHtmlPlugin[]>(pluginsToUse ?? []);
    const [colorTheme, setColorTheme] = useState<ColorTheme>(
       localStorage.getItem("theme") === "dark" ? "dark" : value?.colorTheme ?? "light",
    );
+   const [loaders, setLoaders] = useState<Partial<LoaderConfig>>(value?.loaders ?? {});
+   const [plugins] = useState<BetterHtmlPlugin[]>(pluginsToUse ?? []);
+   const [tabGroups, setTabGroups] = useState<TabGroup[]>([]);
+   const [tabsWithDots, setTabsWithDots] = useState<string[]>([]);
 
    const readyValue = useMemo<BetterHtmlInternalConfig>(
       () => ({
@@ -194,8 +210,14 @@ function BetterHtmlProvider({ value, plugins: pluginsToUse, children }: BetterHt
             ...value?.components,
          },
          plugins,
+         tabsComponentState: {
+            tabGroups,
+            setTabGroups,
+            tabsWithDots,
+            setTabsWithDots,
+         },
       }),
-      [value, colorTheme, loaders, plugins],
+      [value, colorTheme, loaders, plugins, tabGroups, tabsWithDots],
    );
 
    useEffect(() => {

@@ -7,7 +7,7 @@ import { IconName } from "../types/icon";
 
 import { useComponentPropsWithoutStyle, useComponentPropsWithPrefix, useStyledComponentStyles } from "../utils/hooks";
 
-import { useBetterHtmlContext, useTheme } from "./BetterHtmlProvider";
+import { useBetterHtmlContextInternal, useTheme } from "./BetterHtmlProvider";
 
 export type IconProps = {
    name: IconName | AnyOtherString;
@@ -36,7 +36,7 @@ const Icon: IconComponent = forwardRef(function Icon(
    ref: React.ForwardedRef<SVGSVGElement>,
 ) {
    const theme = useTheme();
-   const { icons } = useBetterHtmlContext();
+   const { icons } = useBetterHtmlContextInternal();
 
    const styledComponentStyles = useStyledComponentStyles(props, theme);
    const dataProps = useComponentPropsWithPrefix(props, "data");

@@ -1,10 +1,10 @@
-import { forwardRef, memo, useCallback, useEffect, useState } from "react";
+import { forwardRef, memo, useEffect } from "react";
 import styled from "styled-components";
 
 import { AnyOtherString, OmitProps } from "../types/app";
 import { ComponentHoverStyle, ComponentPropWithRef, ComponentStyle } from "../types/components";
 import { AssetName } from "../types/asset";
-import { useBetterHtmlContext, useTheme } from "./BetterHtmlProvider";
+import { useBetterHtmlContextInternal, useTheme } from "./BetterHtmlProvider";
 import { useComponentPropsWithoutStyle, useComponentPropsWithPrefix, useStyledComponentStyles } from "../utils/hooks";
 
 export type ImageProps = {
@@ -45,7 +45,7 @@ const Image: ImageComponent = forwardRef(function Image(
    ref: React.ForwardedRef<HTMLImageElement>,
 ) {
    const theme = useTheme();
-   const { assets } = useBetterHtmlContext();
+   const { assets } = useBetterHtmlContextInternal();
 
    const styledComponentStyles = useStyledComponentStyles(props, theme);
    const dataProps = useComponentPropsWithPrefix(props, "data");

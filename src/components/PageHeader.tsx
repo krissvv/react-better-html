@@ -7,7 +7,7 @@ import { useMediaQuery } from "../utils/hooks";
 import Div from "./Div";
 import Text, { TextAs } from "./Text";
 import Image from "./Image";
-import { useBetterHtmlContext, useTheme } from "./BetterHtmlProvider";
+import { useBetterHtmlContextInternal, useTheme } from "./BetterHtmlProvider";
 
 export type PageHeaderProps = {
    imageUrl?: string;
@@ -35,7 +35,7 @@ function PageHeader({
    marginBottom,
 }: PageHeaderProps) {
    const theme = useTheme();
-   const { app } = useBetterHtmlContext();
+   const { app } = useBetterHtmlContextInternal();
    const mediaQuery = useMediaQuery();
 
    return (

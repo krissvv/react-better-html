@@ -7,9 +7,9 @@ import { ComponentMarginProps, ComponentPropWithRef } from "../types/components"
 import Div from "./Div";
 import ToggleInput, { ToggleInputProps } from "./ToggleInput";
 import Image, { ImageProps } from "./Image";
-import { useBetterHtmlContext, useTheme } from "./BetterHtmlProvider";
 import Text from "./Text";
 import Loader from "./Loader";
+import { useBetterHtmlContextInternal, useTheme } from "./BetterHtmlProvider";
 
 const defaultImageWidth = 120;
 
@@ -159,7 +159,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
    }: TableProps<DataItem>,
    ref: React.ForwardedRef<HTMLDivElement>,
 ) {
-   const { colorTheme } = useBetterHtmlContext();
+   const { colorTheme } = useBetterHtmlContextInternal();
    const theme = useTheme();
 
    const [checkedItems, setCheckedItems] = useState<boolean[]>([]);

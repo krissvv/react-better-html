@@ -180,9 +180,10 @@ function App() {
                   "Modal",
                   "Table",
                ]}
-               style="box"
+               style="borderRadiusTop"
+               // style="box"
             >
-               <Tabs.content tab="PageHeader">
+               <Tabs.content tab="PageHeader" tabWithDot>
                   <Div.column gap={theme.styles.space}>
                      <PageHeader
                         title="Hello there"
