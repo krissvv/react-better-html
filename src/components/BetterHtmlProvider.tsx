@@ -7,7 +7,7 @@ import { assets } from "../constants/assets";
 import { appConfig } from "../constants/app";
 
 import { BetterHtmlConfig } from "../types/config";
-import { AnyOtherString, DeepPartialRecord, OmitProps } from "../types/app";
+import { AnyOtherString, DeepPartialRecord } from "../types/app";
 import { ColorTheme } from "../types/theme";
 import { LoaderConfig, LoaderName } from "../types/loader";
 import { BetterHtmlPlugin, PluginName } from "../types/plugin";

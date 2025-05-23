@@ -138,13 +138,14 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
       setIsOpened(true);
       setIsOpenedLate(true);
 
-      if (urlQuery && name)
+      if (urlQuery && name) {
          urlQuery.setQuery(
             {
                [`${name}-modal`]: "opened",
             },
             false,
          );
+      }
 
       onOpen?.();
    }, [onOpen, urlQuery, name]);
