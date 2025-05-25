@@ -61,7 +61,7 @@ The component is responsive and will render on two lines if in mobile mode.
 
 A number of components in the library have a _subcomponent_ feature witch is like a preset of the same component that is frequently used.
 
-### `FormRow.withTitle`
+### FormRow.withTitle
 
 Renders a form row with an optional icon, title, and description at the beginning of the row, followed by the one element inside.
 

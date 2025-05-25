@@ -1,7 +1,7 @@
 ---
 title: Table
 description: A customizable table component with support for various column types and styling options.
-sidebar_position: 8
+sidebar_position: 9
 ---
 
 import Tabs from "@theme/Tabs";

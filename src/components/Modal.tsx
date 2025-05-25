@@ -35,9 +35,9 @@ export type ModalProps = {
 };
 
 export type ModalRef = {
+   isOpened: boolean;
    open: () => void;
    close: () => void;
-   isOpened: boolean;
 };
 
 type ModalComponent = {

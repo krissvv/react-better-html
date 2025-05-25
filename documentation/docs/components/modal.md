@@ -106,9 +106,9 @@ The modal can be controlled using a ref with the following methods:
 
 ```typescript
 type ModalRef = {
+   isOpened: boolean;
    open: () => void;
    close: () => void;
-   isOpened: boolean;
 };
 ```
 
