@@ -26,6 +26,7 @@ import {
    useLoader,
    Table,
    Tabs,
+   Foldable,
 } from "../../src";
 
 const data: {
@@ -179,6 +180,7 @@ function App() {
                   "Button",
                   "Modal",
                   "Table",
+                  "Foldable",
                ]}
                style="borderRadiusTop"
                // style="box"
@@ -711,6 +713,57 @@ function App() {
                         ]}
                         data={data}
                      />
+                  </Div.column>
+               </Tabs.content>
+
+               <Tabs.content tab="Foldable">
+                  <Div.column gap={theme.styles.space}>
+                     <Foldable title="Lorem ipsum dolor">
+                        <Text>
+                           Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum, ullam, necessitatibus harum
+                           error voluptas natus iste labore amet, itaque enim quae delectus exercitationem! Ullam saepe,
+                           harum deserunt qui labore officiis id nisi atque nobis laudantium impedit adipisci
+                           reprehenderit. Consequatur, vel.
+                        </Text>
+                     </Foldable>
+
+                     <Foldable.box
+                        title="Lorem ipsum dolor"
+                        description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum, ullam, necessitatibus harum"
+                     >
+                        <Text>
+                           Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum, ullam, necessitatibus harum
+                           error voluptas natus iste labore amet, itaque enim quae delectus exercitationem! Ullam saepe,
+                           harum deserunt qui labore officiis id nisi atque nobis laudantium impedit adipisci
+                           reprehenderit. Consequatur, vel.
+                        </Text>
+                     </Foldable.box>
+
+                     <Foldable
+                        icon="magnifyingGlass"
+                        title="Lorem ipsum dolor"
+                        description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum, ullam, necessitatibus harum"
+                     >
+                        <Text>
+                           Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum, ullam, necessitatibus harum
+                           error voluptas natus iste labore amet, itaque enim quae delectus exercitationem! Ullam saepe,
+                           harum deserunt qui labore officiis id nisi atque nobis laudantium impedit adipisci
+                           reprehenderit. Consequatur, vel.
+                        </Text>
+                     </Foldable>
+
+                     <Foldable
+                        image="logo"
+                        title="Lorem ipsum dolor"
+                        description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum, ullam, necessitatibus harum"
+                     >
+                        <Text>
+                           Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum, ullam, necessitatibus harum
+                           error voluptas natus iste labore amet, itaque enim quae delectus exercitationem! Ullam saepe,
+                           harum deserunt qui labore officiis id nisi atque nobis laudantium impedit adipisci
+                           reprehenderit. Consequatur, vel.
+                        </Text>
+                     </Foldable>
                   </Div.column>
                </Tabs.content>
 

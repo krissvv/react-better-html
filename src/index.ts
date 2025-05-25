@@ -16,8 +16,9 @@ import Form, { type FormProps } from "./components/Form";
 import Label, { type LabelProps } from "./components/Label";
 import FormRow, { type FormRowProps } from "./components/FormRow";
 import ColorThemeSwitch, { type ColorThemeSwitchProps } from "./components/ColorThemeSwitch";
-import Table, { type TableColumn } from "./components/Table";
-import Tabs, { type TabGroup } from "./components/Tabs";
+import Table, { type TableColumn, type TableProps } from "./components/Table";
+import Tabs, { type TabGroup, type TabsProps } from "./components/Tabs";
+import Foldable, { type FoldableProps, type FoldableRef } from "./components/Foldable";
 
 import BetterHtmlProvider, {
    useBetterHtmlContext,
@@ -114,8 +115,13 @@ export {
    ColorThemeSwitchProps,
    Table,
    TableColumn,
+   TableProps,
    Tabs,
-   TabGroup as Tab,
+   TabGroup,
+   TabsProps,
+   Foldable,
+   FoldableProps,
+   FoldableRef,
    // Hooks
    useBetterHtmlContext,
    useTheme,

@@ -256,7 +256,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
 
    return (
       <Div.column width="100%" position="relative" userSelect="none" {...props}>
-         <Div.row position="relative" width="100%">
+         <Div.row position="relative" width="100%" ref={inputFieldHolderRef}>
             <InputField
                label={label}
                labelColor={labelColor}
@@ -276,7 +276,6 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
                onFocus={setIsFocused.setTrue}
                onBlur={setIsFocused.setFalse}
                onKeyDown={onKeyDownInputField}
-               holderRef={inputFieldHolderRef}
                onChangeValue={withSearch ? onChangeValue : undefined}
                insideInputFieldComponent={
                   <Div

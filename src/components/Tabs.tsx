@@ -25,7 +25,7 @@ export type TabsContextValue = {
    setTabsWithDots: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
-type TabsProps = {
+export type TabsProps = {
    tabs: string[];
    name?: string;
    accentColor?: Color;
