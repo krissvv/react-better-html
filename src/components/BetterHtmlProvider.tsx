@@ -15,6 +15,10 @@ import { BetterHtmlPlugin, PluginName } from "../types/plugin";
 import { TabGroup, TabsContextValue } from "./Tabs";
 
 const GlobalStyle = createGlobalStyle<{ fontFamily: string; color: string; backgroundColor: string }>`
+   html {
+      background-color: ${(props) => props.backgroundColor};
+   }
+
    body {
       font-family: ${(props) => props.fontFamily};
       color: ${(props) => props.color};
