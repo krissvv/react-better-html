@@ -24,6 +24,7 @@ export type FoldableProps = {
    description?: string;
    icon?: IconName | AnyOtherString;
    image?: AssetName | AnyOtherString;
+   headerPaddingBlock?: React.CSSProperties["paddingBlock"];
    headerPaddingInline?: React.CSSProperties["paddingInline"];
    renderHeader?: (isOpen: boolean, toggleOpen: () => void) => React.ReactNode;
    onOpenChange?: (isOpen: boolean) => void;
@@ -50,6 +51,7 @@ const FoldableComponent: FoldableComponentType = forwardRef<FoldableRef, Foldabl
       description,
       icon,
       image,
+      headerPaddingBlock,
       headerPaddingInline,
       renderHeader,
       onOpenChange,
@@ -108,7 +110,7 @@ const FoldableComponent: FoldableComponentType = forwardRef<FoldableRef, Foldabl
                width="100%"
                alignItems="center"
                gap={theme.styles.gap}
-               paddingBlock={theme.styles.gap}
+               paddingBlock={headerPaddingBlock ?? theme.styles.gap}
                paddingInline={headerPaddingInline}
                cursor="pointer"
                onClick={toggleOpen}
@@ -120,7 +122,7 @@ const FoldableComponent: FoldableComponentType = forwardRef<FoldableRef, Foldabl
 
                   <Div.column gap={theme.styles.gap / 2}>
                      {title && (
-                        <Text as="h3" fontWeight={700}>
+                        <Text as="h3" fontWeight={700} lineHeight="20px">
                            {title}
                         </Text>
                      )}
@@ -167,6 +169,7 @@ FoldableComponent.box = forwardRef(function Box({ ...props }, ref) {
          backgroundColor={theme.colors.backgroundContent}
          border={`1px solid ${theme.colors.border}`}
          borderRadius={theme.styles.borderRadius}
+         headerPaddingBlock={(theme.styles.gap + theme.styles.space) / 2}
          headerPaddingInline={theme.styles.space}
          {...props}
          ref={ref}

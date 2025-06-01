@@ -233,10 +233,11 @@ type TabsContentProps = {
    tab: string;
    tabWithDot?: boolean;
    tabsGroupName?: string;
+   isInitialTab?: boolean;
    children?: React.ReactNode;
 };
 
-TabsComponent.content = function Content({ tab, tabWithDot, tabsGroupName, children }) {
+TabsComponent.content = function Content({ tab, tabWithDot, tabsGroupName, isInitialTab, children }) {
    const { componentsState } = useBetterHtmlContextInternal();
 
    const thisTabGroupData = useMemo<TabGroup | undefined>(
@@ -254,7 +255,9 @@ TabsComponent.content = function Content({ tab, tabWithDot, tabsGroupName, child
       }
    }, [tabWithDot]);
 
-   return thisTabGroupData?.selectedTab === tab ? <Div width="100%">{children}</Div> : undefined;
+   return (thisTabGroupData ? thisTabGroupData.selectedTab === tab : isInitialTab) ? (
+      <Div width="100%">{children}</Div>
+   ) : undefined;
 } as TabsComponent["content"];
 
 const Tabs = memo(TabsComponent) as any as typeof TabsComponent & {
