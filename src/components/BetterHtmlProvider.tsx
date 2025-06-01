@@ -12,7 +12,7 @@ import { ColorTheme } from "../types/theme";
 import { LoaderConfig, LoaderName } from "../types/loader";
 import { BetterHtmlPlugin, PluginName } from "../types/plugin";
 
-import { TabGroup, TabsContextValue } from "./Tabs";
+import { TabGroup, TabsComponentState } from "./Tabs";
 
 const GlobalStyle = createGlobalStyle<{ fontFamily: string; color: string; backgroundColor: string }>`
    html {
@@ -45,7 +45,9 @@ const GlobalStyle = createGlobalStyle<{ fontFamily: string; color: string; backg
 export type BetterHtmlInternalConfig = BetterHtmlConfig & {
    setLoaders: React.Dispatch<React.SetStateAction<Partial<LoaderConfig>>>;
    plugins: BetterHtmlPlugin[];
-   tabsComponentState: TabsContextValue;
+   componentsState: {
+      tabs: TabsComponentState;
+   };
 };
 
 const betterHtmlContext = createContext<BetterHtmlInternalConfig | undefined>(undefined);
@@ -60,7 +62,7 @@ export const useBetterHtmlContext = (): BetterHtmlConfig => {
          "`useBetterHtmlContext()` must be used within a `<BetterHtmlProvider>`. Make sure to add one at the root of your component tree.",
       );
 
-   const { setLoaders, plugins, tabsComponentState, ...rest } = context;
+   const { setLoaders, plugins, componentsState, ...rest } = context;
 
    return rest;
 };
@@ -214,11 +216,13 @@ function BetterHtmlProvider({ value, plugins: pluginsToUse, children }: BetterHt
             ...value?.components,
          },
          plugins,
-         tabsComponentState: {
-            tabGroups,
-            setTabGroups,
-            tabsWithDots,
-            setTabsWithDots,
+         componentsState: {
+            tabs: {
+               tabGroups,
+               setTabGroups,
+               tabsWithDots,
+               setTabsWithDots,
+            },
          },
       }),
       [value, colorTheme, loaders, plugins, tabGroups, tabsWithDots],

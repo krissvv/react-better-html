@@ -129,6 +129,7 @@ function App() {
 
    const modalRef = useRef<ModalRef>(null);
    const modalWithTitleRef = useRef<ModalRef>(null);
+   const modalWithFoldableRef = useRef<ModalRef>(null);
    const confirmationModalRef = useRef<ModalRef>(null);
    const destructiveModalRef = useRef<ModalRef>(null);
 
@@ -513,6 +514,7 @@ function App() {
                   <Div.column gap={theme.styles.space}>
                      <Button text="Open modal" onClick={() => modalRef.current?.open()} />
                      <Button text="Open modal with title" onClick={() => modalWithTitleRef.current?.open()} />
+                     <Button text="Open modal with foldable" onClick={() => modalWithFoldableRef.current?.open()} />
                      <Button text="Open confirmation modal" onClick={() => confirmationModalRef.current?.open()} />
                      <Button text="Open destructive modal" onClick={() => destructiveModalRef.current?.open()} />
                   </Div.column>
@@ -524,7 +526,38 @@ function App() {
                   <Modal title="My Modal" description="Lorem ipsum dolor sit amet" ref={modalWithTitleRef}>
                      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae cumque tempore qui?
                   </Modal>
+
+                  <Modal
+                     title="My Modal With Foldable"
+                     description="Lorem ipsum dolor sit amet"
+                     ref={modalWithFoldableRef}
+                  >
+                     <Foldable
+                        icon="magnifyingGlass"
+                        title="Lorem ipsum dolor"
+                        description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum, ullam, necessitatibus harum"
+                     >
+                        <Div.column gap={theme.styles.gap}>
+                           <Text>
+                              Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum, ullam, necessitatibus
+                              harum error voluptas natus iste labore amet, itaque enim quae delectus exercitationem!
+                              Ullam saepe, harum deserunt qui labore officiis id nisi atque nobis laudantium impedit
+                              adipisci reprehenderit. Consequatur, vel.
+                           </Text>
+
+                           <Dropdown
+                              options={[
+                                 { label: "Option 1", value: "1" },
+                                 { label: "Option 2", value: "2" },
+                                 { label: "Option 3", value: "3" },
+                              ]}
+                           />
+                        </Div.column>
+                     </Foldable>
+                  </Modal>
+
                   <Modal.confirmation ref={confirmationModalRef} />
+
                   <Modal.destructive ref={destructiveModalRef} />
                </Tabs.content>
 

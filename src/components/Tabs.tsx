@@ -18,7 +18,7 @@ export type TabGroup = {
    selectedTab: string;
 };
 
-export type TabsContextValue = {
+export type TabsComponentState = {
    tabGroups: TabGroup[];
    setTabGroups: React.Dispatch<React.SetStateAction<TabGroup[]>>;
    tabsWithDots: string[];
@@ -50,8 +50,9 @@ const TabsComponent: TabsComponent = function Tabs({
 
    const theme = useTheme();
    const urlQuery = reactRouterDomPlugin ? useUrlQuery() : undefined;
-   const { colorTheme, tabsComponentState } = useBetterHtmlContextInternal();
+   const { colorTheme, componentsState } = useBetterHtmlContextInternal();
 
+   const firstRenderPassedRef = useRef<boolean>(false);
    const tabsRef = useRef<Record<string, HTMLDivElement | null>>({});
 
    const [selectedTab, setSelectedTab] = useState<string>(() => {
@@ -90,24 +91,27 @@ const TabsComponent: TabsComponent = function Tabs({
    );
    const leftSpacing = useMemo<number>(() => {
       const selectedTabIndex = tabs.findIndex((tab) => tab === selectedTab);
-      let totalWidth = 0;
 
+      let spacing = 0;
       Object.values(tabsRef.current).forEach((tab, index) => {
-         if (index < selectedTabIndex) totalWidth += (tab?.getBoundingClientRect().width ?? 0) + tabsGap;
+         if (index < selectedTabIndex) spacing += (tab?.getBoundingClientRect().width ?? 0) + tabsGap;
       });
 
-      return totalWidth;
+      return spacing;
    }, [selectedTab, tabs, tabsGap]);
 
    useEffect(() => {
-      const timeout = setTimeout(() => setRerenderState(Math.random()), 0.01 * 1000);
+      const timeout = setTimeout(() => {
+         setRerenderState(Math.random());
+         firstRenderPassedRef.current = true;
+      }, 0.01 * 1000);
 
       return () => {
          clearTimeout(timeout);
       };
    }, []);
    useEffect(() => {
-      tabsComponentState.setTabGroups((oldValue) => {
+      componentsState.tabs.setTabGroups((oldValue) => {
          const thisTabGroup = oldValue.find((item) => item.name === (name ?? defaultTabName));
 
          if (thisTabGroup) {
@@ -130,6 +134,12 @@ const TabsComponent: TabsComponent = function Tabs({
          }
       });
    }, [selectedTab, name]);
+   useEffect(() => {
+      tabsRef.current[selectedTab]?.scrollIntoView({
+         behavior: firstRenderPassedRef.current ? "smooth" : undefined,
+         block: "nearest",
+      });
+   }, [selectedTab]);
 
    return (
       <Div.column width="100%" gap={theme.styles.space} {...props}>
@@ -173,7 +183,7 @@ const TabsComponent: TabsComponent = function Tabs({
                         }}
                         key={tab}
                      >
-                        {tabsComponentState.tabsWithDots.includes(tab) && (
+                        {componentsState.tabs.tabsWithDots.includes(tab) && (
                            <Div
                               position="absolute"
                               top={(theme.styles.space - tabDotSize) / 2}
@@ -209,7 +219,7 @@ const TabsComponent: TabsComponent = function Tabs({
                   bottom={0}
                   left={leftSpacing}
                   backgroundColor={accentColor ?? theme.colors.primary}
-                  transition={theme.styles.transition}
+                  transition={firstRenderPassedRef.current ? theme.styles.transition : "none"}
                />
             )}
          </Div>
@@ -227,18 +237,18 @@ type TabsContentProps = {
 };
 
 TabsComponent.content = function Content({ tab, tabWithDot, tabsGroupName, children }) {
-   const { tabsComponentState } = useBetterHtmlContextInternal();
+   const { componentsState } = useBetterHtmlContextInternal();
 
    const thisTabGroupData = useMemo<TabGroup | undefined>(
-      () => tabsComponentState.tabGroups.find((item) => item.name === (tabsGroupName ?? defaultTabName)),
-      [tabsComponentState, tabsGroupName],
+      () => componentsState.tabs.tabGroups.find((item) => item.name === (tabsGroupName ?? defaultTabName)),
+      [componentsState.tabs, tabsGroupName],
    );
 
    useEffect(() => {
       if (tabWithDot) {
-         tabsComponentState.setTabsWithDots?.((oldValue) => (oldValue.includes(tab) ? oldValue : [...oldValue, tab]));
+         componentsState.tabs.setTabsWithDots?.((oldValue) => (oldValue.includes(tab) ? oldValue : [...oldValue, tab]));
       } else {
-         tabsComponentState.setTabsWithDots?.((oldValue) =>
+         componentsState.tabs.setTabsWithDots?.((oldValue) =>
             oldValue.includes(tab) ? oldValue.filter((tab) => tab !== tab) : oldValue,
          );
       }

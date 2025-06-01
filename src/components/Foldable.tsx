@@ -14,7 +14,8 @@ import Image from "./Image";
 import Divider from "./Divider";
 import { useTheme } from "./BetterHtmlProvider";
 
-const animationDuration = 0.2;
+const animationDurationClose = 0.15;
+const animationDurationOpen = animationDurationClose * 2;
 
 export type FoldableProps = {
    isOpen?: boolean;
@@ -62,7 +63,7 @@ const FoldableComponent: FoldableComponentType = forwardRef<FoldableRef, Foldabl
    const bodyRef = useRef<HTMLDivElement>(null);
 
    const [internalIsOpen, setInternalIsOpen] = useBooleanState(defaultOpen);
-   const [bodyHeight, setBodyHeight] = useState<number | undefined>(defaultOpen ? undefined : 0);
+   const [bodyVirtualHeight, setBodyVirtualHeight] = useState<number>(500);
 
    const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
 
@@ -82,34 +83,8 @@ const FoldableComponent: FoldableComponentType = forwardRef<FoldableRef, Foldabl
    useEffect(() => {
       if (!bodyRef.current) return;
 
-      if (isOpen) {
-         const height = bodyRef.current.scrollHeight;
-         setBodyHeight(height);
-
-         const timeout = setTimeout(() => {
-            setBodyHeight(undefined);
-         }, animationDuration * 1000);
-
-         return () => {
-            clearTimeout(timeout);
-         };
-      } else {
-         if (bodyHeight === undefined) {
-            const height = bodyRef.current.scrollHeight;
-            setBodyHeight(height);
-
-            bodyRef.current.offsetHeight;
-         }
-
-         const timeout = setTimeout(() => {
-            setBodyHeight(0);
-         }, 0.01 * 1000);
-
-         return () => {
-            clearTimeout(timeout);
-         };
-      }
-   }, [isOpen, animationDuration, bodyHeight]);
+      setBodyVirtualHeight(Math.min(500, bodyRef.current.scrollHeight * 2));
+   }, [isOpen]);
 
    useImperativeHandle(
       ref,
@@ -125,7 +100,7 @@ const FoldableComponent: FoldableComponentType = forwardRef<FoldableRef, Foldabl
    );
 
    return (
-      <Div.column width="100%" overflow="hidden" {...props}>
+      <Div.column width="100%" {...props}>
          {renderHeader ? (
             renderHeader(isOpen, toggleOpen)
          ) : (
@@ -166,7 +141,16 @@ const FoldableComponent: FoldableComponentType = forwardRef<FoldableRef, Foldabl
             <Divider.horizontal />
          </Div>
 
-         <Div height={bodyHeight} transition={`height ${animationDuration}s ease`} ref={bodyRef}>
+         <Div
+            maxHeight={isOpen ? bodyVirtualHeight : 0}
+            opacity={!isOpen ? 0 : undefined}
+            transition={`max-height ${isOpen ? animationDurationOpen : animationDurationClose}s ease, opacity ${
+               theme.styles.transition
+            }`}
+            overflow={!isOpen ? "hidden" : undefined}
+            pointerEvents={!isOpen ? "none" : undefined}
+            ref={bodyRef}
+         >
             <Div paddingBlock={theme.styles.gap} paddingInline={headerPaddingInline}>
                {children}
             </Div>
