@@ -14,6 +14,47 @@ import Text from "./Text";
 import Divider from "./Divider";
 import { useBetterHtmlContextInternal, usePlugin, useTheme } from "./BetterHtmlProvider";
 
+const DialogStylesElement = styled.dialog.withConfig({
+   shouldForwardProp: (prop) => !["theme", "colorTheme", "opacity"].includes(prop),
+})<{ theme: Theme; colorTheme: ColorTheme; opacity?: number }>`
+   width: 100%;
+   max-width: none;
+   height: 100%;
+   max-height: none;
+   color: ${(props) => props.theme.colors.textPrimary};
+   border: none;
+   outline: none;
+   background-color: transparent;
+   margin: auto auto;
+   padding-inline: ${(props) => props.theme.styles.gap}px;
+   opacity: ${(props) => props.opacity};
+   transition: ${(props) => props.theme.styles.transition};
+
+   &::backdrop {
+      background-color: ${(props) => (props.colorTheme === "light" ? "#000000a0" : "#222222e0")};
+      opacity: ${(props) => props.opacity};
+      transition: ${(props) => props.theme.styles.transition};
+   }
+
+   @keyframes fadeInAnimation {
+      from {
+         transform: translateY(${(props) => props.theme.styles.space}px);
+      }
+      to {
+         transform: translateY(0px);
+      }
+   }
+
+   @keyframes fadeOutAnimation {
+      from {
+         transform: translateY(0px);
+      }
+      to {
+         transform: translateY(${(props) => props.theme.styles.space}px);
+      }
+   }
+`;
+
 export type ModalProps = {
    /**
     * If you want to have a small modal, you can use 660px as it looks good on most screens.
@@ -63,47 +104,6 @@ type ModalComponent = {
       >,
    ) => React.ReactElement;
 };
-
-const DialogStylesElement = styled.dialog.withConfig({
-   shouldForwardProp: (prop) => !["theme", "colorTheme", "opacity"].includes(prop),
-})<{ theme: Theme; colorTheme: ColorTheme; opacity?: number }>`
-   width: 100%;
-   max-width: none;
-   height: 100%;
-   max-height: none;
-   color: ${(props) => props.theme.colors.textPrimary};
-   border: none;
-   outline: none;
-   background-color: transparent;
-   margin: auto auto;
-   padding-inline: ${(props) => props.theme.styles.gap}px;
-   opacity: ${(props) => props.opacity};
-   transition: ${(props) => props.theme.styles.transition};
-
-   &::backdrop {
-      background-color: ${(props) => (props.colorTheme === "light" ? "#000000a0" : "#222222e0")};
-      opacity: ${(props) => props.opacity};
-      transition: ${(props) => props.theme.styles.transition};
-   }
-
-   @keyframes fadeInAnimation {
-      from {
-         transform: translateY(${(props) => props.theme.styles.space}px);
-      }
-      to {
-         transform: translateY(0px);
-      }
-   }
-
-   @keyframes fadeOutAnimation {
-      from {
-         transform: translateY(0px);
-      }
-      to {
-         transform: translateY(${(props) => props.theme.styles.space}px);
-      }
-   }
-`;
 
 const ModalComponent: ModalComponent = forwardRef(function Modal(
    {

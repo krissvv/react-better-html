@@ -1,7 +1,7 @@
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 
 import { Color } from "../types/theme";
-import { ComponentMarginProps } from "../types/components";
+import { ComponentMarginProps, ComponentPropWithRef } from "../types/components";
 
 import { useUrlQuery } from "../utils/hooks";
 
@@ -30,22 +30,24 @@ export type TabsProps = {
    name?: string;
    accentColor?: Color;
    style?: "default" | "borderRadiusTop" | "box";
+   onChange?: (tab: string) => void;
    children?: React.ReactNode;
 } & ComponentMarginProps;
 
+export type TabsRef = {
+   selectedTab: string;
+   selectTab: (tab: string) => void;
+};
+
 type TabsComponent = {
-   (props: TabsProps): React.ReactElement;
+   (props: ComponentPropWithRef<TabsRef, TabsProps>): React.ReactElement;
    content: (props: TabsContentProps) => React.ReactElement;
 };
 
-const TabsComponent: TabsComponent = function Tabs({
-   tabs,
-   name,
-   accentColor,
-   style = "default",
-   children,
-   ...props
-}: TabsProps) {
+const TabsComponent: TabsComponent = forwardRef(function Tabs(
+   { tabs, name, accentColor, style = "default", onChange, children, ...props }: TabsProps,
+   ref: React.ForwardedRef<TabsRef>,
+) {
    const reactRouterDomPlugin = usePlugin("react-router-dom");
 
    const theme = useTheme();
@@ -75,6 +77,7 @@ const TabsComponent: TabsComponent = function Tabs({
    const onClickTab = useCallback(
       (tab: string) => {
          setSelectedTab(tab);
+         onChange?.(tab);
 
          if (urlQuery) {
             urlQuery.setQuery({
@@ -82,7 +85,7 @@ const TabsComponent: TabsComponent = function Tabs({
             });
          }
       },
-      [name, urlQuery],
+      [onChange, name, urlQuery],
    );
 
    const width = useMemo<number>(
@@ -140,6 +143,24 @@ const TabsComponent: TabsComponent = function Tabs({
          block: "nearest",
       });
    }, [selectedTab]);
+   useEffect(() => {
+      return () => {
+         componentsState.tabs.setTabGroups((oldValue) =>
+            oldValue.filter((item) => item.name !== (name ?? defaultTabName)),
+         );
+      };
+   }, []);
+
+   useImperativeHandle(
+      ref,
+      (): TabsRef => {
+         return {
+            selectedTab,
+            selectTab: onClickTab,
+         };
+      },
+      [selectedTab, onClickTab],
+   );
 
    return (
       <Div.column width="100%" gap={theme.styles.space} {...props}>
@@ -224,10 +245,10 @@ const TabsComponent: TabsComponent = function Tabs({
             )}
          </Div>
 
-         <Div width="100%">{children}</Div>
+         {children && <Div width="100%">{children}</Div>}
       </Div.column>
    );
-};
+}) as any;
 
 type TabsContentProps = {
    tab: string;
