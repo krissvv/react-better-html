@@ -126,7 +126,7 @@ DivComponent.column = forwardRef(function Column({ flexReverse, invertFlexDirect
    return (
       <DivComponent
          display="flex"
-         flexDirection={((invertFlexDirection ? "column" : "row") + reverseSuffix) as any}
+         flexDirection={((invertFlexDirection ? "row" : "column") + reverseSuffix) as any}
          ref={ref}
          {...props}
       />
