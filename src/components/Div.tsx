@@ -37,7 +37,7 @@ type DivComponentType = {
       props: ComponentPropWithRef<
          HTMLDivElement,
          OmitProps<DivProps<Value>, "display" | "flexDirection"> & {
-            reverse?: boolean;
+            flexReverse?: boolean;
             invertFlexDirection?: boolean;
          }
       >,
@@ -46,7 +46,7 @@ type DivComponentType = {
       props: ComponentPropWithRef<
          HTMLDivElement,
          OmitProps<DivProps<Value>, "display" | "flexDirection"> & {
-            reverse?: boolean;
+            flexReverse?: boolean;
             invertFlexDirection?: boolean;
          }
       >,
@@ -107,8 +107,8 @@ const DivComponent: DivComponentType = forwardRef(function Div<Value>(
    );
 }) as any;
 
-DivComponent.row = forwardRef(function Row({ reverse, invertFlexDirection, ...props }, ref) {
-   const reverseSuffix = reverse ? "-reverse" : "";
+DivComponent.row = forwardRef(function Row({ flexReverse, invertFlexDirection, ...props }, ref) {
+   const reverseSuffix = flexReverse ? "-reverse" : "";
 
    return (
       <DivComponent
@@ -120,8 +120,8 @@ DivComponent.row = forwardRef(function Row({ reverse, invertFlexDirection, ...pr
    );
 }) as DivComponentType["row"];
 
-DivComponent.column = forwardRef(function Column({ reverse, invertFlexDirection, ...props }, ref) {
-   const reverseSuffix = reverse ? "-reverse" : "";
+DivComponent.column = forwardRef(function Column({ flexReverse, invertFlexDirection, ...props }, ref) {
+   const reverseSuffix = flexReverse ? "-reverse" : "";
 
    return (
       <DivComponent
