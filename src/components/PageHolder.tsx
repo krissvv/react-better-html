@@ -1,5 +1,7 @@
 import { memo } from "react";
 
+import { ComponentPaddingProps } from "../types/components";
+
 import Div from "./Div";
 import { useBetterHtmlContextInternal, useTheme } from "./BetterHtmlProvider";
 
@@ -7,9 +9,9 @@ export type PageHolderProps = {
    /** @default false */
    noMaxContentWidth?: boolean;
    children?: React.ReactNode;
-};
+} & ComponentPaddingProps;
 
-function PageHolder({ noMaxContentWidth, children }: PageHolderProps) {
+function PageHolder({ noMaxContentWidth, children, ...props }: PageHolderProps) {
    const theme = useTheme();
    const { app } = useBetterHtmlContextInternal();
 
@@ -20,6 +22,7 @@ function PageHolder({ noMaxContentWidth, children }: PageHolderProps) {
          maxWidth={!noMaxContentWidth ? app.contentMaxWidth : undefined}
          margin="0px auto"
          padding={theme.styles.space}
+         {...props}
       >
          {children}
       </Div>

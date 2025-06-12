@@ -80,6 +80,7 @@ const InputElement = styled.input.withConfig({
    &[type="time"] {
       // min-height: 46px;
       -webkit-appearance: none;
+      -moz-appearance: textfield;
 
       &::-webkit-calendar-picker-indicator {
          display: none;
