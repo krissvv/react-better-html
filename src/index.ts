@@ -37,6 +37,7 @@ import {
    useUrlQuery,
 } from "./utils/hooks";
 import { generateRandomString, getBrowser, formatPhoneNumber, getFormErrorObject } from "./utils/functions";
+import { lightenColor, darkenColor, saturateColor, desaturateColor } from "./utils/colorManipulation";
 import { loaderControls } from "./utils/variableFunctions";
 
 import {
@@ -140,6 +141,11 @@ export {
    getBrowser,
    formatPhoneNumber,
    getFormErrorObject,
+   // Color Manipulation
+   lightenColor,
+   darkenColor,
+   saturateColor,
+   desaturateColor,
    // Variable Functions
    loaderControls,
    // Types

@@ -2,10 +2,13 @@ import { forwardRef, memo } from "react";
 
 import { ComponentPropWithRef } from "../types/components";
 import { OmitProps } from "../types/app";
+import { Color } from "../types/theme";
 
-import Div from "./Div";
-import Text from "./Text";
-import { useTheme } from "./BetterHtmlProvider";
+import { darkenColor, lightenColor, saturateColor } from "../utils/colorManipulation";
+
+import Div, { DivProps } from "./Div";
+import Text, { TextProps } from "./Text";
+import { useBetterHtmlContextInternal, useTheme } from "./BetterHtmlProvider";
 
 export type ChipProps = {
    text: string;
@@ -15,15 +18,27 @@ export type ChipProps = {
    backgroundColor?: string;
    /** @default theme.styles.borderRadius / 1.3 */
    borderRadius?: number;
-};
+   /** @default false */
+   isSmall?: boolean;
+   /** @default false */
+   isCircle?: boolean;
+} & Pick<DivProps<unknown>, "border" | "borderColor" | "borderWidth" | "borderStyle"> &
+   Pick<TextProps, "fontFamily" | "fontSize" | "fontWeight" | "fontStyle">;
 
 type ChipComponentType = {
    (props: ComponentPropWithRef<HTMLDivElement, ChipProps>): React.ReactElement;
-   circle: (props: ComponentPropWithRef<HTMLDivElement, OmitProps<ChipProps, "borderRadius">>) => React.ReactElement;
+   colored: (
+      props: ComponentPropWithRef<
+         HTMLDivElement,
+         OmitProps<ChipProps, "color" | "backgroundColor"> & {
+            color?: Color;
+         }
+      >,
+   ) => React.ReactElement;
 };
 
 const ChipComponent: ChipComponentType = forwardRef(function Chip(
-   { text, color, backgroundColor, borderRadius }: ChipProps,
+   { text, color, backgroundColor, borderRadius, isSmall, isCircle, ...props }: ChipProps,
    ref: React.ForwardedRef<HTMLDivElement>,
 ) {
    const theme = useTheme();
@@ -32,9 +47,10 @@ const ChipComponent: ChipComponentType = forwardRef(function Chip(
       <Div
          width="fit-content"
          backgroundColor={backgroundColor ?? theme.colors.backgroundSecondary}
-         borderRadius={borderRadius ?? theme.styles.borderRadius / 1.3}
-         paddingBlock={theme.styles.gap}
-         paddingInline={theme.styles.space}
+         borderRadius={isCircle ? 999 : borderRadius ?? theme.styles.borderRadius / 1.3}
+         paddingBlock={theme.styles.gap / (isSmall ? 2 : 1)}
+         paddingInline={theme.styles.space / (isSmall ? 1.5 : 1)}
+         {...props}
          ref={ref}
       >
          <Text color={color ?? theme.colors.textPrimary}>{text}</Text>
@@ -42,14 +58,27 @@ const ChipComponent: ChipComponentType = forwardRef(function Chip(
    );
 }) as any;
 
-ChipComponent.circle = forwardRef(function Circle(props, ref) {
-   return <ChipComponent borderRadius={999} ref={ref} {...props} />;
-}) as ChipComponentType["circle"];
+ChipComponent.colored = forwardRef(function Colored({ color, ...props }, ref) {
+   const theme = useTheme();
+   const { colorTheme } = useBetterHtmlContextInternal();
+
+   const readyColor = color ?? theme.colors.textSecondary;
+
+   return (
+      <ChipComponent
+         color={colorTheme === "light" ? darkenColor(readyColor, 0.7) : lightenColor(readyColor, 0.7)}
+         backgroundColor={readyColor + "40"}
+         border={`1px solid ${readyColor}`}
+         ref={ref}
+         {...props}
+      />
+   );
+}) as ChipComponentType["colored"];
 
 const Chip = memo(ChipComponent) as any as typeof ChipComponent & {
-   circle: typeof ChipComponent.circle;
+   colored: typeof ChipComponent.colored;
 };
 
-Chip.circle = ChipComponent.circle;
+Chip.colored = ChipComponent.colored;
 
 export default Chip;

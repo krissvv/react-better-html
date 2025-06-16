@@ -37,7 +37,7 @@ The component renders a chip with text and customizable styling.
 
       function App() {
          return (
-            <Chip text="Category" color="#ffffff" backgroundColor="#ff0000" />
+            <Chip text="Category" fontWeight={700} color="#ffffff" backgroundColor="#ff0000" />
          );
       }
       ```
@@ -45,18 +45,23 @@ The component renders a chip with text and customizable styling.
    </TabItem>
 </Tabs>
 
+There are props to control the look of the chip. Some of with are:
+
+-  **`isSmall`** - weather to render the chip with a smaller padding
+-  **`isCircle`** - weather to render the chip with a circular border radius
+
 ## Subcomponents
 
 A number of components in the library have a _subcomponent_ feature witch is like a preset of the same component that is frequently used.
 
-### Chip.circle
+### Chip.colored
 
-This component renders with circular border radiuses.
+This component renders with a border and a background color.
 
 ```jsx
 import { Chip } from "react-better-html";
 
 function App() {
-   return <Chip.circle text="Circle Text" />;
+   return <Chip.colored text="Colored Text" color="#ff0000" />;
 }
 ```

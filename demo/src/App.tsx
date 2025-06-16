@@ -291,8 +291,45 @@ function App() {
 
                <Tabs.content tab="Chip">
                   <Div.column gap={theme.styles.space}>
-                     <Chip text="Some text" />
-                     <Chip.circle text="Some text" backgroundColor="red" color="white" />
+                     <Div.row alignItems="center" gap={theme.styles.gap} overflowX="auto">
+                        <Chip text="Some text" />
+                        <Chip text="Some text" backgroundColor="#ff0000" color={theme.colors.base} />
+                        <Chip text="Some text" backgroundColor="#abe435" />
+                        <Chip text="Some text" backgroundColor="#395fec" color={theme.colors.base} />
+                        <Chip text="Some text" backgroundColor="#f5bc1e" />
+                     </Div.row>
+
+                     <Div.row alignItems="center" gap={theme.styles.gap} overflowX="auto">
+                        <Chip.colored text="Some text" />
+                        <Chip.colored text="Some text" color="#ff0000" />
+                        <Chip.colored text="Some text" color="#abe435" />
+                        <Chip.colored text="Some text" color="#395fec" />
+                        <Chip.colored text="Some text" color="#f5bc1e" />
+                     </Div.row>
+
+                     <Div.row alignItems="center" gap={theme.styles.gap} overflowX="auto">
+                        <Chip.colored text="Some text" isCircle />
+                        <Chip.colored text="Some text" color="#ff0000" isCircle />
+                        <Chip.colored text="Some text" color="#abe435" isCircle />
+                        <Chip.colored text="Some text" color="#395fec" isCircle />
+                        <Chip.colored text="Some text" color="#f5bc1e" isCircle />
+                     </Div.row>
+
+                     <Div.row alignItems="center" gap={theme.styles.gap} overflowX="auto">
+                        <Chip.colored text="Some text" isSmall />
+                        <Chip.colored text="Some text" color="#ff0000" isSmall />
+                        <Chip.colored text="Some text" color="#abe435" isSmall />
+                        <Chip.colored text="Some text" color="#395fec" isSmall />
+                        <Chip.colored text="Some text" color="#f5bc1e" isSmall />
+                     </Div.row>
+
+                     <Div.row alignItems="center" gap={theme.styles.gap} overflowX="auto">
+                        <Chip.colored text="Some text" isSmall isCircle />
+                        <Chip.colored text="Some text" color="#ff0000" isSmall isCircle />
+                        <Chip.colored text="Some text" color="#abe435" isSmall isCircle />
+                        <Chip.colored text="Some text" color="#395fec" isSmall isCircle />
+                        <Chip.colored text="Some text" color="#f5bc1e" isSmall isCircle />
+                     </Div.row>
                   </Div.column>
                </Tabs.content>
 
@@ -506,6 +543,7 @@ function App() {
                         <Button.icon icon="XMark" />
                         <Button.upload />
                      </Div.row>
+
                      <Div.row alignItems="center" gap={theme.styles.gap} overflowX="auto">
                         <Button text="Hello there" isSmall />
                         <Button.secondary text="Hello there" isSmall />
@@ -514,6 +552,7 @@ function App() {
                         <Button.icon icon="XMark" />
                         <Button.upload isSmall />
                      </Div.row>
+
                      <Div.row alignItems="center" gap={theme.styles.gap} overflowX="auto">
                         <Button text="Hello there" isLoading />
                         <Button.secondary text="Hello there" isLoading />
