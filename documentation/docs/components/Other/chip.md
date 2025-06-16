@@ -30,6 +30,20 @@ The component renders a chip with text and customizable styling.
 
    </TabItem>
 
+   <TabItem value="circle" label="Circle">
+
+      ```jsx
+      import { Chip } from "react-better-html";
+
+      function App() {
+         return (
+            <Chip text="Category" isCircle />
+         );
+      }
+      ```
+
+   </TabItem>
+
    <TabItem value="custom" label="Custom">
 
       ```jsx
@@ -44,11 +58,6 @@ The component renders a chip with text and customizable styling.
 
    </TabItem>
 </Tabs>
-
-There are props to control the look of the chip. Some of with are:
-
--  **`isSmall`** - weather to render the chip with a smaller padding
--  **`isCircle`** - weather to render the chip with a circular border radius
 
 ## Subcomponents
 

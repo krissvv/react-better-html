@@ -19,8 +19,6 @@ export type ChipProps = {
    /** @default theme.styles.borderRadius / 1.3 */
    borderRadius?: number;
    /** @default false */
-   isSmall?: boolean;
-   /** @default false */
    isCircle?: boolean;
 } & Pick<DivProps<unknown>, "border" | "borderColor" | "borderWidth" | "borderStyle"> &
    Pick<TextProps, "fontFamily" | "fontSize" | "fontWeight" | "fontStyle">;
@@ -38,7 +36,7 @@ type ChipComponentType = {
 };
 
 const ChipComponent: ChipComponentType = forwardRef(function Chip(
-   { text, color, backgroundColor, borderRadius, isSmall, isCircle, ...props }: ChipProps,
+   { text, color, backgroundColor, borderRadius, isCircle, ...props }: ChipProps,
    ref: React.ForwardedRef<HTMLDivElement>,
 ) {
    const theme = useTheme();
@@ -48,8 +46,8 @@ const ChipComponent: ChipComponentType = forwardRef(function Chip(
          width="fit-content"
          backgroundColor={backgroundColor ?? theme.colors.backgroundSecondary}
          borderRadius={isCircle ? 999 : borderRadius ?? theme.styles.borderRadius / 1.3}
-         paddingBlock={theme.styles.gap / (isSmall ? 2 : 1)}
-         paddingInline={theme.styles.space / (isSmall ? 1.5 : 1)}
+         paddingBlock={theme.styles.gap / 2}
+         paddingInline={theme.styles.space / 1.5}
          {...props}
          ref={ref}
       >
