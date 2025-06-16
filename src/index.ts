@@ -1,4 +1,4 @@
-import Div, { type DivProps, type DivAs } from "./components/Div";
+import Div, { type DivProps } from "./components/Div";
 import Text, { type TextProps, type TextAs } from "./components/Text";
 import Loader, { type LoaderProps } from "./components/Loader";
 import Icon, { type IconProps } from "./components/Icon";
@@ -74,7 +74,6 @@ export {
    // Components
    Div,
    DivProps,
-   DivAs,
    Text,
    TextProps,
    TextAs,
