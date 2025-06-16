@@ -20,21 +20,21 @@ const TextStyledComponent = styled.div.withConfig({
 
 export type TextAs = "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "p" | "span" | "label";
 
-export type TextProps = {
+export type TextProps<As extends TextAs = "p"> = {
    /** @default "p" */
-   as?: TextAs;
-} & OmitProps<React.ComponentProps<"p">, "style"> &
+   as?: As;
+} & OmitProps<React.ComponentProps<As>, "style"> &
    ComponentStyle &
    ComponentHoverStyle;
 
 type TextComponentType = {
-   (props: ComponentPropWithRef<HTMLParagraphElement, TextProps>): React.ReactElement;
-   unknown: (props: ComponentPropWithRef<HTMLParagraphElement, TextProps>) => React.ReactElement;
-   oneLine: (props: ComponentPropWithRef<HTMLParagraphElement, TextProps>) => React.ReactElement;
+   <As extends TextAs>(props: ComponentPropWithRef<HTMLParagraphElement, TextProps<As>>): React.ReactElement;
+   unknown: <As extends TextAs>(props: ComponentPropWithRef<HTMLParagraphElement, TextProps<As>>) => React.ReactElement;
+   oneLine: <As extends TextAs>(props: ComponentPropWithRef<HTMLParagraphElement, TextProps<As>>) => React.ReactElement;
 };
 
-const TextComponent: TextComponentType = forwardRef(function Text(
-   { as = "p", children, ...props }: TextProps,
+const TextComponent: TextComponentType = forwardRef(function Text<As extends TextAs>(
+   { as = "p", children, ...props }: TextProps<As>,
    ref: React.ForwardedRef<HTMLParagraphElement>,
 ) {
    const theme = useTheme();
@@ -51,7 +51,7 @@ const TextComponent: TextComponentType = forwardRef(function Text(
    );
 }) as any;
 
-TextComponent.unknown = forwardRef(function Unknown(props, ref) {
+TextComponent.unknown = forwardRef(function Unknown<As extends TextAs>(props, ref) {
    const theme = useTheme();
 
    return (
@@ -59,7 +59,7 @@ TextComponent.unknown = forwardRef(function Unknown(props, ref) {
    );
 }) as TextComponentType["unknown"];
 
-TextComponent.oneLine = forwardRef(function OneLine(props, ref) {
+TextComponent.oneLine = forwardRef(function OneLine<As extends TextAs>(props, ref) {
    return <TextComponent textOverflow="ellipsis" whiteSpace="nowrap" overflow="hidden" ref={ref} {...props} />;
 }) as TextComponentType["oneLine"];
 

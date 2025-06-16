@@ -31,6 +31,7 @@ export type DropdownProps<Value, Data = unknown> = {
    infoText?: string;
    /** @default false */
    required?: boolean;
+   name?: string;
    /** @default false */
    disabled?: boolean;
    options: DropdownOption<Value, Data>[];
@@ -53,7 +54,7 @@ export type DropdownProps<Value, Data = unknown> = {
    onChange?: (value: Value | undefined) => void;
    onChangeSearch?: (query: string) => void;
    renderOption?: (option: DropdownOption<Value, Data>, index: number, isSelected: boolean) => React.ReactNode;
-} & OmitProps<DivProps<unknown>, "onChange" | "defaultChecked">;
+} & OmitProps<DivProps, "onChange" | "defaultChecked">;
 
 type DropdownComponentType = {
    <Value, Data>(props: ComponentPropWithRef<HTMLDivElement, DropdownProps<Value, Data>>): React.ReactElement;
@@ -66,6 +67,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
       errorText,
       infoText,
       required,
+      name,
       disabled,
       options,
       value: controlledValue,
@@ -82,6 +84,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
       onChange,
       onChangeSearch,
       renderOption,
+      id,
       ...props
    }: DropdownProps<Value, Data>,
    ref: React.ForwardedRef<HTMLDivElement>,
@@ -263,9 +266,11 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
                errorText={errorText}
                infoText={infoText}
                required={required}
+               name={name}
                disabled={disabled}
                readOnly={!withSearch}
                value={displayValue}
+               id={id}
                cursor={!withSearch ? "pointer" : undefined}
                placeholder={withSearch ? (selectedOption ? selectedOption.label : readyPlaceholder) : readyPlaceholder}
                leftIcon={leftIcon}
@@ -390,6 +395,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
                   transform={`rotate(${isOpen ? 180 : 0}deg)`}
                   transition={theme.styles.transition}
                   pointerEvents="none"
+                  aria-hidden
                />
             </Div.row>
          </Div.row>

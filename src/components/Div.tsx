@@ -1,5 +1,5 @@
 import { forwardRef, memo, useCallback } from "react";
-import styled, { WebTarget } from "styled-components";
+import styled from "styled-components";
 
 import { isMobileDevice } from "../constants";
 
@@ -20,45 +20,59 @@ const DivStyledComponent = styled.div.withConfig({
    }
 `;
 
-export type DivProps<Value> = {
+export type DivAs = keyof React.JSX.IntrinsicElements;
+
+export type DivProps<Value = unknown, As extends DivAs = "div"> = {
    value?: Value;
    /** @default "div" */
-   as?: WebTarget;
+   as?: As;
    /** @default false */
    isTabAccessed?: boolean;
    onClickWithValue?: (value: Value) => void;
-} & OmitProps<React.ComponentProps<"div">, "style" | "defaultValue"> &
+} & OmitProps<React.ComponentProps<As>, "style" | "defaultValue"> &
    ComponentStyle &
    ComponentHoverStyle;
 
 type DivComponentType = {
-   <Value>(props: ComponentPropWithRef<HTMLDivElement, DivProps<Value>>): React.ReactElement;
-   row: <Value>(
+   <Value, As extends DivAs>(props: ComponentPropWithRef<HTMLDivElement, DivProps<Value, As>>): React.ReactElement;
+   row: <Value, As extends DivAs>(
       props: ComponentPropWithRef<
          HTMLDivElement,
-         OmitProps<DivProps<Value>, "display" | "flexDirection"> & {
+         OmitProps<DivProps<Value, As>, "display" | "flexDirection"> & {
             flexReverse?: boolean;
             invertFlexDirection?: boolean;
          }
       >,
    ) => React.ReactElement;
-   column: <Value>(
+   column: <Value, As extends DivAs>(
       props: ComponentPropWithRef<
          HTMLDivElement,
-         OmitProps<DivProps<Value>, "display" | "flexDirection"> & {
+         OmitProps<DivProps<Value, As>, "display" | "flexDirection"> & {
             flexReverse?: boolean;
             invertFlexDirection?: boolean;
          }
       >,
    ) => React.ReactElement;
-   grid: <Value>(
-      props: ComponentPropWithRef<HTMLDivElement, OmitProps<DivProps<Value>, "display">>,
+   grid: <Value, As extends DivAs>(
+      props: ComponentPropWithRef<HTMLDivElement, OmitProps<DivProps<Value, As>, "display">>,
    ) => React.ReactElement;
-   box: <Value>(props: ComponentPropWithRef<HTMLDivElement, DivProps<Value>>) => React.ReactElement;
+   box: <Value, As extends DivAs>(
+      props: ComponentPropWithRef<HTMLDivElement, DivProps<Value, As>>,
+   ) => React.ReactElement;
 };
 
-const DivComponent: DivComponentType = forwardRef(function Div<Value>(
-   { value, as, isTabAccessed, onClickWithValue, role, onClick, onKeyDown, children, ...props }: DivProps<Value>,
+const DivComponent: DivComponentType = forwardRef(function Div<Value, As extends DivAs>(
+   {
+      value,
+      as = "div",
+      isTabAccessed,
+      onClickWithValue,
+      role,
+      onClick,
+      onKeyDown,
+      children,
+      ...props
+   }: DivProps<Value, As>,
    ref: React.ForwardedRef<HTMLDivElement>,
 ) {
    const theme = useTheme();
@@ -107,7 +121,7 @@ const DivComponent: DivComponentType = forwardRef(function Div<Value>(
    );
 }) as any;
 
-DivComponent.row = forwardRef(function Row({ flexReverse, invertFlexDirection, ...props }, ref) {
+DivComponent.row = forwardRef(function Row<As extends DivAs>({ flexReverse, invertFlexDirection, ...props }, ref) {
    const reverseSuffix = flexReverse ? "-reverse" : "";
 
    return (
@@ -120,7 +134,10 @@ DivComponent.row = forwardRef(function Row({ flexReverse, invertFlexDirection, .
    );
 }) as DivComponentType["row"];
 
-DivComponent.column = forwardRef(function Column({ flexReverse, invertFlexDirection, ...props }, ref) {
+DivComponent.column = forwardRef(function Column<As extends DivAs>(
+   { flexReverse, invertFlexDirection, ...props },
+   ref,
+) {
    const reverseSuffix = flexReverse ? "-reverse" : "";
 
    return (
@@ -133,11 +150,11 @@ DivComponent.column = forwardRef(function Column({ flexReverse, invertFlexDirect
    );
 }) as DivComponentType["column"];
 
-DivComponent.grid = forwardRef(function Grid(props, ref) {
+DivComponent.grid = forwardRef(function Grid<As extends DivAs>(props, ref) {
    return <DivComponent display="grid" ref={ref} {...props} />;
 }) as DivComponentType["grid"];
 
-DivComponent.box = forwardRef(function Box(props, ref) {
+DivComponent.box = forwardRef(function Box<As extends DivAs>(props, ref) {
    const theme = useTheme();
 
    return (

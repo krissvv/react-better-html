@@ -388,6 +388,7 @@ export function useForm<FormFields extends Record<string | number, string | numb
          return {
             required: requiredFields?.includes(field),
             value: values[field]?.toString() ?? "",
+            name: field.toString(),
             onChangeValue: (newValue) => {
                const readyValue = type === "number" ? (newValue ? Number(newValue) : undefined) : newValue;
 
@@ -416,6 +417,7 @@ export function useForm<FormFields extends Record<string | number, string | numb
          return {
             required: requiredFields?.includes(field),
             value: values[field]?.toString() ?? "",
+            name: field.toString(),
             onChangeValue: (newValue) => {
                setFieldValue(field, newValue as FormFields[FieldName]);
             },
@@ -427,10 +429,11 @@ export function useForm<FormFields extends Record<string | number, string | numb
    const getDropdownFieldProps = useCallback(
       <FieldName extends keyof FormFields>(
          field: FieldName,
-      ): OmitProps<ComponentPropWithRef<HTMLDivElement, DropdownProps<FormFields[FieldName], unknown>>, "options"> => {
+      ): OmitProps<ComponentPropWithRef<HTMLDivElement, DropdownProps<FormFields[FieldName]>>, "options"> => {
          return {
             required: requiredFields?.includes(field),
             value: values[field],
+            name: field.toString(),
             onChange: (value) => {
                setFieldValue(field, value);
             },
@@ -446,6 +449,7 @@ export function useForm<FormFields extends Record<string | number, string | numb
          return {
             required: requiredFields?.includes(field),
             checked: values[field] as boolean,
+            name: field.toString(),
             onChange: (checked) => {
                setFieldValue(field, checked as FormFields[FieldName]);
             },
@@ -479,6 +483,7 @@ export function useForm<FormFields extends Record<string | number, string | numb
          return {
             required: requiredFields?.includes(field),
             checked: values[field] as boolean,
+            name: field.toString(),
             onChange: (checked) => {
                setFieldValue(field, checked as FormFields[FieldName]);
             },

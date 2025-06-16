@@ -20,7 +20,7 @@ export type ChipProps = {
    borderRadius?: number;
    /** @default false */
    isCircle?: boolean;
-} & Pick<DivProps<unknown>, "border" | "borderColor" | "borderWidth" | "borderStyle"> &
+} & Pick<DivProps, "border" | "borderColor" | "borderWidth" | "borderStyle"> &
    Pick<TextProps, "fontFamily" | "fontSize" | "fontWeight" | "fontStyle">;
 
 type ChipComponentType = {

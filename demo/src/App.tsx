@@ -300,6 +300,14 @@ function App() {
                      </Div.row>
 
                      <Div.row alignItems="center" gap={theme.styles.gap} overflowX="auto">
+                        <Chip text="Some text" isCircle />
+                        <Chip text="Some text" backgroundColor="#ff0000" color={theme.colors.base} isCircle />
+                        <Chip text="Some text" backgroundColor="#abe435" isCircle />
+                        <Chip text="Some text" backgroundColor="#395fec" color={theme.colors.base} isCircle />
+                        <Chip text="Some text" backgroundColor="#f5bc1e" isCircle />
+                     </Div.row>
+
+                     <Div.row alignItems="center" gap={theme.styles.gap} overflowX="auto">
                         <Chip.colored text="Some text" />
                         <Chip.colored text="Some text" color="#ff0000" />
                         <Chip.colored text="Some text" color="#abe435" />
@@ -313,22 +321,6 @@ function App() {
                         <Chip.colored text="Some text" color="#abe435" isCircle />
                         <Chip.colored text="Some text" color="#395fec" isCircle />
                         <Chip.colored text="Some text" color="#f5bc1e" isCircle />
-                     </Div.row>
-
-                     <Div.row alignItems="center" gap={theme.styles.gap} overflowX="auto">
-                        <Chip.colored text="Some text" isSmall />
-                        <Chip.colored text="Some text" color="#ff0000" isSmall />
-                        <Chip.colored text="Some text" color="#abe435" isSmall />
-                        <Chip.colored text="Some text" color="#395fec" isSmall />
-                        <Chip.colored text="Some text" color="#f5bc1e" isSmall />
-                     </Div.row>
-
-                     <Div.row alignItems="center" gap={theme.styles.gap} overflowX="auto">
-                        <Chip.colored text="Some text" isSmall isCircle />
-                        <Chip.colored text="Some text" color="#ff0000" isSmall isCircle />
-                        <Chip.colored text="Some text" color="#abe435" isSmall isCircle />
-                        <Chip.colored text="Some text" color="#395fec" isSmall isCircle />
-                        <Chip.colored text="Some text" color="#f5bc1e" isSmall isCircle />
                      </Div.row>
                   </Div.column>
                </Tabs.content>

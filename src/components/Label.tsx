@@ -10,9 +10,10 @@ export type LabelProps = {
    /** @default false */
    isError?: boolean;
    color?: string;
+   htmlFor?: string;
 };
 
-function Label({ text, required, isError, color }: LabelProps) {
+function Label({ text, required, isError, color, htmlFor }: LabelProps) {
    const theme = useTheme();
 
    return (
@@ -21,6 +22,8 @@ function Label({ text, required, isError, color }: LabelProps) {
          height={16}
          fontSize={14}
          color={isError ? theme.colors.error : color ?? theme.colors.textSecondary}
+         htmlFor={htmlFor}
+         aria-required={required}
       >
          {text}
 

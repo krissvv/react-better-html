@@ -1,4 +1,4 @@
-import { forwardRef, useCallback, useState } from "react";
+import { forwardRef, useCallback, useId, useState } from "react";
 import styled from "styled-components";
 
 import { ComponentHoverStyle, ComponentPropWithRef, ComponentStyle } from "../types/components";
@@ -168,11 +168,13 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
       checked: controlledChecked,
       color,
       required,
+      id,
       ...props
    }: InternalToggleInputProps<Value>,
    ref: React.ForwardedRef<ToggleInputRef>,
 ) {
    const theme = useTheme();
+   const internalId = useId();
 
    const styledComponentStyles = useStyledComponentStyles(props, theme, true);
    const styledComponentStylesWithExcluded = useComponentPropsWithExcludedStyle(props);
@@ -201,9 +203,13 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
       onChange?.(newIsChecked, value);
    }, [checked, controlledChecked, onChange, value]);
 
+   const readyId = id ?? internalId;
+
    return (
       <Div.column width="100%" gap={theme.styles.gap} {...styledComponentStylesWithExcluded}>
-         {label && <Label text={label} color={labelColor} required={required} isError={!!errorText} />}
+         {label && (
+            <Label text={label} color={labelColor} required={required} isError={!!errorText} htmlFor={readyId} />
+         )}
 
          <Div.row alignItems="center" gap={theme.styles.gap}>
             <Div.row position="relative" alignItems="center">
@@ -212,6 +218,7 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
                   type={props.type ?? "checkbox"}
                   checked={checked}
                   onChange={onChangeElement}
+                  id={readyId}
                   {...styledComponentStyles}
                   {...dataProps}
                   {...ariaProps}
@@ -298,11 +305,13 @@ export default {
          onChange,
          checked: controlledChecked,
          required,
+         id,
          ...props
       }: InternalToggleInputProps<Value>,
       ref: React.ForwardedRef<ToggleInputRef>,
    ) {
       const theme = useTheme();
+      const internalId = useId();
 
       const styledComponentStyles = useStyledComponentStyles(props, theme, true);
       const styledComponentStylesWithExcluded = useComponentPropsWithExcludedStyle(props);
@@ -324,9 +333,13 @@ export default {
          onChange?.(newIsChecked, value);
       }, [disabled, checked, onChange, controlledChecked, value]);
 
+      const readyId = id ?? internalId;
+
       return (
          <Div.column width="fit-content" gap={theme.styles.gap} {...styledComponentStylesWithExcluded}>
-            {label && <Label text={label} color={labelColor} required={required} isError={!!errorText} />}
+            {label && (
+               <Label text={label} color={labelColor} required={required} isError={!!errorText} htmlFor={readyId} />
+            )}
 
             <Div.row
                alignItems="center"
@@ -344,6 +357,10 @@ export default {
                   disabled={disabled ?? false}
                   isMouseDown={isMouseDown}
                   onClick={onClickElement}
+                  id={readyId}
+                  role="switch"
+                  aria-checked={checked}
+                  aria-disabled={disabled ?? false}
                   {...styledComponentStyles}
                   {...dataProps}
                   {...ariaProps}

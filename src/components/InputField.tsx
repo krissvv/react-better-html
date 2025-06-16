@@ -1,4 +1,4 @@
-import React, { forwardRef, memo, useCallback, useState, useEffect, useMemo, useRef } from "react";
+import { forwardRef, memo, useCallback, useState, useEffect, useMemo, useRef, useId } from "react";
 import styled from "styled-components";
 
 import { countries } from "../constants/countries";
@@ -28,8 +28,8 @@ import Button from "./Button";
 import Label from "./Label";
 import Dropdown, { DropdownOption } from "./Dropdown";
 import Image from "./Image";
-import { useTheme } from "./BetterHtmlProvider";
 import Calendar from "./Calendar";
+import { useTheme } from "./BetterHtmlProvider";
 
 const buttonWidth = 50;
 
@@ -250,11 +250,13 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
       holderRef,
       required,
       placeholder,
+      id,
       ...props
    }: InputFieldProps,
    ref: React.ForwardedRef<HTMLInputElement>,
 ) {
    const theme = useTheme();
+   const internalId = useId();
    const [_, debouncedValue, setDebouncedValue] = useDebounceState<string>(
       props.value?.toString() ?? "",
       debounceDelay,
@@ -297,9 +299,13 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
       onChangeValue?.(debouncedValue);
    }, [withDebounce, onChangeValue, debouncedValue]);
 
+   const readyId = id ?? internalId;
+
    return (
       <Div.column width="100%" gap={theme.styles.gap} {...styledComponentStylesWithExcluded}>
-         {label && <Label text={label} color={labelColor} required={required} isError={!!errorText} />}
+         {label && (
+            <Label text={label} color={labelColor} required={required} isError={!!errorText} htmlFor={readyId} />
+         )}
 
          <Div position="relative" width="100%" ref={holderRef}>
             {leftIcon && (
@@ -322,6 +328,7 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
                withRightIcon={rightIcon !== undefined}
                required={required}
                placeholder={placeholder ?? label}
+               id={readyId}
                onChange={onChangeElement}
                {...styledComponentStylesWithoutExcluded}
                {...dataProps}
@@ -381,11 +388,13 @@ InputFieldComponent.multiline = forwardRef(function Multiline(
       onChangeValue,
       onClickRightIcon,
       required,
+      id,
       ...props
    },
    ref,
 ) {
    const theme = useTheme();
+   const internalId = useId();
 
    const styledComponentStyles = useStyledComponentStyles(props, theme);
    const dataProps = useComponentPropsWithPrefix(props, "data");
@@ -400,9 +409,11 @@ InputFieldComponent.multiline = forwardRef(function Multiline(
       [onChange, onChangeValue],
    );
 
+   const readyId = id ?? internalId;
+
    return (
       <Div.column gap={theme.styles.gap}>
-         {label && <Label text={label} required={required} isError={!!errorText} />}
+         {label && <Label text={label} required={required} isError={!!errorText} htmlFor={readyId} />}
 
          <Div position="relative" width="100%">
             {leftIcon && (
@@ -423,6 +434,7 @@ InputFieldComponent.multiline = forwardRef(function Multiline(
                required={required}
                placeholder={placeholder ?? label}
                onChange={onChangeElement}
+               id={readyId}
                {...styledComponentStyles}
                {...dataProps}
                {...ariaProps}
@@ -505,10 +517,11 @@ InputFieldComponent.search = forwardRef(function Search({ ...props }, ref) {
 }) as InputFieldComponentType["search"];
 
 InputFieldComponent.phoneNumber = forwardRef(function PhoneNumber(
-   { label, value, onChangeValue, labelColor, ...props },
+   { label, value, onChangeValue, labelColor, id, ...props },
    ref,
 ) {
    const theme = useTheme();
+   const internalId = useId();
 
    const [dropdownValue, setDropdownValue] = useState<string>();
    const [inputFieldValue, setInputFieldValue] = useState<string>(value?.toString() ?? "");
@@ -573,9 +586,19 @@ InputFieldComponent.phoneNumber = forwardRef(function PhoneNumber(
       setInputFieldValue(newValue.slice(country?.phoneNumberExtension.length + 1));
    }, [value]);
 
+   const readyId = id ?? internalId;
+
    return (
       <Div.column width="100%" gap={theme.styles.gap}>
-         {label && <Label text={label} color={labelColor} required={props.required} isError={!!props.errorText} />}
+         {label && (
+            <Label
+               text={label}
+               color={labelColor}
+               required={props.required}
+               isError={!!props.errorText}
+               htmlFor={readyId}
+            />
+         )}
 
          <Div.row>
             <Dropdown
@@ -597,6 +620,7 @@ InputFieldComponent.phoneNumber = forwardRef(function PhoneNumber(
                value={inputFieldValue}
                onChangeValue={onChangeValueElement}
                ref={ref}
+               id={readyId}
                {...props}
             />
          </Div.row>

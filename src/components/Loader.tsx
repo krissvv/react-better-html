@@ -18,7 +18,7 @@ export type LoaderProps = {
    /** @default false */
    disabled?: boolean;
 } & OmitProps<
-   DivProps<unknown>,
+   DivProps,
    | "width"
    | "height"
    | "color"

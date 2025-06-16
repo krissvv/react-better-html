@@ -29,7 +29,7 @@ export type FoldableProps = {
    renderHeader?: (isOpen: boolean, toggleOpen: () => void) => React.ReactNode;
    onOpenChange?: (isOpen: boolean) => void;
    children?: React.ReactNode;
-} & DivProps<unknown>;
+} & DivProps;
 
 export type FoldableRef = {
    isOpen: boolean;
