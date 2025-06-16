@@ -1,4 +1,4 @@
-import { forwardRef, memo } from "react";
+import { ComponentProps, forwardRef, memo } from "react";
 import styled from "styled-components";
 
 import { ComponentHoverStyle, ComponentPropWithRef, ComponentStyle } from "../types/components";
@@ -8,7 +8,7 @@ import { useComponentPropsWithoutStyle, useComponentPropsWithPrefix, useStyledCo
 
 import { useTheme } from "./BetterHtmlProvider";
 
-const TextStyledComponent = styled.div.withConfig({
+const TextStyledComponent = styled.p.withConfig({
    shouldForwardProp: (prop) => !["normalStyle", "hoverStyle"].includes(prop),
 })<{ normalStyle: ComponentStyle; hoverStyle: ComponentStyle }>`
    ${(props) => props.normalStyle as any}
@@ -34,7 +34,7 @@ type TextComponentType = {
 };
 
 const TextComponent: TextComponentType = forwardRef(function Text<As extends TextAs>(
-   { as = "p", children, ...props }: TextProps<As>,
+   { children, ...props }: TextProps<As>,
    ref: React.ForwardedRef<HTMLParagraphElement>,
 ) {
    const theme = useTheme();
@@ -45,13 +45,23 @@ const TextComponent: TextComponentType = forwardRef(function Text<As extends Tex
    const restProps = useComponentPropsWithoutStyle(props);
 
    return (
-      <TextStyledComponent as={as} {...styledComponentStyles} {...dataProps} {...ariaProps} {...restProps} ref={ref}>
+      <TextStyledComponent
+         as={props.as}
+         {...(styledComponentStyles as any)}
+         {...dataProps}
+         {...ariaProps}
+         {...restProps}
+         ref={ref}
+      >
          {children}
       </TextStyledComponent>
    );
 }) as any;
 
-TextComponent.unknown = forwardRef(function Unknown<As extends TextAs>(props, ref) {
+TextComponent.unknown = forwardRef(function Unknown(
+   props: ComponentProps<TextComponentType["unknown"]>,
+   ref: React.ForwardedRef<HTMLParagraphElement>,
+) {
    const theme = useTheme();
 
    return (
@@ -59,7 +69,10 @@ TextComponent.unknown = forwardRef(function Unknown<As extends TextAs>(props, re
    );
 }) as TextComponentType["unknown"];
 
-TextComponent.oneLine = forwardRef(function OneLine<As extends TextAs>(props, ref) {
+TextComponent.oneLine = forwardRef(function OneLine(
+   props: ComponentProps<TextComponentType["oneLine"]>,
+   ref: React.ForwardedRef<HTMLParagraphElement>,
+) {
    return <TextComponent textOverflow="ellipsis" whiteSpace="nowrap" overflow="hidden" ref={ref} {...props} />;
 }) as TextComponentType["oneLine"];
 
