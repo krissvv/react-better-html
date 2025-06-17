@@ -20,6 +20,10 @@ export type BetterHtmlConfig = {
    assets: Partial<AssetsConfig>;
    loaders: Partial<LoaderConfig>;
    components: {
-      button?: ComponentConfig<"default" | "secondary" | "destructive" | "icon" | "upload">;
+      button?: {
+         style?: ComponentConfig<"default" | "secondary" | "destructive" | "icon" | "upload">;
+         buttonComponent?: React.ReactNode;
+         linkComponent?: React.ReactNode;
+      };
    };
 };

@@ -1,5 +1,4 @@
 import { ComponentProps, memo, useCallback } from "react";
-import { Link } from "react-router-dom";
 import styled, { css } from "styled-components";
 
 import { IconName } from "../types/icon";
@@ -191,7 +190,7 @@ const ButtonComponent: ButtonComponent = function Button<Value>({
 
    const styledComponentStyles = useStyledComponentStyles(
       {
-         ...betterHtmlContext.components.button?.default,
+         ...betterHtmlContext.components.button?.style?.default,
          ...props,
       },
       theme,
@@ -226,9 +225,12 @@ const ButtonComponent: ButtonComponent = function Button<Value>({
       />
    ) : undefined;
 
+   const linkComponentTag = betterHtmlContext.components.button?.linkComponent ?? "a";
+   const buttonComponentTag = betterHtmlContext.components.button?.buttonComponent ?? "button";
+
    return (
       <ButtonElement
-         as={(href ? Link : "button") as any}
+         as={(href ? linkComponentTag : buttonComponentTag) as any}
          theme={theme}
          colorTheme={betterHtmlContext.colorTheme}
          isSmall={isSmall}
@@ -236,6 +238,7 @@ const ButtonComponent: ButtonComponent = function Button<Value>({
          isLoading={isLoadingElement}
          disabled={disabled}
          to={href}
+         href={href}
          download={download}
          target={target}
          type={isSubmit && !isLoadingElement ? "submit" : "button"}
@@ -290,7 +293,7 @@ ButtonComponent.secondary = function Secondary({ className, ...props }) {
 
    return (
       <ButtonComponent
-         {...betterHtmlContext.components.button?.secondary}
+         {...betterHtmlContext.components.button?.style?.secondary}
          className={`secondary${className ? ` ${className}` : ""}`}
          color={theme.colors.textPrimary}
          {...props}
@@ -304,7 +307,7 @@ ButtonComponent.destructive = function Destructive(props) {
 
    return (
       <ButtonComponent
-         {...betterHtmlContext.components.button?.destructive}
+         {...betterHtmlContext.components.button?.style?.destructive}
          backgroundColor={theme.colors.error}
          color={theme.colors.base}
          {...props}
@@ -321,7 +324,7 @@ ButtonComponent.icon = function Icon({ size = 16, backgroundButtonColor, ...prop
 
    return (
       <ButtonComponent
-         {...betterHtmlContext.components.button?.icon}
+         {...betterHtmlContext.components.button?.style?.icon}
          width={buttonSize}
          height={buttonSize}
          color={theme.colors.textPrimary}
@@ -357,7 +360,7 @@ ButtonComponent.upload = function Upload({ accept, multiple, onUpload, ...props 
 
    return (
       <ButtonComponent
-         {...betterHtmlContext.components.button?.upload}
+         {...betterHtmlContext.components.button?.style?.upload}
          text="Upload"
          icon="uploadCloud"
          onClick={onClickElement}
