@@ -550,6 +550,10 @@ function App() {
                <Tabs.content tab="Button">
                   <Div.column gap={theme.styles.space}>
                      <Div.row alignItems="center" gap={theme.styles.gap} overflowX="auto">
+                        <Button text="Hello there" href="/" />
+                     </Div.row>
+
+                     <Div.row alignItems="center" gap={theme.styles.gap} overflowX="auto">
                         <Button text="Hello there" />
                         <Button.secondary text="Hello there" />
                         <Button.destructive text="Hello there" />

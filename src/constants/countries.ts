@@ -40,7 +40,7 @@ export const countries: Country[] = [
       phoneNumberFormat: "(XXX)XXX-XXXX",
    },
    {
-      name: "AndorrA",
+      name: "Andorra",
       code: "AD",
       timeZone: "Europe/Andorra",
       phoneNumberExtension: "376",

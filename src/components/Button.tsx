@@ -1,4 +1,5 @@
 import { ComponentProps, memo, useCallback } from "react";
+import { Link } from "react-router-dom";
 import styled, { css } from "styled-components";
 
 import { IconName } from "../types/icon";
@@ -227,14 +228,14 @@ const ButtonComponent: ButtonComponent = function Button<Value>({
 
    return (
       <ButtonElement
-         as={(href ? "a" : "button") as any}
+         as={(href ? Link : "button") as any}
          theme={theme}
          colorTheme={betterHtmlContext.colorTheme}
          isSmall={isSmall}
          withText={text !== undefined}
          isLoading={isLoadingElement}
          disabled={disabled}
-         href={href}
+         to={href}
          download={download}
          target={target}
          type={isSubmit && !isLoadingElement ? "submit" : "button"}

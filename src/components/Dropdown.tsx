@@ -325,6 +325,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
                cursor={!withSearch ? "pointer" : undefined}
                placeholder={withSearch ? (selectedOption ? selectedOption.label : readyPlaceholder) : readyPlaceholder}
                leftIcon={leftIcon}
+               autoComplete="off"
                className={`react-better-html-dropdown${isOpen ? " react-better-html-dropdown-open" : ""}${
                   isOpenLate ? " react-better-html-dropdown-open-late" : ""
                }${inputFieldClassName ? ` ${inputFieldClassName}` : ""}`}
