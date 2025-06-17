@@ -225,8 +225,8 @@ const ButtonComponent: ButtonComponent = function Button<Value>({
       />
    ) : undefined;
 
-   const linkComponentTag = betterHtmlContext.components.button?.linkComponent ?? "a";
-   const buttonComponentTag = betterHtmlContext.components.button?.buttonComponent ?? "button";
+   const linkComponentTag = betterHtmlContext.components.button?.tagReplacement?.linkComponent ?? "a";
+   const buttonComponentTag = betterHtmlContext.components.button?.tagReplacement?.buttonComponent ?? "button";
 
    return (
       <ButtonElement

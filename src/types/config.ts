@@ -8,8 +8,12 @@ export type AppConfig = {
    contentMaxWidth: number;
 };
 
-type ComponentConfig<Subcomponents extends string> = {
+type ComponentStyleConfig<Subcomponents extends string> = {
    [key in Subcomponents]?: ComponentStyle & ComponentHoverStyle;
+};
+
+type ComponentTagReplacementConfig<Subcomponents extends string> = {
+   [key in Subcomponents]?: React.ElementType;
 };
 
 export type BetterHtmlConfig = {
@@ -21,9 +25,8 @@ export type BetterHtmlConfig = {
    loaders: Partial<LoaderConfig>;
    components: {
       button?: {
-         style?: ComponentConfig<"default" | "secondary" | "destructive" | "icon" | "upload">;
-         buttonComponent?: React.ReactNode;
-         linkComponent?: React.ReactNode;
+         style?: ComponentStyleConfig<"default" | "secondary" | "destructive" | "icon" | "upload">;
+         tagReplacement?: ComponentTagReplacementConfig<"buttonComponent" | "linkComponent">;
       };
    };
 };
