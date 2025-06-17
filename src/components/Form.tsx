@@ -1,6 +1,6 @@
-import { Children, Fragment, memo, useMemo } from "react";
+import { Children, forwardRef, Fragment, memo, useMemo } from "react";
 
-import { ComponentMarginProps } from "../types/components";
+import { ComponentMarginProps, ComponentPropWithRef } from "../types/components";
 import { LoaderName } from "../types/loader";
 import { AnyOtherString, OmitProps } from "../types/app";
 
@@ -32,22 +32,29 @@ export type FormProps = {
    children?: React.ReactNode;
 } & ComponentMarginProps;
 
-function Form({
-   form,
-   submitButtonText,
-   submitButtonLoaderName,
-   submitButtonId,
-   submitButtonIsDisabled,
-   actionButtonsLocation = "right",
-   gap,
-   isSubmitting,
-   isDestructive,
-   withDividers,
-   onClickCancel,
-   onSubmit,
-   children,
-   ...props
-}: FormProps) {
+type FormComponentType = {
+   (props: ComponentPropWithRef<HTMLFormElement, FormProps>): React.ReactElement;
+};
+
+const FormComponent: FormComponentType = forwardRef(function Form(
+   {
+      form,
+      submitButtonText,
+      submitButtonLoaderName,
+      submitButtonId,
+      submitButtonIsDisabled,
+      actionButtonsLocation = "right",
+      gap,
+      isSubmitting,
+      isDestructive,
+      withDividers,
+      onClickCancel,
+      onSubmit,
+      children,
+      ...props
+   }: FormProps,
+   ref: React.ForwardedRef<HTMLFormElement>,
+) {
    const theme = useTheme();
 
    const submitButtonIsDisabledInternal = useMemo<boolean>(() => {
@@ -65,7 +72,7 @@ function Form({
 
    return (
       <Div width="100%" {...props}>
-         <form onSubmit={onSubmit ?? form?.onSubmit}>
+         <form onSubmit={onSubmit ?? form?.onSubmit} ref={ref}>
             {gap !== undefined || withDividers ? (
                <Div.column gap={gap ?? (withDividers ? theme.styles.space : theme.styles.gap)}>
                   {withDividers
@@ -110,6 +117,8 @@ function Form({
          </form>
       </Div>
    );
-}
+}) as any;
 
-export default memo(Form);
+const Form = memo(FormComponent) as any as typeof FormComponent & {};
+
+export default Form;

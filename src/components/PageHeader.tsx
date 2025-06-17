@@ -1,6 +1,6 @@
-import { memo } from "react";
+import { forwardRef, memo } from "react";
 
-import { ComponentMarginProps } from "../types/components";
+import { ComponentMarginProps, ComponentPropWithRef } from "../types/components";
 
 import { useMediaQuery } from "../utils/hooks";
 
@@ -22,24 +22,36 @@ export type PageHeaderProps = {
    lightMode?: boolean;
 } & Pick<ComponentMarginProps, "marginBottom">;
 
-function PageHeader({
-   imageUrl,
-   imageSize = 60,
-   title,
-   titleAs,
-   titleRightElement,
-   description,
-   textAlign,
-   rightElement,
-   lightMode,
-   marginBottom,
-}: PageHeaderProps) {
+type PageHeaderComponentType = {
+   (props: ComponentPropWithRef<HTMLDivElement, PageHeaderProps>): React.ReactElement;
+};
+
+const PageHeaderComponent: PageHeaderComponentType = forwardRef(function PageHeader(
+   {
+      imageUrl,
+      imageSize = 60,
+      title,
+      titleAs,
+      titleRightElement,
+      description,
+      textAlign,
+      rightElement,
+      lightMode,
+      marginBottom,
+   }: PageHeaderProps,
+   ref: React.ForwardedRef<HTMLDivElement>,
+) {
    const theme = useTheme();
    const { app } = useBetterHtmlContextInternal();
    const mediaQuery = useMediaQuery();
 
    return (
-      <Div.row alignItems="center" gap={theme.styles.space} marginBottom={marginBottom ?? theme.styles.space * 2}>
+      <Div.row
+         alignItems="center"
+         gap={theme.styles.space}
+         marginBottom={marginBottom ?? theme.styles.space * 2}
+         ref={ref}
+      >
          {imageUrl && <Image.profileImage src={imageUrl} size={imageSize ?? (mediaQuery.size600 ? 46 : 60)} />}
 
          <Div.column
@@ -78,6 +90,8 @@ function PageHeader({
          {rightElement}
       </Div.row>
    );
-}
+}) as any;
 
-export default memo(PageHeader);
+const PageHeader = memo(PageHeaderComponent) as any as typeof PageHeaderComponent & {};
+
+export default PageHeader;

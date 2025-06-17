@@ -1,6 +1,6 @@
-import { memo } from "react";
+import { forwardRef, memo } from "react";
 
-import { ComponentPaddingProps } from "../types/components";
+import { ComponentPaddingProps, ComponentPropWithRef } from "../types/components";
 
 import Div from "./Div";
 import { useBetterHtmlContextInternal, useTheme } from "./BetterHtmlProvider";
@@ -11,7 +11,15 @@ export type PageHolderProps = {
    children?: React.ReactNode;
 } & ComponentPaddingProps;
 
-function PageHolder({ noMaxContentWidth, children, ...props }: PageHolderProps) {
+type PageHolderComponentType = {
+   (props: ComponentPropWithRef<HTMLDivElement, PageHolderProps>): React.ReactElement;
+   center: (props: ComponentPropWithRef<HTMLDivElement, PageHolderProps>) => React.ReactElement;
+};
+
+const PageHolderComponent: PageHolderComponentType = forwardRef(function PageHolder(
+   { noMaxContentWidth, children, ...props }: PageHolderProps,
+   ref: React.ForwardedRef<HTMLDivElement>,
+) {
    const theme = useTheme();
    const { app } = useBetterHtmlContextInternal();
 
@@ -23,10 +31,21 @@ function PageHolder({ noMaxContentWidth, children, ...props }: PageHolderProps) 
          margin="0px auto"
          padding={theme.styles.space}
          {...props}
+         ref={ref}
       >
          {children}
       </Div>
    );
-}
+}) as any;
 
-export default memo(PageHolder);
+PageHolderComponent.center = forwardRef(function Center(props, ref) {
+   return <></>;
+}) as PageHolderComponentType["center"];
+
+const PageHolder = memo(PageHolderComponent) as any as typeof PageHolderComponent & {
+   center: typeof PageHolderComponent.center;
+};
+
+PageHolder.center = PageHolderComponent.center;
+
+export default PageHolder;

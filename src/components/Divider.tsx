@@ -1,6 +1,6 @@
-import { memo } from "react";
+import { forwardRef, memo } from "react";
 
-import { ComponentMarginProps } from "../types/components";
+import { ComponentMarginProps, ComponentPropWithRef } from "../types/components";
 
 import Div from "./Div";
 import Text from "./Text";
@@ -24,37 +24,47 @@ export type HorizontalDividerProps = DividerProps & {
    textColor?: string;
 };
 
+type DividerComponentType = {
+   vertical: (props: ComponentPropWithRef<HTMLDivElement, VerticalDividerProps>) => React.ReactElement;
+   horizontal: (props: ComponentPropWithRef<HTMLDivElement, HorizontalDividerProps>) => React.ReactElement;
+};
+
 export default {
-   vertical: memo(function Divider({ width = 1, backgroundColor, height, ...props }: VerticalDividerProps) {
-      const theme = useTheme();
+   vertical: memo(
+      forwardRef(function Divider(
+         { width = 1, backgroundColor, height, ...props }: VerticalDividerProps,
+         ref: React.ForwardedRef<HTMLDivElement>,
+      ) {
+         const theme = useTheme();
 
-      return (
-         <Div
-            width={width}
-            height={height ?? "100%"}
-            flexShrink={0}
-            backgroundColor={backgroundColor ?? theme.colors.border}
-            {...props}
-         />
-      );
-   }),
-   horizontal: memo(function Divider({
-      width = 1,
-      backgroundColor,
-      text,
-      textColor,
-      ...props
-   }: HorizontalDividerProps) {
-      const theme = useTheme();
+         return (
+            <Div
+               width={width}
+               height={height ?? "100%"}
+               flexShrink={0}
+               backgroundColor={backgroundColor ?? theme.colors.border}
+               {...props}
+               ref={ref}
+            />
+         );
+      }),
+   ) as DividerComponentType["vertical"],
+   horizontal: memo(
+      forwardRef(function Divider(
+         { width = 1, backgroundColor, text, textColor, ...props }: HorizontalDividerProps,
+         ref: React.ForwardedRef<HTMLDivElement>,
+      ) {
+         const theme = useTheme();
 
-      return (
-         <Div.row width="100%" alignItems="center" gap={text ? theme.styles.space : undefined} {...props}>
-            <Div flex={1} height={width} flexShrink={0} backgroundColor={backgroundColor ?? theme.colors.border} />
+         return (
+            <Div.row width="100%" alignItems="center" gap={text ? theme.styles.space : undefined} {...props} ref={ref}>
+               <Div flex={1} height={width} flexShrink={0} backgroundColor={backgroundColor ?? theme.colors.border} />
 
-            {text && <Text color={textColor ?? theme.colors.textSecondary}>{text}</Text>}
+               {text && <Text color={textColor ?? theme.colors.textSecondary}>{text}</Text>}
 
-            <Div flex={1} height={width} flexShrink={0} backgroundColor={backgroundColor ?? theme.colors.border} />
-         </Div.row>
-      );
-   }),
+               <Div flex={1} height={width} flexShrink={0} backgroundColor={backgroundColor ?? theme.colors.border} />
+            </Div.row>
+         );
+      }),
+   ) as DividerComponentType["horizontal"],
 };

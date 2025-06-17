@@ -288,6 +288,7 @@ function App() {
             <Tabs.content tab="Divider">
                <Div.column gap={theme.styles.space}>
                   <Divider.horizontal />
+
                   <Div height={100}>
                      <Divider.vertical />
                   </Div>
