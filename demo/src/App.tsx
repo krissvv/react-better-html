@@ -281,6 +281,8 @@ function App() {
                      <Image.profileImage src="https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png" />
                      <Image.profileImage letters="a" />
                      <Image.profileImage letters="Abc" />
+                     <Image.profileImage letters="A" size={64} />
+                     <Image.profileImage letters="Abc" size={100} />
                   </Div.column>
                </Tabs.content>
 

@@ -94,7 +94,9 @@ Image.profileImage = forwardRef(function ProfileImage({ size = 40, letters, back
          ref={ref}
          {...props}
       >
-         <Text fontWeight={700}>{letters.toUpperCase().slice(0, 2)}</Text>
+         <Text fontSize={size / 2.5} fontWeight={700}>
+            {letters.toUpperCase().slice(0, 2)}
+         </Text>
       </Div.row>
    ) : (
       <Image width={size} height={size} borderRadius={999} objectFit="cover" ref={ref} {...props} />
