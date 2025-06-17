@@ -1000,7 +1000,7 @@ InputFieldComponent.time = forwardRef(function Time({ ...props }, ref) {
 }) as InputFieldComponentType["time"];
 
 InputFieldComponent.color = forwardRef(function Color({ value, onChangeValue, ...props }, ref) {
-   const [inputFieldValue, setInputFieldValue] = useState(value ?? "#000000");
+   const [inputFieldValue, setInputFieldValue] = useState<typeof value>(value ?? "#000000");
 
    const onChangeValueElement = useCallback(
       (value: string) => {
@@ -1009,6 +1009,10 @@ InputFieldComponent.color = forwardRef(function Color({ value, onChangeValue, ..
       },
       [onChangeValue],
    );
+
+   useEffect(() => {
+      setInputFieldValue(value);
+   }, [value]);
 
    return (
       <InputFieldComponent
