@@ -19,6 +19,7 @@ function Label({ text, required, isError, color, htmlFor }: LabelProps) {
    return (
       <Text
          as="label"
+         width="fit-content"
          height={16}
          fontSize={14}
          color={isError ? theme.colors.error : color ?? theme.colors.textSecondary}

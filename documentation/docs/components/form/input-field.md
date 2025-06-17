@@ -334,3 +334,22 @@ function App() {
    );
 }
 ```
+
+### InputField.color
+
+This component renders an input field with color picker to pick a color.
+
+```jsx
+import { InputField } from "react-better-html";
+
+function App() {
+   return (
+      // highlight-next-line
+      <InputField.color
+         onChangeValue={(value) => {
+            console.log("Ready color:", value);
+         }}
+      />
+   );
+}
+```

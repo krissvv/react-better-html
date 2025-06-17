@@ -32,6 +32,9 @@ import Calendar from "./Calendar";
 import { useTheme } from "./BetterHtmlProvider";
 
 const buttonWidth = 50;
+const colorPickerSpacing = 4;
+const colorPickerColorWidth = 12 + 27 + colorPickerSpacing;
+const colorPickerValueWidth = 12 + 74 + colorPickerSpacing;
 
 const InputElement = styled.input.withConfig({
    shouldForwardProp: (prop) => !["theme", "withLeftIcon", "withRightIcon", "normalStyle", "hoverStyle"].includes(prop),
@@ -90,6 +93,17 @@ const InputElement = styled.input.withConfig({
       &::-webkit-date-and-time-value {
          text-align: left !important;
       }
+   }
+
+   &[type="color"] {
+      --color-spacing: ${(props) => (props.theme.styles.space + props.theme.styles.gap) / 2}px;
+
+      width: calc(var(--color-spacing) + 27px + ${colorPickerValueWidth}px);
+      height: 48px;
+      padding: 0px;
+      padding-block: calc(var(--color-spacing) - 3px);
+      padding-left: var(--color-spacing);
+      padding-right: ${colorPickerValueWidth}px;
    }
 
    &.react-better-html-phone-number-holder {
@@ -231,6 +245,7 @@ type InputFieldComponentType = {
       >,
    ) => React.ReactElement;
    time: (props: ComponentPropWithRef<HTMLInputElement, InputFieldProps>) => React.ReactElement;
+   color: (props: ComponentPropWithRef<HTMLInputElement, InputFieldProps>) => React.ReactElement;
 };
 
 const InputFieldComponent: InputFieldComponentType = forwardRef(function InputField(
@@ -984,6 +999,43 @@ InputFieldComponent.time = forwardRef(function Time({ ...props }, ref) {
    );
 }) as InputFieldComponentType["time"];
 
+InputFieldComponent.color = forwardRef(function Color({ value, onChangeValue, ...props }, ref) {
+   const [inputFieldValue, setInputFieldValue] = useState(value ?? "#000000");
+
+   const onChangeValueElement = useCallback(
+      (value: string) => {
+         setInputFieldValue(value);
+         onChangeValue?.(value);
+      },
+      [onChangeValue],
+   );
+
+   return (
+      <InputFieldComponent
+         type="color"
+         insideInputFieldComponent={
+            <Div.row
+               position="absolute"
+               width="100%"
+               height="100%"
+               top={0}
+               left={colorPickerSpacing}
+               alignItems="center"
+               pointerEvents="none"
+               userSelect="none"
+               paddingLeft={colorPickerColorWidth}
+            >
+               <Text>{inputFieldValue}</Text>
+            </Div.row>
+         }
+         value={inputFieldValue}
+         onChangeValue={onChangeValueElement}
+         ref={ref}
+         {...props}
+      />
+   );
+}) as InputFieldComponentType["color"];
+
 const InputField = memo(InputFieldComponent) as any as typeof InputFieldComponent & {
    multiline: typeof InputFieldComponent.multiline;
    email: typeof InputFieldComponent.email;
@@ -993,6 +1045,7 @@ const InputField = memo(InputFieldComponent) as any as typeof InputFieldComponen
    date: typeof InputFieldComponent.date;
    dateTime: typeof InputFieldComponent.dateTime;
    time: typeof InputFieldComponent.time;
+   color: typeof InputFieldComponent.color;
 };
 
 InputField.multiline = InputFieldComponent.multiline;
@@ -1003,5 +1056,6 @@ InputField.phoneNumber = InputFieldComponent.phoneNumber;
 InputField.date = InputFieldComponent.date;
 InputField.dateTime = InputFieldComponent.dateTime;
 InputField.time = InputFieldComponent.time;
+InputField.color = InputFieldComponent.color;
 
 export default InputField;

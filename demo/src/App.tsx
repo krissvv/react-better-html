@@ -357,6 +357,7 @@ function App() {
                      <InputField.date label="Date" leftIcon="XMark" />
                      <InputField.dateTime label="Date & Time" />
                      <InputField.time label="Time" />
+                     <InputField.color label="Color" />
 
                      <InputField.multiline placeholder="Placeholder" />
                      <InputField.multiline leftIcon="uploadCloud" placeholder="Placeholder" />

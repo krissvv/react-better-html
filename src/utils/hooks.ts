@@ -125,7 +125,7 @@ export function useComponentPropsWithoutStyle<Props extends Record<string, any>>
 
 export function useComponentInputFieldDateProps(
    props: InputFieldProps,
-   holderRef: React.RefObject<HTMLDivElement | null>,
+   holderRef?: React.RefObject<HTMLDivElement | null>,
    disabled?: boolean,
 ): {
    internalValue: string;
@@ -200,7 +200,7 @@ export function useComponentInputFieldDateProps(
    }, [isOpen]);
    useEffect(() => {
       const handleClickOutside = (event: MouseEvent) => {
-         if (holderRef.current && !holderRef.current.contains(event.target as Node)) {
+         if (holderRef && holderRef.current && !holderRef.current.contains(event.target as Node)) {
             setIsOpen.setFalse();
          }
       };
