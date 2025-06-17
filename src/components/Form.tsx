@@ -1,4 +1,4 @@
-import { memo, useMemo } from "react";
+import { Children, Fragment, memo, useMemo } from "react";
 
 import { ComponentMarginProps } from "../types/components";
 import { LoaderName } from "../types/loader";
@@ -8,6 +8,7 @@ import { useForm } from "../utils/hooks";
 
 import Div from "./Div";
 import Button from "./Button";
+import Divider from "./Divider";
 import { useTheme } from "./BetterHtmlProvider";
 
 export type FormProps = {
@@ -24,6 +25,8 @@ export type FormProps = {
    isSubmitting?: boolean;
    /** @default false */
    isDestructive?: boolean;
+   /** @default false */
+   withDividers?: boolean;
    onClickCancel?: () => void;
    onSubmit?: (value: React.FormEvent<HTMLFormElement>) => void;
    children?: React.ReactNode;
@@ -39,6 +42,7 @@ function Form({
    gap,
    isSubmitting,
    isDestructive,
+   withDividers,
    onClickCancel,
    onSubmit,
    children,
@@ -62,7 +66,21 @@ function Form({
    return (
       <Div width="100%" {...props}>
          <form onSubmit={onSubmit ?? form?.onSubmit}>
-            {gap !== undefined ? <Div.column gap={gap}>{children}</Div.column> : children}
+            {gap !== undefined || withDividers ? (
+               <Div.column gap={gap ?? (withDividers ? theme.styles.space : theme.styles.gap)}>
+                  {withDividers
+                     ? Children.toArray(children).map((child, index) => (
+                          <Fragment key={index}>
+                             {child}
+
+                             {index < Children.toArray(children).length - 1 && <Divider.horizontal />}
+                          </Fragment>
+                       ))
+                     : children}
+               </Div.column>
+            ) : (
+               children
+            )}
 
             {submitButtonText && (
                <Div.row

@@ -497,7 +497,7 @@ function App() {
                </Tabs.content>
 
                <Tabs.content tab="Form">
-                  <Div.column gap={theme.styles.space}>
+                  <Div.column gap={theme.styles.space * 10}>
                      <Form form={form} gap={theme.styles.gap} submitButtonText="Create" onClickCancel={() => {}}>
                         <InputField placeholder="Name" {...form.getInputFieldProps("name")} />
                         <InputField.email {...form.getInputFieldProps("email")} />
@@ -528,6 +528,18 @@ function App() {
 
                         <ToggleInput.switch text="Can Delete" {...form.getSwitchProps("canDelete")} />
 
+                        <FormRow.withTitle title="Title" description="Description" withActions={form.isDirty}>
+                           <InputField placeholder="Hello" {...form.getInputFieldProps("name")} />
+                        </FormRow.withTitle>
+                     </Form>
+
+                     <Form form={form} withDividers submitButtonText="Create" onClickCancel={() => {}}>
+                        <FormRow.withTitle title="Title" description="Description" withActions={form.isDirty}>
+                           <InputField placeholder="Hello" {...form.getInputFieldProps("name")} />
+                        </FormRow.withTitle>
+                        <FormRow.withTitle title="Title" description="Description" withActions={form.isDirty}>
+                           <InputField placeholder="Hello" {...form.getInputFieldProps("name")} />
+                        </FormRow.withTitle>
                         <FormRow.withTitle title="Title" description="Description" withActions={form.isDirty}>
                            <InputField placeholder="Hello" {...form.getInputFieldProps("name")} />
                         </FormRow.withTitle>
