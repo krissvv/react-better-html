@@ -14,6 +14,9 @@ import Icon from "./Icon";
 import Button from "./Button";
 import Loader from "./Loader";
 import { useTheme } from "./BetterHtmlProvider";
+import { Country } from "../types/countries";
+import Image from "./Image";
+import { countries } from "../constants/countries";
 
 export type DropdownOption<Value, Data = unknown> = {
    value: Value;
@@ -58,6 +61,9 @@ export type DropdownProps<Value, Data = unknown> = {
 
 type DropdownComponentType = {
    <Value, Data>(props: ComponentPropWithRef<HTMLDivElement, DropdownProps<Value, Data>>): React.ReactElement;
+   countries: (
+      props: ComponentPropWithRef<HTMLDivElement, OmitProps<DropdownProps<string, Country>, "options">>,
+   ) => React.ReactElement;
 };
 
 const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Value, Data>(
@@ -403,6 +409,47 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
    );
 }) as any;
 
-const Dropdown = memo(DropdownComponent) as any as typeof DropdownComponent & {};
+DropdownComponent.countries = forwardRef(function Countries({ ...props }, ref) {
+   const theme = useTheme();
+
+   const renderOption = useCallback(
+      (option: DropdownOption<string, Country>, index: number, isSelected: boolean): React.ReactNode => (
+         <Div.row alignItems="center" gap={theme.styles.gap}>
+            <Image src={`https://flagcdn.com/w80/${option.data?.code.toString().toLowerCase()}.webp`} width={20} />
+            <Text>{option.label}</Text>
+         </Div.row>
+      ),
+      [],
+   );
+
+   const options = useMemo<DropdownOption<string, Country>[]>(
+      () =>
+         countries.map(
+            (country): DropdownOption<string, Country> => ({
+               value: country.code,
+               label: country.name,
+               data: country,
+               searchValues: [country.code],
+            }),
+         ),
+      [],
+   );
+
+   return (
+      <DropdownComponent
+         placeholder="Select a country"
+         options={options}
+         renderOption={renderOption}
+         ref={ref}
+         {...props}
+      />
+   );
+}) as DropdownComponentType["countries"];
+
+const Dropdown = memo(DropdownComponent) as any as typeof DropdownComponent & {
+   countries: typeof DropdownComponent.countries;
+};
+
+Dropdown.countries = DropdownComponent.countries;
 
 export default Dropdown;

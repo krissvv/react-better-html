@@ -196,10 +196,7 @@ import { InputField } from "react-better-html";
 function App() {
    return (
       // highlight-start
-      <InputField.multiline
-         label="Description"
-         placeholder="Enter your description"
-      >
+      <InputField.multiline label="Description" placeholder="Enter your description" />
       // highlight-end
    );
 }
@@ -219,7 +216,7 @@ function App() {
          onChangeValue={(value) => {
             console.log("email:", value);
          }}
-      >
+      />
    );
 }
 ```
@@ -238,7 +235,7 @@ function App() {
          onChangeValue={(value) => {
             console.log("password:", value);
          }}
-      >
+      />
    );
 }
 ```
@@ -257,7 +254,7 @@ function App() {
          onChangeValue={(value) => {
             console.log("Search value:", value);
          }}
-      >
+      />
    );
 }
 ```
@@ -276,7 +273,7 @@ function App() {
          onChangeValue={(value) => {
             console.log("Ready phone number:", value);
          }}
-      >
+      />
    );
 }
 ```
@@ -295,7 +292,7 @@ function App() {
          onChangeValue={(value) => {
             console.log("Ready date:", value);
          }}
-      >
+      />
    );
 }
 ```
@@ -314,7 +311,7 @@ function App() {
          onChangeValue={(value) => {
             console.log("Ready time:", value);
          }}
-      >
+      />
    );
 }
 ```
@@ -333,7 +330,7 @@ function App() {
          onChangeValue={(value) => {
             console.log("Ready date and time:", value);
          }}
-      >
+      />
    );
 }
 ```

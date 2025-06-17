@@ -244,3 +244,23 @@ The component supports keyboard navigation:
 -  Enter to select the focused option
 -  Escape to close the dropdown
 -  Enter and/or Space to toggle the dropdown (when not in search mode)
+
+## Subcomponents
+
+A number of components in the library have a _subcomponent_ feature witch is like a preset of the same component that is frequently used.
+
+### Dropdown.countries
+
+This component renders a dropdown with a list of all countries.
+
+```jsx
+import { Dropdown } from "react-better-html";
+
+function App() {
+   return (
+      // highlight-start
+      <Dropdown.countries label="Countries" />
+      // highlight-end
+   );
+}
+```
