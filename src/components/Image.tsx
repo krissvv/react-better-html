@@ -4,8 +4,26 @@ import styled from "styled-components";
 import { AnyOtherString, OmitProps } from "../types/app";
 import { ComponentHoverStyle, ComponentPropWithRef, ComponentStyle } from "../types/components";
 import { AssetName } from "../types/asset";
-import { useBetterHtmlContextInternal, useTheme } from "./BetterHtmlProvider";
+
 import { useComponentPropsWithoutStyle, useComponentPropsWithPrefix, useStyledComponentStyles } from "../utils/hooks";
+
+import Div from "./Div";
+import Text from "./Text";
+import { useBetterHtmlContextInternal, useTheme } from "./BetterHtmlProvider";
+
+const ImageElement = styled.img.withConfig({
+   shouldForwardProp: (prop) => !["normalStyle", "hoverStyle"].includes(prop),
+})<{ normalStyle: ComponentStyle; hoverStyle: ComponentStyle }>`
+   display: block;
+   user-select: none;
+   -webkit-user-drag: none;
+
+   ${(props) => props.normalStyle as any}
+
+   &:hover {
+      ${(props) => props.hoverStyle as any}
+   }
+`;
 
 export type ImageProps = {
    name?: AssetName | AnyOtherString;
@@ -21,24 +39,12 @@ type ImageComponent = {
          OmitProps<ImageProps, "width" | "height"> & {
             /** @default 40 */
             size?: number;
+            letters?: string;
+            backgroundColor?: string;
          }
       >,
    ) => React.ReactElement;
 };
-
-const ImageElement = styled.img.withConfig({
-   shouldForwardProp: (prop) => !["normalStyle", "hoverStyle"].includes(prop),
-})<{ normalStyle: ComponentStyle; hoverStyle: ComponentStyle }>`
-   display: block;
-   user-select: none;
-   -webkit-user-drag: none;
-
-   ${(props) => props.normalStyle as any}
-
-   &:hover {
-      ${(props) => props.hoverStyle as any}
-   }
-`;
 
 const Image: ImageComponent = forwardRef(function Image(
    { name, src, ...props }: ImageProps,
@@ -74,8 +80,25 @@ const Image: ImageComponent = forwardRef(function Image(
    );
 }) as any;
 
-Image.profileImage = forwardRef(function ProfileImage({ size = 40, ...props }, ref) {
-   return <Image width={size} height={size} borderRadius="50%" objectFit="cover" ref={ref} {...props} />;
+Image.profileImage = forwardRef(function ProfileImage({ size = 40, letters, backgroundColor, ...props }, ref) {
+   const theme = useTheme();
+
+   return letters ? (
+      <Div.row
+         width={size}
+         height={size}
+         backgroundColor={backgroundColor ?? theme.colors.backgroundSecondary}
+         borderRadius={999}
+         alignItems="center"
+         justifyContent="center"
+         ref={ref}
+         {...props}
+      >
+         <Text fontWeight={700}>{letters.toUpperCase().slice(0, 2)}</Text>
+      </Div.row>
+   ) : (
+      <Image width={size} height={size} borderRadius={999} objectFit="cover" ref={ref} {...props} />
+   );
 }) as ImageComponent["profileImage"];
 
 const MemoizedImage = memo(Image) as any as typeof Image & {

@@ -127,3 +127,13 @@ function App() {
    return <Image.profileImage src="https://picsum.photos/200/300" alt="user profile image" />;
 }
 ```
+
+Alternatively, you can use the `letters` prop to render an avatar for users without a profile image.
+
+```jsx
+import { Image } from "react-better-html";
+
+function App() {
+   return <Image.profileImage letters="AB" />;
+}
+```

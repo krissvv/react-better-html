@@ -171,7 +171,7 @@ function App() {
                   "Text",
                   "Div",
                   "Loader",
-                  "icon & Image",
+                  "Icon & Image",
                   "Divider",
                   "Chip",
                   "InputField",
@@ -272,11 +272,15 @@ function App() {
                   </Div.column>
                </Tabs.content>
 
-               <Tabs.content tab="icon & Image">
+               <Tabs.content tab="Icon & Image">
                   <Div.column gap={theme.styles.space}>
                      <Icon name="XMark" />
 
                      <Image name="logo" width={300} />
+
+                     <Image.profileImage src="https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png" />
+                     <Image.profileImage letters="a" />
+                     <Image.profileImage letters="Abc" />
                   </Div.column>
                </Tabs.content>
 
