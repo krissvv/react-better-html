@@ -1,8 +1,11 @@
 import { forwardRef, memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import { countries } from "../constants/countries";
+
 import { ComponentPropWithRef } from "../types/components";
 import { AnyOtherString, OmitProps } from "../types/app";
 import { IconName } from "../types/icon";
+import { Country } from "../types/countries";
 
 import { useBooleanState } from "../utils/hooks";
 import { useDebounceState } from "../utils/hooks";
@@ -13,10 +16,8 @@ import InputField from "./InputField";
 import Icon from "./Icon";
 import Button from "./Button";
 import Loader from "./Loader";
-import { useTheme } from "./BetterHtmlProvider";
-import { Country } from "../types/countries";
 import Image from "./Image";
-import { countries } from "../constants/countries";
+import { useTheme } from "./BetterHtmlProvider";
 
 export type DropdownOption<Value, Data = unknown> = {
    value: Value;
@@ -54,6 +55,8 @@ export type DropdownProps<Value, Data = unknown> = {
    debounceMinimumSymbolsRequired?: number;
    /** @default false */
    withoutClearButton?: boolean;
+   /** @default false */
+   withoutRenderingOptionsWhenClosed?: boolean;
    onChange?: (value: Value | undefined) => void;
    onChangeSearch?: (query: string) => void;
    renderOption?: (option: DropdownOption<Value, Data>, index: number, isSelected: boolean) => React.ReactNode;
@@ -87,6 +90,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
       debounceIsLoading,
       debounceMinimumSymbolsRequired,
       withoutClearButton,
+      withoutRenderingOptionsWhenClosed,
       onChange,
       onChangeSearch,
       renderOption,
@@ -98,6 +102,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
    const theme = useTheme();
 
    const inputFieldHolderRef = useRef<HTMLDivElement>(null);
+   const buttonsRef = useRef<HTMLDivElement>(null);
    const inputRef = useRef<HTMLInputElement>(null);
 
    const [isOpen, setIsOpen] = useBooleanState();
@@ -219,6 +224,41 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
    );
 
    const selectedOption = useMemo(() => options.find((option) => option.value === value), [options, value]);
+   const renderedOptions = useMemo(
+      () =>
+         filteredOptions.map((option, index) => {
+            const isSelected = option.value === value;
+            const isDisabled = option.disabled;
+            const isFocused = index === focusedOptionIndex;
+
+            return (
+               <Div
+                  color={
+                     isDisabled
+                        ? theme.colors.textSecondary + "80"
+                        : isSelected
+                        ? theme.colors.base
+                        : theme.colors.textPrimary
+                  }
+                  backgroundColor={isSelected ? theme.colors.primary : theme.colors.backgroundContent}
+                  filter={isFocused ? (isDisabled ? "brightness(0.95)" : "brightness(0.9)") : undefined}
+                  filterHover={focusedOptionIndex === undefined && !isDisabled ? "brightness(0.9)" : undefined}
+                  cursor={isDisabled ? "not-allowed" : "pointer"}
+                  padding={`${theme.styles.space / 2}px ${theme.styles.space + theme.styles.gap}px`}
+                  value={option}
+                  onClickWithValue={onClickOption}
+                  onMouseMove={() => setFocusedOptionIndex(undefined)}
+                  role="option"
+                  aria-selected={isSelected}
+                  aria-disabled={isDisabled}
+                  key={JSON.stringify(option)}
+               >
+                  {renderOption ? renderOption(option, index, isSelected) : <Text>{option.label}</Text>}
+               </Div>
+            );
+         }),
+      [filteredOptions, value, focusedOptionIndex, theme.colors, onClickOption, renderOption],
+   );
 
    useEffect(() => {
       if (isOpen) {
@@ -238,7 +278,12 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
    }, [filteredOptions]);
    useEffect(() => {
       const handleClickOutside = (event: MouseEvent) => {
-         if (inputFieldHolderRef.current && !inputFieldHolderRef.current.contains(event.target as Node)) {
+         if (
+            inputFieldHolderRef.current &&
+            buttonsRef.current &&
+            !inputFieldHolderRef.current.contains(event.target as Node) &&
+            !buttonsRef.current.contains(event.target as Node)
+         ) {
             setIsOpen.setFalse();
             setSearchQuery("");
             setFocusedOptionIndex(undefined);
@@ -265,7 +310,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
 
    return (
       <Div.column width="100%" position="relative" userSelect="none" {...props}>
-         <Div.row position="relative" width="100%" ref={inputFieldHolderRef}>
+         <Div.row position="relative" width="100%">
             <InputField
                label={label}
                labelColor={labelColor}
@@ -315,39 +360,11 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
                            <Loader.text />
                         </Div>
                      ) : filteredOptions.length ? (
-                        filteredOptions.map((option, index) => {
-                           const isSelected = option.value === value;
-                           const isDisabled = option.disabled;
-                           const isFocused = index === focusedOptionIndex;
-
-                           return (
-                              <Div
-                                 color={
-                                    isDisabled
-                                       ? theme.colors.textSecondary + "80"
-                                       : isSelected
-                                       ? theme.colors.base
-                                       : theme.colors.textPrimary
-                                 }
-                                 backgroundColor={isSelected ? theme.colors.primary : theme.colors.backgroundContent}
-                                 filter={isFocused ? (isDisabled ? "brightness(0.95)" : "brightness(0.9)") : undefined}
-                                 filterHover={
-                                    focusedOptionIndex === undefined && !isDisabled ? "brightness(0.9)" : undefined
-                                 }
-                                 cursor={isDisabled ? "not-allowed" : "pointer"}
-                                 padding={`${theme.styles.space / 2}px ${theme.styles.space + theme.styles.gap}px`}
-                                 value={option}
-                                 onClickWithValue={onClickOption}
-                                 onMouseMove={() => setFocusedOptionIndex(undefined)}
-                                 role="option"
-                                 aria-selected={isSelected}
-                                 aria-disabled={isDisabled}
-                                 key={JSON.stringify(option)}
-                              >
-                                 {renderOption ? renderOption(option, index, isSelected) : <Text>{option.label}</Text>}
-                              </Div>
-                           );
-                        })
+                        <>
+                           {(withoutRenderingOptionsWhenClosed ? isOpen || isOpenLate : true)
+                              ? renderedOptions
+                              : undefined}
+                        </>
                      ) : (
                         <Div padding={`${theme.styles.space / 2}px ${theme.styles.space + theme.styles.gap}px`}>
                            <Text.unknown textAlign="left">
@@ -365,6 +382,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
                aria-controls="dropdown-list"
                aria-haspopup="listbox"
                aria-label={label}
+               holderRef={inputFieldHolderRef}
                ref={inputRef}
             />
 
@@ -379,6 +397,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
                filter={disabled ? "brightness(0.9)" : undefined}
                opacity={disabled ? 0.6 : undefined}
                zIndex={isOpen || isOpenLate ? 1001 : undefined}
+               ref={buttonsRef}
             >
                {!withoutClearButton && (
                   <Button.icon
@@ -440,6 +459,7 @@ DropdownComponent.countries = forwardRef(function Countries({ ...props }, ref) {
          placeholder="Select a country"
          options={options}
          renderOption={renderOption}
+         withoutRenderingOptionsWhenClosed
          ref={ref}
          {...props}
       />
