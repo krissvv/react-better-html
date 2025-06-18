@@ -165,6 +165,43 @@ It accepts object of type [`LoaderConfig`](../types/loader-config) and can overr
 
 You can access the value of the loaders using the [useLoader](../hooks/use-loader) hook. To change the values dynamically you can use the [useLoaderControls](../hooks/use-loader-controls) hook.
 
+### Components configuration
+
+It accepts a list of components that can be configured. Per every component you can override the default styles and the tag used for the component itself.
+
+An example can be seen below where the `button` component is having the default style overridden and the tag used for the component is changed.
+
+```jsx
+<BetterHtmlProvider
+   value={{
+      ...
+      // highlight-start
+      components: {
+         button: {
+            style: {
+               default: {
+                  backgroundColor: "#16d7ed",
+                  color: "#ffffff",
+               },
+            },
+            tagReplacement: {
+               buttonComponent: "button",
+            },
+         },
+         ...
+      },
+      // highlight-end
+      ...
+   }}
+>
+   <App />
+</BetterHtmlProvider>
+```
+
+:::note
+Currently only the `button` component is supported. But we plan to add more components in the future.
+:::
+
 ## Default Configuration
 
 Here are the default values used in the global configuration of the components.
@@ -181,12 +218,14 @@ The default colors used in the library are (More on the [Theme](../types/theme) 
 
 -  textPrimary - <HighlightedText color="#111111">#111111</HighlightedText>
 -  textSecondary - <HighlightedText color="#777777">#777777</HighlightedText>
+-  textLink - <HighlightedText color="#0894ff">#0894ff</HighlightedText>
 -  label - <HighlightedText color="#111111">#111111</HighlightedText>
 -  primary - <HighlightedText color="#6d466b">#6d466b</HighlightedText>
 -  secondary - <HighlightedText color="#412234">#412234</HighlightedText>
+-  accent - <HighlightedText color="#16d7ed" isLight>#16d7ed</HighlightedText>
 -  success - <HighlightedText color="#28a745">#28a745</HighlightedText>
--  info - <HighlightedText color="#17a2b8">#17a2b8</HighlightedText>
--  warn - <HighlightedText color="#ffc107">#ffc107</HighlightedText>
+-  info - <HighlightedText color="#0fa0da">#0fa0da</HighlightedText>
+-  warn - <HighlightedText color="#ffc107" isLight>#ffc107</HighlightedText>
 -  error - <HighlightedText color="#dc3545">#dc3545</HighlightedText>
 -  base - <HighlightedText color="#f8f8f8" isLight>#f8f8f8</HighlightedText>
 -  backgroundBase - <HighlightedText color="#f8f8f8" isLight>#f8f8f8</HighlightedText>

@@ -626,6 +626,7 @@ InputFieldComponent.phoneNumber = forwardRef(function PhoneNumber(
                inputFieldClassName="react-better-html-phone-number-holder"
                defaultValue={defaultValue}
                value={dropdownValue}
+               disabled={props.disabled}
                onChange={setDropdownValue}
                withoutClearButton
             />

@@ -8,6 +8,7 @@ import { useBetterHtmlContextInternal, useTheme } from "./BetterHtmlProvider";
 export type PageHolderProps = {
    /** @default false */
    noMaxContentWidth?: boolean;
+   backgroundColor?: string;
    children?: React.ReactNode;
 } & ComponentPaddingProps;
 
@@ -17,7 +18,7 @@ type PageHolderComponentType = {
 };
 
 const PageHolderComponent: PageHolderComponentType = forwardRef(function PageHolder(
-   { noMaxContentWidth, children, ...props }: PageHolderProps,
+   { noMaxContentWidth, backgroundColor, children, ...props }: PageHolderProps,
    ref: React.ForwardedRef<HTMLDivElement>,
 ) {
    const theme = useTheme();
@@ -28,6 +29,7 @@ const PageHolderComponent: PageHolderComponentType = forwardRef(function PageHol
          as="main"
          width="100%"
          maxWidth={!noMaxContentWidth ? app.contentMaxWidth : undefined}
+         backgroundColor={backgroundColor}
          margin="0px auto"
          padding={theme.styles.space}
          {...props}
