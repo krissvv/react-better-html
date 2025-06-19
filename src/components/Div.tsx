@@ -54,7 +54,14 @@ type DivComponentType = {
    grid: <Value>(
       props: ComponentPropWithRef<HTMLDivElement, OmitProps<DivProps<Value>, "display">>,
    ) => React.ReactElement;
-   box: <Value>(props: ComponentPropWithRef<HTMLDivElement, DivProps<Value>>) => React.ReactElement;
+   box: <Value>(
+      props: ComponentPropWithRef<
+         HTMLDivElement,
+         DivProps<Value> & {
+            isActive?: boolean;
+         }
+      >,
+   ) => React.ReactElement;
 };
 
 const DivComponent: DivComponentType = forwardRef(function Div<Value>(
@@ -147,14 +154,20 @@ DivComponent.grid = forwardRef(function Grid(props, ref) {
    return <DivComponent display="grid" ref={ref} {...props} />;
 }) as DivComponentType["grid"];
 
-DivComponent.box = forwardRef(function Box(props, ref) {
+DivComponent.box = forwardRef(function Box({ isActive, ...props }, ref) {
    const theme = useTheme();
+
+   const withClick = props.onClick || props.onClickWithValue;
 
    return (
       <DivComponent
-         backgroundColor={theme.colors.backgroundContent}
-         border={`1px solid ${theme.colors.border}`}
+         color={isActive ? theme.colors.base : undefined}
+         backgroundColor={isActive ? theme.colors.primary : theme.colors.backgroundContent}
+         border={`1px solid ${isActive ? theme.colors.primary : theme.colors.border}`}
          borderRadius={theme.styles.borderRadius}
+         borderColorHover={withClick && !isActive ? theme.colors.primary : undefined}
+         filterHover={withClick && isActive ? "brightness(0.9)" : undefined}
+         cursor={withClick ? "pointer" : undefined}
          paddingBlock={theme.styles.gap}
          paddingInline={theme.styles.space}
          ref={ref}

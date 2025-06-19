@@ -16,7 +16,7 @@ import Form, { type FormProps } from "./components/Form";
 import Label, { type LabelProps } from "./components/Label";
 import FormRow, { type FormRowProps } from "./components/FormRow";
 import ColorThemeSwitch, { type ColorThemeSwitchProps } from "./components/ColorThemeSwitch";
-import Table, { type TableColumn, type TableProps } from "./components/Table";
+import Table, { type TableColumn, type TableProps, type TableRef } from "./components/Table";
 import Tabs, { type TabGroup, type TabsProps, type TabsRef } from "./components/Tabs";
 import Foldable, { type FoldableProps, type FoldableRef } from "./components/Foldable";
 
@@ -117,6 +117,7 @@ export {
    Table,
    TableColumn,
    TableProps,
+   TableRef,
    Tabs,
    TabGroup,
    TabsProps,

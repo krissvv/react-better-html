@@ -18,6 +18,7 @@ export type FormProps = {
    submitButtonId?: string;
    /** @default false */
    submitButtonIsDisabled?: boolean;
+   cancelButtonText?: string;
    /** @default "right" */
    actionButtonsLocation?: "left" | "center" | "right";
    gap?: React.CSSProperties["gap"];
@@ -27,6 +28,7 @@ export type FormProps = {
    isDestructive?: boolean;
    /** @default false */
    withDividers?: boolean;
+   renderActionButtons?: React.ReactNode;
    onClickCancel?: () => void;
    onSubmit?: (value: React.FormEvent<HTMLFormElement>) => void;
    children?: React.ReactNode;
@@ -43,11 +45,13 @@ const FormComponent: FormComponentType = forwardRef(function Form(
       submitButtonLoaderName,
       submitButtonId,
       submitButtonIsDisabled,
+      cancelButtonText,
       actionButtonsLocation = "right",
       gap,
       isSubmitting,
       isDestructive,
       withDividers,
+      renderActionButtons,
       onClickCancel,
       onSubmit,
       children,
@@ -102,7 +106,9 @@ const FormComponent: FormComponentType = forwardRef(function Form(
                   gap={theme.styles.gap}
                   marginTop={theme.styles.space}
                >
-                  {onClickCancel && <Button.secondary text="Cancel" onClick={onClickCancel} />}
+                  {renderActionButtons}
+
+                  {onClickCancel && <Button.secondary text={cancelButtonText ?? "Cancel"} onClick={onClickCancel} />}
 
                   <SubmitButtonTag
                      text={submitButtonText}

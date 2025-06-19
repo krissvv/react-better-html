@@ -5,10 +5,13 @@ export type IconName =
    | "chevronDown"
    | "chevronLeft"
    | "chevronRight"
+   | "doubleChevronLeft"
+   | "doubleChevronRight"
    | "eye"
    | "eyeDashed"
    | "magnifyingGlass"
-   | "check";
+   | "check"
+   | "filter";
 
 export type IconData = {
    width: number;

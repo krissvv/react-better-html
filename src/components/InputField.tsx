@@ -317,7 +317,7 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
    const readyId = id ?? internalId;
 
    return (
-      <Div.column width="100%" gap={theme.styles.gap} {...styledComponentStylesWithExcluded}>
+      <Div.column width="100%" gap={theme.styles.gap / 2} {...styledComponentStylesWithExcluded}>
          {label && (
             <Label text={label} color={labelColor} required={required} isError={!!errorText} htmlFor={readyId} />
          )}
@@ -427,7 +427,7 @@ InputFieldComponent.multiline = forwardRef(function Multiline(
    const readyId = id ?? internalId;
 
    return (
-      <Div.column gap={theme.styles.gap}>
+      <Div.column gap={theme.styles.gap / 2}>
          {label && <Label text={label} required={required} isError={!!errorText} htmlFor={readyId} />}
 
          <Div position="relative" width="100%">
@@ -604,7 +604,7 @@ InputFieldComponent.phoneNumber = forwardRef(function PhoneNumber(
    const readyId = id ?? internalId;
 
    return (
-      <Div.column width="100%" gap={theme.styles.gap}>
+      <Div.column width="100%" gap={theme.styles.gap / 2}>
          {label && (
             <Label
                text={label}
@@ -629,6 +629,7 @@ InputFieldComponent.phoneNumber = forwardRef(function PhoneNumber(
                disabled={props.disabled}
                onChange={setDropdownValue}
                withoutClearButton
+               withoutRenderingOptionsWhenClosed
             />
             <InputFieldComponent
                placeholder={label ?? "Phone number"}

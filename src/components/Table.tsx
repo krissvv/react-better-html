@@ -1,17 +1,26 @@
-import { forwardRef, memo, useCallback, ReactNode, useMemo, useState } from "react";
+import { forwardRef, memo, useCallback, ReactNode, useMemo, useState, useImperativeHandle, useRef } from "react";
 import styled, { css } from "styled-components";
 
 import { ColorTheme, Theme } from "../types/theme";
 import { ComponentMarginProps, ComponentPropWithRef } from "../types/components";
+
+import { useForm, useMediaQuery } from "../utils/hooks";
 
 import Div from "./Div";
 import ToggleInput, { ToggleInputProps } from "./ToggleInput";
 import Image, { ImageProps } from "./Image";
 import Text from "./Text";
 import Loader from "./Loader";
+import Button from "./Button";
+import Modal, { ModalRef } from "./Modal";
+import FormRow from "./FormRow";
+import InputField from "./InputField";
+import Form from "./Form";
+import Label from "./Label";
 import { useBetterHtmlContextInternal, useTheme } from "./BetterHtmlProvider";
 
 const defaultImageWidth = 120;
+const maximumVisiblePages = 11;
 
 const TableStyledComponent = styled.table.withConfig({
    shouldForwardProp: (prop) => !["isStriped", "withHover", "withStickyHeader", "colorTheme", "theme"].includes(prop),
@@ -32,6 +41,10 @@ const TableStyledComponent = styled.table.withConfig({
       &.isHeader {
          background-color: ${(props) => props.theme.colors.backgroundSecondary};
          font-weight: 700;
+      }
+
+      &.isFooter {
+         background-color: ${(props) => props.theme.colors.backgroundSecondary};
       }
 
       &.isClickable {
@@ -98,6 +111,50 @@ const TdStyledComponent = styled.td.withConfig({
    ${(props) => (props.textAlign ? `text-align: ${props.textAlign} !important;` : "")}
 `;
 
+const filterPresetsText: Record<FilterPreset, string> = {
+   today: "Today",
+   yesterday: "Yesterday",
+   thisWeek: "This week",
+   thisMonth: "This month",
+   thisYear: "This year",
+   lastWeek: "Last week",
+   lastMonth: "Last month",
+   lastYear: "Last year",
+   nextWeek: "Next week",
+   nextMonth: "Next month",
+   nextYear: "Next year",
+};
+
+type FilterPreset =
+   | "today"
+   | "yesterday"
+   | "thisWeek"
+   | "thisMonth"
+   | "thisYear"
+   | "lastWeek"
+   | "lastMonth"
+   | "lastYear"
+   | "nextWeek"
+   | "nextMonth"
+   | "nextYear";
+
+type TableFilterData =
+   | {
+        type: "number";
+        min?: number;
+        max?: number;
+     }
+   | {
+        type: "date" | "date-time";
+        min?: string;
+        max?: string;
+     }
+   | {
+        type: "list";
+        list?: string[];
+     };
+
+//? Column types
 type TextColumn<DataItem> = {
    type: "text";
    keyName?: keyof DataItem;
@@ -118,13 +175,31 @@ type CheckboxColumn = {
    type: "checkbox";
 } & ToggleInputProps<boolean>;
 
+//? Filter types
+type NumberFilter<DataItem> = {
+   filter?: "number";
+   getValue?: (item: DataItem) => number;
+};
+
+type DateFilter<DataItem> = {
+   filter?: "date" | "date-time";
+   presets?: FilterPreset[];
+   getValue?: (item: DataItem) => Date;
+};
+
+type ListFilter<DataItem> = {
+   filter?: "list";
+   getValueForList?: (item: DataItem) => string;
+};
+
 export type TableColumn<DataItem> = {
    label?: string;
    width?: string | number;
    minWidth?: string | number;
    maxWidth?: string | number;
    align?: "left" | "center" | "right";
-} & (TextColumn<DataItem> | ElementColumn<DataItem> | ImageColumn<DataItem> | CheckboxColumn);
+} & (TextColumn<DataItem> | ElementColumn<DataItem> | ImageColumn<DataItem> | CheckboxColumn) &
+   (NumberFilter<DataItem> | DateFilter<DataItem> | ListFilter<DataItem>);
 
 export type TableProps<DataItem> = {
    columns: TableColumn<DataItem>[];
@@ -137,9 +212,17 @@ export type TableProps<DataItem> = {
    withStickyHeader?: boolean;
    /** @default "No data available" */
    noDataItemsMessage?: string;
+   pageSize?: number;
    onClickRow?: (item: DataItem, index: number) => void;
    onClickAllCheckboxes?: (checked: boolean) => void;
 } & ComponentMarginProps;
+
+export type TableRef = {
+   currentPage: number;
+   setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+   pagesCount: number;
+   setCheckedItems: React.Dispatch<React.SetStateAction<boolean[]>>;
+};
 
 type TableComponentType = {
    <DataItem>(props: ComponentPropWithRef<HTMLDivElement, TableProps<DataItem>>): React.ReactElement;
@@ -153,16 +236,65 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
       isLoading,
       withStickyHeader,
       noDataItemsMessage = "No data available",
+      pageSize,
       onClickRow,
       onClickAllCheckboxes,
       ...props
    }: TableProps<DataItem>,
-   ref: React.ForwardedRef<HTMLDivElement>,
+   ref: React.ForwardedRef<TableRef>,
 ) {
-   const { colorTheme } = useBetterHtmlContextInternal();
    const theme = useTheme();
+   const mediumScreen = useMediaQuery();
+   const { colorTheme } = useBetterHtmlContextInternal();
+
+   const filterModalRef = useRef<ModalRef>(null);
 
    const [checkedItems, setCheckedItems] = useState<boolean[]>([]);
+   const [currentPage, setCurrentPage] = useState<number>(1);
+
+   const [filterData, setFilterData] = useState<Record<number, TableFilterData | undefined>>({});
+   const [openedFilterColumnIndex, setOpenedFilterColumnIndex] = useState<number>();
+
+   const [filterListSelectedItems, setFilterListSelectedItems] = useState<string[]>();
+
+   const openedFilterData = openedFilterColumnIndex ? filterData[openedFilterColumnIndex] : undefined;
+   const openedFilterColumn = openedFilterColumnIndex ? columns[openedFilterColumnIndex] : undefined;
+
+   const filterForm = useForm({
+      defaultValues: {
+         min: undefined as number | string | undefined,
+         max: undefined as number | string | undefined,
+      },
+      onSubmit: (values) => {
+         if (!openedFilterColumn?.filter) return;
+         if (openedFilterColumnIndex === undefined) return;
+
+         setFilterData((oldValue) => ({
+            ...oldValue,
+            [openedFilterColumnIndex]:
+               openedFilterColumn.filter === "number"
+                  ? {
+                       type: openedFilterColumn.filter,
+                       min: values.min as number | undefined,
+                       max: values.max as number | undefined,
+                    }
+                  : openedFilterColumn.filter === "date" || openedFilterColumn.filter === "date-time"
+                  ? {
+                       type: openedFilterColumn.filter,
+                       min: values.min as string | undefined,
+                       max: values.max as string | undefined,
+                    }
+                  : openedFilterColumn.filter === "list"
+                  ? {
+                       type: openedFilterColumn.filter,
+                       list: filterListSelectedItems,
+                    }
+                  : undefined,
+         }));
+
+         filterModalRef.current?.close();
+      },
+   });
 
    const renderCellContent = useCallback(
       (column: (typeof columns)[number], item: DataItem, index: number) => {
@@ -227,83 +359,545 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
       },
       [onClickAllCheckboxes, data],
    );
+   const onClickFilterButton = useCallback(
+      (columnIndex: number) => {
+         const thisFilterData = filterData[columnIndex];
 
+         if (
+            thisFilterData?.type === "number" ||
+            thisFilterData?.type === "date" ||
+            thisFilterData?.type === "date-time"
+         ) {
+            filterForm.setFieldsValue({
+               min: thisFilterData.min ?? undefined,
+               max: thisFilterData.max ?? undefined,
+            });
+         } else if (thisFilterData?.type === "list") {
+            setFilterListSelectedItems(thisFilterData.list);
+         }
+
+         setOpenedFilterColumnIndex(columnIndex);
+         filterModalRef.current?.open();
+      },
+      [filterData],
+   );
+   const onCloseFilterModal = useCallback(() => {
+      setOpenedFilterColumnIndex(undefined);
+      setFilterListSelectedItems(undefined);
+      filterForm.reset();
+   }, []);
+   const onClickCancelFormFilter = useCallback(() => {
+      if (openedFilterColumnIndex === undefined) return;
+
+      setFilterData((oldValue) => ({
+         ...oldValue,
+         [openedFilterColumnIndex]: undefined,
+      }));
+
+      filterModalRef.current?.close();
+   }, [openedFilterColumnIndex]);
+   const onClickFilterListItem = useCallback(
+      (value: string) =>
+         setFilterListSelectedItems((oldValue) => {
+            if (!oldValue) return [value];
+            if (oldValue.includes(value)) return oldValue.filter((item) => item !== value);
+            return [...oldValue, value];
+         }),
+      [],
+   );
+   const onClickFilterPreset = useCallback(
+      (preset: FilterPreset) => {
+         const getValueForDate = (date: Date) => {
+            if (openedFilterColumn?.filter === "date") return date.toISOString().split("T")[0];
+            return date.toISOString();
+         };
+
+         switch (preset) {
+            case "today":
+               filterForm.setFieldsValue({
+                  min: getValueForDate(new Date()),
+                  max: getValueForDate(new Date()),
+               });
+               break;
+
+            case "yesterday":
+               filterForm.setFieldsValue({
+                  min: getValueForDate(new Date(new Date().setDate(new Date().getDate() - 1))),
+                  max: getValueForDate(new Date(new Date().setDate(new Date().getDate() - 1))),
+               });
+               break;
+
+            case "thisWeek":
+               filterForm.setFieldsValue({
+                  min: getValueForDate(new Date(new Date().setDate(new Date().getDate() - 7))),
+                  max: getValueForDate(new Date()),
+               });
+               break;
+
+            case "thisMonth":
+               filterForm.setFieldsValue({
+                  min: getValueForDate(new Date(new Date().setMonth(new Date().getMonth() - 1))),
+                  max: getValueForDate(new Date()),
+               });
+               break;
+
+            case "thisYear":
+               filterForm.setFieldsValue({
+                  min: getValueForDate(new Date(new Date().setFullYear(new Date().getFullYear() - 1))),
+                  max: getValueForDate(new Date()),
+               });
+               break;
+
+            case "lastWeek":
+               filterForm.setFieldsValue({
+                  min: getValueForDate(new Date(new Date().setDate(new Date().getDate() - 7))),
+                  max: getValueForDate(new Date(new Date().setDate(new Date().getDate() - 1))),
+               });
+               break;
+
+            case "lastMonth":
+               filterForm.setFieldsValue({
+                  min: getValueForDate(new Date(new Date().setMonth(new Date().getMonth() - 1))),
+                  max: getValueForDate(new Date(new Date().setDate(new Date().getDate() - 1))),
+               });
+               break;
+
+            case "lastYear":
+               filterForm.setFieldsValue({
+                  min: getValueForDate(new Date(new Date().setFullYear(new Date().getFullYear() - 1))),
+                  max: getValueForDate(new Date(new Date().setDate(new Date().getDate() - 1))),
+               });
+               break;
+
+            case "nextWeek":
+               filterForm.setFieldsValue({
+                  min: getValueForDate(new Date(new Date().setDate(new Date().getDate() + 7))),
+                  max: getValueForDate(new Date(new Date().setDate(new Date().getDate() + 7))),
+               });
+               break;
+
+            case "nextMonth":
+               filterForm.setFieldsValue({
+                  min: getValueForDate(new Date(new Date().setMonth(new Date().getMonth() + 1))),
+                  max: getValueForDate(new Date(new Date().setMonth(new Date().getMonth() + 1))),
+               });
+               break;
+
+            case "nextYear":
+               filterForm.setFieldsValue({
+                  min: getValueForDate(new Date(new Date().setFullYear(new Date().getFullYear() + 1))),
+                  max: getValueForDate(new Date(new Date().setFullYear(new Date().getFullYear() + 1))),
+               });
+               break;
+
+            default:
+               break;
+         }
+      },
+      [openedFilterColumn],
+   );
+
+   const dataAfterFilter = useMemo(
+      () =>
+         data.filter((item) =>
+            Object.entries(filterData).every(([columnIndex, filter]) => {
+               if (!filter) return true;
+
+               const column = columns[parseInt(columnIndex)];
+               if (!column) return true;
+
+               if (column.filter === "number" && filter.type === "number") {
+                  const itemValue: number =
+                     column.getValue?.(item) ??
+                     (column.type === "text" && column.keyName ? Number(item[column.keyName]) : 0);
+
+                  if (filter.min !== undefined && itemValue < filter.min) return false;
+                  if (filter.max !== undefined && itemValue > filter.max) return false;
+               } else if (
+                  (column.filter === "date" && filter.type === "date") ||
+                  (column.filter === "date-time" && filter.type === "date-time")
+               ) {
+                  const minDate = filter.min ? new Date(filter.min) : undefined;
+                  const maxDate = filter.max ? new Date(filter.max) : undefined;
+
+                  const itemValue: Date =
+                     column.getValue?.(item) ??
+                     new Date(column.type === "text" && column.keyName ? String(item[column.keyName]) : "");
+
+                  if (filter.min !== undefined && minDate && itemValue < minDate) return false;
+                  if (filter.max !== undefined && maxDate && itemValue > maxDate) return false;
+               } else if (column.filter === "list" && filter.type === "list") {
+                  const itemValue: string =
+                     column.getValueForList?.(item) ??
+                     (column.type === "text" && column.keyName ? String(item[column.keyName]) : "");
+
+                  if (!filter.list?.includes(itemValue)) return false;
+               }
+
+               return true;
+            }),
+         ),
+      [data, filterData, columns],
+   );
+   const dataAfterPagination = useMemo(() => {
+      if (pageSize === undefined) return dataAfterFilter;
+
+      const pageStartItemIndex = (currentPage - 1) * (pageSize ?? 0);
+      const pageEndItemIndex = pageStartItemIndex + (pageSize ?? 0);
+
+      return dataAfterFilter.slice(pageStartItemIndex, pageEndItemIndex);
+   }, [dataAfterFilter, pageSize, currentPage]);
    const everythingIsChecked = useMemo<boolean>(() => {
       return checkedItems.every((checked) => checked) && checkedItems.length === data.length;
    }, [data, checkedItems]);
+   const possibleFilterListValues = useMemo<string[]>(() => {
+      if (!openedFilterColumn) return [];
+
+      return data.reduce((previousValue, currentValue) => {
+         const value: string | undefined =
+            openedFilterColumn.type === "text" && openedFilterColumn.keyName
+               ? String(currentValue[openedFilterColumn.keyName])
+               : undefined;
+
+         if (value && !previousValue.includes(value)) previousValue.push(value);
+
+         return previousValue;
+      }, [] as string[]);
+   }, [data, openedFilterColumn]);
+
+   const pagesCount = pageSize !== undefined ? Math.ceil(dataAfterPagination.length / pageSize) : 1;
+
+   const paginationItems = useMemo(() => {
+      const halfRange = Math.floor(maximumVisiblePages / 2);
+
+      let startPage = Math.max(1, currentPage - halfRange);
+      let endPage = Math.min(pagesCount, currentPage + halfRange);
+
+      if (endPage - startPage + 1 < maximumVisiblePages) {
+         startPage = Math.max(1, endPage - maximumVisiblePages + 1);
+         endPage = Math.min(pagesCount, startPage + maximumVisiblePages - 1);
+      }
+
+      return Array.from(
+         {
+            length: endPage - startPage + 1,
+         },
+         (_, index) => startPage + index,
+      );
+   }, [pagesCount, currentPage]);
+   const onClickNextPage = useCallback(() => {
+      setCurrentPage((oldValue) => (oldValue >= pagesCount ? pagesCount : oldValue + 1));
+   }, [pagesCount]);
+   const onClickPreviousPage = useCallback(() => {
+      setCurrentPage((oldValue) => (oldValue <= 1 ? 1 : oldValue - 1));
+   }, []);
+   const onClickSelectAllFilterListItems = useCallback(
+      () => setFilterListSelectedItems(possibleFilterListValues),
+      [possibleFilterListValues],
+   );
+   const onClickDeselectAllFilterListItems = useCallback(() => setFilterListSelectedItems([]), []);
+
+   useImperativeHandle(
+      ref,
+      (): TableRef => {
+         return {
+            currentPage,
+            setCurrentPage,
+            pagesCount,
+            setCheckedItems,
+         };
+      },
+      [currentPage, setCurrentPage, pagesCount, setCheckedItems],
+   );
+
+   const mobileFooterBreakingPoint = mediumScreen.size700 && pagesCount > maximumVisiblePages / 1.4;
 
    return (
-      <Div
-         border={`1px solid ${theme.colors.border}`}
-         borderRadius={theme.styles.borderRadius * 2}
-         overflow="auto"
-         {...props}
-         ref={ref}
-      >
-         <TableStyledComponent
-            isStriped={isStriped}
-            withHover={onClickRow !== undefined}
-            withStickyHeader={withStickyHeader}
-            colorTheme={colorTheme}
-            theme={theme}
+      <>
+         <Div
+            border={`1px solid ${theme.colors.border}`}
+            borderRadius={theme.styles.borderRadius * 2}
+            overflow="auto"
+            {...props}
          >
-            <thead>
-               <tr className="isHeader">
-                  {columns.map((column, index) => (
-                     <ThStyledComponent
-                        width={
-                           column.type === "image" ? defaultImageWidth : column.type === "checkbox" ? 26 : column.width
-                        }
-                        minWidth={column.minWidth}
-                        maxWidth={column.maxWidth}
-                        textAlign={column.align}
-                        key={column.type + column.label + index}
-                     >
-                        {column.label ??
-                           (column.type === "checkbox" && onClickAllCheckboxes ? (
-                              <ToggleInput.checkbox
-                                 checked={everythingIsChecked}
-                                 onChange={onClickAllCheckboxesElement}
-                              />
-                           ) : (
-                              ""
-                           ))}
-                     </ThStyledComponent>
-                  ))}
-               </tr>
-            </thead>
+            <TableStyledComponent
+               isStriped={isStriped}
+               withHover={onClickRow !== undefined}
+               withStickyHeader={withStickyHeader}
+               colorTheme={colorTheme}
+               theme={theme}
+            >
+               <thead>
+                  <tr className="isHeader">
+                     {columns.map((column, index) => (
+                        <ThStyledComponent
+                           width={
+                              column.type === "image"
+                                 ? defaultImageWidth
+                                 : column.type === "checkbox"
+                                 ? 26
+                                 : column.width
+                           }
+                           minWidth={column.minWidth}
+                           maxWidth={column.maxWidth}
+                           textAlign={column.align}
+                           key={column.type + column.label + index}
+                        >
+                           <Div.row
+                              width="100%"
+                              alignItems="center"
+                              justifyContent="space-between"
+                              gap={theme.styles.gap}
+                           >
+                              {column.type === "checkbox" && onClickAllCheckboxes ? (
+                                 <ToggleInput.checkbox
+                                    checked={everythingIsChecked}
+                                    onChange={onClickAllCheckboxesElement}
+                                 />
+                              ) : column.label ? (
+                                 <Text>{column.label}</Text>
+                              ) : undefined}
 
-            <tbody>
-               {isLoading ? (
-                  <tr>
-                     <td className="noData" colSpan={columns.length}>
-                        <Loader.box />
-                     </td>
+                              {column.filter && (
+                                 <Button.icon
+                                    icon="filter"
+                                    color={filterData[index] ? theme.colors.primary : theme.colors.textSecondary}
+                                    value={index}
+                                    onClickWithValue={onClickFilterButton}
+                                 />
+                              )}
+                           </Div.row>
+                        </ThStyledComponent>
+                     ))}
                   </tr>
-               ) : data.length > 0 ? (
-                  data.map((item, rowIndex) => (
-                     <tr
-                        className={onClickRow ? "isClickable" : undefined}
-                        onClick={() => onClickRowElement(item, rowIndex)}
-                        key={JSON.stringify(item) + rowIndex}
-                     >
-                        {columns.map((column, colIndex) => (
-                           <TdStyledComponent textAlign={column.align} key={column.type + column.label + colIndex}>
-                              {renderCellContent(column, item, rowIndex)}
-                           </TdStyledComponent>
-                        ))}
+               </thead>
+
+               <tbody>
+                  {isLoading ? (
+                     <tr>
+                        <td className="noData" colSpan={columns.length}>
+                           <Loader.box />
+                        </td>
                      </tr>
-                  ))
-               ) : (
-                  <tr>
-                     <td className="noData" colSpan={columns.length}>
-                        <Text.unknown>{noDataItemsMessage}</Text.unknown>
-                     </td>
-                  </tr>
+                  ) : dataAfterPagination.length > 0 ? (
+                     dataAfterPagination.map((item, rowIndex) => (
+                        <tr
+                           className={onClickRow ? "isClickable" : undefined}
+                           onClick={() => onClickRowElement(item, rowIndex)}
+                           key={JSON.stringify(item) + rowIndex}
+                        >
+                           {columns.map((column, colIndex) => (
+                              <TdStyledComponent textAlign={column.align} key={column.type + column.label + colIndex}>
+                                 {renderCellContent(column, item, rowIndex)}
+                              </TdStyledComponent>
+                           ))}
+                        </tr>
+                     ))
+                  ) : (
+                     <tr>
+                        <td className="noData" colSpan={columns.length}>
+                           <Text.unknown>{noDataItemsMessage}</Text.unknown>
+                        </td>
+                     </tr>
+                  )}
+               </tbody>
+
+               {pageSize !== undefined && (
+                  <tfoot>
+                     <tr className="isFooter">
+                        <td colSpan={columns.length}>
+                           <Div.column
+                              position="relative"
+                              width="100%"
+                              justifyContent="center"
+                              flexReverse
+                              gap={theme.styles.gap / 2}
+                           >
+                              <Text
+                                 position={mobileFooterBreakingPoint ? "relative" : "absolute"}
+                                 top={!mobileFooterBreakingPoint ? "50%" : undefined}
+                                 color={theme.colors.textSecondary}
+                                 transform={!mobileFooterBreakingPoint ? "translateY(-50%)" : undefined}
+                                 userSelect="none"
+                              >
+                                 {currentPage} / {pagesCount}
+                              </Text>
+
+                              <Div.row alignItems="center" justifyContent="center" gap={theme.styles.gap * 2}>
+                                 {pagesCount > maximumVisiblePages && (
+                                    <Button.icon
+                                       icon="doubleChevronLeft"
+                                       disabled={currentPage === 1}
+                                       value={1}
+                                       onClickWithValue={setCurrentPage}
+                                    />
+                                 )}
+                                 <Button.icon
+                                    icon="chevronLeft"
+                                    disabled={currentPage === 1}
+                                    onClick={onClickPreviousPage}
+                                 />
+
+                                 <Div.row
+                                    alignItems="center"
+                                    justifyContent="center"
+                                    flexWrap={mobileFooterBreakingPoint ? "wrap" : undefined}
+                                    gap={theme.styles.gap}
+                                 >
+                                    {paginationItems.map((pageIndex) => {
+                                       const isActive = currentPage === pageIndex;
+
+                                       return (
+                                          <Div
+                                             cursor="pointer"
+                                             userSelect="none"
+                                             value={pageIndex}
+                                             onClickWithValue={setCurrentPage}
+                                             key={pageIndex}
+                                          >
+                                             <Text
+                                                fontWeight={isActive ? 700 : 400}
+                                                color={isActive ? theme.colors.primary : theme.colors.textSecondary}
+                                                transition={theme.styles.transition}
+                                             >
+                                                {pageIndex}
+                                             </Text>
+                                          </Div>
+                                       );
+                                    })}
+                                 </Div.row>
+
+                                 <Button.icon
+                                    icon="chevronRight"
+                                    disabled={currentPage === pagesCount}
+                                    onClick={onClickNextPage}
+                                 />
+                                 {pagesCount > maximumVisiblePages && (
+                                    <Button.icon
+                                       icon="doubleChevronRight"
+                                       disabled={currentPage === pagesCount}
+                                       onClickWithValue={setCurrentPage}
+                                       value={pagesCount}
+                                    />
+                                 )}
+                              </Div.row>
+                           </Div.column>
+                        </td>
+                     </tr>
+                  </tfoot>
                )}
-            </tbody>
-         </TableStyledComponent>
-      </Div>
+            </TableStyledComponent>
+         </Div>
+
+         <Modal
+            title={`Filter ${openedFilterColumn?.label}`}
+            description={
+               openedFilterColumn?.filter === "number"
+                  ? "Enter minimum and maximum values to filter"
+                  : openedFilterColumn?.filter === "date" || openedFilterColumn?.filter === "date-time"
+                  ? "Enter minimum and maximum dates to filter"
+                  : openedFilterColumn?.filter === "list"
+                  ? "Select values to filter from the list bellow"
+                  : ""
+            }
+            onClose={onCloseFilterModal}
+            ref={filterModalRef}
+         >
+            {openedFilterColumn ? (
+               openedFilterColumn.filter === "number" ? (
+                  <Form
+                     form={filterForm}
+                     submitButtonText="Filter"
+                     cancelButtonText="Clear"
+                     onClickCancel={openedFilterData ? onClickCancelFormFilter : undefined}
+                  >
+                     <FormRow>
+                        <InputField type="number" label="Min" {...filterForm.getInputFieldProps("min")} />
+                        <InputField type="number" label="Max" {...filterForm.getInputFieldProps("max")} />
+                     </FormRow>
+                  </Form>
+               ) : openedFilterColumn.filter === "date" || openedFilterColumn.filter === "date-time" ? (
+                  <Form
+                     form={filterForm}
+                     gap={theme.styles.gap}
+                     submitButtonText="Filter"
+                     cancelButtonText="Clear"
+                     onClickCancel={openedFilterData ? onClickCancelFormFilter : undefined}
+                  >
+                     <FormRow>
+                        <InputField.date label="Min" {...filterForm.getInputFieldProps("min")} />
+                        <InputField.date label="Max" {...filterForm.getInputFieldProps("max")} />
+                     </FormRow>
+
+                     {openedFilterColumn.presets && (
+                        <Div.column gap={theme.styles.gap / 2}>
+                           <Label text="Presets" />
+
+                           <Div.row alignItems="center" gap={theme.styles.gap}>
+                              {openedFilterColumn.presets.map((preset) => {
+                                 return (
+                                    <Button.secondary
+                                       text={filterPresetsText[preset]}
+                                       value={preset}
+                                       onClickWithValue={onClickFilterPreset}
+                                       key={preset}
+                                    />
+                                 );
+                              })}
+                           </Div.row>
+                        </Div.column>
+                     )}
+                  </Form>
+               ) : openedFilterColumn.filter === "list" ? (
+                  <Form
+                     submitButtonText="Filter"
+                     cancelButtonText="Clear"
+                     renderActionButtons={
+                        <Div.row marginRight="auto" alignItems="center" gap={theme.styles.gap}>
+                           <Button.secondary
+                              text="Select All"
+                              disabled={possibleFilterListValues.length === filterListSelectedItems?.length}
+                              onClick={onClickSelectAllFilterListItems}
+                           />
+                           <Button.secondary
+                              text="Deselect All"
+                              disabled={!filterListSelectedItems?.length}
+                              onClick={onClickDeselectAllFilterListItems}
+                           />
+                        </Div.row>
+                     }
+                     onClickCancel={openedFilterData ? onClickCancelFormFilter : undefined}
+                     onSubmit={filterForm.onSubmit}
+                  >
+                     <Div.column gap={theme.styles.gap / 2} marginBottom={theme.styles.space}>
+                        <Label text="Possible values" />
+
+                        <Div.row flexWrap="wrap" gap={theme.styles.gap}>
+                           {possibleFilterListValues.map((value) => {
+                              const isActive = filterListSelectedItems?.includes(value);
+
+                              return (
+                                 <Div.box
+                                    isActive={isActive}
+                                    value={value}
+                                    onClickWithValue={onClickFilterListItem}
+                                    key={value}
+                                 >
+                                    <Text>{value}</Text>
+                                 </Div.box>
+                              );
+                           })}
+                        </Div.row>
+                     </Div.column>
+                  </Form>
+               ) : (
+                  <Text.unknown>Unknown filter</Text.unknown>
+               )
+            ) : (
+               <Loader.box />
+            )}
+         </Modal>
+      </>
    );
 }) as any;
 
