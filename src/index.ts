@@ -64,6 +64,8 @@ import {
 } from "./types/theme";
 import { type BrowserName } from "./types/other";
 
+import { countries } from "./constants/countries";
+
 import { isMobileDevice } from "./constants";
 
 export * from "./plugins";
@@ -175,5 +177,6 @@ export {
    ThemeConfig,
    BrowserName,
    // Constants
+   countries,
    isMobileDevice,
 };

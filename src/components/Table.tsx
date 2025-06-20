@@ -239,7 +239,7 @@ export type TableRef = {
 };
 
 type TableComponentType = {
-   <DataItem>(props: ComponentPropWithRef<HTMLDivElement, TableProps<DataItem>>): React.ReactElement;
+   <DataItem>(props: ComponentPropWithRef<TableRef, TableProps<DataItem>>): React.ReactElement;
 };
 
 const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
@@ -749,7 +749,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                   )}
                </tbody>
 
-               {pageSize !== undefined && (
+               {pageSize !== undefined && pageCountInternal > 1 && (
                   <tfoot>
                      <tr className="isFooter">
                         <td colSpan={columns.length}>
