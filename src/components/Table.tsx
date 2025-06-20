@@ -29,7 +29,7 @@ import Form from "./Form";
 import Label from "./Label";
 import { useBetterHtmlContextInternal, useTheme } from "./BetterHtmlProvider";
 
-const defaultImageWidth = 120;
+const defaultImageWidth = 160;
 const maximumVisiblePages = 11;
 
 const TableStyledComponent = styled.table.withConfig({
@@ -334,12 +334,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                   column.getImageSrc?.(item, index) ?? (column.keyName ? (item[column.keyName] as string) : undefined);
 
                return (
-                  <Image
-                     src={src}
-                     width={defaultImageWidth}
-                     borderRadius={theme.styles.borderRadius / 2}
-                     {...column.imageProps}
-                  />
+                  <Image src={src} width="100%" borderRadius={theme.styles.borderRadius / 2} {...column.imageProps} />
                );
             }
 
@@ -686,11 +681,12 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                      {columns.map((column, index) => (
                         <ThStyledComponent
                            width={
-                              column.type === "image"
+                              column.width ??
+                              (column.type === "image"
                                  ? defaultImageWidth
                                  : column.type === "checkbox"
                                  ? 26
-                                 : column.width
+                                 : undefined)
                            }
                            minWidth={column.minWidth}
                            maxWidth={column.maxWidth}
