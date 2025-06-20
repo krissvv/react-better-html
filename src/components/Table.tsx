@@ -75,7 +75,7 @@ const TableStyledComponent = styled.table.withConfig({
             ? css`
                  transition: ${props.theme.styles.transition};
 
-                 &:not(.isHeader):hover {
+                 &:not(.isHeader):not(.isFooter):not(.withoutHover):hover {
                     filter: brightness(${props.colorTheme === "light" ? "0.95" : "0.85"});
                  }
               `
@@ -720,7 +720,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
 
                <tbody>
                   {isLoading ? (
-                     <tr>
+                     <tr className="withoutHover">
                         <td className="noData" colSpan={columns.length}>
                            <Loader.box />
                         </td>
@@ -740,7 +740,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                         </tr>
                      ))
                   ) : (
-                     <tr>
+                     <tr className="withoutHover">
                         <td className="noData" colSpan={columns.length}>
                            <Text.unknown>{noDataItemsMessage}</Text.unknown>
                         </td>
