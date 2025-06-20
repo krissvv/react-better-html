@@ -322,7 +322,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
             case "text": {
                const value = column.keyName ? item[column.keyName] : undefined;
 
-               return column.format ? column.format(item, index) : String(value ?? "");
+               return column.format?.(item, index) ?? String(value);
             }
 
             case "element": {
@@ -696,7 +696,15 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                            <Div.row
                               width="100%"
                               alignItems="center"
-                              justifyContent="space-between"
+                              justifyContent={
+                                 column.filter
+                                    ? "space-between"
+                                    : column.align === "center"
+                                    ? "center"
+                                    : column.align === "right"
+                                    ? "flex-end"
+                                    : "flex-start"
+                              }
                               gap={theme.styles.gap}
                            >
                               {column.type === "checkbox" && onClickAllCheckboxes ? (
