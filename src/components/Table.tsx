@@ -224,6 +224,7 @@ export type TableProps<DataItem> = {
    /** @default "No data available" */
    noDataItemsMessage?: string;
    pageSize?: number;
+   pageCount?: number;
    onClickRow?: (item: DataItem, index: number) => void;
    onClickAllCheckboxes?: (checked: boolean) => void;
    onChangePage?: (page: number) => void;
@@ -250,6 +251,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
       withStickyHeader,
       noDataItemsMessage = "No data available",
       pageSize,
+      pageCount,
       onClickRow,
       onClickAllCheckboxes,
       onChangePage,
@@ -601,17 +603,18 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
       );
    }, [data, openedFilterColumn]);
 
-   const pagesCount = pageSize !== undefined ? Math.ceil(dataAfterPagination.length / pageSize) : 1;
+   const pageCountInternal =
+      pageCount ?? (pageSize !== undefined ? Math.ceil(dataAfterPagination.length / pageSize) : 1);
 
    const paginationItems = useMemo(() => {
       const halfRange = Math.floor(maximumVisiblePages / 2);
 
       let startPage = Math.max(1, currentPage - halfRange);
-      let endPage = Math.min(pagesCount, currentPage + halfRange);
+      let endPage = Math.min(pageCountInternal, currentPage + halfRange);
 
       if (endPage - startPage + 1 < maximumVisiblePages) {
          startPage = Math.max(1, endPage - maximumVisiblePages + 1);
-         endPage = Math.min(pagesCount, startPage + maximumVisiblePages - 1);
+         endPage = Math.min(pageCountInternal, startPage + maximumVisiblePages - 1);
       }
 
       return Array.from(
@@ -620,10 +623,10 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
          },
          (_, index) => startPage + index,
       );
-   }, [pagesCount, currentPage]);
+   }, [pageCountInternal, currentPage]);
    const onClickNextPage = useCallback(() => {
-      setCurrentPage((oldValue) => (oldValue >= pagesCount ? pagesCount : oldValue + 1));
-   }, [pagesCount]);
+      setCurrentPage((oldValue) => (oldValue >= pageCountInternal ? pageCountInternal : oldValue + 1));
+   }, [pageCountInternal]);
    const onClickPreviousPage = useCallback(() => {
       setCurrentPage((oldValue) => (oldValue <= 1 ? 1 : oldValue - 1));
    }, []);
@@ -646,14 +649,14 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
          return {
             currentPage,
             setCurrentPage,
-            pagesCount,
+            pagesCount: pageCountInternal,
             setCheckedItems,
          };
       },
-      [currentPage, setCurrentPage, pagesCount, setCheckedItems],
+      [currentPage, setCurrentPage, pageCountInternal, setCheckedItems],
    );
 
-   const mobileFooterBreakingPoint = mediumScreen.size700 && pagesCount > maximumVisiblePages / 1.4;
+   const mobileFooterBreakingPoint = mediumScreen.size700 && pageCountInternal > maximumVisiblePages / 1.4;
 
    return (
       <>
@@ -763,11 +766,11 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                                  transform={!mobileFooterBreakingPoint ? "translateY(-50%)" : undefined}
                                  userSelect="none"
                               >
-                                 {currentPage} / {pagesCount}
+                                 {currentPage} / {pageCountInternal}
                               </Text>
 
                               <Div.row alignItems="center" justifyContent="center" gap={theme.styles.gap * 2}>
-                                 {pagesCount > maximumVisiblePages && (
+                                 {pageCountInternal > maximumVisiblePages && (
                                     <Button.icon
                                        icon="doubleChevronLeft"
                                        disabled={currentPage === 1}
@@ -812,15 +815,15 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
 
                                  <Button.icon
                                     icon="chevronRight"
-                                    disabled={currentPage === pagesCount}
+                                    disabled={currentPage === pageCountInternal}
                                     onClick={onClickNextPage}
                                  />
-                                 {pagesCount > maximumVisiblePages && (
+                                 {pageCountInternal > maximumVisiblePages && (
                                     <Button.icon
                                        icon="doubleChevronRight"
-                                       disabled={currentPage === pagesCount}
+                                       disabled={currentPage === pageCountInternal}
                                        onClickWithValue={setCurrentPage}
-                                       value={pagesCount}
+                                       value={pageCountInternal}
                                     />
                                  )}
                               </Div.row>
