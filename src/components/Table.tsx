@@ -1,4 +1,14 @@
-import { forwardRef, memo, useCallback, ReactNode, useMemo, useState, useImperativeHandle, useRef } from "react";
+import {
+   forwardRef,
+   memo,
+   useCallback,
+   ReactNode,
+   useMemo,
+   useState,
+   useImperativeHandle,
+   useRef,
+   useEffect,
+} from "react";
 import styled, { css } from "styled-components";
 
 import { ColorTheme, Theme } from "../types/theme";
@@ -189,6 +199,7 @@ type DateFilter<DataItem> = {
 
 type ListFilter<DataItem> = {
    filter?: "list";
+   withTotalNumber?: boolean;
    getValueForList?: (item: DataItem) => string;
 };
 
@@ -215,6 +226,8 @@ export type TableProps<DataItem> = {
    pageSize?: number;
    onClickRow?: (item: DataItem, index: number) => void;
    onClickAllCheckboxes?: (checked: boolean) => void;
+   onChangePage?: (page: number) => void;
+   onChangeFilter?: (filterData: Record<number, TableFilterData | undefined>) => void;
 } & ComponentMarginProps;
 
 export type TableRef = {
@@ -239,6 +252,8 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
       pageSize,
       onClickRow,
       onClickAllCheckboxes,
+      onChangePage,
+      onChangeFilter,
       ...props
    }: TableProps<DataItem>,
    ref: React.ForwardedRef<TableRef>,
@@ -382,7 +397,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
       [filterData],
    );
    const onCloseFilterModal = useCallback(() => {
-      setOpenedFilterColumnIndex(undefined);
+      setTimeout(() => setOpenedFilterColumnIndex(undefined), 0.2 * 1000);
       setFilterListSelectedItems(undefined);
       filterForm.reset();
    }, []);
@@ -550,19 +565,40 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
    const everythingIsChecked = useMemo<boolean>(() => {
       return checkedItems.every((checked) => checked) && checkedItems.length === data.length;
    }, [data, checkedItems]);
-   const possibleFilterListValues = useMemo<string[]>(() => {
+   const possibleFilterListValues = useMemo<{ value: string; count: number }[]>(() => {
       if (!openedFilterColumn) return [];
 
-      return data.reduce((previousValue, currentValue) => {
-         const value: string | undefined =
-            openedFilterColumn.type === "text" && openedFilterColumn.keyName
-               ? String(currentValue[openedFilterColumn.keyName])
-               : undefined;
+      return data.reduce(
+         (previousValue, currentValue) => {
+            const value: string | undefined =
+               openedFilterColumn.type === "text" && openedFilterColumn.keyName
+                  ? String(currentValue[openedFilterColumn.keyName])
+                  : undefined;
 
-         if (value && !previousValue.includes(value)) previousValue.push(value);
+            if (value !== undefined) {
+               if (previousValue.some((item) => item.value === value)) {
+                  previousValue = previousValue.map((item) =>
+                     item.value === value
+                        ? {
+                             ...item,
+                             count: item.count + 1,
+                          }
+                        : item,
+                  );
+               } else
+                  previousValue.push({
+                     value,
+                     count: 1,
+                  });
+            }
 
-         return previousValue;
-      }, [] as string[]);
+            return previousValue;
+         },
+         [] as {
+            value: string;
+            count: number;
+         }[],
+      );
    }, [data, openedFilterColumn]);
 
    const pagesCount = pageSize !== undefined ? Math.ceil(dataAfterPagination.length / pageSize) : 1;
@@ -592,10 +628,17 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
       setCurrentPage((oldValue) => (oldValue <= 1 ? 1 : oldValue - 1));
    }, []);
    const onClickSelectAllFilterListItems = useCallback(
-      () => setFilterListSelectedItems(possibleFilterListValues),
+      () => setFilterListSelectedItems(possibleFilterListValues.map((item) => item.value)),
       [possibleFilterListValues],
    );
    const onClickDeselectAllFilterListItems = useCallback(() => setFilterListSelectedItems([]), []);
+
+   useEffect(() => {
+      onChangePage?.(currentPage);
+   }, [onChangePage, currentPage]);
+   useEffect(() => {
+      onChangeFilter?.(filterData);
+   }, [onChangeFilter, filterData]);
 
    useImperativeHandle(
       ref,
@@ -874,16 +917,23 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
 
                         <Div.row flexWrap="wrap" gap={theme.styles.gap}>
                            {possibleFilterListValues.map((value) => {
-                              const isActive = filterListSelectedItems?.includes(value);
+                              const isActive = filterListSelectedItems?.includes(value.value);
 
                               return (
                                  <Div.box
                                     isActive={isActive}
-                                    value={value}
+                                    value={value.value}
                                     onClickWithValue={onClickFilterListItem}
-                                    key={value}
+                                    key={value.value}
                                  >
-                                    <Text>{value}</Text>
+                                    <Div.row alignItems="center" gap={theme.styles.gap / 2}>
+                                       <Text>{value.value}</Text>
+                                       {openedFilterColumn.withTotalNumber && (
+                                          <Text fontSize={14} color={theme.colors.textSecondary}>
+                                             ({value.count})
+                                          </Text>
+                                       )}
+                                    </Div.row>
                                  </Div.box>
                               );
                            })}

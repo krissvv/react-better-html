@@ -78,10 +78,19 @@ const InputElement = styled.input.withConfig({
       cursor: not-allowed;
    }
 
+   &::-webkit-outer-spin-button,
+   &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+   }
+
+   &[type="number"] {
+      -moz-appearance: textfield;
+   }
+
    &[type="date"],
    &[type="datetime-local"],
    &[type="time"] {
-      // min-height: 46px;
       -webkit-appearance: none;
       -moz-appearance: textfield;
 

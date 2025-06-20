@@ -772,6 +772,7 @@ function App() {
                               label: "Color",
                               keyName: "color",
                               filter: "list",
+                              withTotalNumber: true,
                            },
                            {
                               type: "text",
