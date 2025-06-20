@@ -179,11 +179,14 @@ type ElementColumn<DataItem> = {
 type ImageColumn<DataItem> = {
    type: "image";
    keyName?: keyof DataItem;
-} & ImageProps;
+   getImageSrc?: (item: DataItem, index: number) => string;
+   imageProps?: ImageProps;
+};
 
 type CheckboxColumn = {
    type: "checkbox";
-} & ToggleInputProps<boolean>;
+   toggleInputProps?: ToggleInputProps<boolean>;
+};
 
 //? Filter types
 type NumberFilter<DataItem> = {
@@ -327,31 +330,35 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
             }
 
             case "image": {
-               const { type, keyName, ...props } = column;
-
-               const src = keyName ? (item[keyName] as string) : undefined;
+               const src: string | undefined =
+                  column.getImageSrc?.(item, index) ?? (column.keyName ? (item[column.keyName] as string) : undefined);
 
                return (
-                  <Image src={src} width={defaultImageWidth} borderRadius={theme.styles.borderRadius / 2} {...props} />
+                  <Image
+                     src={src}
+                     width={defaultImageWidth}
+                     borderRadius={theme.styles.borderRadius / 2}
+                     {...column.imageProps}
+                  />
                );
             }
 
             case "checkbox": {
-               const { type, onChange, ...props } = column;
+               const { onChange, ...toggleInputProps } = column.toggleInputProps ?? {};
 
                const checkedValue = checkedItems[index];
 
                return (
                   <ToggleInput.checkbox
                      checked={checkedValue}
-                     onChange={(checked: boolean, value) => {
+                     onChange={(checked, value) => {
                         setCheckedItems((oldValue) =>
                            oldValue.map((isChecked, internalIndex) => (internalIndex === index ? checked : isChecked)),
                         );
 
                         onChange?.(checked, value);
                      }}
-                     {...props}
+                     {...toggleInputProps}
                   />
                );
             }
