@@ -558,12 +558,13 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
    );
    const dataAfterPagination = useMemo(() => {
       if (pageSize === undefined) return dataAfterFilter;
+      if (pageCount !== undefined) return dataAfterFilter;
 
       const pageStartItemIndex = (currentPage - 1) * (pageSize ?? 0);
       const pageEndItemIndex = pageStartItemIndex + (pageSize ?? 0);
 
       return dataAfterFilter.slice(pageStartItemIndex, pageEndItemIndex);
-   }, [dataAfterFilter, pageSize, currentPage]);
+   }, [dataAfterFilter, pageSize, currentPage, pageCount]);
    const everythingIsChecked = useMemo<boolean>(() => {
       return checkedItems.every((checked) => checked) && checkedItems.length === data.length;
    }, [data, checkedItems]);
