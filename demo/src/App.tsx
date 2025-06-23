@@ -963,7 +963,7 @@ function App() {
             </Tabs>
          </PageHolder>
 
-         {/* <PageHolder.center decorationImageSrc="https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png">
+         {/* <PageHolder.center sideImageSrc="https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png">
             <Div height={300}>Hello there</Div>
          </PageHolder.center> */}
       </>

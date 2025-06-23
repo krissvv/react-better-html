@@ -23,10 +23,13 @@ type PageHolderComponentType = {
       props: ComponentPropWithRef<
          HTMLDivElement,
          PageHolderProps & {
-            decorationImageSrc?: string;
-            decorationImageName?: AssetName | AnyOtherString;
+            sideImageSrc?: string;
+            sideImageName?: AssetName | AnyOtherString;
             /** @default "right" */
-            decorationImagePosition?: "left" | "right";
+            sideImagePosition?: "left" | "right";
+            /** @default "center" */
+            sideImageAlignment?: "left" | "center" | "right";
+            sideImageFooter?: React.ReactNode;
          }
       >,
    ) => React.ReactElement;
@@ -56,9 +59,11 @@ const PageHolderComponent: PageHolderComponentType = forwardRef(function PageHol
 
 PageHolderComponent.center = forwardRef(function Center(
    {
-      decorationImageSrc,
-      decorationImageName,
-      decorationImagePosition = "right",
+      sideImageSrc,
+      sideImageName,
+      sideImagePosition = "right",
+      sideImageAlignment = "center",
+      sideImageFooter,
       noMaxContentWidth,
       children,
       ...props
@@ -73,12 +78,9 @@ PageHolderComponent.center = forwardRef(function Center(
 
    return (
       <Div.row width="100%" minHeight="100svh" alignItems="center" justifyContent="center">
-         {decorationImagePosition === "left" && !breakingPoint && <Div width="50%" />}
+         {sideImagePosition === "left" && !breakingPoint && <Div width="50%" />}
 
-         <Div.column
-            width={`${!breakingPoint && (decorationImageSrc || decorationImageName) ? 50 : 100}%`}
-            alignItems="center"
-         >
+         <Div.column width={`${!breakingPoint && (sideImageSrc || sideImageName) ? 50 : 100}%`} alignItems="center">
             <Div.box
                width={`calc(100% - ${theme.styles.space}px * 2)`}
                maxWidth={!noMaxContentWidth ? app.contentMaxWidth / 2 : undefined}
@@ -91,20 +93,39 @@ PageHolderComponent.center = forwardRef(function Center(
             </Div.box>
          </Div.column>
 
-         {decorationImagePosition === "right" && !breakingPoint && <Div width="50%" />}
+         {sideImagePosition === "right" && !breakingPoint && <Div width="50%" />}
 
-         {(decorationImageSrc || decorationImageName) && !breakingPoint && (
-            <Image
+         {(sideImageSrc || sideImageName) && !breakingPoint && (
+            <Div
                position="fixed"
-               name={decorationImageName}
-               src={decorationImageSrc}
                width="50%"
                height="100svh"
                top={0}
-               left={decorationImagePosition === "left" ? 0 : "auto"}
-               right={decorationImagePosition === "right" ? 0 : "auto"}
-               objectFit="cover"
-            />
+               left={sideImagePosition === "left" ? 0 : "auto"}
+               right={sideImagePosition === "right" ? 0 : "auto"}
+            >
+               <Div.row
+                  position="absolute"
+                  width="100%"
+                  height="100%"
+                  top={0}
+                  left={0}
+                  justifyContent={
+                     sideImageAlignment === "left"
+                        ? "flex-start"
+                        : sideImageAlignment === "right"
+                        ? "flex-end"
+                        : "center"
+                  }
+                  overflow="hidden"
+               >
+                  <Image name={sideImageName} height="100%" src={sideImageSrc} />
+               </Div.row>
+
+               <Div position="absolute" width="100%" bottom={theme.styles.space}>
+                  {sideImageFooter}
+               </Div>
+            </Div>
          )}
       </Div.row>
    );
