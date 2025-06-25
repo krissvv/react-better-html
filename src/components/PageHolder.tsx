@@ -23,6 +23,7 @@ type PageHolderComponentType = {
       props: ComponentPropWithRef<
          HTMLDivElement,
          PageHolderProps & {
+            pageBackgroundColor?: string;
             sideImageSrc?: string;
             sideImageName?: AssetName | AnyOtherString;
             /** @default "right" */
@@ -59,6 +60,7 @@ const PageHolderComponent: PageHolderComponentType = forwardRef(function PageHol
 
 PageHolderComponent.center = forwardRef(function Center(
    {
+      pageBackgroundColor,
       sideImageSrc,
       sideImageName,
       sideImagePosition = "right",
@@ -76,11 +78,19 @@ PageHolderComponent.center = forwardRef(function Center(
 
    const breakingPoint = mediaQuery.size1000;
 
-   return (
-      <Div.row width="100%" minHeight="100svh" alignItems="center" justifyContent="center">
-         {sideImagePosition === "left" && !breakingPoint && <Div width="50%" />}
+   const withSideImage = (sideImageSrc || sideImageName) && !breakingPoint;
 
-         <Div.column width={`${!breakingPoint && (sideImageSrc || sideImageName) ? 50 : 100}%`} alignItems="center">
+   return (
+      <Div.row
+         width="100%"
+         minHeight="100svh"
+         alignItems="center"
+         justifyContent="center"
+         backgroundColor={pageBackgroundColor}
+      >
+         {sideImagePosition === "left" && withSideImage && <Div width="50%" />}
+
+         <Div.column width={`${withSideImage ? 50 : 100}%`} alignItems="center">
             <Div.box
                width={`calc(100% - ${theme.styles.space}px * 2)`}
                maxWidth={!noMaxContentWidth ? app.contentMaxWidth / 2 : undefined}
@@ -93,9 +103,9 @@ PageHolderComponent.center = forwardRef(function Center(
             </Div.box>
          </Div.column>
 
-         {sideImagePosition === "right" && !breakingPoint && <Div width="50%" />}
+         {sideImagePosition === "right" && withSideImage && <Div width="50%" />}
 
-         {(sideImageSrc || sideImageName) && !breakingPoint && (
+         {withSideImage && (
             <Div
                position="fixed"
                width="50%"

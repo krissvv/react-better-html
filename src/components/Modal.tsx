@@ -1,4 +1,5 @@
 import { memo, useCallback, forwardRef, useImperativeHandle, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import styled from "styled-components";
 
 import { ColorTheme, Theme } from "../types/theme";
@@ -173,7 +174,7 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
       [onClickOpen, onClickClose, isOpened],
    );
 
-   return (
+   return createPortal(
       <DialogStylesElement
          theme={theme}
          colorTheme={colorTheme}
@@ -262,7 +263,8 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
                </Div>
             </Div.column>
          ) : undefined}
-      </DialogStylesElement>
+      </DialogStylesElement>,
+      document.body,
    );
 }) as any;
 
@@ -286,7 +288,7 @@ ModalComponent.confirmation = forwardRef(function Confirmation(
    useImperativeHandle(ref, (): ModalRef => modalRef.current as ModalRef, []);
 
    return (
-      <Modal title="Are you sure?" maxWidth={660} {...props} ref={modalRef}>
+      <ModalComponent title="Are you sure?" maxWidth={660} {...props} ref={modalRef}>
          <Text color={theme.colors.textSecondary}>
             Do you really want to continue? This action may be irreversible.
          </Text>
@@ -300,7 +302,7 @@ ModalComponent.confirmation = forwardRef(function Confirmation(
             <Button.secondary text="Cancel" onClick={onCancelElement} />
             <Button text="Continue" loaderName={continueButtonLoaderName} onClick={onContinueElement} />
          </Div.row>
-      </Modal>
+      </ModalComponent>
    );
 }) as ModalComponent["confirmation"];
 
@@ -324,7 +326,7 @@ ModalComponent.destructive = forwardRef(function Destructive(
    useImperativeHandle(ref, (): ModalRef => modalRef.current as ModalRef, []);
 
    return (
-      <Modal title="Are you sure?" maxWidth={660} {...props} ref={modalRef}>
+      <ModalComponent title="Are you sure?" maxWidth={660} {...props} ref={modalRef}>
          <Text color={theme.colors.textSecondary}>
             Do you really want to continue with the deleting of the item? This action may be irreversible.
          </Text>
@@ -343,7 +345,7 @@ ModalComponent.destructive = forwardRef(function Destructive(
                onClick={onDeleteElement}
             />
          </Div.row>
-      </Modal>
+      </ModalComponent>
    );
 }) as ModalComponent["destructive"];
 
