@@ -322,7 +322,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
             case "text": {
                const value = column.keyName ? item[column.keyName] : undefined;
 
-               return column.format?.(item, index) ?? String(value);
+               return column.format?.(item, index) ?? String(value ?? "");
             }
 
             case "element": {
