@@ -8,6 +8,7 @@ import {
    useImperativeHandle,
    useRef,
    useEffect,
+   Fragment,
 } from "react";
 import styled, { css } from "styled-components";
 
@@ -27,6 +28,7 @@ import FormRow from "./FormRow";
 import InputField from "./InputField";
 import Form from "./Form";
 import Label from "./Label";
+import Icon from "./Icon";
 import { useBetterHtmlContextInternal, useTheme } from "./BetterHtmlProvider";
 
 const defaultImageWidth = 160;
@@ -59,6 +61,14 @@ const TableStyledComponent = styled.table.withConfig({
 
       &.isClickable {
          cursor: pointer;
+      }
+
+      &.isExpandRow {
+         height: 0px;
+
+         td {
+            border-top: none;
+         }
       }
 
       ${(props) =>
@@ -188,6 +198,12 @@ type CheckboxColumn = {
    toggleInputProps?: ToggleInputProps<boolean>;
 };
 
+type ExpandColumn<DataItem> = {
+   type: "expand";
+   onlyOneExpanded?: boolean;
+   render?: (item: DataItem, index: number) => ReactNode;
+};
+
 //? Filter types
 type NumberFilter<DataItem> = {
    filter?: "number";
@@ -212,7 +228,7 @@ export type TableColumn<DataItem> = {
    minWidth?: string | number;
    maxWidth?: string | number;
    align?: "left" | "center" | "right";
-} & (TextColumn<DataItem> | ElementColumn<DataItem> | ImageColumn<DataItem> | CheckboxColumn) &
+} & (TextColumn<DataItem> | ElementColumn<DataItem> | ImageColumn<DataItem> | CheckboxColumn | ExpandColumn<DataItem>) &
    (NumberFilter<DataItem> | DateFilter<DataItem> | ListFilter<DataItem>);
 
 export type TableProps<DataItem> = {
@@ -270,6 +286,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
    const filterModalRef = useRef<ModalRef>(null);
 
    const [checkedItems, setCheckedItems] = useState<boolean[]>([]);
+   const [expandedRows, setExpandedRows] = useState<boolean[]>([]);
    const [currentPage, setCurrentPage] = useState<number>(1);
 
    const [filterData, setFilterData] = useState<Record<number, TableFilterData | undefined>>({});
@@ -316,22 +333,25 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
       },
    });
 
+   const expandRow = useMemo(() => columns.find((column) => column.type === "expand"), [columns]);
+
    const renderCellContent = useCallback(
-      (column: (typeof columns)[number], item: DataItem, index: number) => {
+      (column: (typeof columns)[number], item: DataItem, itemIndex: number) => {
          switch (column.type) {
             case "text": {
                const value = column.keyName ? item[column.keyName] : undefined;
 
-               return column.format?.(item, index) ?? String(value ?? "");
+               return column.format?.(item, itemIndex) ?? String(value ?? "");
             }
 
             case "element": {
-               return column.render?.(item, index) ?? <></>;
+               return column.render?.(item, itemIndex) ?? <></>;
             }
 
             case "image": {
                const src: string | undefined =
-                  column.getImageSrc?.(item, index) ?? (column.keyName ? (item[column.keyName] as string) : undefined);
+                  column.getImageSrc?.(item, itemIndex) ??
+                  (column.keyName ? (item[column.keyName] as string) : undefined);
 
                return (
                   <Image src={src} width="100%" borderRadius={theme.styles.borderRadius / 2} {...column.imageProps} />
@@ -341,14 +361,16 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
             case "checkbox": {
                const { onChange, ...toggleInputProps } = column.toggleInputProps ?? {};
 
-               const checkedValue = checkedItems[index];
+               const checkedValue = checkedItems[itemIndex];
 
                return (
                   <ToggleInput.checkbox
                      checked={checkedValue}
                      onChange={(checked, value) => {
                         setCheckedItems((oldValue) =>
-                           oldValue.map((isChecked, internalIndex) => (internalIndex === index ? checked : isChecked)),
+                           oldValue.map((isChecked, internalIndex) =>
+                              internalIndex === itemIndex ? checked : isChecked,
+                           ),
                         );
 
                         onChange?.(checked, value);
@@ -358,18 +380,38 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                );
             }
 
+            case "expand": {
+               return (
+                  <Icon
+                     name="chevronDown"
+                     transform={`rotate(${expandedRows[itemIndex] ? 180 : 0}deg)`}
+                     transition={theme.styles.transition}
+                  />
+               );
+            }
+
             default: {
                return <></>;
             }
          }
       },
-      [theme, checkedItems],
+      [theme, checkedItems, expandedRows],
    );
    const onClickRowElement = useCallback(
       (item: DataItem, index: number) => {
-         onClickRow?.(item, index);
+         if (expandRow) {
+            setExpandedRows((oldValue) => {
+               if (oldValue[index] === undefined) {
+                  const newValue = expandRow.onlyOneExpanded ? [] : [...oldValue];
+                  newValue[index] = true;
+
+                  return newValue;
+               }
+               return oldValue.map((isExpanded, internalIndex) => (internalIndex === index ? !isExpanded : isExpanded));
+            });
+         } else onClickRow?.(item, index);
       },
-      [onClickRow],
+      [onClickRow, expandRow],
    );
    const onClickAllCheckboxesElement = useCallback(
       (checked: boolean) => {
@@ -514,6 +556,15 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
          }
       },
       [openedFilterColumn],
+   );
+   const renderExpandedRow = useCallback(
+      (...props: Parameters<NonNullable<ExpandColumn<DataItem>["render"]>>) => {
+         const expandColumn = columns.find((column) => column.type === "expand");
+         if (!expandColumn) return;
+
+         return expandColumn.render?.(...props);
+      },
+      [columns],
    );
 
    const dataAfterFilter = useMemo(
@@ -670,7 +721,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
          >
             <TableStyledComponent
                isStriped={isStriped}
-               withHover={onClickRow !== undefined}
+               withHover={onClickRow !== undefined || expandRow !== undefined}
                withStickyHeader={withStickyHeader}
                colorTheme={colorTheme}
                theme={theme}
@@ -685,6 +736,8 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                                  ? defaultImageWidth
                                  : column.type === "checkbox"
                                  ? 26
+                                 : column.type === "expand"
+                                 ? 16
                                  : undefined)
                            }
                            minWidth={column.minWidth}
@@ -738,17 +791,27 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                      </tr>
                   ) : dataAfterPagination.length > 0 ? (
                      dataAfterPagination.map((item, rowIndex) => (
-                        <tr
-                           className={onClickRow ? "isClickable" : undefined}
-                           onClick={() => onClickRowElement(item, rowIndex)}
-                           key={JSON.stringify(item) + rowIndex}
-                        >
-                           {columns.map((column, colIndex) => (
-                              <TdStyledComponent textAlign={column.align} key={column.type + column.label + colIndex}>
-                                 {renderCellContent(column, item, rowIndex)}
-                              </TdStyledComponent>
-                           ))}
-                        </tr>
+                        <Fragment key={JSON.stringify(item) + rowIndex}>
+                           <tr
+                              className={onClickRow || expandRow ? "isClickable" : undefined}
+                              onClick={() => onClickRowElement(item, rowIndex)}
+                           >
+                              {columns.map((column, colIndex) => (
+                                 <TdStyledComponent
+                                    textAlign={column.align}
+                                    key={column.type + column.label + colIndex}
+                                 >
+                                    {renderCellContent(column, item, rowIndex)}
+                                 </TdStyledComponent>
+                              ))}
+                           </tr>
+
+                           {expandedRows[rowIndex] && (
+                              <tr className="withoutHover isExpandRow">
+                                 <td colSpan={columns.length}>{renderExpandedRow(item, rowIndex)}</td>
+                              </tr>
+                           )}
+                        </Fragment>
                      ))
                   ) : (
                      <tr className="withoutHover">

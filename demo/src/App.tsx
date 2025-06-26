@@ -880,6 +880,42 @@ function App() {
                         data={data}
                         pageSize={3}
                      />
+
+                     <Table
+                        columns={[
+                           {
+                              type: "expand",
+                              onlyOneExpanded: true,
+                              render: (item) => {
+                                 return <Text>Hello there: {item.name}</Text>;
+                              },
+                           },
+                           {
+                              type: "text",
+                              label: "ID",
+                              keyName: "id",
+                              width: 52,
+                           },
+                           {
+                              type: "text",
+                              label: "Name",
+                              keyName: "name",
+                           },
+                           {
+                              type: "text",
+                              label: "Email",
+                              keyName: "email",
+                           },
+                           {
+                              type: "text",
+                              label: "Age",
+                              keyName: "age",
+                              align: "center",
+                              width: 70,
+                           },
+                        ]}
+                        data={data}
+                     />
                   </Div.column>
                </Tabs.content>
 
