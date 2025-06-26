@@ -76,7 +76,7 @@ const TableStyledComponent = styled.table.withConfig({
                  transition: ${props.theme.styles.transition};
 
                  &:not(.isHeader):not(.isFooter):not(.withoutHover):hover {
-                    filter: brightness(${props.colorTheme === "light" ? "0.95" : "0.85"});
+                    filter: brightness(${props.colorTheme === "light" ? 0.95 : 0.7});
                  }
               `
             : ""}
@@ -606,8 +606,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
       );
    }, [data, openedFilterColumn]);
 
-   const pageCountInternal =
-      pageCount ?? (pageSize !== undefined ? Math.ceil(dataAfterPagination.length / pageSize) : 1);
+   const pageCountInternal = pageCount ?? (pageSize !== undefined ? Math.ceil(dataAfterFilter.length / pageSize) : 1);
 
    const paginationItems = useMemo(() => {
       const halfRange = Math.floor(maximumVisiblePages / 2);
@@ -943,8 +942,12 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                                  >
                                     <Div.row alignItems="center" gap={theme.styles.gap / 2}>
                                        <Text>{value.value}</Text>
+
                                        {openedFilterColumn.withTotalNumber && (
-                                          <Text fontSize={14} color={theme.colors.textSecondary}>
+                                          <Text
+                                             fontSize={14}
+                                             color={isActive ? theme.colors.base + "c0" : theme.colors.textSecondary}
+                                          >
                                              ({value.count})
                                           </Text>
                                        )}

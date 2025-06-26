@@ -3,6 +3,7 @@ import { memo, useEffect } from "react";
 import { ComponentMarginProps } from "../types/components";
 
 import { useForm } from "../utils/hooks";
+import { colorThemeControls } from "../utils/variableFunctions";
 
 import Div from "./Div";
 import Text from "./Text";
@@ -32,14 +33,7 @@ const ColorThemeSwitchComponent: ColorThemeSwitchComponentType = function ColorT
    });
 
    useEffect(() => {
-      const timeout = setTimeout(() => {
-         window.document.body.parentElement?.setAttribute("data-theme", form.values.darkMode ? "dark" : "light");
-         localStorage.setItem("theme", form.values.darkMode ? "dark" : "light");
-      }, 0.2 * 1000);
-
-      return () => {
-         clearTimeout(timeout);
-      };
+      colorThemeControls.toggleTheme(form.values.darkMode ? "dark" : "light");
    }, [form.values.darkMode]);
    useEffect(() => {
       const html = document.querySelector("html");

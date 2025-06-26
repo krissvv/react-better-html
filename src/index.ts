@@ -38,7 +38,7 @@ import {
 } from "./utils/hooks";
 import { generateRandomString, getBrowser, formatPhoneNumber, getFormErrorObject } from "./utils/functions";
 import { lightenColor, darkenColor, saturateColor, desaturateColor } from "./utils/colorManipulation";
-import { loaderControls } from "./utils/variableFunctions";
+import { loaderControls, colorThemeControls } from "./utils/variableFunctions";
 
 import {
    type OmitProps,
@@ -151,6 +151,7 @@ export {
    desaturateColor,
    // Variable Functions
    loaderControls,
+   colorThemeControls,
    // Types
    OmitProps,
    ExcludeOptions,
