@@ -27,6 +27,7 @@ import {
    Table,
    Tabs,
    Foldable,
+   Tooltip,
 } from "../../src";
 
 const data: {
@@ -194,6 +195,7 @@ function App() {
                   "Modal",
                   "Table",
                   "Foldable",
+                  "Tooltip",
                ]}
                style="borderRadiusTop"
                // style="box"
@@ -990,6 +992,77 @@ function App() {
                            reprehenderit. Consequatur, vel.
                         </Text>
                      </Foldable.box>
+                  </Div.column>
+               </Tabs.content>
+
+               <Tabs.content tab="Tooltip">
+                  <Div.column gap={theme.styles.space}>
+                     <Div.row gap={theme.styles.gap} flexWrap="wrap">
+                        <Tooltip
+                           content={<Text>This is a tooltip that appears on hover</Text>}
+                           position="top"
+                           withArrow
+                        >
+                           <Button text="Hover me (top)" />
+                        </Tooltip>
+
+                        <Tooltip
+                           content={
+                              <Div.column gap={theme.styles.gap}>
+                                 <Text fontWeight="bold">Rich Content Tooltip</Text>
+                                 <Text>You can put any content in tooltips</Text>
+                                 <Divider.horizontal />
+                                 <Text color={theme.colors.textSecondary}>Including multiple elements</Text>
+                              </Div.column>
+                           }
+                           position="bottom"
+                           withArrow
+                        >
+                           <Button text="Hover me (bottom)" />
+                        </Tooltip>
+
+                        <Tooltip content={<Text>Left positioned tooltip</Text>} position="left" withArrow>
+                           <Button text="Hover me (left)" />
+                        </Tooltip>
+
+                        <Tooltip content={<Text>Right positioned tooltip</Text>} position="right" withArrow>
+                           <Button text="Hover me (right)" />
+                        </Tooltip>
+                     </Div.row>
+
+                     <Div.row gap={theme.styles.gap} flexWrap="wrap">
+                        <Tooltip content={<Text>This tooltip appears on click</Text>} position="top" trigger="click">
+                           <Button text="Click me (top)" />
+                        </Tooltip>
+
+                        <Tooltip
+                           content={
+                              <Div.column gap={theme.styles.gap}>
+                                 <Text fontWeight="bold">Interactive Tooltip</Text>
+                                 <Text>This tooltip stays open until you click elsewhere</Text>
+                                 <Button text="A button inside tooltip" marginTop={theme.styles.gap} />
+                              </Div.column>
+                           }
+                           position="bottom"
+                           trigger="click"
+                           withArrow
+                        >
+                           <Button text="Click me (bottom)" />
+                        </Tooltip>
+                     </Div.row>
+
+                     <Div.row gap={theme.styles.gap} flexWrap="wrap">
+                        <Tooltip
+                           content={<Text color={theme.colors.base}>Custom background color</Text>}
+                           backgroundColor={theme.colors.success}
+                        >
+                           <Button text="Custom colors" />
+                        </Tooltip>
+
+                        <Tooltip content={<Text>No arrow tooltip</Text>}>
+                           <Button text="No arrow" />
+                        </Tooltip>
+                     </Div.row>
                   </Div.column>
                </Tabs.content>
 
