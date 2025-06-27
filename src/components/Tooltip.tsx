@@ -2,14 +2,20 @@ import { memo, useCallback, useRef, useState, useEffect, forwardRef, useImperati
 import styled, { css, RuleSet } from "styled-components";
 
 import { Theme } from "../types/theme";
-import { ComponentPropWithRef } from "../types/components";
+import { ComponentPaddingProps, ComponentPropWithRef } from "../types/components";
 
 import Div from "./Div";
+import Text, { TextProps } from "./Text";
+import Divider, { HorizontalDividerProps } from "./Divider";
 import { useTheme } from "./BetterHtmlProvider";
+import { AnyOtherString, OmitProps } from "../types/app";
+import { IconName } from "../types/icon";
+import Icon from "./Icon";
 
 type TooltipContainerProps = {
    theme: Theme;
    position: TooltipPosition;
+   align?: TooltipAlign;
    withArrow?: boolean;
    arrowSize?: number;
    isOpen: boolean;
@@ -19,6 +25,7 @@ type TooltipContainerProps = {
 type ArrowProps = {
    theme: Theme;
    position: TooltipPosition;
+   align?: TooltipAlign;
    isOpen: boolean;
    size: number;
 };
@@ -26,18 +33,18 @@ type ArrowProps = {
 const tooltipContainerStyle = (props: TooltipContainerProps): Record<TooltipPosition, RuleSet<object>> => ({
    top: css`
       bottom: calc(100% + ${props.gap}px + ${props.arrowSize}px);
-      left: 50%;
+      ${props.align === "center" ? "left: 50%;" : props.align === "left" ? "left: 0;" : "right: 0;"}
    `,
    bottom: css`
       top: calc(100% + ${props.gap}px + ${props.arrowSize}px);
-      left: 50%;
+      ${props.align === "center" ? "left: 50%;" : props.align === "left" ? "left: 0;" : "right: 0;"};
    `,
    left: css`
-      top: 50%;
+      ${props.align === "center" ? "top: 50%;" : props.align === "top" ? "top: 0;" : "bottom: 0;"};
       right: calc(100% + ${props.gap}px + ${props.arrowSize}px);
    `,
    right: css`
-      top: 50%;
+      ${props.align === "center" ? "top: 50%;" : props.align === "top" ? "top: 0;" : "bottom: 0;"};
       left: calc(100% + ${props.gap}px + ${props.arrowSize}px);
    `,
 });
@@ -53,71 +60,88 @@ const tooltipPositionStyle = (
 > => ({
    top: {
       opened: css`
-         transform: translateX(-50%);
+         transform: translateX(${props.align === "center" ? "-50%" : "0"});
       `,
       closed: css`
-         transform: translateX(-50%) translateY(${props.theme.styles.gap}px);
+         transform: translateX(${props.align === "center" ? "-50%" : "0"}) translateY(${props.theme.styles.gap}px);
       `,
    },
    bottom: {
       opened: css`
-         transform: translateX(-50%);
+         transform: translateX(${props.align === "center" ? "-50%" : "0"});
       `,
       closed: css`
-         transform: translateX(-50%) translateY(-${props.theme.styles.gap}px);
+         transform: translateX(${props.align === "center" ? "-50%" : "0"}) translateY(-${props.theme.styles.gap}px);
       `,
    },
    left: {
       opened: css`
-         transform: translateY(-50%);
+         transform: translateY(${props.align === "center" ? "-50%" : "0"});
       `,
       closed: css`
-         transform: translateX(${props.theme.styles.gap}px) translateY(-50%);
+         transform: translateX(${props.theme.styles.gap}px) translateY(${props.align === "center" ? "-50%" : "0"});
       `,
    },
    right: {
       opened: css`
-         transform: translateY(-50%);
+         transform: translateY(${props.align === "center" ? "-50%" : "0"});
       `,
       closed: css`
-         transform: translateX(-${props.theme.styles.gap}px) translateY(-50%);
+         transform: translateX(-${props.theme.styles.gap}px) translateY(${props.align === "center" ? "-50%" : "0"});
       `,
    },
 });
 
 const arrowStyle = (props: ArrowProps): Record<TooltipPosition, RuleSet<object>> => ({
    top: css`
-      bottom: -${props.size}px;
-      left: 50%;
+      bottom: -${props.size - 1}px;
+      ${props.align === "center"
+         ? "left:  50%;"
+         : props.align === "left"
+         ? "left: var(--arrow-side-space);"
+         : "right: var(--arrow-side-space);"}
       border-top-color: var(--color);
       border-bottom: 0;
-      transform: translateX(-50%);
+      ${props.align === "center" ? "transform: translateX(-50%);" : ""}
    `,
    bottom: css`
-      top: -${props.size}px;
-      left: 50%;
+      top: -${props.size - 1}px;
+      ${props.align === "center"
+         ? "left:  50%;"
+         : props.align === "left"
+         ? "left: var(--arrow-side-space);"
+         : "right: var(--arrow-side-space);"}
       border-bottom-color: var(--color);
       border-top: 0;
-      transform: translateX(-50%);
+      ${props.align === "center" ? "transform: translateX(-50%);" : ""}
    `,
    left: css`
-      right: -${props.size}px;
-      top: 50%;
+      right: -${props.size - 1}px;
+      ${props.align === "center"
+         ? "top: 50%;"
+         : props.align === "top"
+         ? "top: var(--arrow-side-space);"
+         : "bottom: var(--arrow-side-space);"}
       border-left-color: var(--color);
       border-right: 0;
-      transform: translateY(-50%);
+      ${props.align === "center" ? "transform: translateY(-50%);" : ""}
    `,
    right: css`
-      left: -${props.size}px;
-      top: 50%;
+      left: -${props.size - 1}px;
+      ${props.align === "center"
+         ? "top: 50%;"
+         : props.align === "top"
+         ? "top: var(--arrow-side-space);"
+         : "bottom: var(--arrow-side-space);"}
       border-right-color: var(--color);
       border-left: 0;
-      transform: translateY(-50%);
+      ${props.align === "center" ? "transform: translateY(-50%);" : ""}
    `,
 });
 
 const TooltipContainer = styled.div.withConfig({
-   shouldForwardProp: (prop) => !["theme", "position", "withArrow", "arrowSize", "isOpen", "gap"].includes(prop),
+   shouldForwardProp: (prop) =>
+      !["theme", "position", "align", "withArrow", "arrowSize", "isOpen", "gap"].includes(prop),
 })<TooltipContainerProps>`
    position: absolute;
    opacity: ${(props) => (props.isOpen ? 1 : 0)};
@@ -134,9 +158,10 @@ const TooltipContainer = styled.div.withConfig({
 `;
 
 const Arrow = styled.div.withConfig({
-   shouldForwardProp: (prop) => !["theme", "position", "isOpen", "size"].includes(prop),
+   shouldForwardProp: (prop) => !["theme", "position", "align", "isOpen", "size"].includes(prop),
 })<ArrowProps>`
    --color: ${(props) => props.theme.colors.backgroundContent};
+   --arrow-side-space: ${(props) => props.theme.styles.borderRadius}px;
 
    position: absolute;
    width: 0;
@@ -145,26 +170,31 @@ const Arrow = styled.div.withConfig({
    opacity: ${(props) => (props.isOpen ? 1 : 0)};
    pointer-events: ${(props) => (props.isOpen ? "auto" : "none")};
    transition: ${(props) => props.theme.styles.transition};
+   z-index: 1;
 
    ${(props) => arrowStyle(props)[props.position]}
 `;
 
 type TooltipPosition = "top" | "bottom" | "left" | "right";
+type TooltipAlign = "left" | "center" | "right" | "top" | "bottom";
 
 export type TooltipProps = {
    /** @default "bottom" */
    position?: TooltipPosition;
    /** @default "hover" */
    trigger?: "hover" | "click";
+   /** @default "center" */
+   align?: TooltipAlign;
    content: React.ReactNode;
-   /** @default 220 */
+   contentWidth?: React.CSSProperties["width"];
    contentMinWidth?: React.CSSProperties["minWidth"];
    withArrow?: boolean;
    backgroundColor?: string;
+   asContextMenu?: boolean;
    onOpen?: () => void;
    onClose?: () => void;
    children: React.ReactNode;
-};
+} & ComponentPaddingProps;
 
 export type TooltipRef = {
    isOpen: boolean;
@@ -174,19 +204,26 @@ export type TooltipRef = {
 
 type TooltipComponent = {
    (props: ComponentPropWithRef<TooltipRef, TooltipProps>): React.ReactElement;
+   item: <Value>(props: ComponentPropWithRef<HTMLDivElement, TooltipItemProps<Value>>) => React.ReactElement;
+   divider: (props: ComponentPropWithRef<HTMLDivElement, HorizontalDividerProps>) => React.ReactElement;
+   sectionTitle: (props: ComponentPropWithRef<HTMLParagraphElement, TooltipSectionTitleProps>) => React.ReactElement;
 };
 
 const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
    {
       position = "bottom",
       trigger = "hover",
+      align = "center",
       content,
-      contentMinWidth = 220,
+      contentWidth,
+      contentMinWidth,
       withArrow,
       backgroundColor,
+      asContextMenu,
       onOpen,
       onClose,
       children,
+      ...props
    }: TooltipProps,
    ref: React.ForwardedRef<TooltipRef>,
 ) {
@@ -305,6 +342,7 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
          <TooltipContainer
             theme={theme}
             position={position}
+            align={align}
             withArrow={withArrow}
             arrowSize={arrowSize}
             gap={tooltipTriggerGap}
@@ -312,14 +350,19 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
             ref={tooltipContainerRef}
          >
             {(isOpen || isOpenLate) && (
-               <Div.box
-                  position="relative"
-                  minWidth={contentMinWidth}
-                  backgroundColor={backgroundColor ?? theme.colors.backgroundContent}
-                  boxShadow="0px 10px 20px #00000020"
-                  ref={contentRef}
-               >
-                  {content}
+               <Div position="relative" ref={contentRef}>
+                  <Div.box
+                     position="relative"
+                     width={contentWidth}
+                     minWidth={contentMinWidth}
+                     backgroundColor={backgroundColor ?? theme.colors.backgroundContent}
+                     boxShadow="0px 10px 20px #00000020"
+                     paddingInline={asContextMenu ? 0 : theme.styles.space}
+                     overflow={asContextMenu ? "hidden" : undefined}
+                     {...props}
+                  >
+                     {content}
+                  </Div.box>
 
                   <Div
                      position="absolute"
@@ -331,14 +374,96 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
                      right={position === "right" ? "calc(100% + 1px)" : position === "left" ? undefined : 0}
                   />
 
-                  {withArrow && <Arrow theme={theme} position={position} isOpen={isOpen} size={arrowSize} />}
-               </Div.box>
+                  {withArrow && (
+                     <Arrow theme={theme} position={position} align={align} isOpen={isOpen} size={arrowSize} />
+                  )}
+               </Div>
             )}
          </TooltipContainer>
       </Div>
    );
 }) as any;
 
-const Tooltip = memo(TooltipComponent) as any as typeof TooltipComponent & {};
+type TooltipItemProps<Value = unknown> = {
+   icon?: IconName | AnyOtherString;
+   text?: string;
+   description?: string;
+   isActive?: boolean;
+   value?: Value;
+   onClick?: () => void;
+   onClickWithValue?: (value: Value) => void;
+};
+
+TooltipComponent.item = forwardRef(function Item<Value>(
+   { icon, text, description, isActive, onClick, onClickWithValue, value }: TooltipItemProps<Value>,
+   ref: React.ForwardedRef<HTMLDivElement>,
+) {
+   const theme = useTheme();
+
+   return (
+      <Div.row
+         alignItems="center"
+         gap={theme.styles.space}
+         backgroundColor={theme.colors.backgroundContent}
+         filterHover="brightness(0.9)"
+         paddingBlock={theme.styles.gap}
+         paddingInline={theme.styles.space}
+         cursor="pointer"
+         value={value}
+         onClick={onClick}
+         onClickWithValue={onClickWithValue}
+         ref={ref}
+      >
+         {icon && <Icon name={icon} color={!isActive ? theme.colors.textSecondary : undefined} />}
+
+         <Div.column flex={1} gap={theme.styles.gap / 2}>
+            <Text fontWeight={isActive ? 700 : undefined}>{text}</Text>
+            {description && (
+               <Text fontSize={14} color={theme.colors.textSecondary}>
+                  {description}
+               </Text>
+            )}
+         </Div.column>
+      </Div.row>
+   );
+}) as TooltipComponent["item"];
+
+TooltipComponent.divider = forwardRef(function DividerComponent(props, ref) {
+   const theme = useTheme();
+
+   return <Divider.horizontal marginBlock={theme.styles.gap} {...props} ref={ref} />;
+}) as TooltipComponent["divider"];
+
+type TooltipSectionTitleProps = OmitProps<TextProps, "children"> & {
+   text?: string;
+};
+
+TooltipComponent.sectionTitle = forwardRef(function SectionTitle({ text, ...props }, ref) {
+   const theme = useTheme();
+
+   return (
+      <Text
+         fontSize={12}
+         fontWeight={700}
+         textTransform="uppercase"
+         marginBlock={theme.styles.gap / 2}
+         marginInline={theme.styles.space}
+         {...props}
+         ref={ref}
+      >
+         {text}
+      </Text>
+   );
+}) as TooltipComponent["sectionTitle"];
+
+const Tooltip = memo(TooltipComponent) as any as typeof TooltipComponent & {
+   item: typeof TooltipComponent.item;
+   divider: typeof TooltipComponent.divider;
+   sectionTitle: typeof TooltipComponent.sectionTitle;
+};
+
+Tooltip.item = TooltipComponent.item;
+Tooltip.divider = TooltipComponent.divider;
+Tooltip.sectionTitle = TooltipComponent.sectionTitle;
 
 export default Tooltip;

@@ -1000,10 +1000,15 @@ function App() {
                      <Div.row gap={theme.styles.gap} flexWrap="wrap">
                         <Tooltip
                            content={<Text>This is a tooltip that appears on hover</Text>}
+                           contentMinWidth={220}
                            position="top"
                            withArrow
                         >
                            <Button text="Hover me (top)" />
+                        </Tooltip>
+
+                        <Tooltip content="Hello" position="top" withArrow>
+                           <Button text="Hover me (top) 2" />
                         </Tooltip>
 
                         <Tooltip
@@ -1015,23 +1020,41 @@ function App() {
                                  <Text color={theme.colors.textSecondary}>Including multiple elements</Text>
                               </Div.column>
                            }
+                           contentMinWidth={220}
                            position="bottom"
                            withArrow
                         >
                            <Button text="Hover me (bottom)" />
                         </Tooltip>
 
-                        <Tooltip content={<Text>Left positioned tooltip</Text>} position="left" withArrow>
+                        <Tooltip
+                           content={
+                              <Text>Left positioned tooltip Left positioned tooltip Left positioned tooltip</Text>
+                           }
+                           contentMinWidth={220}
+                           position="left"
+                           withArrow
+                        >
                            <Button text="Hover me (left)" />
                         </Tooltip>
 
-                        <Tooltip content={<Text>Right positioned tooltip</Text>} position="right" withArrow>
+                        <Tooltip
+                           content={<Text>Right positioned tooltip</Text>}
+                           contentMinWidth={220}
+                           position="right"
+                           withArrow
+                        >
                            <Button text="Hover me (right)" />
                         </Tooltip>
                      </Div.row>
 
                      <Div.row gap={theme.styles.gap} flexWrap="wrap">
-                        <Tooltip content={<Text>This tooltip appears on click</Text>} position="top" trigger="click">
+                        <Tooltip
+                           content={<Text>This tooltip appears on click</Text>}
+                           contentMinWidth={220}
+                           position="top"
+                           trigger="click"
+                        >
                            <Button text="Click me (top)" />
                         </Tooltip>
 
@@ -1043,6 +1066,7 @@ function App() {
                                  <Button text="A button inside tooltip" marginTop={theme.styles.gap} />
                               </Div.column>
                            }
+                           contentMinWidth={220}
                            position="bottom"
                            trigger="click"
                            withArrow
@@ -1054,13 +1078,36 @@ function App() {
                      <Div.row gap={theme.styles.gap} flexWrap="wrap">
                         <Tooltip
                            content={<Text color={theme.colors.base}>Custom background color</Text>}
+                           contentMinWidth={220}
                            backgroundColor={theme.colors.success}
                         >
                            <Button text="Custom colors" />
                         </Tooltip>
 
-                        <Tooltip content={<Text>No arrow tooltip</Text>}>
+                        <Tooltip content={<Text>No arrow tooltip</Text>} contentMinWidth={220}>
                            <Button text="No arrow" />
+                        </Tooltip>
+                     </Div.row>
+
+                     <Div.row gap={theme.styles.gap} flexWrap="wrap">
+                        <Tooltip
+                           content={
+                              <>
+                                 <Tooltip.sectionTitle text="Section title" />
+                                 <Tooltip.item icon="filter" text="Hello there" />
+                                 <Tooltip.item icon="filter" text="Hello there" isActive />
+                                 <Tooltip.item icon="filter" text="Hello there" description="Something else" />
+                                 <Tooltip.divider />
+                                 <Tooltip.item text="Something else again" />
+                              </>
+                           }
+                           contentMinWidth={220}
+                           asContextMenu
+                           trigger="click"
+                           align="left"
+                           withArrow
+                        >
+                           <Image.profileImage letters="KV" cursor="pointer" />
                         </Tooltip>
                      </Div.row>
                   </Div.column>
