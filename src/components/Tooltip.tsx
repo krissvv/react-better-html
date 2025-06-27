@@ -157,6 +157,8 @@ export type TooltipProps = {
    /** @default "hover" */
    trigger?: "hover" | "click";
    content: React.ReactNode;
+   /** @default 220 */
+   contentMinWidth?: React.CSSProperties["minWidth"];
    withArrow?: boolean;
    backgroundColor?: string;
    onOpen?: () => void;
@@ -179,6 +181,7 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
       position = "bottom",
       trigger = "hover",
       content,
+      contentMinWidth = 220,
       withArrow,
       backgroundColor,
       onOpen,
@@ -189,14 +192,20 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
 ) {
    const theme = useTheme();
 
-   const containerRef = useRef<HTMLDivElement>(null);
    const triggerHolderRef = useRef<HTMLDivElement>(null);
    const contentRef = useRef<HTMLDivElement>(null);
+   const tooltipContainerRef = useRef<HTMLDivElement>(null);
 
    const closeTimerRef = useRef<number>(undefined);
 
    const [isOpen, setIsOpen] = useState<boolean>(false);
    const [isOpenLate, setIsOpenLate] = useState<boolean>(false);
+
+   const arrowSize = withArrow ? theme.styles.gap : 0;
+   const tooltipTriggerGap = theme.styles.gap / 2;
+   const outsideGap = theme.styles.gap / 2;
+
+   const totalGap = arrowSize + tooltipTriggerGap;
 
    const openTooltip = useCallback(() => {
       if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
@@ -204,8 +213,31 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
       setIsOpen(true);
       setIsOpenLate(true);
 
+      setTimeout(() => {
+         if (!tooltipContainerRef.current) return;
+         if (!contentRef.current) return;
+
+         const clientRects = tooltipContainerRef.current.getBoundingClientRect();
+
+         if (clientRects) {
+            const { width, height, x, y } = clientRects;
+
+            const topOutside = y < 0;
+            const bottomOutside = y + height > window.innerHeight;
+            const leftOutside = x < 0;
+            const rightOutside = x + width > window.innerWidth;
+
+            if (topOutside) contentRef.current.style.transform = `translateY(${y * -1 + outsideGap}px)`;
+            if (bottomOutside)
+               contentRef.current.style.transform = `translateY(${window.innerHeight - (y + height) - totalGap}px)`;
+            if (leftOutside) contentRef.current.style.transform = `translateX(${x * -1 + outsideGap}px)`;
+            if (rightOutside)
+               contentRef.current.style.transform = `translateX(${window.innerWidth - (x + width) - totalGap}px)`;
+         }
+      }, 1);
+
       onOpen?.();
-   }, [onOpen]);
+   }, [onOpen, outsideGap, totalGap]);
    const closeTooltip = useCallback(() => {
       setIsOpen(false);
       closeTimerRef.current = setTimeout(() => setIsOpenLate(false), 300);
@@ -264,19 +296,8 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
       [isOpen, openTooltip, closeTooltip],
    );
 
-   const arrowSize = withArrow ? theme.styles.gap : 0;
-   const tooltipTriggerGap = theme.styles.gap / 2;
-
-   const totalGap = arrowSize + tooltipTriggerGap;
-
    return (
-      <Div
-         position="relative"
-         onClick={onClickHolder}
-         onMouseEnter={onMouseEnter}
-         onMouseLeave={onMouseLeave}
-         ref={containerRef}
-      >
+      <Div position="relative" onClick={onClickHolder} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
          <Div width="100%" ref={triggerHolderRef}>
             {children}
          </Div>
@@ -288,11 +309,12 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
             arrowSize={arrowSize}
             gap={tooltipTriggerGap}
             isOpen={isOpen}
+            ref={tooltipContainerRef}
          >
             {(isOpen || isOpenLate) && (
                <Div.box
                   position="relative"
-                  minWidth="220px"
+                  minWidth={contentMinWidth}
                   backgroundColor={backgroundColor ?? theme.colors.backgroundContent}
                   boxShadow="0px 10px 20px #00000020"
                   ref={contentRef}
