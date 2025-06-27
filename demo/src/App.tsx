@@ -1011,6 +1011,10 @@ function App() {
                            <Button text="Hover me (top) 2" />
                         </Tooltip>
 
+                        <Tooltip content="Hello" position="top" withArrow isSmall>
+                           <Button text="Hover me (top) 2 small" />
+                        </Tooltip>
+
                         <Tooltip
                            content={
                               <Div.column gap={theme.styles.gap}>
@@ -1082,6 +1086,15 @@ function App() {
                            backgroundColor={theme.colors.success}
                         >
                            <Button text="Custom colors" />
+                        </Tooltip>
+
+                        <Tooltip
+                           content={<Text color={theme.colors.base}>Custom background color</Text>}
+                           contentMinWidth={220}
+                           backgroundColor={theme.colors.success}
+                           withArrow
+                        >
+                           <Button text="Custom colors arrow" />
                         </Tooltip>
 
                         <Tooltip content={<Text>No arrow tooltip</Text>} contentMinWidth={220}>

@@ -1,16 +1,16 @@
-import { memo, useCallback, useRef, useState, useEffect, forwardRef, useImperativeHandle } from "react";
+import { memo, useCallback, useRef, useState, useEffect, forwardRef, useImperativeHandle, useMemo } from "react";
 import styled, { css, RuleSet } from "styled-components";
 
 import { Theme } from "../types/theme";
 import { ComponentPaddingProps, ComponentPropWithRef } from "../types/components";
+import { IconName } from "../types/icon";
+import { AnyOtherString, OmitProps } from "../types/app";
 
-import Div from "./Div";
+import Div, { DivProps } from "./Div";
 import Text, { TextProps } from "./Text";
 import Divider, { HorizontalDividerProps } from "./Divider";
-import { useTheme } from "./BetterHtmlProvider";
-import { AnyOtherString, OmitProps } from "../types/app";
-import { IconName } from "../types/icon";
 import Icon from "./Icon";
+import { useTheme } from "./BetterHtmlProvider";
 
 type TooltipContainerProps = {
    theme: Theme;
@@ -20,14 +20,6 @@ type TooltipContainerProps = {
    arrowSize?: number;
    isOpen: boolean;
    gap: number;
-};
-
-type ArrowProps = {
-   theme: Theme;
-   position: TooltipPosition;
-   align?: TooltipAlign;
-   isOpen: boolean;
-   size: number;
 };
 
 const tooltipContainerStyle = (props: TooltipContainerProps): Record<TooltipPosition, RuleSet<object>> => ({
@@ -92,53 +84,6 @@ const tooltipPositionStyle = (
    },
 });
 
-const arrowStyle = (props: ArrowProps): Record<TooltipPosition, RuleSet<object>> => ({
-   top: css`
-      bottom: -${props.size - 1}px;
-      ${props.align === "center"
-         ? "left:  50%;"
-         : props.align === "left"
-         ? "left: var(--arrow-side-space);"
-         : "right: var(--arrow-side-space);"}
-      border-top-color: var(--color);
-      border-bottom: 0;
-      ${props.align === "center" ? "transform: translateX(-50%);" : ""}
-   `,
-   bottom: css`
-      top: -${props.size - 1}px;
-      ${props.align === "center"
-         ? "left:  50%;"
-         : props.align === "left"
-         ? "left: var(--arrow-side-space);"
-         : "right: var(--arrow-side-space);"}
-      border-bottom-color: var(--color);
-      border-top: 0;
-      ${props.align === "center" ? "transform: translateX(-50%);" : ""}
-   `,
-   left: css`
-      right: -${props.size - 1}px;
-      ${props.align === "center"
-         ? "top: 50%;"
-         : props.align === "top"
-         ? "top: var(--arrow-side-space);"
-         : "bottom: var(--arrow-side-space);"}
-      border-left-color: var(--color);
-      border-right: 0;
-      ${props.align === "center" ? "transform: translateY(-50%);" : ""}
-   `,
-   right: css`
-      left: -${props.size - 1}px;
-      ${props.align === "center"
-         ? "top: 50%;"
-         : props.align === "top"
-         ? "top: var(--arrow-side-space);"
-         : "bottom: var(--arrow-side-space);"}
-      border-right-color: var(--color);
-      border-left: 0;
-      ${props.align === "center" ? "transform: translateY(-50%);" : ""}
-   `,
-});
-
 const TooltipContainer = styled.div.withConfig({
    shouldForwardProp: (prop) =>
       !["theme", "position", "align", "withArrow", "arrowSize", "isOpen", "gap"].includes(prop),
@@ -157,26 +102,112 @@ const TooltipContainer = styled.div.withConfig({
          : tooltipPositionStyle(props)[props.position].closed}
 `;
 
-const Arrow = styled.div.withConfig({
-   shouldForwardProp: (prop) => !["theme", "position", "align", "isOpen", "size"].includes(prop),
-})<ArrowProps>`
-   --color: ${(props) => props.theme.colors.backgroundContent};
-   --arrow-side-space: ${(props) => props.theme.styles.borderRadius}px;
-
-   position: absolute;
-   width: 0;
-   height: 0;
-   border: ${(props) => props.size}px solid transparent;
-   opacity: ${(props) => (props.isOpen ? 1 : 0)};
-   pointer-events: ${(props) => (props.isOpen ? "auto" : "none")};
-   transition: ${(props) => props.theme.styles.transition};
-   z-index: 1;
-
-   ${(props) => arrowStyle(props)[props.position]}
-`;
-
 type TooltipPosition = "top" | "bottom" | "left" | "right";
 type TooltipAlign = "left" | "center" | "right" | "top" | "bottom";
+
+type ArrowProps = {
+   position: TooltipPosition;
+   align: TooltipAlign;
+   sideSpace: number;
+   size: number;
+   color: string;
+   isOpen: boolean;
+};
+
+const arrowStyle = (props: ArrowProps, borderWidth?: number): Record<TooltipPosition, DivProps> => ({
+   top: {
+      borderTopColor: props.color,
+      borderBottom: 0,
+      top: borderWidth ? -props.size : undefined,
+      left: borderWidth
+         ? -props.size + borderWidth * 2
+         : props.align === "center"
+         ? "50%"
+         : props.align === "left"
+         ? props.sideSpace
+         : undefined,
+      right: !borderWidth && props.align === "right" ? props.sideSpace : undefined,
+      bottom: -props.size + 1,
+      transform: !borderWidth && props.align === "center" ? "translateX(-50%)" : undefined,
+   },
+   bottom: {
+      borderBottomColor: props.color,
+      borderTop: 0,
+      top: borderWidth ? borderWidth * 2 : -props.size + 1,
+      left: borderWidth
+         ? -props.size + borderWidth * 2
+         : props.align === "center"
+         ? "50%"
+         : props.align === "left"
+         ? props.sideSpace
+         : undefined,
+      right: !borderWidth && props.align === "right" ? props.sideSpace : undefined,
+      transform: !borderWidth && props.align === "center" ? "translateX(-50%);" : undefined,
+   },
+   left: {
+      borderLeftColor: props.color,
+      borderRight: 0,
+      top: borderWidth
+         ? -props.size + borderWidth * 2
+         : props.align === "center"
+         ? "50%"
+         : props.align === "top"
+         ? props.sideSpace
+         : undefined,
+      bottom: !borderWidth && props.align === "bottom" ? props.sideSpace : undefined,
+      left: borderWidth ? -props.size : undefined,
+      right: -props.size + 1,
+      transform: !borderWidth && props.align === "center" ? "translateY(-50%)" : undefined,
+   },
+   right: {
+      borderRightColor: props.color,
+      borderLeft: 0,
+      top: borderWidth
+         ? -props.size + borderWidth * 2
+         : props.align === "center"
+         ? "50%"
+         : props.align === "top"
+         ? props.sideSpace
+         : undefined,
+      bottom: !borderWidth && props.align === "bottom" ? props.sideSpace : undefined,
+      left: borderWidth ? borderWidth * 2 : -props.size + 1,
+      transform: !borderWidth && props.align === "center" ? "translateY(-50%);" : undefined,
+   },
+});
+
+const Arrow = memo(function Arrow(props: ArrowProps) {
+   const theme = useTheme();
+
+   const { position, size } = props;
+
+   const outerProps = useMemo<ArrowProps>(
+      () => ({
+         ...props,
+         color: theme.colors.border,
+      }),
+      [props, theme],
+   );
+
+   const borderWidth = 1;
+
+   return (
+      <Div
+         position="absolute"
+         width={0}
+         height={0}
+         border={`${size}px solid transparent`}
+         {...arrowStyle(outerProps)[position]}
+      >
+         <Div
+            position="absolute"
+            width={0}
+            height={0}
+            border={`${size - borderWidth * 2}px solid transparent`}
+            {...arrowStyle(props, borderWidth)[position]}
+         />
+      </Div>
+   );
+});
 
 export type TooltipProps = {
    /** @default "bottom" */
@@ -189,6 +220,7 @@ export type TooltipProps = {
    contentWidth?: React.CSSProperties["width"];
    contentMinWidth?: React.CSSProperties["minWidth"];
    withArrow?: boolean;
+   isSmall?: boolean;
    backgroundColor?: string;
    asContextMenu?: boolean;
    onOpen?: () => void;
@@ -218,6 +250,7 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
       contentWidth,
       contentMinWidth,
       withArrow,
+      isSmall,
       backgroundColor,
       asContextMenu,
       onOpen,
@@ -239,10 +272,10 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
    const [isOpenLate, setIsOpenLate] = useState<boolean>(false);
 
    const arrowSize = withArrow ? theme.styles.gap : 0;
-   const tooltipTriggerGap = theme.styles.gap / 2;
-   const outsideGap = theme.styles.gap / 2;
+   const gap = theme.styles.gap / 2;
 
-   const totalGap = arrowSize + tooltipTriggerGap;
+   const outsideScreenGap = theme.styles.gap / 2;
+   const totalGap = arrowSize + gap;
 
    const openTooltip = useCallback(() => {
       if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
@@ -264,17 +297,17 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
             const leftOutside = x < 0;
             const rightOutside = x + width > window.innerWidth;
 
-            if (topOutside) contentRef.current.style.transform = `translateY(${y * -1 + outsideGap}px)`;
+            if (topOutside) contentRef.current.style.transform = `translateY(${y * -1 + outsideScreenGap}px)`;
             if (bottomOutside)
                contentRef.current.style.transform = `translateY(${window.innerHeight - (y + height) - totalGap}px)`;
-            if (leftOutside) contentRef.current.style.transform = `translateX(${x * -1 + outsideGap}px)`;
+            if (leftOutside) contentRef.current.style.transform = `translateX(${x * -1 + outsideScreenGap}px)`;
             if (rightOutside)
                contentRef.current.style.transform = `translateX(${window.innerWidth - (x + width) - totalGap}px)`;
          }
       }, 1);
 
       onOpen?.();
-   }, [onOpen, outsideGap, totalGap]);
+   }, [onOpen, outsideScreenGap, totalGap]);
    const closeTooltip = useCallback(() => {
       setIsOpen(false);
       closeTimerRef.current = setTimeout(() => setIsOpenLate(false), 300);
@@ -345,8 +378,9 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
             align={align}
             withArrow={withArrow}
             arrowSize={arrowSize}
-            gap={tooltipTriggerGap}
+            gap={gap}
             isOpen={isOpen}
+            role="tooltip"
             ref={tooltipContainerRef}
          >
             {(isOpen || isOpenLate) && (
@@ -357,7 +391,8 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
                      minWidth={contentMinWidth}
                      backgroundColor={backgroundColor ?? theme.colors.backgroundContent}
                      boxShadow="0px 10px 20px #00000020"
-                     paddingInline={asContextMenu ? 0 : theme.styles.space}
+                     paddingBlock={isSmall ? theme.styles.gap / 2 : theme.styles.gap}
+                     paddingInline={asContextMenu ? 0 : isSmall ? theme.styles.space / 2 : theme.styles.space}
                      overflow={asContextMenu ? "hidden" : undefined}
                      {...props}
                   >
@@ -368,14 +403,21 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
                      position="absolute"
                      width={position === "left" || position === "right" ? totalGap : "100%"}
                      height={position === "top" || position === "bottom" ? totalGap : "100%"}
-                     top={position === "top" ? "calc(100% + 1px)" : position === "bottom" ? undefined : 0}
-                     bottom={position === "bottom" ? "calc(100% + 1px)" : position === "top" ? undefined : 0}
-                     left={position === "left" ? "calc(100% + 1px)" : position === "right" ? undefined : 0}
-                     right={position === "right" ? "calc(100% + 1px)" : position === "left" ? undefined : 0}
+                     top={position === "top" ? "100%" : position === "bottom" ? undefined : 0}
+                     bottom={position === "bottom" ? "100%" : position === "top" ? undefined : 0}
+                     left={position === "left" ? "100%" : position === "right" ? undefined : 0}
+                     right={position === "right" ? "100%" : position === "left" ? undefined : 0}
                   />
 
                   {withArrow && (
-                     <Arrow theme={theme} position={position} align={align} isOpen={isOpen} size={arrowSize} />
+                     <Arrow
+                        position={position}
+                        align={align}
+                        sideSpace={theme.styles.borderRadius}
+                        size={arrowSize}
+                        color={backgroundColor ?? theme.colors.backgroundContent}
+                        isOpen={isOpen}
+                     />
                   )}
                </Div>
             )}
