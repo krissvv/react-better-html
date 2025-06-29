@@ -1126,6 +1126,7 @@ function App() {
                            trigger="click"
                            align="left"
                            withArrow
+                           isTabAccessed
                         >
                            <Image.profileImage letters="KV" cursor="pointer" />
                         </Tooltip>

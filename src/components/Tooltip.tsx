@@ -223,6 +223,7 @@ export type TooltipProps = {
    isSmall?: boolean;
    backgroundColor?: string;
    asContextMenu?: boolean;
+   isTabAccessed?: boolean;
    onOpen?: () => void;
    onClose?: () => void;
    children: React.ReactNode;
@@ -253,6 +254,7 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
       isSmall,
       backgroundColor,
       asContextMenu,
+      isTabAccessed,
       onOpen,
       onClose,
       children,
@@ -367,7 +369,7 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
 
    return (
       <Div position="relative" onClick={onClickHolder} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-         <Div width="100%" ref={triggerHolderRef}>
+         <Div width="100%" isTabAccessed={isTabAccessed} ref={triggerHolderRef}>
             {children}
          </Div>
 
