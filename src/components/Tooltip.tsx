@@ -454,6 +454,7 @@ TooltipComponent.item = forwardRef(function Item<Value>(
          paddingBlock={theme.styles.gap}
          paddingInline={theme.styles.space}
          cursor="pointer"
+         isTabAccessed
          id={id}
          value={value}
          onClick={onClick}
