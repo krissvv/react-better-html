@@ -2,7 +2,7 @@ import { memo, useCallback, useRef, useState, useEffect, forwardRef, useImperati
 import styled, { css, RuleSet } from "styled-components";
 
 import { Theme } from "../types/theme";
-import { ComponentPaddingProps, ComponentPropWithRef } from "../types/components";
+import { ComponentPropWithRef } from "../types/components";
 import { IconName } from "../types/icon";
 import { AnyOtherString, OmitProps } from "../types/app";
 
@@ -226,7 +226,7 @@ export type TooltipProps = {
    onOpen?: () => void;
    onClose?: () => void;
    children: React.ReactNode;
-} & ComponentPaddingProps;
+};
 
 export type TooltipRef = {
    isOpen: boolean;
@@ -256,7 +256,6 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
       onOpen,
       onClose,
       children,
-      ...props
    }: TooltipProps,
    ref: React.ForwardedRef<TooltipRef>,
 ) {
@@ -394,7 +393,6 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
                      paddingBlock={isSmall ? theme.styles.gap / 2 : theme.styles.gap}
                      paddingInline={asContextMenu ? 0 : isSmall ? theme.styles.space / 2 : theme.styles.space}
                      overflow={asContextMenu ? "hidden" : undefined}
-                     {...props}
                   >
                      {content}
                   </Div.box>
@@ -407,6 +405,8 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
                      bottom={position === "bottom" ? "100%" : position === "top" ? undefined : 0}
                      left={position === "left" ? "100%" : position === "right" ? undefined : 0}
                      right={position === "right" ? "100%" : position === "left" ? undefined : 0}
+                     borderTopLeftRadius={999}
+                     borderTopRightRadius={999}
                   />
 
                   {withArrow && (
@@ -432,12 +432,13 @@ type TooltipItemProps<Value = unknown> = {
    description?: string;
    isActive?: boolean;
    value?: Value;
+   id?: string;
    onClick?: () => void;
    onClickWithValue?: (value: Value) => void;
 };
 
 TooltipComponent.item = forwardRef(function Item<Value>(
-   { icon, text, description, isActive, onClick, onClickWithValue, value }: TooltipItemProps<Value>,
+   { icon, text, description, isActive, value, id, onClick, onClickWithValue }: TooltipItemProps<Value>,
    ref: React.ForwardedRef<HTMLDivElement>,
 ) {
    const theme = useTheme();
@@ -451,6 +452,7 @@ TooltipComponent.item = forwardRef(function Item<Value>(
          paddingBlock={theme.styles.gap}
          paddingInline={theme.styles.space}
          cursor="pointer"
+         id={id}
          value={value}
          onClick={onClick}
          onClickWithValue={onClickWithValue}
