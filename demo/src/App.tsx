@@ -743,6 +743,11 @@ function App() {
                         columns={[
                            {
                               type: "checkbox",
+                              getToggleInputProps: {
+                                 onChange: (checked, value) => {
+                                    console.log(checked, value);
+                                 },
+                              },
                            },
                            {
                               type: "text",
@@ -824,7 +829,9 @@ function App() {
                            {
                               type: "image",
                               label: "Image",
-                              keyName: "image",
+                              getImageProps: (item) => ({
+                                 src: item.image,
+                              }),
                            },
                            {
                               type: "text",

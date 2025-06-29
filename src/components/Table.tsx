@@ -20,7 +20,7 @@ import { useForm, useMediaQuery } from "../utils/hooks";
 import Div from "./Div";
 import ToggleInput, { ToggleInputProps } from "./ToggleInput";
 import Image, { ImageProps } from "./Image";
-import Text from "./Text";
+import Text, { TextProps } from "./Text";
 import Loader from "./Loader";
 import Button from "./Button";
 import Modal, { ModalRef } from "./Modal";
@@ -178,6 +178,7 @@ type TableFilterData =
 type TextColumn<DataItem> = {
    type: "text";
    keyName?: keyof DataItem;
+   getTextProps?: ((item: DataItem, index: number) => TextProps) | TextProps;
    format?: (item: DataItem, index: number) => string;
 };
 
@@ -188,14 +189,12 @@ type ElementColumn<DataItem> = {
 
 type ImageColumn<DataItem> = {
    type: "image";
-   keyName?: keyof DataItem;
-   getImageSrc?: (item: DataItem, index: number) => string;
-   imageProps?: ImageProps;
+   getImageProps?: ((item: DataItem, index: number) => ImageProps) | ImageProps;
 };
 
-type CheckboxColumn = {
+type CheckboxColumn<DataItem> = {
    type: "checkbox";
-   toggleInputProps?: ToggleInputProps<boolean>;
+   getToggleInputProps?: ((item: DataItem, index: number) => ToggleInputProps<DataItem>) | ToggleInputProps<DataItem>;
 };
 
 type ExpandColumn<DataItem> = {
@@ -228,7 +227,13 @@ export type TableColumn<DataItem> = {
    minWidth?: string | number;
    maxWidth?: string | number;
    align?: "left" | "center" | "right";
-} & (TextColumn<DataItem> | ElementColumn<DataItem> | ImageColumn<DataItem> | CheckboxColumn | ExpandColumn<DataItem>) &
+} & (
+   | TextColumn<DataItem>
+   | ElementColumn<DataItem>
+   | ImageColumn<DataItem>
+   | CheckboxColumn<DataItem>
+   | ExpandColumn<DataItem>
+) &
    (NumberFilter<DataItem> | DateFilter<DataItem> | ListFilter<DataItem>);
 
 export type TableProps<DataItem> = {
@@ -340,8 +345,12 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
          switch (column.type) {
             case "text": {
                const value = column.keyName ? item[column.keyName] : undefined;
+               const textProps =
+                  (typeof column.getTextProps === "function"
+                     ? column.getTextProps?.(item, itemIndex)
+                     : column.getTextProps) ?? {};
 
-               return column.format?.(item, itemIndex) ?? String(value ?? "");
+               return <Text {...textProps}>{column.format?.(item, itemIndex) ?? String(value ?? "")}</Text>;
             }
 
             case "element": {
@@ -349,23 +358,26 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
             }
 
             case "image": {
-               const src: string | undefined =
-                  column.getImageSrc?.(item, itemIndex) ??
-                  (column.keyName ? (item[column.keyName] as string) : undefined);
+               const imageProps =
+                  (typeof column.getImageProps === "function"
+                     ? column.getImageProps?.(item, itemIndex)
+                     : column.getImageProps) ?? {};
 
-               return (
-                  <Image src={src} width="100%" borderRadius={theme.styles.borderRadius / 2} {...column.imageProps} />
-               );
+               return <Image width="100%" borderRadius={theme.styles.borderRadius / 2} {...imageProps} />;
             }
 
             case "checkbox": {
-               const { onChange, ...toggleInputProps } = column.toggleInputProps ?? {};
+               const { onChange, ...toggleInputProps } =
+                  (typeof column.getToggleInputProps === "function"
+                     ? column.getToggleInputProps?.(item, itemIndex)
+                     : column.getToggleInputProps) ?? {};
 
                const checkedValue = checkedItems[itemIndex];
 
                return (
                   <ToggleInput.checkbox
                      checked={checkedValue}
+                     value={item}
                      onChange={(checked, value) => {
                         setCheckedItems((oldValue) =>
                            oldValue.map((isChecked, internalIndex) =>
