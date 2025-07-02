@@ -436,17 +436,32 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
 
 type TooltipItemProps<Value = unknown> = {
    icon?: IconName | AnyOtherString;
+   iconColor?: string;
    text?: string;
+   textColor?: string;
    description?: string;
    isActive?: boolean;
    value?: Value;
    id?: string;
+   disabled?: boolean;
    onClick?: () => void;
    onClickWithValue?: (value: Value) => void;
 };
 
 TooltipComponent.item = forwardRef(function Item<Value>(
-   { icon, text, description, isActive, value, id, onClick, onClickWithValue }: TooltipItemProps<Value>,
+   {
+      icon,
+      iconColor,
+      text,
+      textColor,
+      description,
+      isActive,
+      value,
+      id,
+      disabled,
+      onClick,
+      onClickWithValue,
+   }: TooltipItemProps<Value>,
    ref: React.ForwardedRef<HTMLDivElement>,
 ) {
    const theme = useTheme();
@@ -456,21 +471,24 @@ TooltipComponent.item = forwardRef(function Item<Value>(
          alignItems="center"
          gap={theme.styles.space}
          backgroundColor={theme.colors.backgroundContent}
-         filterHover="brightness(0.9)"
+         filterHover={!disabled ? "brightness(0.9)" : "brightness(0.94)"}
          paddingBlock={theme.styles.gap}
          paddingInline={theme.styles.space}
-         cursor="pointer"
+         cursor={disabled ? "not-allowed" : "pointer"}
          isTabAccessed
          id={id}
+         opacity={disabled ? 0.4 : undefined}
          value={value}
-         onClick={onClick}
-         onClickWithValue={onClickWithValue}
+         onClick={!disabled ? onClick : undefined}
+         onClickWithValue={!disabled ? onClickWithValue : undefined}
          ref={ref}
       >
-         {icon && <Icon name={icon} color={!isActive ? theme.colors.textSecondary : undefined} />}
+         {icon && <Icon name={icon} color={iconColor ?? (!isActive ? theme.colors.textSecondary : undefined)} />}
 
          <Div.column flex={1} gap={theme.styles.gap / 2}>
-            <Text fontWeight={isActive ? 700 : undefined}>{text}</Text>
+            <Text fontWeight={isActive ? 700 : undefined} color={textColor ?? theme.colors.textPrimary}>
+               {text}
+            </Text>
             {description && (
                <Text fontSize={14} color={theme.colors.textSecondary}>
                   {description}

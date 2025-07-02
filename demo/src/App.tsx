@@ -1149,6 +1149,7 @@ function App() {
                                  <Tooltip.item icon="filter" text="Hello there" description="Something else" />
                                  <Tooltip.divider />
                                  <Tooltip.item text="Something else again" />
+                                 <Tooltip.item text="A one disbaled" disabled />
                               </>
                            }
                            contentMinWidth={220}
