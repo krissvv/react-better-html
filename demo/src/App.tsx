@@ -828,6 +828,27 @@ function App() {
                               align: "center",
                               width: 70,
                            },
+                           {
+                              type: "element",
+                              width: 50,
+                              clickStopPropagation: true,
+                              render: () => (
+                                 <Tooltip
+                                    content={
+                                       <>
+                                          <Tooltip.item text="Hello" />
+                                       </>
+                                    }
+                                    contentMinWidth={200}
+                                    asContextMenu
+                                    withArrow
+                                    align="right"
+                                    trigger="click"
+                                 >
+                                    <Button.icon icon="filter" />
+                                 </Tooltip>
+                              ),
+                           },
                         ]}
                         data={data2}
                         onClickRow={(item) => console.log(item.id)}

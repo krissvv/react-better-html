@@ -368,8 +368,14 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
    );
 
    return (
-      <Div position="relative" onClick={onClickHolder} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-         <Div width="100%" isTabAccessed={isTabAccessed} ref={triggerHolderRef}>
+      <Div
+         position="relative"
+         width="fit-content"
+         onClick={onClickHolder}
+         onMouseEnter={onMouseEnter}
+         onMouseLeave={onMouseLeave}
+      >
+         <Div width="fit-content" isTabAccessed={isTabAccessed} ref={triggerHolderRef}>
             {children}
          </Div>
 

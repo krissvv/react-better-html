@@ -16,6 +16,7 @@ import { ColorTheme, Theme } from "../types/theme";
 import { ComponentMarginProps, ComponentPropWithRef } from "../types/components";
 
 import { useForm, useMediaQuery } from "../utils/hooks";
+import { darkenColor } from "../utils/colorManipulation";
 
 import Div from "./Div";
 import ToggleInput, { ToggleInputProps } from "./ToggleInput";
@@ -86,7 +87,10 @@ const TableStyledComponent = styled.table.withConfig({
                  transition: ${props.theme.styles.transition};
 
                  &:not(.isHeader):not(.isFooter):not(.withoutHover):hover {
-                    filter: brightness(${props.colorTheme === "light" ? 0.95 : 0.7});
+                    background-color: ${darkenColor(
+                       props.theme.colors.backgroundContent,
+                       props.colorTheme === "light" ? 0.05 : 0.15,
+                    )};
                  }
               `
             : ""}
@@ -229,6 +233,7 @@ export type TableColumn<DataItem> = {
    minWidth?: string | number;
    maxWidth?: string | number;
    align?: "left" | "center" | "right";
+   clickStopPropagation?: boolean;
 } & (
    | TextColumn<DataItem>
    | ElementColumn<DataItem>
@@ -340,7 +345,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
       },
    });
 
-   const expandRow = useMemo(() => columns.find((column) => column.type === "expand"), [columns]);
+   const expandColumn = useMemo(() => columns.find((column) => column.type === "expand"), [columns]);
 
    const renderCellContent = useCallback(
       (column: (typeof columns)[number], item: DataItem, itemIndex: number) => {
@@ -380,6 +385,9 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                   <ToggleInput.checkbox
                      checked={checkedValue}
                      value={item}
+                     onClick={(event) => {
+                        event.stopPropagation();
+                     }}
                      onChange={(checked, value) => {
                         setCheckedItems((oldValue) =>
                            oldValue.map((isChecked, internalIndex) =>
@@ -413,10 +421,10 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
    );
    const onClickRowElement = useCallback(
       (item: DataItem, index: number) => {
-         if (expandRow) {
+         if (expandColumn) {
             setExpandedRows((oldValue) => {
                if (oldValue[index] === undefined) {
-                  const newValue = expandRow.onlyOneExpanded ? [] : [...oldValue];
+                  const newValue = expandColumn.onlyOneExpanded ? [] : [...oldValue];
                   newValue[index] = true;
 
                   return newValue;
@@ -425,7 +433,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
             });
          } else onClickRow?.(item, index);
       },
-      [onClickRow, expandRow],
+      [onClickRow, expandColumn],
    );
    const onClickAllCheckboxesElement = useCallback(
       (checked: boolean) => {
@@ -742,7 +750,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
          >
             <TableStyledComponent
                isStriped={isStriped}
-               withHover={onClickRow !== undefined || expandRow !== undefined}
+               withHover={onClickRow !== undefined || expandColumn !== undefined}
                withStickyHeader={withStickyHeader}
                colorTheme={colorTheme}
                theme={theme}
@@ -814,12 +822,15 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                      dataAfterPagination.map((item, rowIndex) => (
                         <Fragment key={JSON.stringify(item) + rowIndex}>
                            <tr
-                              className={onClickRow || expandRow ? "isClickable" : undefined}
+                              className={onClickRow || expandColumn ? "isClickable" : undefined}
                               onClick={() => onClickRowElement(item, rowIndex)}
                            >
                               {columns.map((column, colIndex) => (
                                  <TdStyledComponent
                                     textAlign={column.align}
+                                    onClick={(event) => {
+                                       if (column.clickStopPropagation) event.stopPropagation();
+                                    }}
                                     key={column.type + column.label + colIndex}
                                  >
                                     {renderCellContent(column, item, rowIndex)}
@@ -984,16 +995,14 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                            <Label text="Presets" />
 
                            <Div.row alignItems="center" gap={theme.styles.gap}>
-                              {openedFilterColumn.presets.map((preset) => {
-                                 return (
-                                    <Button.secondary
-                                       text={filterPresetsText[preset]}
-                                       value={preset}
-                                       onClickWithValue={onClickFilterPreset}
-                                       key={preset}
-                                    />
-                                 );
-                              })}
+                              {openedFilterColumn.presets.map((preset) => (
+                                 <Button.secondary
+                                    text={filterPresetsText[preset]}
+                                    value={preset}
+                                    onClickWithValue={onClickFilterPreset}
+                                    key={preset}
+                                 />
+                              ))}
                            </Div.row>
                         </Div.column>
                      )}
