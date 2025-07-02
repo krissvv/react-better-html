@@ -14,6 +14,7 @@ import styled, { css } from "styled-components";
 
 import { ColorTheme, Theme } from "../types/theme";
 import { ComponentMarginProps, ComponentPropWithRef } from "../types/components";
+import { OmitProps } from "../types/app";
 
 import { useForm, useMediaQuery } from "../utils/hooks";
 import { darkenColor } from "../utils/colorManipulation";
@@ -164,6 +165,12 @@ type FilterPreset =
    | "nextMonth"
    | "nextYear";
 
+type ListFilterValue = {
+   label?: string;
+   value: string;
+   count: number;
+};
+
 type TableFilterData =
    | {
         type: "number";
@@ -224,7 +231,7 @@ type DateFilter<DataItem> = {
 type ListFilter<DataItem> = {
    filter?: "list";
    withTotalNumber?: boolean;
-   getValueForList?: (item: DataItem) => string;
+   getValueForList?: (item: DataItem) => OmitProps<ListFilterValue, "count">;
 };
 
 export type TableColumn<DataItem> = {
@@ -627,7 +634,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                   if (filter.max !== undefined && maxDate && itemValue > maxDate) return false;
                } else if (column.filter === "list" && filter.type === "list") {
                   const itemValue: string =
-                     column.getValueForList?.(item) ??
+                     column.getValueForList?.(item).value ??
                      (column.type === "text" && column.keyName ? String(item[column.keyName]) : "");
 
                   if (!filter.list?.includes(itemValue)) return false;
@@ -650,40 +657,41 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
    const everythingIsChecked = useMemo<boolean>(() => {
       return checkedItems.every((checked) => checked) && checkedItems.length === data.length;
    }, [data, checkedItems]);
-   const possibleFilterListValues = useMemo<{ value: string; count: number }[]>(() => {
+   const possibleFilterListValues = useMemo<ListFilterValue[]>(() => {
       if (!openedFilterColumn) return [];
 
-      return data.reduce(
-         (previousValue, currentValue) => {
-            const value: string | undefined =
-               openedFilterColumn.type === "text" && openedFilterColumn.keyName
-                  ? String(currentValue[openedFilterColumn.keyName])
-                  : undefined;
+      return data.reduce((previousValue, currentValue) => {
+         const valueFromList =
+            openedFilterColumn.filter === "list" && openedFilterColumn.getValueForList
+               ? openedFilterColumn.getValueForList(currentValue)
+               : undefined;
 
-            if (value !== undefined) {
-               if (previousValue.some((item) => item.value === value)) {
-                  previousValue = previousValue.map((item) =>
-                     item.value === value
-                        ? {
-                             ...item,
-                             count: item.count + 1,
-                          }
-                        : item,
-                  );
-               } else
-                  previousValue.push({
-                     value,
-                     count: 1,
-                  });
-            }
+         const value: string | undefined = valueFromList
+            ? valueFromList.value
+            : openedFilterColumn.type === "text" && openedFilterColumn.keyName
+            ? String(currentValue[openedFilterColumn.keyName])
+            : undefined;
 
-            return previousValue;
-         },
-         [] as {
-            value: string;
-            count: number;
-         }[],
-      );
+         if (value !== undefined) {
+            if (previousValue.some((item) => item.value === value)) {
+               previousValue = previousValue.map((item) =>
+                  item.value === value
+                     ? {
+                          ...item,
+                          count: item.count + 1,
+                       }
+                     : item,
+               );
+            } else
+               previousValue.push({
+                  label: valueFromList ? valueFromList.label : value,
+                  value,
+                  count: 1,
+               });
+         }
+
+         return previousValue;
+      }, [] as ListFilterValue[]);
    }, [data, openedFilterColumn]);
 
    const pageCountInternal = pageCount ?? (pageSize !== undefined ? Math.ceil(dataAfterFilter.length / pageSize) : 1);
@@ -1043,7 +1051,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                                     key={value.value}
                                  >
                                     <Div.row alignItems="center" gap={theme.styles.gap / 2}>
-                                       <Text>{value.value}</Text>
+                                       <Text>{value.label ?? value.value}</Text>
 
                                        {openedFilterColumn.withTotalNumber && (
                                           <Text
