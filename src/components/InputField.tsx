@@ -536,8 +536,49 @@ InputFieldComponent.password = forwardRef(function Password({ ...props }, ref) {
    );
 }) as InputFieldComponentType["password"];
 
-InputFieldComponent.search = forwardRef(function Search({ ...props }, ref) {
-   return <InputFieldComponent leftIcon="magnifyingGlass" placeholder="Search..." ref={ref} {...props} />;
+InputFieldComponent.search = forwardRef(function Search({ value, onChangeValue, onFocus, onBlur, ...props }, ref) {
+   const [inputFieldValue, setInputFieldValue] = useState<string>(value?.toString() ?? "");
+   const [inputFieldFocused, setInputFieldFocused] = useBooleanState();
+
+   const onChangeValueElement = useCallback(
+      (value: string) => {
+         setInputFieldValue(value);
+         onChangeValue?.(value);
+      },
+      [onChangeValue],
+   );
+   const onFocusElement = useCallback(
+      (event: React.FocusEvent<HTMLInputElement, Element>) => {
+         setInputFieldFocused.setTrue();
+         onFocus?.(event);
+      },
+      [onFocus],
+   );
+   const onBlurElement = useCallback(
+      (event: React.FocusEvent<HTMLInputElement, Element>) => {
+         setTimeout(() => setInputFieldFocused.setFalse(), 0.1 * 1000);
+         onBlur?.(event);
+      },
+      [onBlur],
+   );
+   const onClickRightIcon = useCallback(() => {
+      onChangeValueElement("");
+   }, [onChangeValueElement]);
+
+   return (
+      <InputFieldComponent
+         leftIcon="magnifyingGlass"
+         placeholder="Search..."
+         rightIcon={inputFieldValue.length > 0 && inputFieldFocused ? "XMark" : undefined}
+         onClickRightIcon={onClickRightIcon}
+         value={inputFieldValue}
+         onChangeValue={onChangeValueElement}
+         onFocus={onFocusElement}
+         onBlur={onBlurElement}
+         ref={ref}
+         {...props}
+      />
+   );
 }) as InputFieldComponentType["search"];
 
 InputFieldComponent.phoneNumber = forwardRef(function PhoneNumber(

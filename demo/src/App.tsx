@@ -789,6 +789,7 @@ function App() {
                               keyName: "color",
                               filter: "list",
                               withTotalNumber: true,
+                              withSearch: true,
                               getValueForList: (item) => ({
                                  label: `${item.color[0].toUpperCase()}${item.color.slice(1)}`,
                                  value: item.color,

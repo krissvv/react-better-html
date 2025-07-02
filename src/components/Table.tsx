@@ -231,6 +231,7 @@ type DateFilter<DataItem> = {
 type ListFilter<DataItem> = {
    filter?: "list";
    withTotalNumber?: boolean;
+   withSearch?: boolean;
    getValueForList?: (item: DataItem) => OmitProps<ListFilterValue, "count">;
 };
 
@@ -320,6 +321,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
       defaultValues: {
          min: undefined as number | string | undefined,
          max: undefined as number | string | undefined,
+         search: "",
       },
       onSubmit: (values) => {
          if (!openedFilterColumn?.filter) return;
@@ -341,10 +343,12 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                        max: values.max as string | undefined,
                     }
                   : openedFilterColumn.filter === "list"
-                  ? {
-                       type: openedFilterColumn.filter,
-                       list: filterListSelectedItems,
-                    }
+                  ? filterListSelectedItems && filterListSelectedItems.length > 0
+                     ? {
+                          type: openedFilterColumn.filter,
+                          list: filterListSelectedItems,
+                       }
+                     : undefined
                   : undefined,
          }));
 
@@ -671,8 +675,14 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
             : openedFilterColumn.type === "text" && openedFilterColumn.keyName
             ? String(currentValue[openedFilterColumn.keyName])
             : undefined;
+         const label = valueFromList ? valueFromList.label : value;
 
-         if (value !== undefined) {
+         let searchPassed = openedFilterColumn.filter === "list" && openedFilterColumn.withSearch ? false : true;
+         if (openedFilterColumn.filter === "list" && openedFilterColumn.withSearch) {
+            searchPassed = label?.toLowerCase().includes(filterForm.values.search.toLowerCase()) ?? false;
+         }
+
+         if (value !== undefined && value !== null && value !== "" && searchPassed) {
             if (previousValue.some((item) => item.value === value)) {
                previousValue = previousValue.map((item) =>
                   item.value === value
@@ -684,7 +694,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                );
             } else
                previousValue.push({
-                  label: valueFromList ? valueFromList.label : value,
+                  label,
                   value,
                   count: 1,
                });
@@ -692,7 +702,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
 
          return previousValue;
       }, [] as ListFilterValue[]);
-   }, [data, openedFilterColumn]);
+   }, [data, openedFilterColumn, filterForm.values.search]);
 
    const pageCountInternal = pageCount ?? (pageSize !== undefined ? Math.ceil(dataAfterFilter.length / pageSize) : 1);
 
@@ -1017,17 +1027,20 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                   </Form>
                ) : openedFilterColumn.filter === "list" ? (
                   <Form
+                     gap={theme.styles.space}
                      submitButtonText="Filter"
                      cancelButtonText="Clear"
                      renderActionButtons={
                         <Div.row marginRight="auto" alignItems="center" gap={theme.styles.gap}>
                            <Button.secondary
                               text="Select All"
+                              isSmall
                               disabled={possibleFilterListValues.length === filterListSelectedItems?.length}
                               onClick={onClickSelectAllFilterListItems}
                            />
                            <Button.secondary
                               text="Deselect All"
+                              isSmall
                               disabled={!filterListSelectedItems?.length}
                               onClick={onClickDeselectAllFilterListItems}
                            />
@@ -1036,37 +1049,53 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                      onClickCancel={openedFilterData ? onClickCancelFormFilter : undefined}
                      onSubmit={filterForm.onSubmit}
                   >
-                     <Div.column gap={theme.styles.gap / 2} marginBottom={theme.styles.space}>
+                     {openedFilterColumn?.withSearch && (
+                        <FormRow oneItemOnly>
+                           <InputField.search
+                              label="Search"
+                              autoComplete="off"
+                              {...filterForm.getInputFieldProps("search")}
+                           />
+                        </FormRow>
+                     )}
+
+                     <Div.column gap={theme.styles.gap / 2}>
                         <Label text="Possible values" />
 
                         <Div.row flexWrap="wrap" gap={theme.styles.gap}>
-                           {possibleFilterListValues.map((value) => {
-                              const isActive = filterListSelectedItems?.includes(value.value);
+                           {possibleFilterListValues.length > 0 ? (
+                              possibleFilterListValues.map((value) => {
+                                 const isActive = filterListSelectedItems?.includes(value.value);
 
-                              return (
-                                 <Div.box
-                                    isActive={isActive}
-                                    value={value.value}
-                                    onClickWithValue={onClickFilterListItem}
-                                    key={value.value}
-                                 >
-                                    <Div.row alignItems="center" gap={theme.styles.gap / 2}>
-                                       <Text>{value.label ?? value.value}</Text>
+                                 return (
+                                    <Div.box
+                                       isActive={isActive}
+                                       value={value.value}
+                                       onClickWithValue={onClickFilterListItem}
+                                       key={value.value}
+                                    >
+                                       <Div.row alignItems="center" gap={theme.styles.gap / 2}>
+                                          <Text>{value.label ?? value.value}</Text>
 
-                                       {openedFilterColumn.withTotalNumber && (
-                                          <Text
-                                             fontSize={14}
-                                             color={isActive ? theme.colors.base + "c0" : theme.colors.textSecondary}
-                                          >
-                                             ({value.count})
-                                          </Text>
-                                       )}
-                                    </Div.row>
-                                 </Div.box>
-                              );
-                           })}
+                                          {openedFilterColumn.withTotalNumber && (
+                                             <Text
+                                                fontSize={14}
+                                                color={isActive ? theme.colors.base + "c0" : theme.colors.textSecondary}
+                                             >
+                                                ({value.count})
+                                             </Text>
+                                          )}
+                                       </Div.row>
+                                    </Div.box>
+                                 );
+                              })
+                           ) : (
+                              <Text.unknown>No values</Text.unknown>
+                           )}
                         </Div.row>
                      </Div.column>
+
+                     <Div />
                   </Form>
                ) : (
                   <Text.unknown>Unknown filter</Text.unknown>
