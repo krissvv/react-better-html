@@ -1,8 +1,8 @@
 import { Link as RouterLink, NavLink as RouterNavLink } from "react-router-dom";
 
-import { BetterHtmlPlugin } from "../types/plugin";
+import { BetterHtmlPluginConstructor } from "../types/plugin";
 
-export const reactRouterDomPlugin: BetterHtmlPlugin = {
+export const reactRouterDomPlugin: BetterHtmlPluginConstructor = () => ({
    name: "react-router-dom",
    components: {
       Link: RouterLink,
@@ -11,4 +11,4 @@ export const reactRouterDomPlugin: BetterHtmlPlugin = {
    initialize: () => {
       console.log("react-router-dom plugin initialized");
    },
-};
+});

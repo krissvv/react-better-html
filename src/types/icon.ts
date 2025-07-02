@@ -11,6 +11,8 @@ export type IconName =
    | "eyeDashed"
    | "magnifyingGlass"
    | "check"
+   | "infoI"
+   | "warningTriangle"
    | "filter";
 
 export type IconData = {

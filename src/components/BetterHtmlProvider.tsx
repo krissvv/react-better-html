@@ -7,12 +7,14 @@ import { assets } from "../constants/assets";
 import { appConfig } from "../constants/app";
 
 import { BetterHtmlConfig } from "../types/config";
-import { AnyOtherString, DeepPartialRecord } from "../types/app";
+import { AnyOtherString, DeepPartialRecord, OmitProps } from "../types/app";
 import { ColorTheme } from "../types/theme";
 import { LoaderConfig, LoaderName } from "../types/loader";
+import { Alert } from "../types/alert";
 import { BetterHtmlPlugin, PluginName } from "../types/plugin";
 
 import { TabGroup, TabsComponentState } from "./Tabs";
+import AlertsHolder from "./alerts/AlertsHolder";
 
 const GlobalStyle = createGlobalStyle<{ fontFamily: string; color: string; backgroundColor: string }>`
    html {
@@ -44,6 +46,8 @@ const GlobalStyle = createGlobalStyle<{ fontFamily: string; color: string; backg
 
 export type BetterHtmlInternalConfig = BetterHtmlConfig & {
    setLoaders: React.Dispatch<React.SetStateAction<Partial<LoaderConfig>>>;
+   alerts: Alert[];
+   setAlerts: React.Dispatch<React.SetStateAction<Alert[]>>;
    plugins: BetterHtmlPlugin[];
    componentsState: {
       tabs: TabsComponentState;
@@ -130,6 +134,33 @@ export const useLoaderControls = () => {
    };
 };
 
+export const useAlertControls = () => {
+   const context = useContext(betterHtmlContext);
+
+   if (context === undefined)
+      throw new Error(
+         "`useAlertControls()` must be used within a `<BetterHtmlProvider>`. Make sure to add one at the root of your component tree.",
+      );
+
+   const createAlert = useCallback((alert: OmitProps<Alert, "id">): Alert => {
+      const readyAlert: Alert = {
+         id: crypto.randomUUID(),
+         ...alert,
+      };
+      context.setAlerts((oldValue) => [...oldValue, readyAlert]);
+
+      return readyAlert;
+   }, []);
+   const removeAlert = useCallback((alertId: string) => {
+      context.setAlerts((oldValue) => oldValue.filter((alert) => alert.id !== alertId));
+   }, []);
+
+   return {
+      createAlert,
+      removeAlert,
+   };
+};
+
 export const usePlugin = (pluginName: PluginName): BetterHtmlPlugin | undefined => {
    const context = useContext(betterHtmlContext);
 
@@ -139,7 +170,10 @@ export const usePlugin = (pluginName: PluginName): BetterHtmlPlugin | undefined 
       );
    }
 
-   return context.plugins.find((plugin: BetterHtmlPlugin) => plugin.name === pluginName);
+   return useMemo(
+      () => context.plugins.find((plugin: BetterHtmlPlugin) => plugin.name === pluginName),
+      [context.plugins, pluginName],
+   );
 };
 
 type BetterHtmlProviderContentProps = {
@@ -148,6 +182,7 @@ type BetterHtmlProviderContentProps = {
 
 function BetterHtmlProviderContent({ children }: BetterHtmlProviderContentProps) {
    const theme = useTheme();
+   const alertsPlugin = usePlugin("alerts");
 
    return (
       <>
@@ -158,6 +193,8 @@ function BetterHtmlProviderContent({ children }: BetterHtmlProviderContentProps)
          />
 
          {children}
+
+         {alertsPlugin && <AlertsHolder />}
       </>
    );
 }
@@ -176,6 +213,7 @@ function BetterHtmlProvider({ value, plugins: pluginsToUse, children }: BetterHt
    );
    const [loaders, setLoaders] = useState<Partial<LoaderConfig>>(value?.loaders ?? {});
    const [plugins] = useState<BetterHtmlPlugin[]>(pluginsToUse ?? []);
+   const [alerts, setAlerts] = useState<Alert[]>([]);
    const [tabGroups, setTabGroups] = useState<TabGroup[]>([]);
    const [tabsWithDots, setTabsWithDots] = useState<string[]>([]);
 
@@ -212,6 +250,8 @@ function BetterHtmlProvider({ value, plugins: pluginsToUse, children }: BetterHt
          },
          loaders,
          setLoaders,
+         alerts,
+         setAlerts,
          components: {
             ...value?.components,
          },
@@ -225,7 +265,7 @@ function BetterHtmlProvider({ value, plugins: pluginsToUse, children }: BetterHt
             },
          },
       }),
-      [value, colorTheme, loaders, plugins, tabGroups, tabsWithDots],
+      [value, colorTheme, loaders, alerts, plugins, tabGroups, tabsWithDots],
    );
 
    useEffect(() => {
@@ -264,4 +304,4 @@ function BetterHtmlProvider({ value, plugins: pluginsToUse, children }: BetterHt
    );
 }
 
-export default memo(BetterHtmlProvider);
+export default memo(BetterHtmlProvider) as typeof BetterHtmlProvider;

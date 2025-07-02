@@ -1,7 +1,7 @@
-import { AnyOtherString } from "../types/app";
+import { AnyOtherString, OmitProps } from "../types/app";
 import { LoaderName } from "../types/loader";
-
 import { ColorTheme } from "../types/theme";
+import { Alert } from "../types/alert";
 
 import { BetterHtmlInternalConfig, externalBetterHtmlContextValue } from "../components/BetterHtmlProvider";
 
@@ -34,6 +34,26 @@ export const loaderControls = {
          ...oldValue,
          [loaderName.toString()]: false,
       }));
+   },
+};
+
+export const alertControls = {
+   createAlert: (alert: OmitProps<Alert, "id">): Alert => {
+      if (!checkBetterHtmlContextValue(externalBetterHtmlContextValue, "alertControls.createAlert"))
+         return undefined as any;
+
+      const readyAlert: Alert = {
+         id: crypto.randomUUID(),
+         ...alert,
+      };
+      externalBetterHtmlContextValue.setAlerts((oldValue) => [...oldValue, readyAlert]);
+
+      return readyAlert;
+   },
+   removeAlert: (alertId: string) => {
+      if (!checkBetterHtmlContextValue(externalBetterHtmlContextValue, "alertControls.removeAlert")) return;
+
+      externalBetterHtmlContextValue.setAlerts((oldValue) => oldValue.filter((alert) => alert.id !== alertId));
    },
 };
 

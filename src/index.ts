@@ -25,6 +25,7 @@ import BetterHtmlProvider, {
    useBetterHtmlContext,
    useTheme,
    useLoader,
+   useAlertControls,
    useLoaderControls,
    type BetterHtmlProviderValue,
 } from "./components/BetterHtmlProvider";
@@ -39,7 +40,7 @@ import {
 } from "./utils/hooks";
 import { generateRandomString, getBrowser, formatPhoneNumber, getFormErrorObject } from "./utils/functions";
 import { lightenColor, darkenColor, saturateColor, desaturateColor } from "./utils/colorManipulation";
-import { loaderControls, colorThemeControls } from "./utils/variableFunctions";
+import { loaderControls, alertControls, colorThemeControls } from "./utils/variableFunctions";
 
 import {
    type OmitProps,
@@ -53,6 +54,7 @@ import { type AppConfig, type BetterHtmlConfig } from "./types/config";
 import { type AssetName, type AssetsConfig } from "./types/asset";
 import { type IconName, type IconsConfig } from "./types/icon";
 import { type LoaderName, type LoaderConfig } from "./types/loader";
+import { type AlertType, type Alert } from "./types/alert";
 import { type PluginName, type BetterHtmlPlugin } from "./types/plugin";
 import {
    type Color,
@@ -135,6 +137,7 @@ export {
    useBetterHtmlContext,
    useTheme,
    useLoader,
+   useAlertControls,
    useLoaderControls,
    usePageResize,
    usePageScroll,
@@ -155,6 +158,7 @@ export {
    desaturateColor,
    // Variable Functions
    loaderControls,
+   alertControls,
    colorThemeControls,
    // Types
    OmitProps,
@@ -170,6 +174,8 @@ export {
    IconName,
    IconsConfig,
    LoaderName,
+   AlertType,
+   Alert,
    PluginName,
    BetterHtmlPlugin,
    LoaderConfig,

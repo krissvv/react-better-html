@@ -28,6 +28,7 @@ import {
    Tabs,
    Foldable,
    Tooltip,
+   useAlertControls,
 } from "../../src";
 
 const data: {
@@ -146,6 +147,7 @@ const data2 = [
 
 function App() {
    const theme = useTheme();
+   const alertControls = useAlertControls();
 
    const testLoaderIsLoading = useLoader("testLoader");
 
@@ -193,6 +195,7 @@ function App() {
                   "Text",
                   "Div",
                   "Loader",
+                  "Alert",
                   "Icon & Image",
                   "Divider",
                   "Chip",
@@ -296,6 +299,59 @@ function App() {
                         />
 
                         {testLoaderIsLoading && <Loader />}
+                     </Div.row>
+                  </Div.column>
+               </Tabs.content>
+
+               <Tabs.content tab="Alert">
+                  <Div.column gap={theme.styles.space}>
+                     <Div.row gap={theme.styles.gap}>
+                        <Button
+                           text="Info alert"
+                           onClick={() => {
+                              alertControls.createAlert({
+                                 type: "info",
+                                 title: "Hello there",
+                                 message: "Lorem ipsum dolor sit amet consectetur",
+                                 duration: 1000,
+                                 onClose: (alert) => {
+                                    console.log("Alert closed", alert.id);
+                                 },
+                              });
+                           }}
+                        />
+                        <Button
+                           text="Success alert"
+                           onClick={() => {
+                              alertControls.createAlert({
+                                 type: "success",
+                                 title: "Hello there",
+                                 message: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+                              });
+                           }}
+                        />
+                        <Button
+                           text="Warning alert"
+                           onClick={() => {
+                              alertControls.createAlert({
+                                 type: "warning",
+                                 title: "Hello there",
+                                 message:
+                                    "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ipsa nobis aspernatur.",
+                              });
+                           }}
+                        />
+                        <Button
+                           text="Error alert"
+                           onClick={() => {
+                              alertControls.createAlert({
+                                 type: "error",
+                                 title: "Hello there",
+                                 message:
+                                    "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ipsa nobis aspernatur. Commodi ipsa nobis aspernatur.",
+                              });
+                           }}
+                        />
                      </Div.row>
                   </Div.column>
                </Tabs.content>

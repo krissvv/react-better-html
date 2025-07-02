@@ -1,0 +1,41 @@
+import { memo } from "react";
+
+import { BetterHtmlPlugin } from "../../types/plugin";
+
+import { AlertsPluginOptions } from "../../plugins";
+
+import Div from "../Div";
+import Alert from "./Alert";
+import { useBetterHtmlContextInternal, usePlugin, useTheme } from "../BetterHtmlProvider";
+
+function AlertsHolder() {
+   const theme = useTheme();
+   const alertsPlugin = usePlugin("alerts") as BetterHtmlPlugin<AlertsPluginOptions> | undefined;
+   const { alerts } = useBetterHtmlContextInternal();
+
+   const pluginConfig = alertsPlugin?.getConfig?.() ?? {};
+
+   const top: React.CSSProperties["top"] = pluginConfig.position === "top" ? theme.styles.gap : undefined;
+   const bottom: React.CSSProperties["bottom"] = pluginConfig.position === "bottom" ? theme.styles.gap : undefined;
+   const left: React.CSSProperties["left"] =
+      pluginConfig.align === "left" ? theme.styles.space : pluginConfig.align === "center" ? "50%" : undefined;
+   const right: React.CSSProperties["right"] = pluginConfig.align === "right" ? theme.styles.space : undefined;
+
+   return (
+      <Div.column
+         position="fixed"
+         top={top}
+         bottom={bottom}
+         left={left}
+         right={right}
+         gap={theme.styles.gap}
+         transform={pluginConfig.align === "center" ? "translateX(-50%)" : undefined}
+      >
+         {alerts.map((alert) => (
+            <Alert alert={alert} key={alert.id} />
+         ))}
+      </Div.column>
+   );
+}
+
+export default memo(AlertsHolder);
