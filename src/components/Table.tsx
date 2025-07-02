@@ -659,7 +659,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
       return dataAfterFilter.slice(pageStartItemIndex, pageEndItemIndex);
    }, [dataAfterFilter, pageSize, currentPage, pageCount]);
    const everythingIsChecked = useMemo<boolean>(() => {
-      return checkedItems.length > 0 && checkedItems.every((checked) => checked) && checkedItems.length === data.length;
+      return data.length > 0 && checkedItems.every((checked) => checked) && checkedItems.length === data.length;
    }, [data, checkedItems]);
    const possibleFilterListValues = useMemo<ListFilterValue[]>(() => {
       if (!openedFilterColumn) return [];
@@ -809,6 +809,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                               {column.type === "checkbox" && onClickAllCheckboxes ? (
                                  <ToggleInput.checkbox
                                     checked={everythingIsChecked}
+                                    disabled={data.length === 0}
                                     onChange={onClickAllCheckboxesElement}
                                  />
                               ) : column.label ? (
