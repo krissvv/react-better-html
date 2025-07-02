@@ -781,7 +781,16 @@ function App() {
                               keyName: "date",
                               filter: "date",
                               getValue: (value) => new Date(value.date),
-                              presets: ["yesterday", "today", "tomorrow", "thisWeek", "thisMonth", "thisYear"],
+                              presets: [
+                                 "lastMonth",
+                                 "lastWeek",
+                                 "yesterday",
+                                 "today",
+                                 "tomorrow",
+                                 "thisWeek",
+                                 "thisMonth",
+                                 "thisYear",
+                              ],
                            },
                            {
                               type: "text",

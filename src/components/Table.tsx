@@ -300,7 +300,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
    ref: React.ForwardedRef<TableRef>,
 ) {
    const theme = useTheme();
-   const mediumScreen = useMediaQuery();
+   const mediaQuery = useMediaQuery();
    const { colorTheme } = useBetterHtmlContextInternal();
 
    const filterModalRef = useRef<ModalRef>(null);
@@ -756,7 +756,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
       [currentPage, setCurrentPage, pageCountInternal, setCheckedItems],
    );
 
-   const mobileFooterBreakingPoint = mediumScreen.size700 && pageCountInternal > maximumVisiblePages / 1.4;
+   const mobileFooterBreakingPoint = mediaQuery.size700 && pageCountInternal > maximumVisiblePages / 1.4;
 
    return (
       <>
@@ -1013,10 +1013,11 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                         <Div.column gap={theme.styles.gap / 2}>
                            <Label text="Presets" />
 
-                           <Div.row alignItems="center" gap={theme.styles.gap}>
+                           <Div.row alignItems="center" flexWrap="wrap" gap={theme.styles.gap}>
                               {openedFilterColumn.presets.map((preset) => (
                                  <Button.secondary
                                     text={filterPresetsText[preset]}
+                                    isSmall={mediaQuery.size600}
                                     value={preset}
                                     onClickWithValue={onClickFilterPreset}
                                     key={preset}
