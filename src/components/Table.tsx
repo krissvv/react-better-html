@@ -659,7 +659,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
       return dataAfterFilter.slice(pageStartItemIndex, pageEndItemIndex);
    }, [dataAfterFilter, pageSize, currentPage, pageCount]);
    const everythingIsChecked = useMemo<boolean>(() => {
-      return checkedItems.every((checked) => checked) && checkedItems.length === data.length;
+      return checkedItems.length > 0 && checkedItems.every((checked) => checked) && checkedItems.length === data.length;
    }, [data, checkedItems]);
    const possibleFilterListValues = useMemo<ListFilterValue[]>(() => {
       if (!openedFilterColumn) return [];
