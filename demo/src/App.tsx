@@ -90,6 +90,15 @@ const data: {
       date: "2025-06-23",
       color: "green",
    },
+   {
+      id: 6,
+      name: "awd",
+      age: 27,
+      email: "awd@awd.com",
+      image: "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg",
+      date: "2025-06-24T14:04:59.180489",
+      color: "green",
+   },
 ];
 
 const data2 = [
@@ -772,7 +781,7 @@ function App() {
                               keyName: "date",
                               filter: "date",
                               getValue: (value) => new Date(value.date),
-                              presets: ["today", "yesterday", "thisWeek", "thisMonth", "thisYear"],
+                              presets: ["yesterday", "today", "tomorrow", "thisWeek", "thisMonth", "thisYear"],
                            },
                            {
                               type: "text",

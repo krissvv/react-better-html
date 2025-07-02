@@ -88,6 +88,7 @@ type ModalComponent = {
       props: ComponentPropWithRef<
          ModalRef,
          OmitProps<ModalProps, "maxWidth" | "children" | "overflow"> & {
+            message?: string;
             continueButtonLoaderName?: LoaderName | AnyOtherString;
             onContinue?: () => void;
             onCancel?: () => void;
@@ -98,6 +99,7 @@ type ModalComponent = {
       props: ComponentPropWithRef<
          ModalRef,
          OmitProps<ModalProps, "maxWidth" | "children" | "overflow"> & {
+            message?: string;
             deleteButtonLoaderName?: LoaderName | AnyOtherString;
             onDelete?: () => void;
             onCancel?: () => void;
@@ -269,7 +271,7 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
 }) as any;
 
 ModalComponent.confirmation = forwardRef(function Confirmation(
-   { continueButtonLoaderName, onContinue, onCancel, ...props },
+   { message, continueButtonLoaderName, onContinue, onCancel, ...props },
    ref,
 ) {
    const theme = useTheme();
@@ -290,7 +292,7 @@ ModalComponent.confirmation = forwardRef(function Confirmation(
    return (
       <ModalComponent title="Are you sure?" maxWidth={660} {...props} ref={modalRef}>
          <Text color={theme.colors.textSecondary}>
-            Do you really want to continue? This action may be irreversible.
+            {message ?? "Do you really want to continue? This action may be irreversible."}
          </Text>
 
          <Div.row
@@ -307,7 +309,7 @@ ModalComponent.confirmation = forwardRef(function Confirmation(
 }) as ModalComponent["confirmation"];
 
 ModalComponent.destructive = forwardRef(function Destructive(
-   { deleteButtonLoaderName, onDelete, onCancel, ...props },
+   { message, deleteButtonLoaderName, onDelete, onCancel, ...props },
    ref,
 ) {
    const theme = useTheme();
@@ -328,7 +330,8 @@ ModalComponent.destructive = forwardRef(function Destructive(
    return (
       <ModalComponent title="Are you sure?" maxWidth={660} {...props} ref={modalRef}>
          <Text color={theme.colors.textSecondary}>
-            Do you really want to continue with the deleting of the item? This action may be irreversible.
+            {message ??
+               "Do you really want to continue with the deleting of the item? This action may be irreversible."}
          </Text>
 
          <Div.row

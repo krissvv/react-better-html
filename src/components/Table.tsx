@@ -134,6 +134,7 @@ const TdStyledComponent = styled.td.withConfig({
 const filterPresetsText: Record<FilterPreset, string> = {
    today: "Today",
    yesterday: "Yesterday",
+   tomorrow: "Tomorrow",
    thisWeek: "This week",
    thisMonth: "This month",
    thisYear: "This year",
@@ -148,6 +149,7 @@ const filterPresetsText: Record<FilterPreset, string> = {
 type FilterPreset =
    | "today"
    | "yesterday"
+   | "tomorrow"
    | "thisWeek"
    | "thisMonth"
    | "thisYear"
@@ -497,6 +499,13 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                filterForm.setFieldsValue({
                   min: getValueForDate(new Date(new Date().setDate(new Date().getDate() - 1))),
                   max: getValueForDate(new Date(new Date().setDate(new Date().getDate() - 1))),
+               });
+               break;
+
+            case "tomorrow":
+               filterForm.setFieldsValue({
+                  min: getValueForDate(new Date(new Date().setDate(new Date().getDate() + 1))),
+                  max: getValueForDate(new Date(new Date().setDate(new Date().getDate() + 1))),
                });
                break;
 
@@ -957,8 +966,17 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                      onClickCancel={openedFilterData ? onClickCancelFormFilter : undefined}
                   >
                      <FormRow>
-                        <InputField.date label="Min" {...filterForm.getInputFieldProps("min")} />
-                        <InputField.date label="Max" {...filterForm.getInputFieldProps("max")} />
+                        {openedFilterColumn.filter === "date" ? (
+                           <>
+                              <InputField.date label="Min" {...filterForm.getInputFieldProps("min")} />
+                              <InputField.date label="Max" {...filterForm.getInputFieldProps("max")} />
+                           </>
+                        ) : (
+                           <>
+                              <InputField.dateTime label="Min" {...filterForm.getInputFieldProps("min")} />
+                              <InputField.dateTime label="Max" {...filterForm.getInputFieldProps("max")} />
+                           </>
+                        )}
                      </FormRow>
 
                      {openedFilterColumn.presets && (
