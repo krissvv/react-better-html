@@ -308,9 +308,7 @@ function Alert({ alert }: AlertProps) {
                         {alert.title ?? alertData[alert.type].title}
                      </Text>
 
-                     <Text fontSize={14} color={theme.colors.textSecondary}>
-                        {alert.message}
-                     </Text>
+                     <Text color={theme.colors.textSecondary}>{alert.message}</Text>
                   </Div.column>
 
                   {pluginConfig.withCloseButton && (
