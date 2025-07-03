@@ -8,6 +8,20 @@ import Div, { DivProps } from "./Div";
 import Text from "./Text";
 import { useTheme } from "./BetterHtmlProvider";
 
+const StyledDiv = styled.div`
+   @keyframes loaderAnimation {
+      to {
+         transform: rotate(360deg);
+      }
+   }
+
+   @keyframes textLoaderAnimation {
+      to {
+         clip-path: inset(0 -1ch 0 0);
+      }
+   }
+`;
+
 export type LoaderProps = {
    /** @default textPrimary */
    color?: Color;
@@ -51,20 +65,6 @@ type LoaderComponentType = {
    ) => React.ReactElement;
 };
 
-const StyledDiv = styled(Div)`
-   @keyframes loaderAnimation {
-      to {
-         transform: rotate(360deg);
-      }
-   }
-
-   @keyframes textLoaderAnimation {
-      to {
-         clip-path: inset(0 -1ch 0 0);
-      }
-   }
-`;
-
 const LoaderComponent: LoaderComponentType = function Loader({
    color,
    size = 16,
@@ -79,17 +79,19 @@ const LoaderComponent: LoaderComponentType = function Loader({
    const mask: React.CSSProperties["mask"] = `radial-gradient(farthest-side, #0000 calc(100% - ${readyWidth}px), #000 0)`;
 
    return (
-      <StyledDiv
-         width={size + readyWidth * 2}
-         height={size + readyWidth * 2}
-         background={`radial-gradient(farthest-side, ${readyColor} 94%, #0000) top/${readyWidth}px ${readyWidth}px no-repeat, conic-gradient(#0000 30%, ${readyColor})`}
-         borderRadius={999}
-         mask={mask}
-         WebkitMask={mask}
-         padding={readyWidth}
-         animation={!disabled ? "loaderAnimation .6s infinite linear" : undefined}
-         {...props}
-      />
+      <StyledDiv>
+         <Div
+            width={size + readyWidth * 2}
+            height={size + readyWidth * 2}
+            background={`radial-gradient(farthest-side, ${readyColor} 94%, #0000) top/${readyWidth}px ${readyWidth}px no-repeat, conic-gradient(#0000 30%, ${readyColor})`}
+            borderRadius={999}
+            mask={mask}
+            WebkitMask={mask}
+            padding={readyWidth}
+            animation={!disabled ? "loaderAnimation .6s infinite linear" : undefined}
+            {...props}
+         />
+      </StyledDiv>
    );
 } as any;
 

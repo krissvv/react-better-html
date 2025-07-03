@@ -29,7 +29,7 @@ import {
    Foldable,
    Tooltip,
    useAlertControls,
-} from "../../src";
+} from "../../dist";
 
 const data: {
    id: number;
