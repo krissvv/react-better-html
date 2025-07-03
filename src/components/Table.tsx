@@ -306,12 +306,8 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
 
    const filterModalRef = useRef<ModalRef>(null);
 
-   const onChangePageRef = useRef(onChangePage);
-   onChangePageRef.current = onChangePage;
-   const onChangeFilterRef = useRef(onChangeFilter);
-   onChangeFilterRef.current = onChangeFilter;
-   const onChangeFilterDataValueRef = useRef(onChangeFilterDataValue);
-   onChangeFilterDataValueRef.current = onChangeFilterDataValue;
+   const columnsRef = useRef(columns);
+   columnsRef.current = columns;
 
    const [checkedItems, setCheckedItems] = useState<boolean[]>([]);
    const [expandedRows, setExpandedRows] = useState<boolean[]>([]);
@@ -621,7 +617,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
             Object.entries(filterData).every(([columnIndex, filter]) => {
                if (!filter) return true;
 
-               const column = columns[parseInt(columnIndex)];
+               const column = columnsRef.current[parseInt(columnIndex)];
                if (!column) return true;
 
                if (column.filter === "number" && filter.type === "number") {
@@ -655,7 +651,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                return true;
             }),
          ),
-      [data, filterData, columns],
+      [data, filterData],
    );
    const dataAfterPagination = useMemo(() => {
       if (pageSize === undefined) return dataAfterFilter;
@@ -745,14 +741,14 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
    const onClickDeselectAllFilterListItems = useCallback(() => setFilterListSelectedItems([]), []);
 
    useEffect(() => {
-      onChangePageRef.current?.(currentPage);
-   }, [currentPage]);
+      onChangePage?.(currentPage);
+   }, [onChangePage, currentPage]);
    useEffect(() => {
-      onChangeFilterRef.current?.(filterData);
-   }, [filterData]);
+      onChangeFilter?.(filterData);
+   }, [onChangeFilter, filterData]);
    useEffect(() => {
-      onChangeFilterDataValueRef.current?.(dataAfterFilter);
-   }, [dataAfterFilter]);
+      onChangeFilterDataValue?.(dataAfterFilter);
+   }, [onChangeFilterDataValue, dataAfterFilter]);
 
    useImperativeHandle(
       ref,
