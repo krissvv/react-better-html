@@ -61,10 +61,6 @@ const TableStyledComponent = styled.table.withConfig({
          background-color: ${(props) => props.theme.colors.backgroundSecondary};
       }
 
-      &.isClickable {
-         cursor: pointer;
-      }
-
       &.isExpandRow {
          height: 0px;
 
@@ -92,6 +88,7 @@ const TableStyledComponent = styled.table.withConfig({
                        props.theme.colors.backgroundContent,
                        props.colorTheme === "light" ? 0.05 : 0.15,
                     )};
+                    cursor: pointer;
                  }
               `
             : ""}
@@ -264,6 +261,7 @@ export type TableProps<DataItem> = {
    noDataItemsMessage?: string;
    pageSize?: number;
    pageCount?: number;
+   isInsideTableExpandRow?: boolean;
    onClickRow?: (item: DataItem, index: number) => void;
    onClickAllCheckboxes?: (checked: boolean) => void;
    onChangePage?: (page: number) => void;
@@ -291,6 +289,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
       noDataItemsMessage = "No data available",
       pageSize,
       pageCount,
+      isInsideTableExpandRow,
       onClickRow,
       onClickAllCheckboxes,
       onChangePage,
@@ -841,7 +840,11 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                      dataAfterPagination.map((item, rowIndex) => (
                         <Fragment key={JSON.stringify(item) + rowIndex}>
                            <tr
-                              className={onClickRow || expandColumn ? "isClickable" : undefined}
+                              className={
+                                 isInsideTableExpandRow && onClickRow === undefined && expandColumn === undefined
+                                    ? "withoutHover"
+                                    : undefined
+                              }
                               onClick={() => onClickRowElement(item, rowIndex)}
                            >
                               {columns.map((column, colIndex) => (
