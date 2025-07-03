@@ -29,6 +29,9 @@ function AlertsHolder() {
          left={left}
          right={right}
          gap={theme.styles.gap}
+         alignItems={
+            pluginConfig.align === "center" ? "center" : pluginConfig.align === "right" ? "flex-end" : undefined
+         }
          transform={pluginConfig.align === "center" ? "translateX(-50%)" : undefined}
       >
          {alerts.map((alert) => (

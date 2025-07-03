@@ -29,7 +29,7 @@ import {
    Foldable,
    Tooltip,
    useAlertControls,
-} from "../../dist";
+} from "../../src";
 
 const data: {
    id: number;
@@ -306,6 +306,15 @@ function App() {
                <Tabs.content tab="Alert">
                   <Div.column gap={theme.styles.space}>
                      <Div.row gap={theme.styles.gap}>
+                        <Button
+                           text="Short info alert"
+                           onClick={() => {
+                              alertControls.createAlert({
+                                 type: "info",
+                                 message: "Lorem ipsum",
+                              });
+                           }}
+                        />
                         <Button
                            text="Info alert"
                            onClick={() => {

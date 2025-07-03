@@ -107,6 +107,7 @@ const StyledDiv = styled.div.withConfig({
    }
 `;
 
+const minWidth = 250;
 const updateInterval = 20;
 
 const getAnimationInName = (
@@ -275,7 +276,9 @@ function Alert({ alert }: AlertProps) {
    return (
       <StyledDiv theme={theme}>
          <Div.box
-            maxWidth={pluginConfig.maxWidth}
+            width="fit-content"
+            maxWidth={Math.max(minWidth, pluginConfig.maxWidth ?? defaultAlertsPluginOptions.maxWidth)}
+            minWidth={minWidth}
             boxShadow="0px 10px 20px #00000020"
             onMouseEnter={onMouseEnter}
             onMouseMove={onMouseEnter}

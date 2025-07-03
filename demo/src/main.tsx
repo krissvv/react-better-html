@@ -2,7 +2,8 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
-import { BetterHtmlProvider, alertsPlugin, BetterHtmlPlugin, reactRouterDomPlugin } from "../../dist";
+import BetterHtmlProvider from "../../src/components/BetterHtmlProvider";
+import { alertsPlugin, BetterHtmlPlugin, reactRouterDomPlugin } from "../../src/index.ts";
 
 import vite from "./assets/vite.svg";
 
