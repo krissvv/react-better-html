@@ -24,6 +24,7 @@ type PageHolderComponentType = {
          HTMLDivElement,
          PageHolderProps & {
             pageBackgroundColor?: string;
+            contentMaxWidth?: React.CSSProperties["maxWidth"];
             sideImageSrc?: string;
             sideImageName?: AssetName | AnyOtherString;
             /** @default "right" */
@@ -61,6 +62,7 @@ const PageHolderComponent: PageHolderComponentType = forwardRef(function PageHol
 PageHolderComponent.center = forwardRef(function Center(
    {
       pageBackgroundColor,
+      contentMaxWidth,
       sideImageSrc,
       sideImageName,
       sideImagePosition = "right",
@@ -93,7 +95,7 @@ PageHolderComponent.center = forwardRef(function Center(
          <Div.column width={`${withSideImage ? 50 : 100}%`} alignItems="center">
             <Div.box
                width={`calc(100% - ${theme.styles.space}px * 2)`}
-               maxWidth={!noMaxContentWidth ? app.contentMaxWidth / 2 : undefined}
+               maxWidth={!noMaxContentWidth ? contentMaxWidth ?? app.contentMaxWidth / 2 : undefined}
                marginInline={theme.styles.space}
                marginBlock={theme.styles.space}
                {...props}
