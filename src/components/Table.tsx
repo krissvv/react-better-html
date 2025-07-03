@@ -266,6 +266,7 @@ export type TableProps<DataItem> = {
    onClickAllCheckboxes?: (checked: boolean) => void;
    onChangePage?: (page: number) => void;
    onChangeFilter?: (filterData: Record<number, TableFilterData | undefined>) => void;
+   onChangeFilterDataValue?: (data: DataItem[]) => void;
 } & ComponentMarginProps;
 
 export type TableRef = {
@@ -294,6 +295,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
       onClickAllCheckboxes,
       onChangePage,
       onChangeFilter,
+      onChangeFilterDataValue,
       ...props
    }: TableProps<DataItem>,
    ref: React.ForwardedRef<TableRef>,
@@ -741,6 +743,9 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
    useEffect(() => {
       onChangeFilter?.(filterData);
    }, [onChangeFilter, filterData]);
+   useEffect(() => {
+      onChangeFilterDataValue?.(dataAfterFilter);
+   }, [onChangeFilterDataValue, dataAfterFilter]);
 
    useImperativeHandle(
       ref,
