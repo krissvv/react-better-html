@@ -127,8 +127,8 @@ const getAnimationOutName = (
 
 const getAlertDurationFromAuto = (duration: AlertDuration, alert: AlertT): number => {
    if (duration === "auto") {
-      const titleLength = alert.title.length;
-      const messageLength = alert.message?.length ?? 0;
+      const titleLength: number = alert.title?.length ?? 0;
+      const messageLength: number = alert.message?.length ?? 0;
 
       return Math.max(defaultAlertDuration, (titleLength + messageLength) * 30);
    }
@@ -302,7 +302,7 @@ function Alert({ alert }: AlertProps) {
 
                   <Div.column flex={1} gap={theme.styles.gap / 2}>
                      <Text fontSize={18} fontWeight={700}>
-                        {alertData[alert.type].title}
+                        {alert.title ?? alertData[alert.type].title}
                      </Text>
 
                      <Text fontSize={14} color={theme.colors.textSecondary}>

@@ -4,7 +4,7 @@ export type AlertDuration = number | "auto";
 export type Alert = {
    id: string;
    type: AlertType;
-   title: string;
+   title?: string;
    message?: string;
    duration?: AlertDuration;
    onClose?: (alert: Alert) => void;
