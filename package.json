@@ -1,6 +1,6 @@
 {
    "name": "react-better-html",
-   "version": "1.1.133",
+   "version": "1.1.134",
    "description": "A component library for react that is as close to plane html as possible",
    "main": "dist/index.js",
    "files": [

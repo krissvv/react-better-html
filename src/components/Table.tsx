@@ -306,6 +306,13 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
 
    const filterModalRef = useRef<ModalRef>(null);
 
+   const onChangePageRef = useRef(onChangePage);
+   onChangePageRef.current = onChangePage;
+   const onChangeFilterRef = useRef(onChangeFilter);
+   onChangeFilterRef.current = onChangeFilter;
+   const onChangeFilterDataValueRef = useRef(onChangeFilterDataValue);
+   onChangeFilterDataValueRef.current = onChangeFilterDataValue;
+
    const [checkedItems, setCheckedItems] = useState<boolean[]>([]);
    const [expandedRows, setExpandedRows] = useState<boolean[]>([]);
    const [currentPage, setCurrentPage] = useState<number>(1);
@@ -738,14 +745,14 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
    const onClickDeselectAllFilterListItems = useCallback(() => setFilterListSelectedItems([]), []);
 
    useEffect(() => {
-      onChangePage?.(currentPage);
-   }, [onChangePage, currentPage]);
+      onChangePageRef.current?.(currentPage);
+   }, [currentPage]);
    useEffect(() => {
-      onChangeFilter?.(filterData);
-   }, [onChangeFilter, filterData]);
+      onChangeFilterRef.current?.(filterData);
+   }, [filterData]);
    useEffect(() => {
-      onChangeFilterDataValue?.(dataAfterFilter);
-   }, [onChangeFilterDataValue, dataAfterFilter]);
+      onChangeFilterDataValueRef.current?.(dataAfterFilter);
+   }, [dataAfterFilter]);
 
    useImperativeHandle(
       ref,
