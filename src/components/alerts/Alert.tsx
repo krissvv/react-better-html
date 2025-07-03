@@ -15,7 +15,7 @@ import Text from "../Text";
 import Button from "../Button";
 import { useAlertControls, usePlugin, useTheme } from "../BetterHtmlProvider";
 
-const StyledDiv = styled(Div).withConfig({
+const StyledDiv = styled.div.withConfig({
    shouldForwardProp: (prop) => !["theme"].includes(prop),
 })<{ theme: ThemeConfig }>`
    @keyframes fadeInFromLeft {
