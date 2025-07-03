@@ -4,4 +4,4 @@ export const appConfig: AppConfig = {
    contentMaxWidth: 1100,
 };
 
-export const defaultAlertDuration: number = 3000;
+export const defaultAlertDuration: number = 2.3 * 1000;

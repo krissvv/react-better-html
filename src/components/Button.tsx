@@ -186,7 +186,7 @@ const ButtonComponent: ButtonComponent = function Button<Value>({
    const isLoadingHook = useLoader(loaderName);
    const betterHtmlContext = useBetterHtmlContextInternal();
 
-   const isLoadingElement = isLoading ?? isLoadingHook;
+   const isLoadingElement = isLoading || isLoadingHook;
 
    const styledComponentStyles = useStyledComponentStyles(
       {
