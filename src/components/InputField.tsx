@@ -788,7 +788,6 @@ InputFieldComponent.dateTime = forwardRef(function DateTime({ minDate, maxDate, 
             .padStart(2, "0")}-${new Date().getDate().toString().padStart(2, "0")}`;
 
          const newValue = `${(internalValue.trim() || today)?.toString().split("T")[0]}T${newTime}`;
-         console.log(newValue);
 
          inputFieldProps.onChangeValue?.(newValue);
          setInternalValue(newValue);

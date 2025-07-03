@@ -219,6 +219,8 @@ export type TooltipProps = {
    content: React.ReactNode;
    contentWidth?: React.CSSProperties["width"];
    contentMinWidth?: React.CSSProperties["minWidth"];
+   /** @default "fit-content" */
+   childrenWrapperWidth?: React.CSSProperties["width"];
    withArrow?: boolean;
    isSmall?: boolean;
    backgroundColor?: string;
@@ -250,6 +252,7 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
       content,
       contentWidth,
       contentMinWidth,
+      childrenWrapperWidth = "fit-content",
       withArrow,
       isSmall,
       backgroundColor,
@@ -370,12 +373,12 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
    return (
       <Div
          position="relative"
-         width="fit-content"
+         width={childrenWrapperWidth}
          onClick={onClickHolder}
          onMouseEnter={onMouseEnter}
          onMouseLeave={onMouseLeave}
       >
-         <Div width="fit-content" isTabAccessed={isTabAccessed} ref={triggerHolderRef}>
+         <Div width={childrenWrapperWidth} isTabAccessed={isTabAccessed} ref={triggerHolderRef}>
             {children}
          </Div>
 
