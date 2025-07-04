@@ -97,6 +97,22 @@ const FoldableComponent: FoldableComponentType = forwardRef<FoldableRef, Foldabl
          clearTimeout(timeout);
       };
    }, [isOpen]);
+   useEffect(() => {
+      if (!isOpen) return;
+      if (!bodyRef.current) return;
+
+      const observer = new ResizeObserver(() => {
+         if (!bodyRef.current) return;
+
+         setBodyVirtualHeight(bodyRef.current.scrollHeight * 2);
+      });
+
+      observer.observe(bodyRef.current);
+
+      return () => {
+         observer.disconnect();
+      };
+   }, [isOpen]);
 
    useImperativeHandle(
       ref,

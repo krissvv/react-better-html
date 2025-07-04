@@ -29,6 +29,7 @@ import {
    Foldable,
    Tooltip,
    useAlertControls,
+   useBooleanState,
 } from "../../src";
 
 const data: {
@@ -156,6 +157,8 @@ function App() {
    const modalWithFoldableRef = useRef<ModalRef>(null);
    const confirmationModalRef = useRef<ModalRef>(null);
    const destructiveModalRef = useRef<ModalRef>(null);
+
+   const [bigHeight, setBigHeight] = useBooleanState();
 
    const form = useForm({
       defaultValues: {
@@ -1176,6 +1179,17 @@ function App() {
                            harum deserunt qui labore officiis id nisi atque nobis laudantium impedit adipisci
                            reprehenderit. Consequatur, vel.
                         </Text>
+
+                        <Button text="Change height" onClick={setBigHeight.toggle} />
+
+                        {bigHeight && (
+                           <Text>
+                              Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum, ullam, necessitatibus
+                              harum error voluptas natus iste labore amet, itaque enim quae delectus exercitationem!
+                              Ullam saepe, harum deserunt qui labore officiis id nisi atque nobis laudantium impedit
+                              adipisci reprehenderit. Consequatur, vel.
+                           </Text>
+                        )}
                      </Foldable.box>
                   </Div.column>
                </Tabs.content>
