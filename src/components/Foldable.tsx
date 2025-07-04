@@ -65,7 +65,7 @@ const FoldableComponent: FoldableComponentType = forwardRef<FoldableRef, Foldabl
    const bodyRef = useRef<HTMLDivElement>(null);
 
    const [internalIsOpen, setInternalIsOpen] = useBooleanState(defaultOpen);
-   const [bodyVirtualHeight, setBodyVirtualHeight] = useState<number>(500);
+   const [bodyVirtualHeight, setBodyVirtualHeight] = useState<number>();
 
    const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
 
@@ -85,7 +85,17 @@ const FoldableComponent: FoldableComponentType = forwardRef<FoldableRef, Foldabl
    useEffect(() => {
       if (!bodyRef.current) return;
 
-      setBodyVirtualHeight(Math.min(500, bodyRef.current.scrollHeight * 2));
+      const body = bodyRef.current;
+
+      setBodyVirtualHeight(body.scrollHeight * 2);
+
+      const timeout = setTimeout(() => {
+         setBodyVirtualHeight(body.scrollHeight * 2);
+      }, 0.2 * 1000);
+
+      return () => {
+         clearTimeout(timeout);
+      };
    }, [isOpen]);
 
    useImperativeHandle(
