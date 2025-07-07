@@ -206,7 +206,7 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
    const readyId = id ?? internalId;
 
    return (
-      <Div.column width="100%" gap={theme.styles.gap} {...styledComponentStylesWithExcluded}>
+      <Div.column gap={theme.styles.gap} {...styledComponentStylesWithExcluded}>
          {label && (
             <Label text={label} color={labelColor} required={required} isError={!!errorText} htmlFor={readyId} />
          )}

@@ -11,8 +11,8 @@ import Div from "./Div";
 import Icon from "./Icon";
 import Text from "./Text";
 import Button from "./Button";
-import { useTheme } from "./BetterHtmlProvider";
 import Loader from "./Loader";
+import { useTheme } from "./BetterHtmlProvider";
 
 export type FormRowProps = {
    oneItemOnly?: boolean;
@@ -89,15 +89,11 @@ FormRowComponent.withTitle = forwardRef(function WithTitle(
    const theme = useTheme();
    const mediaQuery = useMediaQuery();
 
+   const titleGap = theme.styles.space;
+
    return (
       <FormRowComponent {...props} ref={ref}>
-         <Div.row
-            width="100%"
-            alignItems="center"
-            gap={theme.styles.space}
-            paddingRight={isLoading ? 26 : undefined}
-            transition={theme.styles.transition}
-         >
+         <Div.row width="100%" alignItems="center" gap={titleGap}>
             {icon && <Icon name={icon} />}
 
             <Div.column flex={1} gap={theme.styles.gap / 2}>
@@ -105,6 +101,8 @@ FormRowComponent.withTitle = forwardRef(function WithTitle(
 
                {description && <Text color={theme.colors.textSecondary}>{description}</Text>}
             </Div.column>
+
+            {isLoading && <Div width={26 - titleGap} />}
          </Div.row>
 
          <Div.row
