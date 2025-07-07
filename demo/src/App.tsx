@@ -643,7 +643,7 @@ function App() {
                         <FormRow.withTitle title="Title" description="Description" withActions={form.isDirty}>
                            <InputField placeholder="Hello" {...form.getInputFieldProps("name")} />
                         </FormRow.withTitle>
-                        <FormRow.withTitle title="Title" description="Description" withActions={form.isDirty}>
+                        <FormRow.withTitle title="Title" description="Description" isLoading withActions={form.isDirty}>
                            <InputField placeholder="Hello" {...form.getInputFieldProps("name")} />
                         </FormRow.withTitle>
                      </Form>

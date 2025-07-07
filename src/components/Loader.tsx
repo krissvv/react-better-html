@@ -43,6 +43,8 @@ export type LoaderProps = {
    | "padding"
    | "animation"
    | "animationName"
+   | "transform"
+   | "clipPath"
 >;
 
 type LoaderComponentType = {

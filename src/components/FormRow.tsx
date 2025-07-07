@@ -12,6 +12,7 @@ import Icon from "./Icon";
 import Text from "./Text";
 import Button from "./Button";
 import { useTheme } from "./BetterHtmlProvider";
+import Loader from "./Loader";
 
 export type FormRowProps = {
    oneItemOnly?: boolean;
@@ -20,6 +21,11 @@ export type FormRowProps = {
     * @default false
     */
    noBreakingPoint?: boolean;
+   /**
+    * @description Weather to render the children as a column or not
+    * @default false
+    */
+   asColumn?: boolean;
    gap?: React.CSSProperties["gap"];
    children?: React.ReactNode;
 } & ComponentMarginProps;
@@ -33,6 +39,7 @@ type FormRowComponentType = {
             icon?: IconName | AnyOtherString;
             title?: string;
             description?: string;
+            isLoading?: boolean;
             withActions?: boolean;
             saveButtonLoaderName?: LoaderName | AnyOtherString;
             resetButtonLoaderName?: LoaderName | AnyOtherString;
@@ -44,13 +51,13 @@ type FormRowComponentType = {
 };
 
 const FormRowComponent: FormRowComponentType = forwardRef(function FormRow(
-   { oneItemOnly, noBreakingPoint, gap, children, ...props }: FormRowProps,
+   { oneItemOnly, noBreakingPoint, asColumn, gap, children, ...props }: FormRowProps,
    ref: React.ForwardedRef<HTMLDivElement>,
 ) {
    const theme = useTheme();
    const mediaQuery = useMediaQuery();
 
-   const breakingPoint = !noBreakingPoint ? mediaQuery.size900 : false;
+   const breakingPoint = asColumn ?? (!noBreakingPoint ? mediaQuery.size900 : false);
    const readyGap =
       breakingPoint || (noBreakingPoint && mediaQuery.size900) ? theme.styles.gap : theme.styles.space * 2;
 
@@ -68,6 +75,7 @@ FormRowComponent.withTitle = forwardRef(function WithTitle(
       icon,
       title,
       description,
+      isLoading,
       withActions,
       saveButtonLoaderName,
       resetButtonLoaderName,
@@ -83,7 +91,13 @@ FormRowComponent.withTitle = forwardRef(function WithTitle(
 
    return (
       <FormRowComponent {...props} ref={ref}>
-         <Div.row width="100%" alignItems="center" gap={theme.styles.space}>
+         <Div.row
+            width="100%"
+            alignItems="center"
+            gap={theme.styles.space}
+            paddingRight={isLoading ? 26 : undefined}
+            transition={theme.styles.transition}
+         >
             {icon && <Icon name={icon} />}
 
             <Div.column flex={1} gap={theme.styles.gap / 2}>
@@ -94,10 +108,22 @@ FormRowComponent.withTitle = forwardRef(function WithTitle(
          </Div.row>
 
          <Div.row
+            position="relative"
             width={props.noBreakingPoint && mediaQuery.size900 ? undefined : "100%"}
             alignItems="center"
             gap={theme.styles.gap}
          >
+            <Div
+               position="absolute"
+               top="50%"
+               right={`calc(100% + ${theme.styles.space}px)`}
+               transform="translateY(-50%)"
+               opacity={!isLoading ? 0 : undefined}
+               pointerEvents={!isLoading ? "none" : undefined}
+            >
+               <Loader />
+            </Div>
+
             {children}
 
             {withActions && (

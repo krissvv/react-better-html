@@ -33,6 +33,7 @@ function AlertsHolder() {
             pluginConfig.align === "center" ? "center" : pluginConfig.align === "right" ? "flex-end" : undefined
          }
          transform={pluginConfig.align === "center" ? "translateX(-50%)" : undefined}
+         zIndex={1000}
       >
          {alerts.map((alert) => (
             <Alert alert={alert} key={alert.id} />
