@@ -13,7 +13,7 @@ import {
 import styled, { css } from "styled-components";
 
 import { ColorTheme, Theme } from "../types/theme";
-import { ComponentMarginProps, ComponentPropWithRef } from "../types/components";
+import { ComponentMarginProps, ComponentPropWithRef, ComponentStyle } from "../types/components";
 import { OmitProps } from "../types/app";
 
 import { useForm, useMediaQuery } from "../utils/hooks";
@@ -262,6 +262,7 @@ export type TableProps<DataItem> = {
    pageSize?: number;
    pageCount?: number;
    isInsideTableExpandRow?: boolean;
+   getRowStyle?: (item: DataItem, index: number) => ComponentStyle;
    onClickRow?: (item: DataItem, index: number) => void;
    onClickAllCheckboxes?: (checked: boolean) => void;
    onChangePage?: (page: number) => void;
@@ -291,6 +292,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
       pageSize,
       pageCount,
       isInsideTableExpandRow,
+      getRowStyle,
       onClickRow,
       onClickAllCheckboxes,
       onChangePage,
@@ -853,6 +855,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                                     ? "withoutHover"
                                     : undefined
                               }
+                              style={getRowStyle?.(item, rowIndex)}
                               onClick={() => onClickRowElement(item, rowIndex)}
                            >
                               {columns.map((column, colIndex) => (

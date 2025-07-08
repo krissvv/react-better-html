@@ -821,6 +821,10 @@ function App() {
                         ]}
                         data={data}
                         withStickyHeader
+                        getRowStyle={(item) => ({
+                           color: item.id === 2 ? theme.colors.base : undefined,
+                           backgroundColor: item.id === 2 ? theme.colors.error : undefined,
+                        })}
                      />
                      <Table
                         columns={[
