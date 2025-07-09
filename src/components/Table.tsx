@@ -37,17 +37,93 @@ const defaultImageWidth = 160;
 const maximumVisiblePages = 11;
 
 const TableStyledComponent = styled.table.withConfig({
-   shouldForwardProp: (prop) => !["isStriped", "withHover", "withStickyHeader", "colorTheme", "theme"].includes(prop),
+   shouldForwardProp: (prop) =>
+      ![
+         "isStriped",
+         "withHover",
+         "withStickyHeader",
+         "colorTheme",
+         "theme",
+         "containsOverflowComponents",
+         "withFooter",
+      ].includes(prop),
 })<{
    isStriped?: boolean;
    withHover?: boolean;
    withStickyHeader?: boolean;
    colorTheme?: ColorTheme;
    theme: Theme;
+   containsOverflowComponents?: boolean;
+   withFooter?: boolean;
 }>`
    width: 100%;
    border-collapse: collapse;
    border-spacing: 0;
+
+   thead {
+      tr:first-child {
+         border-top-left-radius: ${(props) =>
+            props.containsOverflowComponents ? `${props.theme.styles.borderRadius * 2 - 1}px` : undefined};
+         border-top-right-radius: ${(props) =>
+            props.containsOverflowComponents ? `${props.theme.styles.borderRadius * 2 - 1}px` : undefined};
+
+         th:first-child {
+            border-top-left-radius: ${(props) =>
+               props.containsOverflowComponents ? `${props.theme.styles.borderRadius * 2 - 1}px` : undefined};
+         }
+
+         th:last-child {
+            border-top-right-radius: ${(props) =>
+               props.containsOverflowComponents ? `${props.theme.styles.borderRadius * 2 - 1}px` : undefined};
+         }
+      }
+   }
+
+   tbody {
+      tr:last-child {
+         border-bottom-left-radius: ${(props) =>
+            props.containsOverflowComponents && !props.withFooter
+               ? `${props.theme.styles.borderRadius * 2 - 1}px`
+               : undefined};
+         border-bottom-right-radius: ${(props) =>
+            props.containsOverflowComponents && !props.withFooter
+               ? `${props.theme.styles.borderRadius * 2 - 1}px`
+               : undefined};
+
+         td:first-child {
+            border-bottom-left-radius: ${(props) =>
+               props.containsOverflowComponents && !props.withFooter
+                  ? `${props.theme.styles.borderRadius * 2 - 1}px`
+                  : undefined};
+         }
+
+         td:last-child {
+            border-bottom-right-radius: ${(props) =>
+               props.containsOverflowComponents && !props.withFooter
+                  ? `${props.theme.styles.borderRadius * 2 - 1}px`
+                  : undefined};
+         }
+      }
+   }
+
+   tfoot {
+      tr:last-child {
+         border-bottom-left-radius: ${(props) =>
+            props.containsOverflowComponents ? `${props.theme.styles.borderRadius * 2 - 1}px` : undefined};
+         border-bottom-right-radius: ${(props) =>
+            props.containsOverflowComponents ? `${props.theme.styles.borderRadius * 2 - 1}px` : undefined};
+
+         td:first-child {
+            border-bottom-left-radius: ${(props) =>
+               props.containsOverflowComponents ? `${props.theme.styles.borderRadius * 2 - 1}px` : undefined};
+         }
+
+         td:last-child {
+            border-bottom-right-radius: ${(props) =>
+               props.containsOverflowComponents ? `${props.theme.styles.borderRadius * 2 - 1}px` : undefined};
+         }
+      }
+   }
 
    tr {
       background-color: ${(props) => props.theme.colors.backgroundContent};
@@ -264,6 +340,7 @@ export type TableProps<DataItem> = {
    pageSize?: number;
    pageCount?: number;
    isInsideTableExpandRow?: boolean;
+   containsOverflowComponents?: boolean;
    getRowStyle?: (item: DataItem, index: number) => ComponentStyle;
    onClickRow?: (item: DataItem, index: number) => void;
    onClickAllCheckboxes?: (checked: boolean) => void;
@@ -294,6 +371,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
       pageSize,
       pageCount,
       isInsideTableExpandRow,
+      containsOverflowComponents,
       getRowStyle,
       onClickRow,
       onClickAllCheckboxes,
@@ -774,6 +852,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
       [currentPage, setCurrentPage, pageCountInternal, setCheckedItems],
    );
 
+   const withFooter = pageSize !== undefined && pageCountInternal > 1;
    const mobileFooterBreakingPoint = mediaQuery.size700 && pageCountInternal > maximumVisiblePages / 1.4;
 
    return (
@@ -781,7 +860,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
          <Div
             border={`1px solid ${theme.colors.border}`}
             borderRadius={theme.styles.borderRadius * 2}
-            overflow="auto"
+            overflow={!containsOverflowComponents ? "auto" : undefined}
             {...props}
          >
             <TableStyledComponent
@@ -790,6 +869,8 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                withStickyHeader={withStickyHeader}
                colorTheme={colorTheme}
                theme={theme}
+               containsOverflowComponents={containsOverflowComponents}
+               withFooter={withFooter}
             >
                <thead>
                   <tr className="isHeader">
@@ -896,7 +977,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                   )}
                </tbody>
 
-               {pageSize !== undefined && pageCountInternal > 1 && (
+               {withFooter && (
                   <tfoot>
                      <tr className="isFooter">
                         <td colSpan={columns.length}>

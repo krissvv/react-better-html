@@ -837,6 +837,7 @@ function App() {
                            color: item.id === 2 ? theme.colors.base : undefined,
                            backgroundColor: item.id === 2 ? theme.colors.error : undefined,
                         })}
+                        containsOverflowComponents
                      />
                      <Table
                         columns={[
@@ -1022,6 +1023,7 @@ function App() {
                         ]}
                         data={data}
                         pageSize={3}
+                        containsOverflowComponents
                      />
 
                      <Table
