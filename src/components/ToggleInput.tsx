@@ -344,6 +344,7 @@ export default {
             <Div.row
                alignItems="center"
                gap={theme.styles.gap}
+               isTabAccessed
                onMouseDown={setIsMouseDown.setTrue}
                onMouseUp={setIsMouseDown.setFalse}
                onMouseOut={setIsMouseDown.setFalse}

@@ -155,6 +155,7 @@ function App() {
    const modalRef = useRef<ModalRef>(null);
    const modalWithTitleRef = useRef<ModalRef>(null);
    const modalWithFoldableRef = useRef<ModalRef>(null);
+   const modalWithoutCloseRef = useRef<ModalRef>(null);
    const confirmationModalRef = useRef<ModalRef>(null);
    const destructiveModalRef = useRef<ModalRef>(null);
 
@@ -688,6 +689,7 @@ function App() {
                      <Button text="Open modal" onClick={() => modalRef.current?.open()} />
                      <Button text="Open modal with title" onClick={() => modalWithTitleRef.current?.open()} />
                      <Button text="Open modal with foldable" onClick={() => modalWithFoldableRef.current?.open()} />
+                     <Button text="Open modal without close " onClick={() => modalWithoutCloseRef.current?.open()} />
                      <Button text="Open confirmation modal" onClick={() => confirmationModalRef.current?.open()} />
                      <Button text="Open destructive modal" onClick={() => destructiveModalRef.current?.open()} />
                   </Div.column>
@@ -727,6 +729,16 @@ function App() {
                            />
                         </Div.column>
                      </Foldable>
+                  </Modal>
+
+                  <Modal
+                     title="My Modal With Foldable"
+                     description="Lorem ipsum dolor sit amet"
+                     withoutCloseButton
+                     ref={modalWithoutCloseRef}
+                  >
+                     Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae cumque tempore qui?
+                     <Button text="Close" onClick={() => modalWithoutCloseRef.current?.close()} />
                   </Modal>
 
                   <Modal.confirmation ref={confirmationModalRef} />

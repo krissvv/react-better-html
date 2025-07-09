@@ -423,11 +423,13 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
 
             case "expand": {
                return (
-                  <Icon
-                     name="chevronDown"
-                     transform={`rotate(${expandedRows[itemIndex] ? 180 : 0}deg)`}
-                     transition={theme.styles.transition}
-                  />
+                  <Div isTabAccessed>
+                     <Icon
+                        name="chevronDown"
+                        transform={`rotate(${expandedRows[itemIndex] ? 180 : 0}deg)`}
+                        transition={theme.styles.transition}
+                     />
+                  </Div>
                );
             }
 

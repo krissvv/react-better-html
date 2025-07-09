@@ -71,6 +71,7 @@ export type ModalProps = {
    /** @requires ReactRouterDomPlugin */
    name?: string;
    overflow?: React.CSSProperties["overflow"];
+   withoutCloseButton?: boolean;
    onOpen?: () => void;
    onClose?: () => void;
    children?: React.ReactNode;
@@ -118,6 +119,7 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
       headerBackgroundColor,
       name,
       overflow,
+      withoutCloseButton,
       onOpen,
       onClose,
       children,
@@ -163,6 +165,16 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
          setIsOpenedLate(false);
       }, 0.2 * 1000);
    }, [onClose, urlQuery, name]);
+   const onKeyDown = useCallback(
+      (event: React.KeyboardEvent<HTMLDialogElement>) => {
+         if (event.key === "Escape") {
+            if (!withoutCloseButton) return;
+
+            event.preventDefault();
+         }
+      },
+      [withoutCloseButton],
+   );
 
    useImperativeHandle(
       ref,
@@ -182,6 +194,7 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
          colorTheme={colorTheme}
          opacity={!isOpened ? 0 : 1}
          onClose={onClickClose}
+         onKeyDown={onKeyDown}
          ref={dialogRef}
       >
          {isOpenedLate ? (
@@ -239,21 +252,27 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
                               )}
                            </Div.column>
 
-                           <Button.icon
-                              icon="XMark"
-                              marginTop={1}
-                              iconColor={titleColor}
-                              onClick={onClickClose}
-                              transition={theme.styles.transition}
-                           />
+                           {!withoutCloseButton && (
+                              <Button.icon
+                                 icon="XMark"
+                                 marginTop={1}
+                                 iconColor={titleColor}
+                                 onClick={onClickClose}
+                                 transition={theme.styles.transition}
+                              />
+                           )}
                         </Div.row>
 
                         <Divider.horizontal />
                      </>
                   ) : (
-                     <Div position="absolute" top={theme.styles.space} right={theme.styles.space}>
-                        <Button.icon icon="XMark" onClick={onClickClose} />
-                     </Div>
+                     <>
+                        {!withoutCloseButton && (
+                           <Div position="absolute" top={theme.styles.space} right={theme.styles.space}>
+                              <Button.icon icon="XMark" onClick={onClickClose} />
+                           </Div>
+                        )}
+                     </>
                   )}
 
                   <Div
