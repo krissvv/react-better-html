@@ -211,6 +211,8 @@ type ExpandColumn<DataItem> = {
    type: "expand";
    onlyOneExpanded?: boolean;
    render?: (item: DataItem, index: number) => ReactNode;
+   onExpand?: (item: DataItem, index: number) => void;
+   onCollapse?: (item: DataItem, index: number) => void;
 };
 
 //? Filter types
@@ -444,8 +446,13 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                   const newValue = expandColumn.onlyOneExpanded ? [] : [...oldValue];
                   newValue[index] = true;
 
+                  expandColumn.onExpand?.(item, index);
+
                   return newValue;
                }
+
+               expandColumn.onCollapse?.(item, index);
+
                return oldValue.map((isExpanded, internalIndex) => (internalIndex === index ? !isExpanded : isExpanded));
             });
          } else onClickRow?.(item, index);
