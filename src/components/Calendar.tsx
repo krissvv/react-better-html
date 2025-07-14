@@ -1,8 +1,12 @@
 import { useCallback, useMemo, useState, memo, useEffect } from "react";
+import styled from "styled-components";
+
+import { Theme } from "../types/theme";
 
 import Div from "./Div";
 import Text from "./Text";
 import Button from "./Button";
+import Icon from "./Icon";
 import { useTheme } from "./BetterHtmlProvider";
 
 const getMonthName = (month: number, short = false) => {
@@ -34,6 +38,17 @@ const getWeekDayName = (day: number, short = false) => {
 };
 
 const weekDaysIndex = [1, 2, 3, 4, 5, 6, 0];
+const yearsRange = Array.from({ length: 100 + 1 + 50 }, (_, index) => index + new Date().getFullYear() - 100);
+
+const SelectComponent = styled.select.withConfig({
+   shouldForwardProp: (prop) => !["normalStyle", "hoverStyle"].includes(prop),
+})<{ theme: Theme }>`
+   position: absolute;
+   top: 50%;
+   right: 0;
+   transform: translateY(-50%);
+   opacity: 0;
+`;
 
 type CalendarProps = {
    value?: string;
@@ -96,6 +111,9 @@ function Calendar({ value, minDate, maxDate, onChange }: CalendarProps) {
             .padStart(2, "0")}`,
       );
    }, [onChange]);
+   const onChangeYearSelect = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
+      setCurrentYear(parseInt(event.target.value));
+   }, []);
 
    const firstDayOfMonth = useMemo(() => {
       const day = new Date(currentYear, currentMonth, 1).getDay();
@@ -130,9 +148,22 @@ function Calendar({ value, minDate, maxDate, onChange }: CalendarProps) {
          <Div.row width="100%" justifyContent="space-between" alignItems="center">
             <Button.icon icon="chevronLeft" onClick={onClickPreviousMonthButton} />
 
-            <Text fontWeight={700}>
-               {getMonthName(currentMonth)} {currentYear}
-            </Text>
+            <Div.row alignItems="center" gap={4}>
+               <Text fontWeight={700}>{getMonthName(currentMonth)}</Text>
+
+               <Div.row position="relative" alignItems="center" gap={2}>
+                  <Text fontWeight={700}>{currentYear}</Text>
+                  <Icon name="chevronDown" size={12} />
+
+                  <SelectComponent theme={theme} value={currentYear} onChange={onChangeYearSelect}>
+                     {yearsRange.map((year) => (
+                        <option value={year} key={year}>
+                           {year}
+                        </option>
+                     ))}
+                  </SelectComponent>
+               </Div.row>
+            </Div.row>
 
             <Button.icon icon="chevronRight" onClick={onClickNextMonthButton} />
          </Div.row>

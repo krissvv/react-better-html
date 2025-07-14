@@ -344,7 +344,9 @@ export default {
             <Div.row
                alignItems="center"
                gap={theme.styles.gap}
+               borderRadius={999}
                isTabAccessed
+               onClick={onClickElement}
                onMouseDown={setIsMouseDown.setTrue}
                onMouseUp={setIsMouseDown.setFalse}
                onMouseOut={setIsMouseDown.setFalse}
@@ -357,7 +359,6 @@ export default {
                   checked={checked}
                   disabled={disabled ?? false}
                   isMouseDown={isMouseDown}
-                  onClick={onClickElement}
                   id={readyId}
                   role="switch"
                   aria-checked={checked}

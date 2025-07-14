@@ -91,6 +91,7 @@ const InputElement = styled.input.withConfig({
    &[type="date"],
    &[type="datetime-local"],
    &[type="time"] {
+      min-height: 48px;
       -webkit-appearance: none;
       -moz-appearance: textfield;
 
