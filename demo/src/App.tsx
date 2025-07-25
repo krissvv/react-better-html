@@ -574,9 +574,14 @@ function App() {
                      <ToggleInput.checkbox />
                      <ToggleInput.checkbox label="Label" />
                      <ToggleInput.checkbox text="Some text here" />
+                     <ToggleInput.checkbox text="Some text here" required />
                      <ToggleInput.checkbox label="Label" text="Some text here" />
+                     <ToggleInput.checkbox label="Label" text="Some text here" required />
                      <ToggleInput.checkbox label="Label" text="Some text here" errorText="This is an error" />
                      <ToggleInput.checkbox label="Label" text="Some text here" disabled />
+
+                     <ToggleInput.checkbox textAdvanced={<Text>Some text here that is advanced</Text>} />
+                     <ToggleInput.checkbox textAdvanced={<Text>Some text here that is advanced</Text>} required />
 
                      <ToggleInput.radiobutton />
                      <ToggleInput.radiobutton label="Label" />

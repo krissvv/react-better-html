@@ -2,9 +2,8 @@ import { forwardRef, memo } from "react";
 
 import { ComponentPropWithRef } from "../types/components";
 import { OmitProps } from "../types/app";
-import { Color } from "../types/theme";
 
-import { darkenColor, lightenColor, saturateColor } from "../utils/colorManipulation";
+import { darkenColor, lightenColor } from "../utils/colorManipulation";
 
 import Div, { DivProps } from "./Div";
 import Text, { TextProps } from "./Text";
@@ -29,7 +28,7 @@ type ChipComponentType = {
       props: ComponentPropWithRef<
          HTMLDivElement,
          OmitProps<ChipProps, "color" | "backgroundColor"> & {
-            color?: Color;
+            color?: string;
          }
       >,
    ) => React.ReactElement;

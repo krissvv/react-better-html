@@ -142,6 +142,7 @@ type InternalToggleInputProps<Value> = {
    label?: string;
    labelColor?: string;
    text?: string;
+   textAdvanced?: React.ReactNode;
    errorText?: string;
    infoText?: string;
    value?: Value;
@@ -161,6 +162,7 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
       label,
       labelColor,
       text,
+      textAdvanced,
       errorText,
       infoText,
       value,
@@ -254,7 +256,7 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
                ) : undefined}
             </Div.row>
 
-            {text && (
+            {text ? (
                <Text color={color} userSelect="none" cursor="pointer" onClick={onClickText}>
                   {text}
                   {required && !label && (
@@ -264,7 +266,18 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
                      </Text>
                   )}
                </Text>
-            )}
+            ) : textAdvanced ? (
+               <Div.row userSelect="none" cursor="pointer" onClick={onClickText}>
+                  {textAdvanced}
+
+                  {required && !label && (
+                     <Text as="span" fontSize={16} color={theme.colors.error} marginLeft={4}>
+                        {" "}
+                        *
+                     </Text>
+                  )}
+               </Div.row>
+            ) : undefined}
          </Div.row>
 
          {(errorText || infoText) && (
