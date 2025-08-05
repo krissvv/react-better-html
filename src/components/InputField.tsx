@@ -251,6 +251,10 @@ type InputFieldComponentType = {
          InputFieldProps & {
             minDate?: Date;
             maxDate?: Date;
+            /** @default today */
+            defaultDateAfterTimePick?: `${number}-${number}-${number}`;
+            /** @default "00:00" */
+            defaultTimeAfterDatePick?: `${number}:${number}`;
          }
       >,
    ) => React.ReactElement;
@@ -743,7 +747,10 @@ InputFieldComponent.date = forwardRef(function Date({ minDate, maxDate, ...props
    );
 }) as InputFieldComponentType["date"];
 
-InputFieldComponent.dateTime = forwardRef(function DateTime({ minDate, maxDate, ...props }, ref) {
+InputFieldComponent.dateTime = forwardRef(function DateTime(
+   { minDate, maxDate, defaultDateAfterTimePick, defaultTimeAfterDatePick = "00:00", ...props },
+   ref,
+) {
    const theme = useTheme();
 
    const holderRef = useRef<HTMLDivElement>(null);
@@ -757,26 +764,29 @@ InputFieldComponent.dateTime = forwardRef(function DateTime({ minDate, maxDate, 
 
    const onChange = useCallback(
       (date?: string) => {
-         const newValue = date ? `${date}T${internalValue?.toString().split("T")[1] ?? "00:00"}` : "";
+         const newValue = date ? `${date}T${internalValue?.toString().split("T")[1] ?? defaultTimeAfterDatePick}` : "";
 
          inputFieldProps.onChangeValue?.(newValue);
          setInternalValue(newValue);
       },
-      [internalValue, inputFieldProps.onChangeValue],
+      [internalValue, defaultTimeAfterDatePick, inputFieldProps.onChangeValue],
    );
    const onClickHour = useCallback(
       (hour: number) => {
          const newTime = `${hour.toString().padStart(2, "0")}:${internalValue?.toString().split(":")[1] || "00"}`;
 
-         const today = `${new Date().getFullYear()}-${(new Date().getMonth() + 1)
-            .toString()
-            .padStart(2, "0")}-${new Date().getDate().toString().padStart(2, "0")}`;
+         const today =
+            defaultDateAfterTimePick ??
+            `${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, "0")}-${new Date()
+               .getDate()
+               .toString()
+               .padStart(2, "0")}`;
 
          const newValue = `${(internalValue.trim() || today)?.toString().split("T")[0]}T${newTime}`;
          inputFieldProps.onChangeValue?.(newValue);
          setInternalValue(newValue);
       },
-      [internalValue, inputFieldProps.onChangeValue],
+      [defaultDateAfterTimePick, internalValue, inputFieldProps.onChangeValue],
    );
    const onClickMinute = useCallback(
       (minute: number) => {
@@ -784,16 +794,19 @@ InputFieldComponent.dateTime = forwardRef(function DateTime({ minDate, maxDate, 
             .toString()
             .padStart(2, "0")}`;
 
-         const today = `${new Date().getFullYear()}-${(new Date().getMonth() + 1)
-            .toString()
-            .padStart(2, "0")}-${new Date().getDate().toString().padStart(2, "0")}`;
+         const today =
+            defaultDateAfterTimePick ??
+            `${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, "0")}-${new Date()
+               .getDate()
+               .toString()
+               .padStart(2, "0")}`;
 
          const newValue = `${(internalValue.trim() || today)?.toString().split("T")[0]}T${newTime}`;
 
          inputFieldProps.onChangeValue?.(newValue);
          setInternalValue(newValue);
       },
-      [internalValue, inputFieldProps.onChangeValue],
+      [defaultDateAfterTimePick, internalValue, inputFieldProps.onChangeValue],
    );
 
    useEffect(() => {
