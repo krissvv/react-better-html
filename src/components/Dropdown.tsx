@@ -1,4 +1,4 @@
-import { forwardRef, memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { forwardRef, Fragment, memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { countries } from "../constants/countries";
 
@@ -60,6 +60,12 @@ export type DropdownProps<Value, Data = unknown> = {
    onChange?: (value: Value | undefined) => void;
    onChangeSearch?: (query: string) => void;
    renderOption?: (option: DropdownOption<Value, Data>, index: number, isSelected: boolean) => React.ReactNode;
+   renderOptionDivider?: (
+      previousOption: DropdownOption<Value, Data> | undefined,
+      nextOption: DropdownOption<Value, Data> | undefined,
+      previousOptionIndex: number,
+      nextOptionIndex: number,
+   ) => React.ReactNode;
 } & OmitProps<DivProps, "onChange" | "defaultChecked">;
 
 type DropdownComponentType = {
@@ -94,6 +100,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
       onChange,
       onChangeSearch,
       renderOption,
+      renderOptionDivider,
       id,
       ...props
    }: DropdownProps<Value, Data>,
@@ -225,39 +232,54 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
 
    const selectedOption = useMemo(() => options.find((option) => option.value === value), [options, value]);
    const renderedOptions = useMemo(
-      () =>
-         filteredOptions.map((option, index) => {
-            const isSelected = option.value === value;
-            const isDisabled = option.disabled;
-            const isFocused = index === focusedOptionIndex;
+      (): React.ReactNode => (
+         <>
+            {renderOptionDivider ? renderOptionDivider(undefined, filteredOptions[0], -1, 0) : undefined}
 
-            return (
-               <Div
-                  color={
-                     isDisabled
-                        ? theme.colors.textSecondary + "80"
-                        : isSelected
-                        ? theme.colors.base
-                        : theme.colors.textPrimary
-                  }
-                  backgroundColor={isSelected ? theme.colors.primary : theme.colors.backgroundContent}
-                  filter={isFocused ? (isDisabled ? "brightness(0.95)" : "brightness(0.9)") : undefined}
-                  filterHover={focusedOptionIndex === undefined && !isDisabled ? "brightness(0.9)" : undefined}
-                  cursor={isDisabled ? "not-allowed" : "pointer"}
-                  padding={`${theme.styles.space / 2}px ${theme.styles.space + theme.styles.gap}px`}
-                  value={option}
-                  onClickWithValue={onClickOption}
-                  onMouseMove={() => setFocusedOptionIndex(undefined)}
-                  role="option"
-                  aria-selected={isSelected}
-                  aria-disabled={isDisabled}
-                  key={JSON.stringify(option)}
-               >
-                  {renderOption ? renderOption(option, index, isSelected) : <Text>{option.label}</Text>}
-               </Div>
-            );
-         }),
-      [filteredOptions, value, focusedOptionIndex, theme.colors, onClickOption, renderOption],
+            {filteredOptions.map((option, index) => {
+               const isSelected = option.value === value;
+               const isDisabled = option.disabled;
+               const isFocused = index === focusedOptionIndex;
+
+               return (
+                  <Fragment key={JSON.stringify(option)}>
+                     <Div
+                        color={
+                           isDisabled
+                              ? theme.colors.textSecondary + "80"
+                              : isSelected
+                              ? theme.colors.base
+                              : theme.colors.textPrimary
+                        }
+                        backgroundColor={isSelected ? theme.colors.primary : theme.colors.backgroundContent}
+                        filter={isFocused ? (isDisabled ? "brightness(0.95)" : "brightness(0.9)") : undefined}
+                        filterHover={focusedOptionIndex === undefined && !isDisabled ? "brightness(0.9)" : undefined}
+                        cursor={isDisabled ? "not-allowed" : "pointer"}
+                        padding={`${theme.styles.space / 2}px ${theme.styles.space + theme.styles.gap}px`}
+                        value={option}
+                        onClickWithValue={onClickOption}
+                        onMouseMove={() => setFocusedOptionIndex(undefined)}
+                        role="option"
+                        aria-selected={isSelected}
+                        aria-disabled={isDisabled}
+                     >
+                        {renderOption ? renderOption(option, index, isSelected) : <Text>{option.label}</Text>}
+                     </Div>
+
+                     {renderOptionDivider
+                        ? renderOptionDivider(
+                             option,
+                             filteredOptions[index + 1],
+                             index,
+                             filteredOptions[index + 1] ? index + 1 : -1,
+                          )
+                        : undefined}
+                  </Fragment>
+               );
+            })}
+         </>
+      ),
+      [filteredOptions, value, focusedOptionIndex, theme.colors, onClickOption, renderOption, renderOptionDivider],
    );
 
    useEffect(() => {

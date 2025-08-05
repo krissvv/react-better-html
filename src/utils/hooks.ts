@@ -495,14 +495,19 @@ export function useForm<FormFields extends Record<string | number, string | numb
    const focusField = useCallback((field: keyof FormFields) => {
       inputFieldRefs.current[field]?.focus();
    }, []);
+   const validateForm = useCallback(() => {
+      const validationErrors = validate?.(values) || {};
+      setErrors(validationErrors);
+
+      return validationErrors;
+   }, [validate, values]);
    const onSubmitFunction = useCallback(
       async (event: React.FormEvent<HTMLFormElement>) => {
          event.preventDefault();
          setIsSubmitting.setTrue();
 
          try {
-            const validationErrors = validate?.(values) || {};
-            setErrors(validationErrors);
+            const validationErrors = validateForm();
 
             if (Object.keys(validationErrors).length === 0) {
                await onSubmit?.(values);
@@ -514,7 +519,7 @@ export function useForm<FormFields extends Record<string | number, string | numb
             setIsSubmitting.setFalse();
          }
       },
-      [values, validate, onSubmit, focusField],
+      [values, validateForm, onSubmit, focusField],
    );
    const reset = useCallback(() => {
       setValues(defaultValues);
@@ -550,6 +555,7 @@ export function useForm<FormFields extends Record<string | number, string | numb
       getRadioButtonProps,
       getSwitchProps,
       focusField,
+      validate: validateForm,
       onSubmit: onSubmitFunction,
       reset,
       requiredFields,
