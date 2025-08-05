@@ -341,6 +341,7 @@ export type TableProps<DataItem> = {
    pageCount?: number;
    isInsideTableExpandRow?: boolean;
    containsOverflowComponents?: boolean;
+   wrapperComponentRef?: React.Ref<HTMLDivElement>;
    getRowStyle?: (item: DataItem, index: number) => ComponentStyle;
    onClickRow?: (item: DataItem, index: number) => void;
    onClickAllCheckboxes?: (checked: boolean) => void;
@@ -372,6 +373,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
       pageCount,
       isInsideTableExpandRow,
       containsOverflowComponents,
+      wrapperComponentRef,
       getRowStyle,
       onClickRow,
       onClickAllCheckboxes,
@@ -862,6 +864,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
             borderRadius={theme.styles.borderRadius * 2}
             overflow={!containsOverflowComponents ? "auto" : undefined}
             {...props}
+            ref={wrapperComponentRef}
          >
             <TableStyledComponent
                isStriped={isStriped}
