@@ -485,6 +485,24 @@ function App() {
                            { label: "Option 3", value: "3", disabled: true },
                         ]}
                      />
+                     <Dropdown
+                        label="Dropdown with option dividers"
+                        options={[
+                           { label: "Option 1", value: "1" },
+                           { label: "Option 2", value: "2" },
+                           { label: "Option 3", value: "3" },
+                        ]}
+                        renderOptionDivider={() => (
+                           <Text
+                              fontSize={12}
+                              color={theme.colors.textSecondary}
+                              paddingBlock={theme.styles.gap}
+                              paddingInline={theme.styles.space + theme.styles.gap}
+                           >
+                              Divider
+                           </Text>
+                        )}
+                     />
                      <Dropdown.countries />
                      <Dropdown.countries withSearch />
                      <Dropdown

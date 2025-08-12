@@ -51,6 +51,7 @@ import {
    type PickAllRequired,
 } from "./types/app";
 import { type AppConfig, type BetterHtmlConfig } from "./types/config";
+import { type ComponentMarginProps, type ComponentPaddingProps, type ComponentHoverStyle } from "./types/components";
 import { type AssetName, type AssetsConfig } from "./types/asset";
 import { type IconName, type IconsConfig } from "./types/icon";
 import { type LoaderName, type LoaderConfig } from "./types/loader";
@@ -169,6 +170,9 @@ export {
    PickAllRequired,
    AppConfig,
    BetterHtmlConfig,
+   ComponentMarginProps,
+   ComponentPaddingProps,
+   ComponentHoverStyle,
    AssetName,
    AssetsConfig,
    IconName,
