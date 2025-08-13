@@ -20,6 +20,7 @@ import {
    useStyledComponentStyles,
 } from "../utils/hooks";
 import { getBrowser } from "../utils/functions";
+import { darkenColor, lightenColor } from "../utils/colorManipulation";
 
 import Text from "./Text";
 import Div from "./Div";
@@ -29,8 +30,7 @@ import Label from "./Label";
 import Dropdown, { DropdownOption } from "./Dropdown";
 import Image from "./Image";
 import Calendar from "./Calendar";
-import { useTheme } from "./BetterHtmlProvider";
-import { lightenColor } from "../utils/colorManipulation";
+import { useBetterHtmlContextInternal, useTheme } from "./BetterHtmlProvider";
 
 const buttonWidth = 50;
 const colorPickerSpacing = 4;
@@ -225,7 +225,9 @@ export type InputFieldProps = {
    leftIcon?: IconName | AnyOtherString;
    rightIcon?: IconName | AnyOtherString;
    prefix?: React.ReactNode;
+   prefixBackgroundColor?: string;
    suffix?: React.ReactNode;
+   suffixBackgroundColor?: string;
    insideInputFieldComponent?: React.ReactNode;
    /** @default false */
    withDebounce?: boolean;
@@ -285,7 +287,9 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
       leftIcon,
       rightIcon,
       prefix,
+      prefixBackgroundColor,
       suffix,
+      suffixBackgroundColor,
       insideInputFieldComponent,
       withDebounce,
       debounceDelay = 0.5,
@@ -302,6 +306,7 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
 ) {
    const theme = useTheme();
    const internalId = useId();
+   const { colorTheme } = useBetterHtmlContextInternal();
    const [_, debouncedValue, setDebouncedValue] = useDebounceState<string>(
       props.value?.toString() ?? "",
       debounceDelay,
@@ -359,7 +364,12 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
                   justifyContent="center"
                   border={`1px solid ${theme.colors.border}`}
                   borderRight="none"
-                  backgroundColor={lightenColor(theme.colors.border, 0.8)}
+                  backgroundColor={
+                     prefixBackgroundColor ??
+                     (colorTheme === "light"
+                        ? darkenColor(theme.colors.backgroundContent, 0.03)
+                        : lightenColor(theme.colors.backgroundContent, 0.1))
+                  }
                   borderTopLeftRadius={theme.styles.borderRadius}
                   borderBottomLeftRadius={theme.styles.borderRadius}
                   paddingInline={theme.styles.space}
@@ -432,7 +442,12 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
                   justifyContent="center"
                   border={`1px solid ${theme.colors.border}`}
                   borderLeft="none"
-                  backgroundColor={lightenColor(theme.colors.border, 0.8)}
+                  backgroundColor={
+                     suffixBackgroundColor ??
+                     (colorTheme === "light"
+                        ? darkenColor(theme.colors.backgroundContent, 0.03)
+                        : lightenColor(theme.colors.backgroundContent, 0.1))
+                  }
                   borderTopRightRadius={theme.styles.borderRadius}
                   borderBottomRightRadius={theme.styles.borderRadius}
                   paddingInline={theme.styles.space}
