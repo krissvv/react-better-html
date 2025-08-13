@@ -446,6 +446,8 @@ function App() {
                         marginBottom={20}
                      />
                      <InputField label="Label" required infoText="Here is a helper message" placeholder="Placeholder" />
+                     <InputField label="With prefix" placeholder="Placeholder" prefix={<>Hello</>} />
+                     <InputField label="With suffix" placeholder="Placeholder" suffix={<>Hello</>} />
                      <InputField.email />
                      <InputField.password />
                      <InputField.search />

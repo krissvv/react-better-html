@@ -26,8 +26,9 @@ export type DivProps<Value = unknown> = {
    as?: WebTarget;
    /** @default false */
    isTabAccessed?: boolean;
+   htmlContentTranslate?: React.ComponentProps<"div">["translate"];
    onClickWithValue?: (value: Value) => void;
-} & OmitProps<React.ComponentProps<"div">, "style" | "defaultValue"> &
+} & OmitProps<React.ComponentProps<"div">, "style" | "defaultValue" | "translate"> &
    ComponentStyle &
    ComponentHoverStyle;
 
@@ -69,6 +70,7 @@ const DivComponent: DivComponentType = forwardRef(function Div<Value>(
       as = "div",
       value,
       isTabAccessed,
+      htmlContentTranslate,
       onClickWithValue,
       role,
       onClick,
@@ -110,6 +112,7 @@ const DivComponent: DivComponentType = forwardRef(function Div<Value>(
       <DivStyledComponent
          as={as}
          tabIndex={isTabAccessed && !isMobileDevice ? 0 : undefined}
+         translate={htmlContentTranslate}
          role={role ?? (onClick ? "button" : undefined)}
          onClick={onClickElement}
          onKeyDown={onKeyDownElement}

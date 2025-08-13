@@ -30,6 +30,7 @@ import Dropdown, { DropdownOption } from "./Dropdown";
 import Image from "./Image";
 import Calendar from "./Calendar";
 import { useTheme } from "./BetterHtmlProvider";
+import { lightenColor } from "../utils/colorManipulation";
 
 const buttonWidth = 50;
 const colorPickerSpacing = 4;
@@ -37,11 +38,16 @@ const colorPickerColorWidth = 12 + 27 + colorPickerSpacing;
 const colorPickerValueWidth = 12 + 74 + colorPickerSpacing;
 
 const InputElement = styled.input.withConfig({
-   shouldForwardProp: (prop) => !["theme", "withLeftIcon", "withRightIcon", "normalStyle", "hoverStyle"].includes(prop),
+   shouldForwardProp: (prop) =>
+      !["theme", "withLeftIcon", "withRightIcon", "withPrefix", "withSuffix", "normalStyle", "hoverStyle"].includes(
+         prop,
+      ),
 })<{
    theme: Theme;
    withLeftIcon?: boolean;
    withRightIcon?: boolean;
+   withPrefix?: boolean;
+   withSuffix?: boolean;
    normalStyle: ComponentStyle;
    hoverStyle: ComponentStyle;
 }>`
@@ -54,15 +60,24 @@ const InputElement = styled.input.withConfig({
    background: ${(props) => props.theme.colors.backgroundContent};
    border: 1px solid ${(props) => props.theme.colors.border};
    border-radius: ${(props) => props.theme.styles.borderRadius}px;
+   border-top-left-radius: ${(props) => (props.withPrefix ? 0 : undefined)};
+   border-bottom-left-radius: ${(props) => (props.withPrefix ? 0 : undefined)};
+   border-top-right-radius: ${(props) => (props.withSuffix ? 0 : undefined)};
+   border-bottom-right-radius: ${(props) => (props.withSuffix ? 0 : undefined)};
    outline: none;
-   padding: ${(props) =>
-      `${(props.theme.styles.space + props.theme.styles.gap) / 2}px ${
-         props.theme.styles.space + props.theme.styles.gap
-      }px`};
+   padding: ${(props) => `${(props.theme.styles.space + props.theme.styles.gap) / 2}px ${props.theme.styles.space}px`};
    padding-left: ${(props) =>
-      props.withLeftIcon ? `${props.theme.styles.space + 16 + props.theme.styles.space - 1}px` : undefined};
+      props.withLeftIcon
+         ? `${props.theme.styles.space + 16 + props.theme.styles.space - 1}px`
+         : props.withPrefix
+         ? `${props.theme.styles.space}px`
+         : undefined};
    padding-right: ${(props) =>
-      props.withRightIcon ? `${props.theme.styles.space + 16 + props.theme.styles.space - 1}px` : undefined};
+      props.withRightIcon
+         ? `${props.theme.styles.space + 16 + props.theme.styles.space - 1}px`
+         : props.withSuffix
+         ? `${props.theme.styles.space}px`
+         : undefined};
    transition: ${(props) => props.theme.styles.transition};
 
    &::placeholder {
@@ -176,10 +191,7 @@ const TextareaElement = styled.textarea.withConfig({
    border: 1px solid ${(props) => props.theme.colors.border};
    border-radius: ${(props) => props.theme.styles.borderRadius}px;
    outline: none;
-   padding: ${(props) =>
-      `${(props.theme.styles.gap + props.theme.styles.space) / 2}px ${
-         props.theme.styles.space + props.theme.styles.gap
-      }px`};
+   padding: ${(props) => `${(props.theme.styles.gap + props.theme.styles.space) / 2}px ${props.theme.styles.space}px`};
    padding-left: ${(props) =>
       props.withLeftIcon ? `${props.theme.styles.space + 16 + props.theme.styles.space - 1}px` : undefined};
    padding-right: ${(props) =>
@@ -212,6 +224,8 @@ export type InputFieldProps = {
    infoText?: string;
    leftIcon?: IconName | AnyOtherString;
    rightIcon?: IconName | AnyOtherString;
+   prefix?: React.ReactNode;
+   suffix?: React.ReactNode;
    insideInputFieldComponent?: React.ReactNode;
    /** @default false */
    withDebounce?: boolean;
@@ -220,7 +234,7 @@ export type InputFieldProps = {
    onChangeValue?: (value: string) => void;
    onClickRightIcon?: () => void;
    holderRef?: React.ForwardedRef<HTMLDivElement>;
-} & OmitProps<React.ComponentProps<"input">, "style" | "ref"> &
+} & OmitProps<React.ComponentProps<"input">, "style" | "ref" | "prefix"> &
    ComponentStyle &
    ComponentHoverStyle;
 
@@ -234,7 +248,7 @@ type InputFieldComponentType = {
    password: (props: ComponentPropWithRef<HTMLInputElement, InputFieldProps>) => React.ReactElement;
    search: (props: ComponentPropWithRef<HTMLInputElement, InputFieldProps>) => React.ReactElement;
    phoneNumber: (
-      props: ComponentPropWithRef<HTMLInputElement, OmitProps<InputFieldProps, "type">>,
+      props: ComponentPropWithRef<HTMLInputElement, OmitProps<InputFieldProps, "type" | "prefix">>,
    ) => React.ReactElement;
    date: (
       props: ComponentPropWithRef<
@@ -270,6 +284,8 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
       infoText,
       leftIcon,
       rightIcon,
+      prefix,
+      suffix,
       insideInputFieldComponent,
       withDebounce,
       debounceDelay = 0.5,
@@ -336,60 +352,95 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
             <Label text={label} color={labelColor} required={required} isError={!!errorText} htmlFor={readyId} />
          )}
 
-         <Div position="relative" width="100%" ref={holderRef}>
-            {leftIcon && (
-               <Icon
-                  name={leftIcon}
-                  position="absolute"
-                  top={
-                     (props.type === "date" || props.type === "time" || props.type === "datetime-local" ? 48 : 46) / 2
-                  }
-                  left={theme.styles.space + 1}
-                  transform="translateY(-50%)"
-                  pointerEvents="none"
-                  zIndex={leftIconZIndex}
-               />
+         <Div.row alignItems="stretch" width="100%">
+            {prefix && (
+               <Div.row
+                  alignItems="center"
+                  justifyContent="center"
+                  border={`1px solid ${theme.colors.border}`}
+                  borderRight="none"
+                  backgroundColor={lightenColor(theme.colors.border, 0.8)}
+                  borderTopLeftRadius={theme.styles.borderRadius}
+                  borderBottomLeftRadius={theme.styles.borderRadius}
+                  paddingInline={theme.styles.space}
+               >
+                  {prefix}
+               </Div.row>
             )}
 
-            <InputElement
-               theme={theme}
-               withLeftIcon={leftIcon !== undefined}
-               withRightIcon={rightIcon !== undefined}
-               required={required}
-               placeholder={placeholder ?? label}
-               id={readyId}
-               onChange={onChangeElement}
-               {...styledComponentStylesWithoutExcluded}
-               {...dataProps}
-               {...ariaProps}
-               {...restProps}
-               ref={ref}
-            />
-
-            {rightIcon ? (
-               onClickRightIcon ? (
-                  <Button.icon
-                     icon={rightIcon}
-                     position="absolute"
-                     top={46 / 2}
-                     right={theme.styles.space + 1 - theme.styles.space / 2}
-                     transform="translateY(-50%)"
-                     onClick={onClickRightIcon}
-                  />
-               ) : (
+            <Div position="relative" width="100%" height="fit-content" ref={holderRef}>
+               {leftIcon && (
                   <Icon
-                     name={rightIcon}
+                     name={leftIcon}
                      position="absolute"
-                     top={46 / 2}
-                     right={theme.styles.space + 1}
+                     top={
+                        (props.type === "date" || props.type === "time" || props.type === "datetime-local" ? 48 : 46) /
+                        2
+                     }
+                     left={theme.styles.space + 1}
                      transform="translateY(-50%)"
                      pointerEvents="none"
+                     zIndex={leftIconZIndex}
                   />
-               )
-            ) : undefined}
+               )}
 
-            {insideInputFieldComponent}
-         </Div>
+               <InputElement
+                  theme={theme}
+                  withLeftIcon={leftIcon !== undefined}
+                  withRightIcon={rightIcon !== undefined}
+                  withPrefix={prefix !== undefined}
+                  withSuffix={suffix !== undefined}
+                  required={required}
+                  placeholder={placeholder ?? label}
+                  id={readyId}
+                  onChange={onChangeElement}
+                  {...styledComponentStylesWithoutExcluded}
+                  {...dataProps}
+                  {...ariaProps}
+                  {...restProps}
+                  ref={ref}
+               />
+
+               {rightIcon ? (
+                  onClickRightIcon ? (
+                     <Button.icon
+                        icon={rightIcon}
+                        position="absolute"
+                        top={46 / 2}
+                        right={theme.styles.space + 1 - theme.styles.space / 2}
+                        transform="translateY(-50%)"
+                        onClick={onClickRightIcon}
+                     />
+                  ) : (
+                     <Icon
+                        name={rightIcon}
+                        position="absolute"
+                        top={46 / 2}
+                        right={theme.styles.space + 1}
+                        transform="translateY(-50%)"
+                        pointerEvents="none"
+                     />
+                  )
+               ) : undefined}
+
+               {insideInputFieldComponent}
+            </Div>
+
+            {suffix && (
+               <Div.row
+                  alignItems="center"
+                  justifyContent="center"
+                  border={`1px solid ${theme.colors.border}`}
+                  borderLeft="none"
+                  backgroundColor={lightenColor(theme.colors.border, 0.8)}
+                  borderTopRightRadius={theme.styles.borderRadius}
+                  borderBottomRightRadius={theme.styles.borderRadius}
+                  paddingInline={theme.styles.space}
+               >
+                  {suffix}
+               </Div.row>
+            )}
+         </Div.row>
 
          {(errorText || infoText) && (
             <Text

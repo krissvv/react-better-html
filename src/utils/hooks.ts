@@ -131,7 +131,7 @@ export function useComponentInputFieldDateProps(
    internalValue: string;
    setInternalValue: React.Dispatch<React.SetStateAction<string>>;
    inputFieldProps: InputFieldProps;
-   insideInputFieldComponentProps: InputFieldProps;
+   insideInputFieldComponentProps: React.CSSProperties;
    isOpen: boolean;
 } {
    const theme = useTheme();
@@ -169,7 +169,7 @@ export function useComponentInputFieldDateProps(
       }),
       [props, internalValue, isOpen, isOpenLate, disabled],
    );
-   const insideInputFieldComponentProps = useMemo<InputFieldProps>(
+   const insideInputFieldComponentProps = useMemo<React.CSSProperties>(
       () => ({
          border: `1px solid ${isFocused ? theme.colors.primary : theme.colors.border}`,
          borderTop: "none",
