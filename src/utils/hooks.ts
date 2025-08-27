@@ -273,6 +273,7 @@ export function useMediaQuery() {
    const { width } = usePageResize();
 
    return {
+      screenWidth: width,
       size320: width <= 320,
       size400: width <= 400,
       size500: width <= 500,

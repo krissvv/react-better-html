@@ -15,6 +15,7 @@ export type FormProps = {
    form?: OmitProps<ReturnType<typeof useForm>, "focusField">;
    submitButtonText?: string;
    submitButtonLoaderName?: LoaderName | AnyOtherString;
+   submitButtonIsLoading?: boolean;
    submitButtonId?: string;
    /** @default false */
    submitButtonIsDisabled?: boolean;
@@ -23,14 +24,12 @@ export type FormProps = {
    actionButtonsLocation?: "left" | "center" | "right";
    gap?: React.CSSProperties["gap"];
    /** @default false */
-   isSubmitting?: boolean;
-   /** @default false */
    isDestructive?: boolean;
    /** @default false */
    withDividers?: boolean;
    renderActionButtons?: React.ReactNode;
    onClickCancel?: () => void;
-   onSubmit?: (value: React.FormEvent<HTMLFormElement>) => void;
+   onSubmit?: (event: React.FormEvent<HTMLFormElement>) => void;
    children?: React.ReactNode;
 } & ComponentMarginProps;
 
@@ -43,12 +42,12 @@ const FormComponent: FormComponentType = forwardRef(function Form(
       form,
       submitButtonText,
       submitButtonLoaderName,
+      submitButtonIsLoading,
       submitButtonId,
       submitButtonIsDisabled,
       cancelButtonText,
       actionButtonsLocation = "right",
       gap,
-      isSubmitting,
       isDestructive,
       withDividers,
       renderActionButtons,
@@ -112,7 +111,7 @@ const FormComponent: FormComponentType = forwardRef(function Form(
 
                   <SubmitButtonTag
                      text={submitButtonText}
-                     isLoading={isSubmitting || form?.isSubmitting}
+                     isLoading={submitButtonIsLoading || form?.isSubmitting}
                      loaderName={submitButtonLoaderName}
                      disabled={submitButtonIsDisabledFinal}
                      id={submitButtonId}

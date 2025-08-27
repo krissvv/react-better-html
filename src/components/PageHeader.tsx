@@ -49,7 +49,7 @@ const PageHeaderComponent: PageHeaderComponentType = forwardRef(function PageHea
       <Div.row
          alignItems="center"
          gap={theme.styles.space}
-         marginBottom={marginBottom || theme.styles.space * 2}
+         marginBottom={marginBottom ?? theme.styles.space * 2}
          ref={ref}
       >
          {imageUrl && <Image.profileImage src={imageUrl} size={imageSize ?? (mediaQuery.size600 ? 46 : 60)} />}
