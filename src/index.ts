@@ -43,9 +43,9 @@ import {
    getBrowser,
    formatPhoneNumber,
    getFormErrorObject,
-   onClickPreventDefault,
-   onClickPreventPropagation,
-   onClickPrevent,
+   eventPreventDefault,
+   eventStopPropagation,
+   eventPreventStop,
 } from "./utils/functions";
 import { lightenColor, darkenColor, saturateColor, desaturateColor } from "./utils/colorManipulation";
 import { loaderControls, alertControls, colorThemeControls } from "./utils/variableFunctions";
@@ -160,9 +160,9 @@ export {
    getBrowser,
    formatPhoneNumber,
    getFormErrorObject,
-   onClickPreventDefault,
-   onClickPreventPropagation,
-   onClickPrevent,
+   eventPreventDefault,
+   eventStopPropagation,
+   eventPreventStop,
    // Color Manipulation
    lightenColor,
    darkenColor,

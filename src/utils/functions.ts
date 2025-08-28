@@ -101,15 +101,15 @@ export const getFormErrorObject = <FormFields extends ReturnType<typeof useForm>
    return {};
 };
 
-export const onClickPreventDefault = (event: React.MouseEvent) => {
+export const eventPreventDefault = (event: React.MouseEvent) => {
    event.preventDefault();
 };
 
-export const onClickPreventPropagation = (event: React.MouseEvent) => {
+export const eventStopPropagation = (event: React.MouseEvent) => {
    event.stopPropagation();
 };
 
-export const onClickPrevent = (event: React.MouseEvent) => {
+export const eventPreventStop = (event: React.MouseEvent) => {
    event.preventDefault();
    event.stopPropagation();
 };
