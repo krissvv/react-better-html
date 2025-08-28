@@ -456,12 +456,14 @@ export const countries: Country[] = [
       code: "FI",
       timeZone: "Europe/Helsinki",
       phoneNumberExtension: "358",
+      phoneNumberFormat: "XX XXX XX XX",
    },
    {
       name: "France",
       code: "FR",
       timeZone: "Europe/Paris",
       phoneNumberExtension: "33",
+      phoneNumberFormat: "X XX XX XX XX",
    },
    {
       name: "French Guiana",
@@ -504,7 +506,7 @@ export const countries: Country[] = [
       code: "DE",
       timeZone: "Europe/Berlin",
       phoneNumberExtension: "49",
-      phoneNumberFormat: "XXXX XXXXXX",
+      phoneNumberFormat: "XXXX XXXXXXX",
    },
    {
       name: "Ghana",

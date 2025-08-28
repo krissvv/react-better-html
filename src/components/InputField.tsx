@@ -93,6 +93,10 @@ const InputElement = styled.input.withConfig({
       cursor: not-allowed;
    }
 
+   &:read-only {
+      caret-color: transparent;
+   }
+
    &::-webkit-outer-spin-button,
    &::-webkit-inner-spin-button {
       -webkit-appearance: none;
@@ -926,6 +930,7 @@ InputFieldComponent.dateTime = forwardRef(function DateTime(
                               width={buttonWidth}
                               height={`calc(100% - ${16 + theme.styles.gap / 2}px)`}
                               overflowY="auto"
+                              tabIndex={-1}
                            >
                               {hours.map((hour) => {
                                  const isSelected = hour.toString() === valueHour;
@@ -966,6 +971,7 @@ InputFieldComponent.dateTime = forwardRef(function DateTime(
                               width={buttonWidth}
                               height={`calc(100% - ${16 + theme.styles.gap / 2}px)`}
                               overflowY="auto"
+                              tabIndex={-1}
                            >
                               {minutes.map((minute) => {
                                  const isSelected = minute.toString() === valueMinute;
@@ -1070,7 +1076,13 @@ InputFieldComponent.time = forwardRef(function Time({ ...props }, ref) {
                   {...insideInputFieldComponentProps}
                >
                   <Div.row height="100%">
-                     <Div className="react-better-html-no-scrollbar" width={buttonWidth} height="100%" overflowY="auto">
+                     <Div
+                        className="react-better-html-no-scrollbar"
+                        width={buttonWidth}
+                        height="100%"
+                        overflowY="auto"
+                        tabIndex={-1}
+                     >
                         {hours.map((hour) => {
                            const isSelected = hour.toString() === valueHour;
 
@@ -1094,7 +1106,13 @@ InputFieldComponent.time = forwardRef(function Time({ ...props }, ref) {
                         })}
                      </Div>
 
-                     <Div className="react-better-html-no-scrollbar" width={buttonWidth} height="100%" overflowY="auto">
+                     <Div
+                        className="react-better-html-no-scrollbar"
+                        width={buttonWidth}
+                        height="100%"
+                        overflowY="auto"
+                        tabIndex={-1}
+                     >
                         {minutes.map((minute) => {
                            const isSelected = minute.toString() === valueMinute;
 

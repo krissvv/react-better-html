@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState, memo, useEffect } from "react";
+import { useCallback, useMemo, useState, memo, useEffect, useId } from "react";
 import styled from "styled-components";
 
 import { Theme } from "../types/theme";
@@ -40,8 +40,19 @@ const getWeekDayName = (day: number, short = false) => {
 const weekDaysIndex = [1, 2, 3, 4, 5, 6, 0];
 const yearsRange = Array.from({ length: 100 + 1 + 50 }, (_, index) => index + new Date().getFullYear() - 100);
 
+const SelectWrapperComponent = styled.div.withConfig({
+   shouldForwardProp: (prop) => !["theme"].includes(prop),
+})<{ theme: Theme }>`
+   &:has(select:focus) {
+      outline: auto;
+      outline-color: -webkit-focus-ring-color;
+      outline-style: auto;
+      outline-offset: 2px;
+   }
+`;
+
 const SelectComponent = styled.select.withConfig({
-   shouldForwardProp: (prop) => !["normalStyle", "hoverStyle"].includes(prop),
+   shouldForwardProp: (prop) => !["theme"].includes(prop),
 })<{ theme: Theme }>`
    position: absolute;
    top: 50%;
@@ -59,6 +70,7 @@ type CalendarProps = {
 
 function Calendar({ value, minDate, maxDate, onChange }: CalendarProps) {
    const theme = useTheme();
+   const internalYearSelectId = useId();
 
    const [currentDate, setCurrentDate] = useState(value ? new Date(value) : undefined);
    const [currentMonth, setCurrentMonth] = useState(currentDate?.getMonth() ?? new Date().getMonth());
@@ -151,18 +163,25 @@ function Calendar({ value, minDate, maxDate, onChange }: CalendarProps) {
             <Div.row alignItems="center" gap={4}>
                <Text fontWeight={700}>{getMonthName(currentMonth)}</Text>
 
-               <Div.row position="relative" alignItems="center" gap={2}>
-                  <Text fontWeight={700}>{currentYear}</Text>
-                  <Icon name="chevronDown" size={12} />
+               <SelectWrapperComponent>
+                  <Div.row position="relative" alignItems="center" gap={2}>
+                     <Text fontWeight={700}>{currentYear}</Text>
+                     <Icon name="chevronDown" size={12} />
 
-                  <SelectComponent theme={theme} value={currentYear} onChange={onChangeYearSelect}>
-                     {yearsRange.map((year) => (
-                        <option value={year} key={year}>
-                           {year}
-                        </option>
-                     ))}
-                  </SelectComponent>
-               </Div.row>
+                     <SelectComponent
+                        theme={theme}
+                        value={currentYear}
+                        onChange={onChangeYearSelect}
+                        id={internalYearSelectId}
+                     >
+                        {yearsRange.map((year) => (
+                           <option value={year} key={year}>
+                              {year}
+                           </option>
+                        ))}
+                     </SelectComponent>
+                  </Div.row>
+               </SelectWrapperComponent>
             </Div.row>
 
             <Button.icon icon="chevronRight" onClick={onClickNextMonthButton} />

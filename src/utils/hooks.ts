@@ -62,14 +62,21 @@ export function useStyledComponentStyles(
 
             const normalKey = key.slice(0, -5) as keyof ComponentStyle;
             (hoverStyle[normalKey] as any) = props[key as keyof ComponentStyle];
+
+            if (normalKey === "transition") hoverStyle.WebkitTransition = hoverStyle.transition;
          } else {
             if (!cssProps[key.toLowerCase()]) continue;
 
             (normalStyle[key as keyof ComponentStyle] as any) = props[key as keyof ComponentStyle];
+
+            if (key === "transition") normalStyle.WebkitTransition = normalStyle.transition;
          }
       }
 
-      if (haveHover) normalStyle.transition = theme?.styles.transition ?? "";
+      if (haveHover) {
+         normalStyle.transition = theme?.styles.transition ?? "";
+         normalStyle.WebkitTransition = normalStyle.transition;
+      }
 
       return {
          normalStyle,
