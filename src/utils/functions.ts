@@ -100,3 +100,16 @@ export const getFormErrorObject = <FormFields extends ReturnType<typeof useForm>
 ): PartialRecord<keyof FormFields, string> => {
    return {};
 };
+
+export const onClickPreventDefault = (event: React.MouseEvent) => {
+   event.preventDefault();
+};
+
+export const onClickPreventPropagation = (event: React.MouseEvent) => {
+   event.stopPropagation();
+};
+
+export const onClickPrevent = (event: React.MouseEvent) => {
+   event.preventDefault();
+   event.stopPropagation();
+};

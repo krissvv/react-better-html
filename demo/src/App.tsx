@@ -372,6 +372,8 @@ function App() {
                <Tabs.content tab="Icon & Image">
                   <Div.column gap={theme.styles.space}>
                      <Icon name="XMark" />
+                     <Icon name="XMark" color="red" size={30} />
+                     <Icon name="XMark" color="red" colorHover="purple" size={30} />
 
                      <Image name="logo" width={300} />
 

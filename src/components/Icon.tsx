@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { AnyOtherString, OmitProps } from "../types/app";
 import { ComponentHoverStyle, ComponentPropWithRef, ComponentStyle } from "../types/components";
 import { IconName } from "../types/icon";
+import { Theme } from "../types/theme";
 
 import { useComponentPropsWithoutStyle, useComponentPropsWithPrefix, useStyledComponentStyles } from "../utils/hooks";
 
@@ -22,9 +23,23 @@ type IconComponent = {
 };
 
 const IconElement = styled.svg.withConfig({
-   shouldForwardProp: (prop) => !["normalStyle", "hoverStyle"].includes(prop),
-})<{ normalStyle: ComponentStyle; hoverStyle: ComponentStyle }>`
+   shouldForwardProp: (prop) => !["theme", "normalStyle", "hoverStyle", "hoverColor"].includes(prop),
+})<{ theme: Theme; normalStyle: ComponentStyle; hoverStyle: ComponentStyle; hoverColor?: string }>`
    ${(props) => props.normalStyle as any}
+
+   path {
+      ${(props) => (props.hoverColor ? `transition: ${props.theme.styles.transition};` : "")}
+   }
+
+   &:hover {
+      path.react-better-html-icon-path-with-fill {
+         fill: ${(props) => props.hoverColor};
+      }
+
+      path.react-better-html-icon-path-with-stroke {
+         stroke: ${(props) => props.hoverColor};
+      }
+   }
 
    &:hover {
       ${(props) => props.hoverStyle as any}
@@ -44,6 +59,7 @@ const Icon: IconComponent = forwardRef(function Icon(
    const restProps = useComponentPropsWithoutStyle(props);
 
    const svgColor = props.color ?? theme.colors.textPrimary;
+   const svgHoverColorColor = props.colorHover;
 
    useEffect(() => {
       if (!icons[name.toString()])
@@ -59,6 +75,8 @@ const Icon: IconComponent = forwardRef(function Icon(
          viewBox={`0 0 ${icons[name.toString()]?.width ?? 0} ${icons[name.toString()]?.height ?? 0}`}
          fill="none"
          xmlns="http://www.w3.org/2000/svg"
+         theme={theme}
+         hoverColor={svgHoverColorColor}
          {...styledComponentStyles}
          {...dataProps}
          {...ariaProps}
@@ -68,6 +86,11 @@ const Icon: IconComponent = forwardRef(function Icon(
          {icons[name.toString()]?.paths.map((path) => (
             <path
                {...path}
+               className={
+                  path.type === "fill"
+                     ? "react-better-html-icon-path-with-fill"
+                     : "react-better-html-icon-path-with-stroke"
+               }
                fill={path.type === "fill" ? svgColor : undefined}
                stroke={path.type === "stroke" ? svgColor : undefined}
                key={path.d}

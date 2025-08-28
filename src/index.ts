@@ -38,7 +38,15 @@ import {
    useForm,
    useUrlQuery,
 } from "./utils/hooks";
-import { generateRandomString, getBrowser, formatPhoneNumber, getFormErrorObject } from "./utils/functions";
+import {
+   generateRandomString,
+   getBrowser,
+   formatPhoneNumber,
+   getFormErrorObject,
+   onClickPreventDefault,
+   onClickPreventPropagation,
+   onClickPrevent,
+} from "./utils/functions";
 import { lightenColor, darkenColor, saturateColor, desaturateColor } from "./utils/colorManipulation";
 import { loaderControls, alertControls, colorThemeControls } from "./utils/variableFunctions";
 
@@ -152,6 +160,9 @@ export {
    getBrowser,
    formatPhoneNumber,
    getFormErrorObject,
+   onClickPreventDefault,
+   onClickPreventPropagation,
+   onClickPrevent,
    // Color Manipulation
    lightenColor,
    darkenColor,
