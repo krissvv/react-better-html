@@ -1,7 +1,5 @@
 import { memo } from "react";
 
-import { BetterHtmlPlugin } from "../../types/plugin";
-
 import { AlertsPluginOptions } from "../../plugins";
 
 import Div from "../Div";
@@ -10,7 +8,7 @@ import { useBetterHtmlContextInternal, usePlugin, useTheme } from "../BetterHtml
 
 function AlertsHolder() {
    const theme = useTheme();
-   const alertsPlugin = usePlugin("alerts") as BetterHtmlPlugin<AlertsPluginOptions> | undefined;
+   const alertsPlugin = usePlugin<AlertsPluginOptions>("alerts");
    const { alerts } = useBetterHtmlContextInternal();
 
    const pluginConfig = alertsPlugin?.getConfig?.() ?? {};

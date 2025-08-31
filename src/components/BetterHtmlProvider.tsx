@@ -161,7 +161,7 @@ export const useAlertControls = () => {
    };
 };
 
-export const usePlugin = (pluginName: PluginName): BetterHtmlPlugin | undefined => {
+export const usePlugin = <T extends object>(pluginName: PluginName): BetterHtmlPlugin<T> | undefined => {
    const context = useContext(betterHtmlContext);
 
    if (context === undefined) {
@@ -173,7 +173,7 @@ export const usePlugin = (pluginName: PluginName): BetterHtmlPlugin | undefined 
    return useMemo(
       () => context.plugins.find((plugin: BetterHtmlPlugin) => plugin.name === pluginName),
       [context.plugins, pluginName],
-   );
+   ) as any;
 };
 
 type BetterHtmlProviderContentProps = {

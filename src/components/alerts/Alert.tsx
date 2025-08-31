@@ -4,7 +4,6 @@ import styled from "styled-components";
 import { defaultAlertDuration } from "../../constants/app";
 
 import { AlertDuration, Alert as AlertT, AlertType } from "../../types/alert";
-import { BetterHtmlPlugin } from "../../types/plugin";
 import { ThemeConfig } from "../../types/theme";
 
 import { AlertsPluginOptions, defaultAlertsPluginOptions } from "../../plugins";
@@ -151,7 +150,7 @@ type AlertProps = {
 function Alert({ alert }: AlertProps) {
    const theme = useTheme();
    const alertControls = useAlertControls();
-   const alertsPlugin = usePlugin("alerts") as BetterHtmlPlugin<AlertsPluginOptions> | undefined;
+   const alertsPlugin = usePlugin<AlertsPluginOptions>("alerts");
 
    const pluginConfig = alertsPlugin?.getConfig?.() ?? {};
 

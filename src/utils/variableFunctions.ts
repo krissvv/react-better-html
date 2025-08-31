@@ -5,7 +5,7 @@ import { Alert } from "../types/alert";
 
 import { BetterHtmlInternalConfig, externalBetterHtmlContextValue } from "../components/BetterHtmlProvider";
 
-const checkBetterHtmlContextValue = (
+export const checkBetterHtmlContextValue = (
    value: BetterHtmlInternalConfig | undefined,
    functionsName: string,
 ): value is BetterHtmlInternalConfig => {

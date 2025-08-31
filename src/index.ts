@@ -49,6 +49,7 @@ import {
 } from "./utils/functions";
 import { lightenColor, darkenColor, saturateColor, desaturateColor } from "./utils/colorManipulation";
 import { loaderControls, alertControls, colorThemeControls } from "./utils/variableFunctions";
+import { generateLocalStorage } from "./utils/localStorage";
 
 import {
    type OmitProps,
@@ -172,6 +173,8 @@ export {
    loaderControls,
    alertControls,
    colorThemeControls,
+   // LocalStorage
+   generateLocalStorage,
    // Types
    OmitProps,
    ExcludeOptions,

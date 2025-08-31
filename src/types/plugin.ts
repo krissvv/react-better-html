@@ -1,6 +1,6 @@
 import { ComponentType } from "react";
 
-export type PluginName = "react-router-dom" | "alerts";
+export type PluginName = "alerts" | "react-router-dom" | "localStorage";
 
 export type BetterHtmlPluginConstructor<T extends object = object> = (config?: T) => BetterHtmlPlugin<T>;
 
