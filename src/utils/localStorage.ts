@@ -5,9 +5,6 @@ import { checkBetterHtmlContextValue } from "./variableFunctions";
 
 import { externalBetterHtmlContextValue } from "../components/BetterHtmlProvider";
 
-/**
- * @description All values inside LocalStorage needs to be optional
- */
 export function generateLocalStorage<LocalStorage extends object>(): {
    setItem: <StorageName extends keyof LocalStorage>(name: StorageName, value: LocalStorage[StorageName]) => void;
    getItem: <StorageName extends keyof LocalStorage>(name: StorageName) => LocalStorage[StorageName] | undefined;
