@@ -10,7 +10,8 @@ import { useBetterHtmlContextInternal, useTheme } from "./BetterHtmlProvider";
 export type PageHolderProps = {
    /** @default false */
    noMaxContentWidth?: boolean;
-   backgroundColor?: string;
+   backgroundColor?: React.CSSProperties["backgroundColor"];
+   backgroundImage?: React.CSSProperties["backgroundImage"];
    children?: React.ReactNode;
 } & ComponentPaddingProps;
 
@@ -20,8 +21,10 @@ type PageHolderComponentType = {
       props: ComponentPropWithRef<
          HTMLDivElement,
          PageHolderProps & {
-            pageBackgroundColor?: string;
+            pageBackgroundColor?: React.CSSProperties["backgroundColor"];
+            pageBackgroundImage?: React.CSSProperties["backgroundImage"];
             contentMaxWidth?: React.CSSProperties["maxWidth"];
+            behindComponent?: React.ReactNode;
             sideComponent?: React.ReactNode;
             /** @default "right" */
             sideComponentPosition?: "left" | "right";
@@ -55,7 +58,9 @@ const PageHolderComponent: PageHolderComponentType = forwardRef(function PageHol
 PageHolderComponent.center = forwardRef(function Center(
    {
       pageBackgroundColor,
+      pageBackgroundImage,
       contentMaxWidth,
+      behindComponent,
       sideComponent,
       sideComponentPosition = "right",
       noMaxContentWidth,
@@ -74,17 +79,33 @@ PageHolderComponent.center = forwardRef(function Center(
 
    return (
       <Div.row
+         position="relative"
          width="100%"
          minHeight="100svh"
          alignItems="center"
          justifyContent="center"
          backgroundColor={pageBackgroundColor}
+         backgroundImage={pageBackgroundImage}
       >
+         {behindComponent && (
+            <Div
+               position="fixed"
+               width={`${withSideComponent ? 50 : 100}%`}
+               height="100svh"
+               top={0}
+               left={sideComponentPosition === "right" ? 0 : "auto"}
+               right={sideComponentPosition === "left" ? 0 : "auto"}
+               zIndex={1}
+            >
+               {behindComponent}
+            </Div>
+         )}
+
          {sideComponentPosition === "left" && withSideComponent && <Div width="50%" />}
 
-         <Div.column width={`${withSideComponent ? 50 : 100}%`} alignItems="center">
+         <Div.column position="relative" width={`${withSideComponent ? 50 : 100}%`} alignItems="center" zIndex={2}>
             <Div.box
-               width={`calc(100% - ${theme.styles.space}px * 2)`}
+               width={`calc(100% - ${theme.styles.space * 2}px)`}
                maxWidth={!noMaxContentWidth ? contentMaxWidth ?? app.contentMaxWidth / 2 : undefined}
                marginInline={theme.styles.space}
                marginBlock={theme.styles.space}

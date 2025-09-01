@@ -1403,6 +1403,14 @@ function App() {
                   <Text color={theme.colors.base}>Hello there</Text>
                </Div.column>
             }
+            sideComponentPosition="left"
+            behindComponent={
+               <Div.column width="100%" height="100%" alignItems="center" justifyContent="center" textAlign="justify">
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel, autem ut veniam harum nobis aperiam?
+                  Eveniet ipsam recusandae quasi voluptatum ipsa aliquam, quod perferendis ad error sed, asperiores
+                  officiis quis!
+               </Div.column>
+            }
          >
             <Div height={300}>Hello there</Div>
          </PageHolder.center> */}
