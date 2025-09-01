@@ -48,7 +48,7 @@ import {
    eventPreventStop,
 } from "./utils/functions";
 import { lightenColor, darkenColor, saturateColor, desaturateColor } from "./utils/colorManipulation";
-import { loaderControls, alertControls, colorThemeControls } from "./utils/variableFunctions";
+import { loaderControls, alertControls, colorThemeControls, filterHover } from "./utils/variableFunctions";
 import { generateLocalStorage } from "./utils/localStorage";
 
 import {
@@ -173,6 +173,7 @@ export {
    loaderControls,
    alertControls,
    colorThemeControls,
+   filterHover,
    // LocalStorage
    generateLocalStorage,
    // Types

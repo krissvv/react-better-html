@@ -70,3 +70,9 @@ export const colorThemeControls = {
       }, 0.01 * 1000);
    },
 };
+
+export const filterHover = {
+   z1: externalBetterHtmlContextValue?.colorTheme === "dark" ? "brightness(1.1)" : "brightness(0.9)",
+   z2: externalBetterHtmlContextValue?.colorTheme === "dark" ? "brightness(1.2)" : "brightness(0.8)",
+   z3: externalBetterHtmlContextValue?.colorTheme === "dark" ? "brightness(1.3)" : "brightness(0.7)",
+};
