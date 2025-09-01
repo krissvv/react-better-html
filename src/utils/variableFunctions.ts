@@ -71,8 +71,12 @@ export const colorThemeControls = {
    },
 };
 
-export const filterHover = {
-   z1: externalBetterHtmlContextValue?.colorTheme === "dark" ? "brightness(1.1)" : "brightness(0.9)",
-   z2: externalBetterHtmlContextValue?.colorTheme === "dark" ? "brightness(1.2)" : "brightness(0.8)",
-   z3: externalBetterHtmlContextValue?.colorTheme === "dark" ? "brightness(1.3)" : "brightness(0.7)",
+export const filterHover = (): Record<"z1" | "z2" | "z3", React.CSSProperties["filter"]> => {
+   if (!checkBetterHtmlContextValue(externalBetterHtmlContextValue, "filterHover")) return undefined as any;
+
+   return {
+      z1: externalBetterHtmlContextValue.colorTheme === "dark" ? "brightness(1.1)" : "brightness(0.9)",
+      z2: externalBetterHtmlContextValue.colorTheme === "dark" ? "brightness(1.2)" : "brightness(0.8)",
+      z3: externalBetterHtmlContextValue.colorTheme === "dark" ? "brightness(1.3)" : "brightness(0.7)",
+   };
 };

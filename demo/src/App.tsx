@@ -30,6 +30,7 @@ import {
    Tooltip,
    useAlertControls,
    useBooleanState,
+   filterHover,
 } from "../../src";
 
 const data: {
@@ -299,6 +300,25 @@ function App() {
                      <Div.box isActive onClick={() => {}}>
                         App
                      </Div.box>
+
+                     <Div
+                        width={120}
+                        height={120}
+                        backgroundColor={theme.colors.backgroundContent}
+                        filterHover={filterHover().z1}
+                     />
+                     <Div
+                        width={120}
+                        height={120}
+                        backgroundColor={theme.colors.backgroundContent}
+                        filterHover={filterHover().z2}
+                     />
+                     <Div
+                        width={120}
+                        height={120}
+                        backgroundColor={theme.colors.backgroundContent}
+                        filterHover={filterHover().z3}
+                     />
                   </Div.column>
                </Tabs.content>
 
