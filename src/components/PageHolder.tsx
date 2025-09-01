@@ -1,13 +1,10 @@
 import { forwardRef, memo } from "react";
 
 import { ComponentPaddingProps, ComponentPropWithRef } from "../types/components";
-import { AssetName } from "../types/asset";
-import { AnyOtherString } from "../types/app";
 
 import { useMediaQuery } from "../utils/hooks";
 
 import Div from "./Div";
-import Image from "./Image";
 import { useBetterHtmlContextInternal, useTheme } from "./BetterHtmlProvider";
 
 export type PageHolderProps = {
@@ -25,13 +22,9 @@ type PageHolderComponentType = {
          PageHolderProps & {
             pageBackgroundColor?: string;
             contentMaxWidth?: React.CSSProperties["maxWidth"];
-            sideImageSrc?: string;
-            sideImageName?: AssetName | AnyOtherString;
+            sideComponent?: React.ReactNode;
             /** @default "right" */
-            sideImagePosition?: "left" | "right";
-            /** @default "center" */
-            sideImageAlignment?: "left" | "center" | "right";
-            sideImageFooter?: React.ReactNode;
+            sideComponentPosition?: "left" | "right";
          }
       >,
    ) => React.ReactElement;
@@ -63,11 +56,8 @@ PageHolderComponent.center = forwardRef(function Center(
    {
       pageBackgroundColor,
       contentMaxWidth,
-      sideImageSrc,
-      sideImageName,
-      sideImagePosition = "right",
-      sideImageAlignment = "center",
-      sideImageFooter,
+      sideComponent,
+      sideComponentPosition = "right",
       noMaxContentWidth,
       children,
       ...props
@@ -80,7 +70,7 @@ PageHolderComponent.center = forwardRef(function Center(
 
    const breakingPoint = mediaQuery.size1000;
 
-   const withSideImage = (sideImageSrc || sideImageName) && !breakingPoint;
+   const withSideComponent = sideComponent && !breakingPoint;
 
    return (
       <Div.row
@@ -90,9 +80,9 @@ PageHolderComponent.center = forwardRef(function Center(
          justifyContent="center"
          backgroundColor={pageBackgroundColor}
       >
-         {sideImagePosition === "left" && withSideImage && <Div width="50%" />}
+         {sideComponentPosition === "left" && withSideComponent && <Div width="50%" />}
 
-         <Div.column width={`${withSideImage ? 50 : 100}%`} alignItems="center">
+         <Div.column width={`${withSideComponent ? 50 : 100}%`} alignItems="center">
             <Div.box
                width={`calc(100% - ${theme.styles.space}px * 2)`}
                maxWidth={!noMaxContentWidth ? contentMaxWidth ?? app.contentMaxWidth / 2 : undefined}
@@ -105,38 +95,18 @@ PageHolderComponent.center = forwardRef(function Center(
             </Div.box>
          </Div.column>
 
-         {sideImagePosition === "right" && withSideImage && <Div width="50%" />}
+         {sideComponentPosition === "right" && withSideComponent && <Div width="50%" />}
 
-         {withSideImage && (
+         {withSideComponent && (
             <Div
                position="fixed"
                width="50%"
                height="100svh"
                top={0}
-               left={sideImagePosition === "left" ? 0 : "auto"}
-               right={sideImagePosition === "right" ? 0 : "auto"}
+               left={sideComponentPosition === "left" ? 0 : "auto"}
+               right={sideComponentPosition === "right" ? 0 : "auto"}
             >
-               <Div.row
-                  position="absolute"
-                  width="100%"
-                  height="100%"
-                  top={0}
-                  left={0}
-                  justifyContent={
-                     sideImageAlignment === "left"
-                        ? "flex-start"
-                        : sideImageAlignment === "right"
-                        ? "flex-end"
-                        : "center"
-                  }
-                  overflow="hidden"
-               >
-                  <Image name={sideImageName} height="100%" src={sideImageSrc} />
-               </Div.row>
-
-               <Div position="absolute" width="100%" bottom={theme.styles.space}>
-                  {sideImageFooter}
-               </Div>
+               {sideComponent}
             </Div>
          )}
       </Div.row>

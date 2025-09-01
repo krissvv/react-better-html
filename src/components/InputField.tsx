@@ -251,7 +251,15 @@ type InputFieldComponentType = {
    (props: ComponentPropWithRef<HTMLInputElement, InputFieldProps>): React.ReactElement;
    multiline: (props: ComponentPropWithRef<HTMLTextAreaElement, TextareaFieldProps>) => React.ReactElement;
    email: (props: ComponentPropWithRef<HTMLInputElement, InputFieldProps>) => React.ReactElement;
-   password: (props: ComponentPropWithRef<HTMLInputElement, InputFieldProps>) => React.ReactElement;
+   password: (
+      props: ComponentPropWithRef<
+         HTMLInputElement,
+         OmitProps<InputFieldProps, "autoComplete"> & {
+            /** @default "current-password" */
+            autoComplete?: React.ComponentProps<"input">["autoComplete"];
+         }
+      >,
+   ) => React.ReactElement;
    search: (props: ComponentPropWithRef<HTMLInputElement, InputFieldProps>) => React.ReactElement;
    phoneNumber: (
       props: ComponentPropWithRef<HTMLInputElement, OmitProps<InputFieldProps, "type" | "prefix">>,

@@ -1378,7 +1378,32 @@ function App() {
             </Tabs>
          </PageHolder>
 
-         {/* <PageHolder.center sideImageSrc="https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png">
+         {/* <PageHolder.center
+            sideComponent={
+               <Image
+                  width="100%"
+                  height="100%"
+                  src="https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png"
+                  objectFit="cover"
+               />
+            }
+         >
+            <Div height={300}>Hello there</Div>
+         </PageHolder.center> */}
+
+         {/* <PageHolder.center
+            sideComponent={
+               <Div.column
+                  width="100%"
+                  height="100%"
+                  backgroundColor={theme.colors.primary}
+                  alignItems="center"
+                  justifyContent="center"
+               >
+                  <Text color={theme.colors.base}>Hello there</Text>
+               </Div.column>
+            }
+         >
             <Div height={300}>Hello there</Div>
          </PageHolder.center> */}
       </>

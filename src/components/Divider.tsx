@@ -20,8 +20,9 @@ export type VerticalDividerProps = DividerProps & {
 
 export type HorizontalDividerProps = DividerProps & {
    text?: string;
+   textFontSize?: React.CSSProperties["fontSize"];
    /** @default textSecondary */
-   textColor?: string;
+   textColor?: React.CSSProperties["color"];
 };
 
 type DividerComponentType = {
@@ -51,7 +52,7 @@ export default {
    ) as DividerComponentType["vertical"],
    horizontal: memo(
       forwardRef(function Divider(
-         { width = 1, backgroundColor, text, textColor, ...props }: HorizontalDividerProps,
+         { width = 1, backgroundColor, text, textFontSize, textColor, ...props }: HorizontalDividerProps,
          ref: React.ForwardedRef<HTMLDivElement>,
       ) {
          const theme = useTheme();
@@ -60,7 +61,11 @@ export default {
             <Div.row width="100%" alignItems="center" gap={text ? theme.styles.space : undefined} {...props} ref={ref}>
                <Div flex={1} height={width} flexShrink={0} backgroundColor={backgroundColor ?? theme.colors.border} />
 
-               {text && <Text color={textColor ?? theme.colors.textSecondary}>{text}</Text>}
+               {text && (
+                  <Text fontSize={textFontSize} color={textColor ?? theme.colors.textSecondary}>
+                     {text}
+                  </Text>
+               )}
 
                <Div flex={1} height={width} flexShrink={0} backgroundColor={backgroundColor ?? theme.colors.border} />
             </Div.row>
