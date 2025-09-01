@@ -131,9 +131,9 @@ export const encryptString = (text: string): string => {
       );
    }
 
-   const pluginConfig: LocalStoragePluginOptions = localStoragePlugin.getConfig?.() ?? {};
+   const pluginConfig: LocalStoragePluginOptions = localStoragePlugin.getConfig();
 
-   if (!pluginConfig?.encryption?.enabled) return text;
+   if (!pluginConfig.encryption?.enabled) return text;
 
    const encrypted = CryptoJS.AES.encrypt(text, CryptoJS.enc.Hex.parse(pluginConfig.encryption.secretKey), {
       iv: CryptoJS.enc.Hex.parse(pluginConfig.encryption.iv),
@@ -155,9 +155,9 @@ export const decryptString = <ReturnValue extends string>(text: string): ReturnV
       );
    }
 
-   const pluginConfig: LocalStoragePluginOptions = localStoragePlugin.getConfig?.() ?? {};
+   const pluginConfig: LocalStoragePluginOptions = localStoragePlugin.getConfig();
 
-   if (!pluginConfig?.encryption?.enabled) return text as ReturnValue;
+   if (!pluginConfig.encryption?.enabled) return text as ReturnValue;
 
    const decrypted = CryptoJS.AES.decrypt(text, CryptoJS.enc.Hex.parse(pluginConfig.encryption.secretKey), {
       iv: CryptoJS.enc.Hex.parse(pluginConfig.encryption.iv),

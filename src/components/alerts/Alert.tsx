@@ -152,7 +152,7 @@ function Alert({ alert }: AlertProps) {
    const alertControls = useAlertControls();
    const alertsPlugin = usePlugin<AlertsPluginOptions>("alerts");
 
-   const pluginConfig = alertsPlugin?.getConfig?.() ?? {};
+   const pluginConfig = alertsPlugin?.getConfig() ?? {};
 
    const defaultAlertDurationNumber: number = getAlertDurationFromAuto(
       alert.duration ?? pluginConfig.defaultDuration ?? defaultAlertsPluginOptions.defaultDuration,

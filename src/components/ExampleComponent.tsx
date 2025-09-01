@@ -9,12 +9,11 @@ type ExampleComponentProps = {
 };
 
 function ExampleComponent({ test, plugin }: ComponentPropWithPlugin<ExampleComponentProps>) {
-   const { Link } = plugin.components || {};
-
    return (
       <div>
-         <h1>Example Component with Router Plugin: {test}</h1>
-         <Link to="/">Go to Home Page</Link>
+         <h1>
+            Example Component with Router Plugin: {test} {plugin.name}
+         </h1>
       </div>
    );
 }

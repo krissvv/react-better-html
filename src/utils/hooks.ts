@@ -3,6 +3,8 @@ import { createSearchParams, useInRouterContext, useNavigate, useSearchParams } 
 
 import { cssProps } from "../constants/css";
 
+import { ReactRouterDomPluginOptions } from "../plugins";
+
 import { ComponentHoverStyle, ComponentPropWithRef, ComponentStyle } from "../types/components";
 import { Theme } from "../types/theme";
 import { OmitProps, PartialRecord } from "../types/app";
@@ -574,13 +576,15 @@ export function useForm<FormFields extends Record<string | number, string | numb
 }
 
 export function useUrlQuery() {
-   const reactRouterDomPlugin = usePlugin("react-router-dom");
+   const reactRouterDomPlugin = usePlugin<ReactRouterDomPluginOptions>("react-router-dom");
 
    if (!reactRouterDomPlugin) {
       throw new Error(
          "`useUrlQuery` hook requires the `react-router-dom` plugin to be added to the `plugins` prop in `<BetterHtmlProvider>`.",
       );
    }
+
+   // const reactRouterDomPluginConfig = reactRouterDomPlugin.getConfig();
 
    const isInRouterContext = useInRouterContext();
 

@@ -279,6 +279,21 @@ function App() {
                      </Div.row>
 
                      <Div.box>App</Div.box>
+                     <Div.box title="Hello there">App</Div.box>
+                     <Div.box title="Hello there" description="Some text here to example">
+                        App
+                     </Div.box>
+                     <Div.box
+                        title="Hello there"
+                        titleAs="h2"
+                        description="Some text here to example"
+                        headerBackgroundColor="red"
+                        titleColor="white"
+                        descriptionColor="white"
+                     >
+                        App
+                     </Div.box>
+
                      <Div.box onClick={() => {}}>App</Div.box>
                      <Div.box isActive>App</Div.box>
                      <Div.box isActive onClick={() => {}}>

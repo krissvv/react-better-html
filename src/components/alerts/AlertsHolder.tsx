@@ -11,7 +11,7 @@ function AlertsHolder() {
    const alertsPlugin = usePlugin<AlertsPluginOptions>("alerts");
    const { alerts } = useBetterHtmlContextInternal();
 
-   const pluginConfig = alertsPlugin?.getConfig?.() ?? {};
+   const pluginConfig = alertsPlugin?.getConfig() ?? {};
 
    const top: React.CSSProperties["top"] = pluginConfig.position === "top" ? theme.styles.gap : undefined;
    const bottom: React.CSSProperties["bottom"] = pluginConfig.position === "bottom" ? theme.styles.gap : undefined;

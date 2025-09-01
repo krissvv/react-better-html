@@ -217,8 +217,7 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
                   minHeight={32 + theme.styles.space * 2}
                   backgroundColor={theme.colors.backgroundBase}
                   borderRadius={theme.styles.borderRadius * 2}
-                  paddingInline={!title ? theme.styles.space + theme.styles.gap : undefined}
-                  paddingBlock={!title ? theme.styles.space : undefined}
+                  padding={!title ? theme.styles.space : undefined}
                   overflow={overflow}
                >
                   {title ? (
@@ -229,7 +228,7 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
                            backgroundColor={headerBackgroundColor}
                            borderTopLeftRadius={theme.styles.borderRadius * 2 - 1}
                            borderTopRightRadius={theme.styles.borderRadius * 2 - 1}
-                           paddingInline={theme.styles.space + theme.styles.gap}
+                           paddingInline={theme.styles.space}
                            paddingBlock={theme.styles.space}
                            transition={theme.styles.transition}
                         >
@@ -275,12 +274,7 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
                      </>
                   )}
 
-                  <Div
-                     paddingInline={title ? theme.styles.space + theme.styles.gap : undefined}
-                     paddingBlock={title ? theme.styles.space : undefined}
-                  >
-                     {children}
-                  </Div>
+                  <Div padding={title ? theme.styles.space : undefined}>{children}</Div>
                </Div>
             </Div.column>
          ) : undefined}

@@ -9,13 +9,19 @@ import Text, { TextAs } from "./Text";
 import Image from "./Image";
 import { useBetterHtmlContextInternal, useTheme } from "./BetterHtmlProvider";
 
+//* Used in DIV.box
+
 export type PageHeaderProps = {
    imageUrl?: string;
    imageSize?: number;
    title?: string;
    titleAs?: TextAs;
+   /** @default theme.colors.textPrimary */
+   titleColor?: React.CSSProperties["color"];
    titleRightElement?: React.ReactNode;
    description?: string;
+   /** @default theme.colors.textSecondary */
+   descriptionColor?: React.CSSProperties["color"];
    textAlign?: React.CSSProperties["textAlign"];
    rightElement?: React.ReactNode;
    /** @default false */
@@ -32,8 +38,10 @@ const PageHeaderComponent: PageHeaderComponentType = forwardRef(function PageHea
       imageSize = 60,
       title,
       titleAs,
+      titleColor,
       titleRightElement,
       description,
+      descriptionColor,
       textAlign,
       rightElement,
       lightMode,
@@ -67,7 +75,7 @@ const PageHeaderComponent: PageHeaderComponentType = forwardRef(function PageHea
                <Text
                   as={titleAs ?? "h1"}
                   textAlign={textAlign}
-                  color={lightMode ? theme.colors.base : theme.colors.textPrimary}
+                  color={titleColor ?? (lightMode ? theme.colors.base : theme.colors.textPrimary)}
                >
                   {title}
                </Text>
@@ -79,7 +87,7 @@ const PageHeaderComponent: PageHeaderComponentType = forwardRef(function PageHea
                <Text
                   maxWidth={!mediaQuery.size600 ? app.contentMaxWidth * 0.6 : undefined}
                   textAlign={textAlign}
-                  color={lightMode ? theme.colors.base : theme.colors.textSecondary}
+                  color={descriptionColor ?? (lightMode ? theme.colors.base : theme.colors.textSecondary)}
                   opacity={lightMode ? 0.7 : undefined}
                >
                   {description}

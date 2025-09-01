@@ -8,6 +8,8 @@ import { OmitProps } from "../types/app";
 
 import { useStyledComponentStyles, useComponentPropsWithPrefix, useComponentPropsWithoutStyle } from "../utils/hooks";
 
+import Divider from "./Divider";
+import PageHeader, { PageHeaderProps } from "./PageHeader";
 import { useTheme } from "./BetterHtmlProvider";
 
 const DivStyledComponent = styled.div.withConfig({
@@ -58,9 +60,11 @@ type DivComponentType = {
    box: <Value>(
       props: ComponentPropWithRef<
          HTMLDivElement,
-         DivProps<Value> & {
-            isActive?: boolean;
-         }
+         DivProps<Value> &
+            OmitProps<PageHeaderProps, "marginBottom"> & {
+               headerBackgroundColor?: string;
+               isActive?: boolean;
+            }
       >,
    ) => React.ReactElement;
 };
@@ -157,7 +161,26 @@ DivComponent.grid = forwardRef(function Grid(props, ref) {
    return <DivComponent display="grid" ref={ref} {...props} />;
 }) as DivComponentType["grid"];
 
-DivComponent.box = forwardRef(function Box({ isActive, ...props }, ref) {
+DivComponent.box = forwardRef(function Box(
+   {
+      imageUrl,
+      imageSize,
+      title,
+      titleAs,
+      titleColor,
+      titleRightElement,
+      description,
+      descriptionColor,
+      textAlign,
+      rightElement,
+      lightMode,
+      headerBackgroundColor,
+      isActive,
+      children,
+      ...props
+   },
+   ref,
+) {
    const theme = useTheme();
 
    const withClick = props.onClick || props.onClickWithValue;
@@ -171,11 +194,45 @@ DivComponent.box = forwardRef(function Box({ isActive, ...props }, ref) {
          borderColorHover={withClick && !isActive ? theme.colors.primary : undefined}
          filterHover={withClick && isActive ? "brightness(0.9)" : undefined}
          cursor={withClick ? "pointer" : undefined}
-         paddingBlock={theme.styles.gap}
+         paddingBlock={title ? theme.styles.space : theme.styles.gap}
          paddingInline={theme.styles.space}
          ref={ref}
          {...props}
-      />
+      >
+         {title && (
+            <Div
+               backgroundColor={headerBackgroundColor}
+               borderTopLeftRadius={props.borderTopLeftRadius ?? props.borderRadius ?? theme.styles.borderRadius - 1}
+               borderTopRightRadius={props.borderTopRightRadius ?? props.borderRadius ?? theme.styles.borderRadius - 1}
+               marginInline={-theme.styles.space}
+               marginTop={-theme.styles.space}
+               marginBottom={theme.styles.space}
+               paddingInline={theme.styles.space}
+               paddingTop={theme.styles.space}
+            >
+               <PageHeader
+                  imageUrl={imageUrl}
+                  imageSize={imageSize}
+                  title={title}
+                  titleAs={titleAs}
+                  titleColor={titleColor}
+                  titleRightElement={titleRightElement}
+                  description={description}
+                  descriptionColor={descriptionColor}
+                  textAlign={textAlign}
+                  rightElement={rightElement}
+                  lightMode={lightMode}
+                  marginBottom={theme.styles.space}
+               />
+
+               <Div width={`calc(100% + ${theme.styles.space * 2}px)`} marginLeft={-theme.styles.space}>
+                  <Divider.horizontal />
+               </Div>
+            </Div>
+         )}
+
+         {children}
+      </DivComponent>
    );
 }) as DivComponentType["box"];
 

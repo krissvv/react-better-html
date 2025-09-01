@@ -26,7 +26,7 @@ export function generateLocalStorage<LocalStorage extends object>(): {
             );
          }
 
-         const pluginConfig: LocalStoragePluginOptions = localStoragePlugin.getConfig?.() ?? {};
+         const pluginConfig: LocalStoragePluginOptions = localStoragePlugin.getConfig();
 
          const encryptionEnabled = pluginConfig.encryption?.enabled ?? false;
 
@@ -50,7 +50,7 @@ export function generateLocalStorage<LocalStorage extends object>(): {
             );
          }
 
-         const pluginConfig: LocalStoragePluginOptions = localStoragePlugin.getConfig?.() ?? {};
+         const pluginConfig: LocalStoragePluginOptions = localStoragePlugin.getConfig();
 
          const encryptionEnabled = pluginConfig.encryption?.enabled ?? false;
 
@@ -79,7 +79,7 @@ export function generateLocalStorage<LocalStorage extends object>(): {
             );
          }
 
-         const pluginConfig: LocalStoragePluginOptions = localStoragePlugin.getConfig?.() ?? {};
+         const pluginConfig: LocalStoragePluginOptions = localStoragePlugin.getConfig();
 
          const encryptionEnabled = pluginConfig.encryption?.enabled ?? false;
 
