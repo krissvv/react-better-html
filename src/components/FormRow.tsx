@@ -9,7 +9,7 @@ import { useMediaQuery } from "../utils/hooks";
 
 import Div from "./Div";
 import Icon from "./Icon";
-import Text from "./Text";
+import Text, { TextAs } from "./Text";
 import Button from "./Button";
 import Loader from "./Loader";
 import { useTheme } from "./BetterHtmlProvider";
@@ -38,7 +38,12 @@ type FormRowComponentType = {
          FormRowProps & {
             icon?: IconName | AnyOtherString;
             title?: string;
+            /** @default "h3" */
+            titleAs?: TextAs;
+            titleFontSize?: React.CSSProperties["fontSize"];
             description?: string;
+            descriptionFontSize?: React.CSSProperties["fontSize"];
+            alignChildren?: React.CSSProperties["justifyContent"];
             isLoading?: boolean;
             withActions?: boolean;
             saveButtonLoaderName?: LoaderName | AnyOtherString;
@@ -74,7 +79,11 @@ FormRowComponent.withTitle = forwardRef(function WithTitle(
    {
       icon,
       title,
+      titleAs = "h3",
+      titleFontSize,
       description,
+      descriptionFontSize,
+      alignChildren = "flex-start",
       isLoading,
       withActions,
       saveButtonLoaderName,
@@ -97,9 +106,15 @@ FormRowComponent.withTitle = forwardRef(function WithTitle(
             {icon && <Icon name={icon} />}
 
             <Div.column flex={1} gap={theme.styles.gap / 2}>
-               <Text as="h3">{title}</Text>
+               <Text as={titleAs} fontSize={titleFontSize}>
+                  {title}
+               </Text>
 
-               {description && <Text color={theme.colors.textSecondary}>{description}</Text>}
+               {description && (
+                  <Text fontSize={descriptionFontSize} color={theme.colors.textSecondary}>
+                     {description}
+                  </Text>
+               )}
             </Div.column>
 
             {isLoading && <Div width={26 - titleGap} />}
@@ -109,6 +124,7 @@ FormRowComponent.withTitle = forwardRef(function WithTitle(
             position="relative"
             width={props.noBreakingPoint && mediaQuery.size900 ? undefined : "100%"}
             alignItems="center"
+            justifyContent={alignChildren}
             gap={theme.styles.gap}
          >
             <Div

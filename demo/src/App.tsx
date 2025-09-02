@@ -512,6 +512,17 @@ function App() {
                      <FormRow.withTitle icon="trash" title="Title" description="Description">
                         <InputField placeholder="Hello" />
                      </FormRow.withTitle>
+
+                     <FormRow.withTitle
+                        title="Title"
+                        titleAs="h4"
+                        description="Description"
+                        descriptionFontSize={14}
+                        noBreakingPoint
+                        alignChildren="flex-end"
+                     >
+                        <Text color={theme.colors.primary}>Hello</Text>
+                     </FormRow.withTitle>
                   </Div.column>
                </Tabs.content>
 
