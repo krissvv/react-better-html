@@ -3,6 +3,8 @@ import { LoaderName } from "../types/loader";
 import { ColorTheme } from "../types/theme";
 import { Alert } from "../types/alert";
 
+import { LocalStorage } from "./localStorage";
+
 import { BetterHtmlInternalConfig, externalBetterHtmlContextValue } from "../components/BetterHtmlProvider";
 
 export const checkBetterHtmlContextValue = (
@@ -66,17 +68,18 @@ export const colorThemeControls = {
 
       setTimeout(() => {
          window.document.body.parentElement?.setAttribute("data-theme", newColorTheme);
-         localStorage.setItem("theme", newColorTheme);
+         LocalStorage.setItem("theme", newColorTheme);
       }, 0.01 * 1000);
    },
 };
 
-export const filterHover = (): Record<"z1" | "z2" | "z3", React.CSSProperties["filter"]> => {
+export const filterHover = (): Record<"z05" | "z1" | "z2" | "z3", React.CSSProperties["filter"]> => {
    if (!checkBetterHtmlContextValue(externalBetterHtmlContextValue, "filterHover")) return undefined as any;
 
    return {
-      z1: externalBetterHtmlContextValue.colorTheme === "dark" ? "brightness(1.2)" : "brightness(0.9)",
-      z2: externalBetterHtmlContextValue.colorTheme === "dark" ? "brightness(1.4)" : "brightness(0.8)",
-      z3: externalBetterHtmlContextValue.colorTheme === "dark" ? "brightness(1.6)" : "brightness(0.7)",
+      z05: externalBetterHtmlContextValue.colorTheme === "dark" ? "brightness(1.2)" : "brightness(0.95)",
+      z1: externalBetterHtmlContextValue.colorTheme === "dark" ? "brightness(1.3)" : "brightness(0.9)",
+      z2: externalBetterHtmlContextValue.colorTheme === "dark" ? "brightness(1.6)" : "brightness(0.8)",
+      z3: externalBetterHtmlContextValue.colorTheme === "dark" ? "brightness(1.9)" : "brightness(0.7)",
    };
 };

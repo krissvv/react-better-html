@@ -1,5 +1,7 @@
 import { LocalStoragePluginOptions } from "../plugins";
 
+import { ColorTheme } from "../types/theme";
+
 import { decryptString, encryptString } from "./functions";
 import { checkBetterHtmlContextValue } from "./variableFunctions";
 
@@ -92,3 +94,7 @@ export function generateLocalStorage<LocalStorage extends object>(): {
       },
    };
 }
+
+export const LocalStorage = generateLocalStorage<{
+   theme: ColorTheme;
+}>();
