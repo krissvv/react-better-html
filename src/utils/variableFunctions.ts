@@ -3,8 +3,6 @@ import { LoaderName } from "../types/loader";
 import { ColorTheme } from "../types/theme";
 import { Alert } from "../types/alert";
 
-import { LocalStorage } from "./localStorage";
-
 import { BetterHtmlInternalConfig, externalBetterHtmlContextValue } from "../components/BetterHtmlProvider";
 
 export const checkBetterHtmlContextValue = (
@@ -68,7 +66,7 @@ export const colorThemeControls = {
 
       setTimeout(() => {
          window.document.body.parentElement?.setAttribute("data-theme", newColorTheme);
-         LocalStorage.setItem("theme", newColorTheme);
+         localStorage.setItem("theme", newColorTheme);
       }, 0.01 * 1000);
    },
 };

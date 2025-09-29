@@ -4,7 +4,6 @@ import { ComponentMarginProps } from "../types/components";
 
 import { useForm } from "../utils/hooks";
 import { colorThemeControls } from "../utils/variableFunctions";
-import { LocalStorage } from "../utils/localStorage";
 
 import Div from "./Div";
 import Text from "./Text";
@@ -29,7 +28,7 @@ const ColorThemeSwitchComponent: ColorThemeSwitchComponentType = function ColorT
 }: ColorThemeSwitchProps) {
    const form = useForm({
       defaultValues: {
-         darkMode: LocalStorage.getItem("theme") === "dark",
+         darkMode: localStorage.getItem("theme") === "dark",
       },
    });
 

@@ -13,8 +13,6 @@ import { LoaderConfig, LoaderName } from "../types/loader";
 import { Alert } from "../types/alert";
 import { BetterHtmlPlugin, PluginName } from "../types/plugin";
 
-import { LocalStorage } from "../utils/localStorage";
-
 import { TabGroup, TabsComponentState } from "./Tabs";
 import AlertsHolder from "./alerts/AlertsHolder";
 
@@ -211,7 +209,7 @@ type BetterHtmlProviderProps = {
 
 function BetterHtmlProvider({ value, plugins: pluginsToUse, children }: BetterHtmlProviderProps) {
    const [colorTheme, setColorTheme] = useState<ColorTheme>(
-      LocalStorage.getItem("theme") === "dark" ? "dark" : value?.colorTheme ?? "light",
+      localStorage.getItem("theme") === "dark" ? "dark" : value?.colorTheme ?? "light",
    );
    const [loaders, setLoaders] = useState<Partial<LoaderConfig>>(value?.loaders ?? {});
    const [plugins] = useState<BetterHtmlPlugin[]>(pluginsToUse ?? []);

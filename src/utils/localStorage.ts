@@ -1,7 +1,5 @@
 import { LocalStoragePluginOptions } from "../plugins";
 
-import { ColorTheme } from "../types/theme";
-
 import { decryptString, encryptString } from "./functions";
 import { checkBetterHtmlContextValue } from "./variableFunctions";
 
@@ -15,7 +13,7 @@ export function generateLocalStorage<LocalStorage extends object>(): {
 } {
    return {
       setItem: (name, value) => {
-         if (!checkBetterHtmlContextValue(externalBetterHtmlContextValue, "generateLocalStorage"))
+         if (!checkBetterHtmlContextValue(externalBetterHtmlContextValue, "generateLocalStorage.setItem"))
             return undefined as any;
 
          const localStoragePlugin = externalBetterHtmlContextValue.plugins.find(
@@ -24,7 +22,7 @@ export function generateLocalStorage<LocalStorage extends object>(): {
 
          if (!localStoragePlugin) {
             throw new Error(
-               "`generateLocalStorage` hook requires the `localStorage` plugin to be added to the `plugins` prop in `<BetterHtmlProvider>`.",
+               "`generateLocalStorage.setItem` function requires the `localStorage` plugin to be added to the `plugins` prop in `<BetterHtmlProvider>`.",
             );
          }
 
@@ -39,7 +37,7 @@ export function generateLocalStorage<LocalStorage extends object>(): {
          else localStorage.removeItem(readyName.toString());
       },
       getItem: (name) => {
-         if (!checkBetterHtmlContextValue(externalBetterHtmlContextValue, "generateLocalStorage"))
+         if (!checkBetterHtmlContextValue(externalBetterHtmlContextValue, "generateLocalStorage.getItem"))
             return undefined as any;
 
          const localStoragePlugin = externalBetterHtmlContextValue.plugins.find(
@@ -48,7 +46,7 @@ export function generateLocalStorage<LocalStorage extends object>(): {
 
          if (!localStoragePlugin) {
             throw new Error(
-               "`generateLocalStorage` hook requires the `localStorage` plugin to be added to the `plugins` prop in `<BetterHtmlProvider>`.",
+               "`generateLocalStorage.getItem` function requires the `localStorage` plugin to be added to the `plugins` prop in `<BetterHtmlProvider>`.",
             );
          }
 
@@ -68,7 +66,7 @@ export function generateLocalStorage<LocalStorage extends object>(): {
          }
       },
       removeItem: (name) => {
-         if (!checkBetterHtmlContextValue(externalBetterHtmlContextValue, "generateLocalStorage"))
+         if (!checkBetterHtmlContextValue(externalBetterHtmlContextValue, "generateLocalStorage.removeItem"))
             return undefined as any;
 
          const localStoragePlugin = externalBetterHtmlContextValue.plugins.find(
@@ -77,7 +75,7 @@ export function generateLocalStorage<LocalStorage extends object>(): {
 
          if (!localStoragePlugin) {
             throw new Error(
-               "`generateLocalStorage` hook requires the `localStorage` plugin to be added to the `plugins` prop in `<BetterHtmlProvider>`.",
+               "`generateLocalStorage.removeItem` function requires the `localStorage` plugin to be added to the `plugins` prop in `<BetterHtmlProvider>`.",
             );
          }
 
@@ -94,7 +92,3 @@ export function generateLocalStorage<LocalStorage extends object>(): {
       },
    };
 }
-
-export const LocalStorage = generateLocalStorage<{
-   theme: ColorTheme;
-}>();
