@@ -353,6 +353,15 @@ export function useForm<FormFields extends Record<string | number, string | numb
    const inputFieldRefs = useRef<Record<keyof FormFields, HTMLInputElement | undefined>>(
       {} as Record<keyof FormFields, HTMLInputElement | undefined>,
    );
+   const textAreaRefs = useRef<Record<keyof FormFields, HTMLTextAreaElement | undefined>>(
+      {} as Record<keyof FormFields, HTMLTextAreaElement | undefined>,
+   );
+   const dropdownRefs = useRef<Record<keyof FormFields, HTMLDivElement | undefined>>(
+      {} as Record<keyof FormFields, HTMLDivElement | undefined>,
+   );
+   const toggleInputRefs = useRef<Record<keyof FormFields, ToggleInputRef | undefined>>(
+      {} as Record<keyof FormFields, ToggleInputRef | undefined>,
+   );
    const [inputTypes, setInputTypes] = useState<Record<keyof FormFields, React.HTMLInputTypeAttribute>>(
       {} as Record<keyof FormFields, React.HTMLInputTypeAttribute>,
    );
@@ -431,6 +440,11 @@ export function useForm<FormFields extends Record<string | number, string | numb
             onChangeValue: (newValue) => {
                setFieldValue(field, newValue as FormFields[FieldName]);
             },
+            ref: (element) => {
+               if (!element) return;
+
+               textAreaRefs.current[field] = element;
+            },
             errorText: errors[field],
          };
       },
@@ -447,6 +461,11 @@ export function useForm<FormFields extends Record<string | number, string | numb
             onChange: (value) => {
                setFieldValue(field, value);
             },
+            ref: (element) => {
+               if (!element) return;
+
+               dropdownRefs.current[field] = element;
+            },
             errorText: errors[field],
          };
       },
@@ -462,6 +481,11 @@ export function useForm<FormFields extends Record<string | number, string | numb
             name: field.toString(),
             onChange: (checked) => {
                setFieldValue(field, checked as FormFields[FieldName]);
+            },
+            ref: (element) => {
+               if (!element) return;
+
+               toggleInputRefs.current[field] = element;
             },
             errorText: errors[field],
          };
@@ -481,6 +505,11 @@ export function useForm<FormFields extends Record<string | number, string | numb
             onChange: (checked, newValue) => {
                setFieldValue(field, checked ? newValue : undefined);
             },
+            ref: (element) => {
+               if (!element) return;
+
+               toggleInputRefs.current[field] = element;
+            },
             errorText: errors[field],
          };
       },
@@ -496,6 +525,11 @@ export function useForm<FormFields extends Record<string | number, string | numb
             name: field.toString(),
             onChange: (checked) => {
                setFieldValue(field, checked as FormFields[FieldName]);
+            },
+            ref: (element) => {
+               if (!element) return;
+
+               toggleInputRefs.current[field] = element;
             },
             errorText: errors[field],
          };
@@ -565,6 +599,10 @@ export function useForm<FormFields extends Record<string | number, string | numb
       getRadioButtonProps,
       getSwitchProps,
       focusField,
+      inputFieldRefs,
+      textAreaRefs,
+      dropdownRefs,
+      toggleInputRefs,
       validate: validateForm,
       onSubmit: onSubmitFunction,
       reset,

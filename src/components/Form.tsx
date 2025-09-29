@@ -13,6 +13,7 @@ import { useTheme } from "./BetterHtmlProvider";
 
 export type FormProps = {
    form?: OmitProps<ReturnType<typeof useForm>, "focusField">;
+   name?: string;
    submitButtonText?: string;
    submitButtonLoaderName?: LoaderName | AnyOtherString;
    submitButtonIsLoading?: boolean;
@@ -40,6 +41,7 @@ type FormComponentType = {
 const FormComponent: FormComponentType = forwardRef(function Form(
    {
       form,
+      name,
       submitButtonText,
       submitButtonLoaderName,
       submitButtonIsLoading,
@@ -75,7 +77,7 @@ const FormComponent: FormComponentType = forwardRef(function Form(
 
    return (
       <Div width="100%" {...props}>
-         <form onSubmit={onSubmit ?? form?.onSubmit} ref={ref}>
+         <form name={name} onSubmit={onSubmit ?? form?.onSubmit} ref={ref}>
             {gap !== undefined || withDividers ? (
                <Div.column gap={gap ?? (withDividers ? theme.styles.space : theme.styles.gap)}>
                   {withDividers
