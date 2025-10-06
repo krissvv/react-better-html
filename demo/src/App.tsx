@@ -306,19 +306,25 @@ function App() {
                         height={120}
                         backgroundColor={theme.colors.backgroundContent}
                         filterHover={filterHover().z1}
-                     />
+                     >
+                        hover
+                     </Div>
                      <Div
                         width={120}
                         height={120}
                         backgroundColor={theme.colors.backgroundContent}
                         filterHover={filterHover().z2}
-                     />
+                     >
+                        hover
+                     </Div>
                      <Div
                         width={120}
                         height={120}
                         backgroundColor={theme.colors.backgroundContent}
                         filterHover={filterHover().z3}
-                     />
+                     >
+                        hover
+                     </Div>
                   </Div.column>
                </Tabs.content>
 
