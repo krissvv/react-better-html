@@ -188,7 +188,7 @@ function App() {
 ```
 
 :::tip
-Both `Div.row` and `Div.column` have a prop called `invertFlexDirection` that is of type `boolean`. When passed it inverts the flex direction. It is mostly used for creating a responsive design. Best used with [useMediaQuery](../hooks/use-media-query) hook.
+Both `Div.row` and `Div.column` have two useful props: `invertFlexDirection` of type `boolean` - when passed it inverts the flex direction and `flexReverse` of type `boolean` - when passed it reverses the flex direction. Both are mostly used to create responsive designs. Best used with [useMediaQuery](../hooks/use-media-query) hook.
 :::
 
 ### Div.grid

@@ -29,10 +29,10 @@ createRoot(root).render(
 );
 ```
 
-This is enough for the components to work with the [default configuration](#default-configuration) that the library comes with. They can be overridden by passing `value` prop to the `<BetterHtmlProvider>` tag.
+This is enough for the components to work with the [default configuration](#default-configuration) that the library comes with. They can be overridden by passing `config` prop to the `<BetterHtmlProvider>` tag.
 
 :::note
-If no value is provided, then all components in the library will use the default configuration that comes with the library. Check out the [default configuration](#default-configuration)
+If no value is provided for the `config` prop, then all components in the library will use the default configuration that comes with the library. Check out the [default configuration](#default-configuration)
 :::
 
 ### App configuration
@@ -41,7 +41,7 @@ There are some configuration properties for the whole app that can be set from t
 
 ```jsx
 <BetterHtmlProvider
-   value={{
+   config={{
       ...
       // highlight-start
       app: {
@@ -55,21 +55,25 @@ There are some configuration properties for the whole app that can be set from t
 </BetterHtmlProvider>
 ```
 
+| Key             | Value Type | Default Value | Description                                                                                          |
+| --------------- | ---------- | ------------- | ---------------------------------------------------------------------------------------------------- |
+| contentMaxWidth | `number`   | 1200          | Sets the max content width of the [`<PageContent />`](../components/structure/page-holder) component |
+
 ### Theme configuration
 
 It accepts object of type [`Theme`](../types/theme) and can customize the `styles` and `colors`. Colors support theme management.
 
 ```jsx
 <BetterHtmlProvider
-   value={{
+   config={{
       ...
       // highlight-start
       theme: {
-         light: {
-            colors: {
+         colors: {
+            light: {
                backgroundBase: "#f0f0f0"
-            }
-         },
+            },
+         }
          styles: {
             gap: 20
          }
@@ -94,7 +98,7 @@ It accepts object of type [`IconConfig`](../types/icon-config) and can customize
 
 ```jsx
 <BetterHtmlProvider
-   value={{
+   config={{
       ...
       // highlight-start
       icons: {
@@ -127,7 +131,7 @@ It accepts object of type [`AssetConfig`](../types/asset-config) and can overrid
 import logoAsset from "../assets/logo.svg";
 
 <BetterHtmlProvider
-   value={{
+   config={{
       ...
       // highlight-start
       assets: {
@@ -148,7 +152,7 @@ It accepts object of type [`LoaderConfig`](../types/loader-config) and can overr
 
 ```jsx
 <BetterHtmlProvider
-   value={{
+   config={{
       ...
       // highlight-start
       loaders: {
@@ -173,7 +177,7 @@ An example can be seen below where the `button` component is having the default 
 
 ```jsx
 <BetterHtmlProvider
-   value={{
+   config={{
       ...
       // highlight-start
       components: {
@@ -252,6 +256,19 @@ The default icons used in the library are (More on the [Icons](../types/icon-con
 
 -  **`XMark`** - the symbol `X`
 -  **`uploadCloud`** - a cloud with an arrow pointing up
+-  **`trash`** - a trash
+-  **`chevronDown`** - an arrow pointing down
+-  **`chevronLeft`** - an arrow pointing left
+-  **`chevronRight`** - an arrow pointing right
+-  **`doubleChevronLeft`** - an double arrow pointing left
+-  **`doubleChevronRight`** - an double arrow pointing right
+-  **`eye`** - an open eye
+-  **`eyeDashed`** - a closed/dashed eye
+-  **`magnifyingGlass`** - a magnifying glass
+-  **`check`** - a tick/check symbol `✔`
+-  **`infoI`** - an information `i` symbol
+-  **`warningTriangle`** - a triangle with exclamation mark inside
+-  **`filter`** - a funnel/filter symbol
 
 ### Assets
 

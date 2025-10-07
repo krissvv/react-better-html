@@ -1,7 +1,7 @@
 ---
 title: Formatters
 description: Any format functions that transform a value to a ready to use.
-sidebar_position: 1
+sidebar_position: 2
 ---
 
 ## `formatPhoneNumber`

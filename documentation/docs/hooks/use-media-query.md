@@ -1,7 +1,7 @@
 ---
 title: useMediaQuery
 description: The hook that makes everything responsive and mobile-friendly
-sidebar_position: 4
+sidebar_position: 5
 ---
 
 # useMediaQuery Hook

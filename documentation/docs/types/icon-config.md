@@ -16,7 +16,7 @@ This document describes the `IconConfig` which defines the configuration for SVG
 type IconName = "XMark" | "uploadCloud";
 ```
 
-This type defines the allowed names for icons. When using the [Icon](../components/icon) component you pass a `name` props witch is of that type. You can pass other values different from the predefined names but you will need to define them in the `value` prop of the `<BetterHtmlProvider>` also. Check out the [Configuration](../getting-started/configuration#icons-configuration) page for more details.
+This type defines the allowed names for icons. When using the [Icon](../components/icon) component you pass a `name` props witch is of that type. You can pass other values different from the predefined names but you will need to define them in the `config` prop of the `<BetterHtmlProvider>` also. Check out the [Configuration](../getting-started/configuration#icons-configuration) page for more details.
 
 ### `IconData`
 
@@ -38,4 +38,4 @@ This type defines the structure of the data associated with each icon. It includ
 
 ## Usage
 
-These types are used to configure the icons in the library. You can provide a custom icons or override the predefined ones by passing an object to the `value` prop of the `<BetterHtmlProvider>` component. Check out the [Configuration](../getting-started/configuration#icons-configuration) page for more details.
+These types are used to configure the icons in the library. You can provide a custom icons or override the predefined ones by passing an object to the `config` prop of the `<BetterHtmlProvider>` component. Check out the [Configuration](../getting-started/configuration#icons-configuration) page for more details.

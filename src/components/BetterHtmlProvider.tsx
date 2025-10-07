@@ -202,60 +202,59 @@ function BetterHtmlProviderContent({ children }: BetterHtmlProviderContentProps)
 export type BetterHtmlProviderValue = DeepPartialRecord<BetterHtmlConfig>;
 
 type BetterHtmlProviderProps = {
-   value?: BetterHtmlProviderValue;
+   config?: BetterHtmlProviderValue;
    plugins?: BetterHtmlPlugin[];
    children?: React.ReactNode;
 };
 
-function BetterHtmlProvider({ value, plugins: pluginsToUse, children }: BetterHtmlProviderProps) {
+function BetterHtmlProvider({ config, plugins, children }: BetterHtmlProviderProps) {
    const [colorTheme, setColorTheme] = useState<ColorTheme>(
-      localStorage.getItem("theme") === "dark" ? "dark" : value?.colorTheme ?? "light",
+      localStorage.getItem("theme") === "dark" ? "dark" : config?.colorTheme ?? "light",
    );
-   const [loaders, setLoaders] = useState<Partial<LoaderConfig>>(value?.loaders ?? {});
-   const [plugins] = useState<BetterHtmlPlugin[]>(pluginsToUse ?? []);
+   const [loaders, setLoaders] = useState<Partial<LoaderConfig>>(config?.loaders ?? {});
    const [alerts, setAlerts] = useState<Alert[]>([]);
    const [tabGroups, setTabGroups] = useState<TabGroup[]>([]);
    const [tabsWithDots, setTabsWithDots] = useState<string[]>([]);
 
-   const readyValue = useMemo<BetterHtmlInternalConfig>(
+   const readyConfig = useMemo<BetterHtmlInternalConfig>(
       () => ({
          app: {
             ...appConfig,
-            ...value?.app,
+            ...config?.app,
          },
          theme: {
             styles: {
                ...theme.styles,
-               ...value?.theme?.styles,
+               ...config?.theme?.styles,
             },
             colors: {
                light: {
                   ...theme.colors.light,
-                  ...value?.theme?.colors?.light,
+                  ...config?.theme?.colors?.light,
                },
                dark: {
                   ...theme.colors.dark,
-                  ...value?.theme?.colors?.dark,
+                  ...config?.theme?.colors?.dark,
                },
             },
          },
          colorTheme,
          icons: {
             ...icons,
-            ...value?.icons,
+            ...config?.icons,
          },
          assets: {
             ...assets,
-            ...value?.assets,
+            ...config?.assets,
          },
          loaders,
          setLoaders,
          alerts,
          setAlerts,
          components: {
-            ...value?.components,
+            ...config?.components,
          },
-         plugins,
+         plugins: plugins ?? [],
          componentsState: {
             tabs: {
                tabGroups,
@@ -265,14 +264,16 @@ function BetterHtmlProvider({ value, plugins: pluginsToUse, children }: BetterHt
             },
          },
       }),
-      [value, colorTheme, loaders, alerts, plugins, tabGroups, tabsWithDots],
+      [config, colorTheme, loaders, alerts, tabGroups, tabsWithDots],
    );
 
    useEffect(() => {
+      if (!plugins) return;
+
       plugins.forEach((plugin) => {
          plugin.initialize?.();
       });
-   }, [plugins]);
+   }, []);
    useEffect(() => {
       const html = document.querySelector("html");
 
@@ -281,7 +282,7 @@ function BetterHtmlProvider({ value, plugins: pluginsToUse, children }: BetterHt
       const observer = new MutationObserver((mutations) => {
          mutations.forEach((mutation) => {
             if (mutation.type === "attributes") {
-               setColorTheme(html.getAttribute("data-theme") === "dark" ? "dark" : value?.colorTheme ?? "light");
+               setColorTheme(html.getAttribute("data-theme") === "dark" ? "dark" : config?.colorTheme ?? "light");
             }
          });
       });
@@ -295,10 +296,10 @@ function BetterHtmlProvider({ value, plugins: pluginsToUse, children }: BetterHt
       };
    }, []);
 
-   externalBetterHtmlContextValue = readyValue;
+   externalBetterHtmlContextValue = readyConfig;
 
    return (
-      <betterHtmlContext.Provider value={readyValue}>
+      <betterHtmlContext.Provider value={readyConfig}>
          <BetterHtmlProviderContent>{children}</BetterHtmlProviderContent>
       </betterHtmlContext.Provider>
    );

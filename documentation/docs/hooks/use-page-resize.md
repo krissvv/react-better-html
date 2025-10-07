@@ -1,7 +1,7 @@
 ---
 title: usePageResize
 description: Get the current width and height of the window.
-sidebar_position: 5
+sidebar_position: 6
 ---
 
 # usePageResize Hook

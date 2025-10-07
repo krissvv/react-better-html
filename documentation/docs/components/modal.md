@@ -129,7 +129,7 @@ import { useRef } from "react";
 import { Div, Button, Modal, ModalRef } from "react-better-html";
 
 function App() {
-   const confirmationModalRef = useRef < ModalRef > null;
+   const confirmationModalRef = useRef<ModalRef>(null);
 
    return (
       <Div>
@@ -160,7 +160,7 @@ import { useRef } from "react";
 import { Div, Button, Modal, ModalRef } from "react-better-html";
 
 function App() {
-   const deleteModalRef = useRef < ModalRef > null;
+   const deleteModalRef = useRef<ModalRef>(null);
 
    return (
       <Div>
@@ -172,7 +172,7 @@ function App() {
          />
 
          <Modal.destructive
-            onConfirm={() => {
+            onDelete={() => {
                console.log("Deleted!");
             }}
             ref={deleteModalRef}

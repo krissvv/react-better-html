@@ -1,7 +1,7 @@
 ---
-title: Other
-description: Any other function that might be useful in an app development
-sidebar_position: 1
+title: Generators
+description: Any generate functions that create values.
+sidebar_position: 3
 ---
 
 ## `generateRandomString`

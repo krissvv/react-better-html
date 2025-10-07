@@ -16,4 +16,4 @@ This document describes the `LoaderConfig` which defines the configuration for l
 type LoaderName = "";
 ```
 
-This type defines the allowed names for loaders within the application. You can use other values different from the predefined names but you will need to define them in the `value` prop of the `<BetterHtmlProvider>` also. Check out the [Configuration](../getting-started/configuration#loaders-configuration) page for more details.
+This type defines the allowed names for loaders within the application. You can use other values different from the predefined names but you will need to define them in the `config` prop of the `<BetterHtmlProvider>` also. Check out the [Configuration](../getting-started/configuration#loaders-configuration) page for more details.

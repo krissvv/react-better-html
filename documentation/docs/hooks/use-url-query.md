@@ -1,7 +1,7 @@
 ---
 title: useUrlQuery
 description: A hook for managing URL query parameters in React applications
-sidebar_position: 8
+sidebar_position: 9
 ---
 
 # useUrlQuery Hook

@@ -52,7 +52,7 @@ createRoot(root).render(
 );
 ```
 
-This is enough for the components to work with the default configurations that the library comes with. They can be overridden when passing `value` prop to the `<BetterHtmlProvider>` tag.
+This is enough for the components to work with the default configurations that the library comes with. They can be overridden when passing `config` prop to the `<BetterHtmlProvider>` tag.
 
 ## Problems?
 

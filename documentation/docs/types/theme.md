@@ -84,4 +84,4 @@ You can check out the [default configuration](../getting-started/configuration#t
 
 ## Usage
 
-These types are used to configure the theme of all components in the library. You can provide a custom theme by passing a `Theme` object to the `value` prop of the `<BetterHtmlProvider>` component. Check out the [Configuration](../getting-started/configuration#theme-configuration) page for more details.
+These types are used to configure the theme of all components in the library. You can provide a custom theme by passing a `Theme` object to the `config` prop of the `<BetterHtmlProvider>` component. Check out the [Configuration](../getting-started/configuration#theme-configuration) page for more details.
