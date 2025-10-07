@@ -14,6 +14,7 @@ import Button from "./Button";
 import Text from "./Text";
 import Divider from "./Divider";
 import { useBetterHtmlContextInternal, usePlugin, useTheme } from "./BetterHtmlProvider";
+import { IconName } from "../types/icon";
 
 const DialogStylesElement = styled.dialog.withConfig({
    shouldForwardProp: (prop) => !["theme", "colorTheme", "opacity"].includes(prop),
@@ -90,6 +91,8 @@ type ModalComponent = {
          ModalRef,
          OmitProps<ModalProps, "maxWidth" | "children" | "overflow"> & {
             message?: string;
+            /** @default "Continue" */
+            continueButtonText?: string;
             continueButtonLoaderName?: LoaderName | AnyOtherString;
             onContinue?: () => void;
             onCancel?: () => void;
@@ -101,6 +104,10 @@ type ModalComponent = {
          ModalRef,
          OmitProps<ModalProps, "maxWidth" | "children" | "overflow"> & {
             message?: string;
+            /** @default "Delete" */
+            deleteButtonText?: string;
+            /** @default "trash" */
+            deleteButtonIconName?: IconName | AnyOtherString;
             deleteButtonLoaderName?: LoaderName | AnyOtherString;
             onDelete?: () => void;
             onCancel?: () => void;
@@ -284,7 +291,7 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
 }) as any;
 
 ModalComponent.confirmation = forwardRef(function Confirmation(
-   { message, continueButtonLoaderName, onContinue, onCancel, ...props },
+   { message, continueButtonText = "Continue", continueButtonLoaderName, onContinue, onCancel, ...props },
    ref,
 ) {
    const theme = useTheme();
@@ -315,14 +322,22 @@ ModalComponent.confirmation = forwardRef(function Confirmation(
             marginTop={theme.styles.space * 2}
          >
             <Button.secondary text="Cancel" onClick={onCancelElement} />
-            <Button text="Continue" loaderName={continueButtonLoaderName} onClick={onContinueElement} />
+            <Button text={continueButtonText} loaderName={continueButtonLoaderName} onClick={onContinueElement} />
          </Div.row>
       </ModalComponent>
    );
 }) as ModalComponent["confirmation"];
 
 ModalComponent.destructive = forwardRef(function Destructive(
-   { message, deleteButtonLoaderName, onDelete, onCancel, ...props },
+   {
+      message,
+      deleteButtonText = "Delete",
+      deleteButtonIconName = "trash",
+      deleteButtonLoaderName,
+      onDelete,
+      onCancel,
+      ...props
+   },
    ref,
 ) {
    const theme = useTheme();
@@ -355,8 +370,8 @@ ModalComponent.destructive = forwardRef(function Destructive(
          >
             <Button.secondary text="Cancel" onClick={onCancelElement} />
             <Button.destructive
-               icon="trash"
-               text="Delete"
+               icon={deleteButtonIconName}
+               text={deleteButtonText}
                loaderName={deleteButtonLoaderName}
                onClick={onDeleteElement}
             />
