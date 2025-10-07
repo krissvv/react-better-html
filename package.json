@@ -3,7 +3,7 @@
    "version": "1.1.172",
    "description": "A component library for react that is as close to plane html as possible",
    "main": "dist/index.js",
-   "triggerDeployment": 2,
+   "triggerDeployment": 3,
    "files": [
       "dist"
    ],
