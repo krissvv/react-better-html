@@ -24,7 +24,6 @@ jobs:
            uses: actions/setup-node@v4
            with:
               node-version: "20.x"
-              registry-url: "https://registry.npmjs.org"
 
          - name: Check version changes
            id: check
@@ -56,7 +55,7 @@ jobs:
 
          - name: Publish to NPM
            if: steps.check.outputs.version_changed == 'true'
-           run: npm publish --access public
+           run: npm publish
 
          - name: Create and push git tag
            if: steps.check.outputs.version_changed == 'true'
