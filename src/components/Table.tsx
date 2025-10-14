@@ -312,6 +312,8 @@ type ListFilter<DataItem> = {
 
 export type TableColumn<DataItem> = {
    label?: string;
+   /** @requires label */
+   renderLabel?: (label: string) => React.ReactNode;
    width?: string | number;
    minWidth?: string | number;
    maxWidth?: string | number;
@@ -915,7 +917,11 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                                     onChange={onClickAllCheckboxesElement}
                                  />
                               ) : column.label ? (
-                                 <Text>{column.label}</Text>
+                                 column.renderLabel ? (
+                                    column.renderLabel(column.label)
+                                 ) : (
+                                    <Text>{column.label}</Text>
+                                 )
                               ) : undefined}
 
                               {column.filter && (
@@ -1068,7 +1074,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
          </Div>
 
          <Modal
-            title={`Filter ${openedFilterColumn?.label}`}
+            title={`Filter ${openedFilterColumn?.label ?? ""}`}
             description={
                openedFilterColumn?.filter === "number"
                   ? "Enter minimum and maximum values to filter"

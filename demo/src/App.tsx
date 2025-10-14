@@ -867,6 +867,12 @@ function App() {
                               type: "text",
                               label: "Name",
                               keyName: "name",
+                              renderLabel: (label) => (
+                                 <Div.row alignItems="center" gap={theme.styles.gap}>
+                                    <Text color="red">{label}</Text>
+                                    <Button.icon icon="infoI" />
+                                 </Div.row>
+                              ),
                            },
                            {
                               type: "text",
