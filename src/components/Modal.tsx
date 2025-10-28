@@ -265,6 +265,7 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
                                  iconColor={titleColor}
                                  onClick={onClickClose}
                                  transition={theme.styles.transition}
+                                 zIndex={10}
                               />
                            )}
                         </Div.row>
@@ -274,7 +275,7 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
                   ) : (
                      <>
                         {!withoutCloseButton && (
-                           <Div position="absolute" top={theme.styles.space} right={theme.styles.space}>
+                           <Div position="absolute" top={theme.styles.space} right={theme.styles.space} zIndex={10}>
                               <Button.icon icon="XMark" onClick={onClickClose} />
                            </Div>
                         )}

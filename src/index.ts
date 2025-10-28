@@ -27,7 +27,7 @@ import BetterHtmlProvider, {
    useLoader,
    useAlertControls,
    useLoaderControls,
-   type BetterHtmlProviderValue,
+   type BetterHtmlProviderConfig,
 } from "./components/BetterHtmlProvider";
 import {
    usePageResize,
@@ -85,7 +85,7 @@ export * from "./plugins";
 
 export {
    BetterHtmlProvider,
-   BetterHtmlProviderValue,
+   BetterHtmlProviderConfig,
    // Components
    Div,
    DivProps,

@@ -199,10 +199,10 @@ function BetterHtmlProviderContent({ children }: BetterHtmlProviderContentProps)
    );
 }
 
-export type BetterHtmlProviderValue = DeepPartialRecord<BetterHtmlConfig>;
+export type BetterHtmlProviderConfig = DeepPartialRecord<BetterHtmlConfig>;
 
 type BetterHtmlProviderProps = {
-   config?: BetterHtmlProviderValue;
+   config?: BetterHtmlProviderConfig;
    plugins?: BetterHtmlPlugin[];
    children?: React.ReactNode;
 };
