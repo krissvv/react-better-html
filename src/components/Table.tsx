@@ -244,7 +244,7 @@ type ListFilterValue = {
    count: number;
 };
 
-type TableFilterData =
+export type TableFilterData =
    | {
         type: "number";
         min?: number;

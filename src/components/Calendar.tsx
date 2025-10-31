@@ -205,6 +205,10 @@ function Calendar({ value, minDate, maxDate, onChange }: CalendarProps) {
                   currentMonth === currentDate.getMonth() &&
                   currentYear === currentDate.getFullYear();
 
+               const isToday =
+                  thisDayDate.getDate() === new Date().getDate() &&
+                  thisDayDate.getMonth() === new Date().getMonth() &&
+                  thisDayDate.getFullYear() === new Date().getFullYear();
                const isWeekend = thisDayDate.getDay() === 6 || thisDayDate.getDay() === 0;
 
                const isDisabled =
@@ -219,7 +223,8 @@ function Calendar({ value, minDate, maxDate, onChange }: CalendarProps) {
                      alignItems="center"
                      justifyContent="center"
                      backgroundColor={isSelected ? theme.colors.primary : theme.colors.backgroundContent}
-                     filterHover={!isDisabled ? "brightness(0.9)" : undefined}
+                     filterHover={day && !isDisabled ? "brightness(0.9)" : undefined}
+                     border={`1px solid ${isToday ? theme.colors.primary : theme.colors.primary + "00"}`}
                      borderRadius={theme.styles.borderRadius / 2}
                      padding={theme.styles.space / 2}
                      cursor={day ? (!isDisabled ? "pointer" : "not-allowed") : undefined}
