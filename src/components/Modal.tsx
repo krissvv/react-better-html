@@ -6,6 +6,7 @@ import { ColorTheme, Theme } from "../types/theme";
 import { ComponentPropWithRef } from "../types/components";
 import { AnyOtherString, OmitProps } from "../types/app";
 import { LoaderName } from "../types/loader";
+import { IconName } from "../types/icon";
 
 import { useUrlQuery } from "../utils/hooks";
 
@@ -14,7 +15,6 @@ import Button from "./Button";
 import Text from "./Text";
 import Divider from "./Divider";
 import { useBetterHtmlContextInternal, usePlugin, useTheme } from "./BetterHtmlProvider";
-import { IconName } from "../types/icon";
 
 const DialogStylesElement = styled.dialog.withConfig({
    shouldForwardProp: (prop) => !["theme", "colorTheme", "opacity"].includes(prop),
@@ -65,10 +65,11 @@ export type ModalProps = {
     * */
    maxWidth?: number;
    title?: string;
-   titleColor?: string;
+   titleColor?: React.CSSProperties["color"];
    description?: string;
-   descriptionColor?: string;
-   headerBackgroundColor?: string;
+   descriptionColor?: React.CSSProperties["color"];
+   headerBackgroundColor?: React.CSSProperties["backgroundColor"];
+   backgroundColor?: React.CSSProperties["backgroundColor"];
    /** @requires ReactRouterDomPlugin */
    name?: string;
    overflow?: React.CSSProperties["overflow"];
@@ -124,6 +125,7 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
       description,
       descriptionColor,
       headerBackgroundColor,
+      backgroundColor,
       name,
       overflow,
       withoutCloseButton,
@@ -222,7 +224,7 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
                   position="relative"
                   width="100%"
                   minHeight={32 + theme.styles.space * 2}
-                  backgroundColor={theme.colors.backgroundBase}
+                  backgroundColor={backgroundColor ?? theme.colors.backgroundBase}
                   borderRadius={theme.styles.borderRadius * 2}
                   padding={!title ? theme.styles.space : undefined}
                   overflow={overflow}
@@ -276,7 +278,7 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
                      <>
                         {!withoutCloseButton && (
                            <Div position="absolute" top={theme.styles.space} right={theme.styles.space} zIndex={10}>
-                              <Button.icon icon="XMark" onClick={onClickClose} />
+                              <Button.icon icon="XMark" iconColor={titleColor} onClick={onClickClose} />
                            </Div>
                         )}
                      </>
