@@ -311,6 +311,7 @@ type ListFilter<DataItem> = {
 };
 
 export type TableColumn<DataItem> = {
+   hidden?: boolean;
    label?: string;
    /** @requires label */
    renderLabel?: (label: string) => React.ReactNode;
@@ -406,8 +407,10 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
 
    const filterModalRef = useRef<ModalRef>(null);
 
-   const columnsRef = useRef(columns);
-   columnsRef.current = columns;
+   const readyColumns = useMemo(() => columns.filter((column) => !column.hidden), [columns]);
+
+   const columnsRef = useRef(readyColumns);
+   columnsRef.current = readyColumns;
 
    const [checkedItems, setCheckedItems] = useState<boolean[]>([]);
    const [expandedRows, setExpandedRows] = useState<boolean[]>([]);
@@ -431,7 +434,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
    const [filterListSelectedItems, setFilterListSelectedItems] = useState<string[]>();
 
    const openedFilterData = openedFilterColumnIndex ? filterData[openedFilterColumnIndex] : undefined;
-   const openedFilterColumn = openedFilterColumnIndex ? columns[openedFilterColumnIndex] : undefined;
+   const openedFilterColumn = openedFilterColumnIndex ? readyColumns[openedFilterColumnIndex] : undefined;
 
    const filterForm = useForm({
       defaultValues: {
@@ -472,10 +475,10 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
       },
    });
 
-   const expandColumn = useMemo(() => columns.find((column) => column.type === "expand"), [columns]);
+   const expandColumn = useMemo(() => readyColumns.find((column) => column.type === "expand"), [readyColumns]);
 
    const renderCellContent = useCallback(
-      (column: (typeof columns)[number], item: DataItem, itemIndex: number) => {
+      (column: (typeof readyColumns)[number], item: DataItem, itemIndex: number) => {
          switch (column.type) {
             case "text": {
                const value = column.keyName ? item[column.keyName] : undefined;
@@ -606,10 +609,16 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
    const onClickCancelFormFilter = useCallback(() => {
       if (openedFilterColumnIndex === undefined) return;
 
-      setFilterData((oldValue) => ({
-         ...oldValue,
-         [openedFilterColumnIndex]: undefined,
-      }));
+      setFilterData((oldValue) =>
+         Object.entries({
+            ...oldValue,
+            [openedFilterColumnIndex]: undefined,
+         }).reduce<typeof oldValue>((previousValue, [key, value]) => {
+            if (value !== undefined) previousValue[parseInt(key)] = value;
+
+            return previousValue;
+         }, {}),
+      );
 
       filterModalRef.current?.close();
    }, [openedFilterColumnIndex]);
@@ -722,12 +731,12 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
    );
    const renderExpandedRow = useCallback(
       (...props: Parameters<NonNullable<ExpandColumn<DataItem>["render"]>>) => {
-         const expandColumn = columns.find((column) => column.type === "expand");
+         const expandColumn = readyColumns.find((column) => column.type === "expand");
          if (!expandColumn) return;
 
          return expandColumn.render?.(...props);
       },
-      [columns],
+      [readyColumns],
    );
 
    const dataAfterFilter = useMemo(
@@ -922,7 +931,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
             >
                <thead>
                   <tr className="isHeader">
-                     {columns.map((column, index) => (
+                     {readyColumns.map((column, index) => (
                         <ThStyledComponent
                            width={
                               column.width ??
@@ -984,7 +993,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                <tbody>
                   {isLoading ? (
                      <tr className="withoutHover">
-                        <td className="noData" colSpan={columns.length}>
+                        <td className="noData" colSpan={readyColumns.length}>
                            <Loader.box />
                         </td>
                      </tr>
@@ -1000,7 +1009,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                               style={getRowStyle?.(item, rowIndex)}
                               onClick={() => onClickRowElement(item, rowIndex)}
                            >
-                              {columns.map((column, colIndex) => (
+                              {readyColumns.map((column, colIndex) => (
                                  <TdStyledComponent
                                     textAlign={column.align}
                                     onClick={(event) => {
@@ -1015,14 +1024,14 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
 
                            {expandedRows[rowIndex] && (
                               <tr className="withoutHover isExpandRow">
-                                 <td colSpan={columns.length}>{renderExpandedRow(item, rowIndex)}</td>
+                                 <td colSpan={readyColumns.length}>{renderExpandedRow(item, rowIndex)}</td>
                               </tr>
                            )}
                         </Fragment>
                      ))
                   ) : (
                      <tr className="withoutHover">
-                        <td className="noData" colSpan={columns.length}>
+                        <td className="noData" colSpan={readyColumns.length}>
                            <Text.unknown>{noDataItemsMessage}</Text.unknown>
                         </td>
                      </tr>
@@ -1032,7 +1041,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                {withFooter && (
                   <tfoot>
                      <tr className="isFooter">
-                        <td colSpan={columns.length}>
+                        <td colSpan={readyColumns.length}>
                            <Div.column
                               position="relative"
                               width="100%"
