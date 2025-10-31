@@ -283,6 +283,9 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
    );
 
    useEffect(() => {
+      setInternalValue(controlledValue);
+   }, [controlledValue]);
+   useEffect(() => {
       if (isOpen) {
          setIsOpenLate.setTrue();
 
@@ -328,7 +331,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
 
    const displayValue = withSearch && isFocused ? searchQuery : selectedOption?.label ?? "";
    const withClearButton = isOpen && selectedOption;
-   const readyPlaceholder = placeholder ? placeholder : `Select an ${label?.toLowerCase() ?? "option"}`;
+   const readyPlaceholder = placeholder ?? `Select an ${label?.toLowerCase() ?? "option"}`;
 
    return (
       <Div.column width="100%" position="relative" userSelect="none" {...props}>

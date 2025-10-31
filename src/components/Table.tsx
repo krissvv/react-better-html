@@ -329,6 +329,7 @@ export type TableColumn<DataItem> = {
    (NumberFilter<DataItem> | DateFilter<DataItem> | ListFilter<DataItem>);
 
 export type TableProps<DataItem> = {
+   name?: string;
    columns: TableColumn<DataItem>[];
    data: DataItem[];
    /** @default false */
@@ -344,6 +345,16 @@ export type TableProps<DataItem> = {
    isInsideTableExpandRow?: boolean;
    containsOverflowComponents?: boolean;
    wrapperComponentRef?: React.Ref<HTMLDivElement>;
+   /**
+    * @default false
+    * @requires name
+    */
+   memoizeFilters?: boolean;
+   /**
+    * The lifespan of the memoized filters in milliseconds. The time will reset if the user changes the filters or reloads the page.
+    * @default 7200000 (2 hours)
+    */
+   memoizeFiltersLifespan?: number;
    getRowStyle?: (item: DataItem, index: number) => ComponentStyle;
    onClickRow?: (item: DataItem, index: number) => void;
    onClickAllCheckboxes?: (checked: boolean) => void;
@@ -365,6 +376,7 @@ type TableComponentType = {
 
 const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
    {
+      name,
       columns,
       data,
       isStriped,
@@ -376,6 +388,8 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
       isInsideTableExpandRow,
       containsOverflowComponents,
       wrapperComponentRef,
+      memoizeFilters,
+      memoizeFiltersLifespan = 7200000,
       getRowStyle,
       onClickRow,
       onClickAllCheckboxes,
@@ -399,7 +413,19 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
    const [expandedRows, setExpandedRows] = useState<boolean[]>([]);
    const [currentPage, setCurrentPage] = useState<number>(1);
 
-   const [filterData, setFilterData] = useState<Record<number, TableFilterData | undefined>>({});
+   const [filterData, setFilterData] = useState<Record<number, TableFilterData | undefined>>(() => {
+      if (!memoizeFilters || !name) return {};
+
+      const localStorageData = JSON.parse(localStorage.getItem(`react-better-html-table-filters-${name}`) || "{}");
+
+      const timestamp = localStorageData.timestamp;
+      const data = localStorageData.data ?? {};
+
+      const timeDiff = Date.now() - timestamp;
+      if (timeDiff > memoizeFiltersLifespan) return {};
+
+      return data;
+   });
    const [openedFilterColumnIndex, setOpenedFilterColumnIndex] = useState<number>();
 
    const [filterListSelectedItems, setFilterListSelectedItems] = useState<string[]>();
@@ -727,6 +753,11 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                   const minDate = filter.min ? new Date(filter.min) : undefined;
                   const maxDate = filter.max ? new Date(filter.max) : undefined;
 
+                  if (column.filter === "date") {
+                     minDate?.setHours(0, 0, 0, 0);
+                     maxDate?.setHours(23, 59, 59, 999);
+                  }
+
                   const itemValue: Date =
                      column.getValue?.(item) ??
                      new Date(column.type === "text" && column.keyName ? String(item[column.keyName]) : "");
@@ -839,6 +870,18 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
    useEffect(() => {
       onChangeFilter?.(filterData);
    }, [onChangeFilter, filterData]);
+   useEffect(() => {
+      if (!memoizeFilters) return;
+      if (!name) return;
+
+      localStorage.setItem(
+         `react-better-html-table-filters-${name}`,
+         JSON.stringify({
+            timestamp: Date.now(),
+            data: filterData,
+         }),
+      );
+   }, [memoizeFilters, name, filterData]);
    useEffect(() => {
       onChangeFilterDataValue?.(dataAfterFilter);
    }, [onChangeFilterDataValue, dataAfterFilter]);
