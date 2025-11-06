@@ -546,8 +546,8 @@ export function useForm<FormFields extends Record<string | number, string | numb
       return validationErrors;
    }, [validate, values]);
    const onSubmitFunction = useCallback(
-      async (event: React.FormEvent<HTMLFormElement>) => {
-         event.preventDefault();
+      async (event?: React.FormEvent<HTMLFormElement>) => {
+         event?.preventDefault();
          setIsSubmitting.setTrue();
 
          try {

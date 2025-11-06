@@ -240,7 +240,7 @@ type FilterPreset =
 
 type ListFilterValue = {
    label?: string;
-   value: string;
+   value: number | string;
    count: number;
 };
 
@@ -257,7 +257,7 @@ export type TableFilterData =
      }
    | {
         type: "list";
-        list?: string[];
+        list?: ListFilterValue["value"][];
      };
 
 //? Column types
@@ -431,7 +431,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
    });
    const [openedFilterColumnIndex, setOpenedFilterColumnIndex] = useState<number>();
 
-   const [filterListSelectedItems, setFilterListSelectedItems] = useState<string[]>();
+   const [filterListSelectedItems, setFilterListSelectedItems] = useState<ListFilterValue["value"][]>();
 
    const openedFilterData = openedFilterColumnIndex !== undefined ? filterData[openedFilterColumnIndex] : undefined;
    const openedFilterColumn = openedFilterColumnIndex !== undefined ? readyColumns[openedFilterColumnIndex] : undefined;
@@ -623,7 +623,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
       filterModalRef.current?.close();
    }, [openedFilterColumnIndex]);
    const onClickFilterListItem = useCallback(
-      (value: string) =>
+      (value: ListFilterValue["value"]) =>
          setFilterListSelectedItems((oldValue) => {
             if (!oldValue) return [value];
             if (oldValue.includes(value)) return oldValue.filter((item) => item !== value);
@@ -774,7 +774,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                   if (filter.min !== undefined && minDate && itemValue < minDate) return false;
                   if (filter.max !== undefined && maxDate && itemValue > maxDate) return false;
                } else if (column.filter === "list" && filter.type === "list") {
-                  const itemValue: string =
+                  const itemValue: ListFilterValue["value"] =
                      column.getValueForList?.(item).value ??
                      (column.type === "text" && column.keyName ? String(item[column.keyName]) : "");
 
@@ -807,7 +807,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                ? openedFilterColumn.getValueForList(currentValue)
                : undefined;
 
-         const value: string | undefined = valueFromList
+         const value: ListFilterValue["value"] | undefined = valueFromList
             ? valueFromList.value
             : openedFilterColumn.type === "text" && openedFilterColumn.keyName
             ? String(currentValue[openedFilterColumn.keyName])
@@ -816,7 +816,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
 
          let searchPassed = openedFilterColumn.filter === "list" && openedFilterColumn.withSearch ? false : true;
          if (openedFilterColumn.filter === "list" && openedFilterColumn.withSearch) {
-            searchPassed = label?.toLowerCase().includes(filterForm.values.search.toLowerCase()) ?? false;
+            searchPassed = label?.toString().toLowerCase().includes(filterForm.values.search.toLowerCase()) ?? false;
          }
 
          if (value !== undefined && value !== null && value !== "" && searchPassed) {
@@ -831,7 +831,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                );
             } else
                previousValue.push({
-                  label,
+                  label: label?.toString() ?? "",
                   value,
                   count: 1,
                });
