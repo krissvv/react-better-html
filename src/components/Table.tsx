@@ -433,8 +433,8 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
 
    const [filterListSelectedItems, setFilterListSelectedItems] = useState<string[]>();
 
-   const openedFilterData = openedFilterColumnIndex ? filterData[openedFilterColumnIndex] : undefined;
-   const openedFilterColumn = openedFilterColumnIndex ? readyColumns[openedFilterColumnIndex] : undefined;
+   const openedFilterData = openedFilterColumnIndex !== undefined ? filterData[openedFilterColumnIndex] : undefined;
+   const openedFilterColumn = openedFilterColumnIndex !== undefined ? readyColumns[openedFilterColumnIndex] : undefined;
 
    const filterForm = useForm({
       defaultValues: {
