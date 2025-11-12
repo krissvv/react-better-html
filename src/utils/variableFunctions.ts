@@ -57,6 +57,29 @@ export const alertControls = {
    },
 };
 
+export const sideMenuControls = {
+   expand: () => {
+      if (!checkBetterHtmlContextValue(externalBetterHtmlContextValue, "sideMenuControls.expand")) return;
+
+      externalBetterHtmlContextValue.setSideMenuIsCollapsed.setFalse();
+   },
+   collapse: () => {
+      if (!checkBetterHtmlContextValue(externalBetterHtmlContextValue, "sideMenuControls.collapse")) return;
+
+      externalBetterHtmlContextValue.setSideMenuIsCollapsed.setTrue();
+   },
+   open: () => {
+      if (!checkBetterHtmlContextValue(externalBetterHtmlContextValue, "sideMenuControls.open")) return;
+
+      externalBetterHtmlContextValue.setSideMenuIsOpenMobile.setTrue();
+   },
+   close: () => {
+      if (!checkBetterHtmlContextValue(externalBetterHtmlContextValue, "sideMenuControls.close")) return;
+
+      externalBetterHtmlContextValue.setSideMenuIsOpenMobile.setFalse();
+   },
+};
+
 export const colorThemeControls = {
    toggleTheme: (theme?: ColorTheme) => {
       if (!checkBetterHtmlContextValue(externalBetterHtmlContextValue, "colorThemeControls.toggleTheme")) return;

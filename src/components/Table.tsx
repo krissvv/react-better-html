@@ -1242,7 +1242,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                                        key={value.value}
                                     >
                                        <Div.row alignItems="center" gap={theme.styles.gap / 2}>
-                                          <Text>{value.label ?? value.value}</Text>
+                                          <Text>{value.label || value.value}</Text>
 
                                           {openedFilterColumn.withTotalNumber && (
                                              <Text

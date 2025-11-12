@@ -20,6 +20,7 @@ import Table, { type TableColumn, type TableFilterData, type TableProps, type Ta
 import Tooltip, { type TooltipProps, type TooltipRef } from "./components/Tooltip";
 import Tabs, { type TabGroup, type TabsProps, type TabsRef } from "./components/Tabs";
 import Foldable, { type FoldableProps, type FoldableRef } from "./components/Foldable";
+import SideMenu, { type MenuItem } from "./components/SideMenu";
 
 import BetterHtmlProvider, {
    useBetterHtmlContext,
@@ -48,7 +49,13 @@ import {
    eventPreventStop,
 } from "./utils/functions";
 import { lightenColor, darkenColor, saturateColor, desaturateColor } from "./utils/colorManipulation";
-import { loaderControls, alertControls, colorThemeControls, filterHover } from "./utils/variableFunctions";
+import {
+   loaderControls,
+   alertControls,
+   sideMenuControls,
+   colorThemeControls,
+   filterHover,
+} from "./utils/variableFunctions";
 import { generateLocalStorage } from "./utils/localStorage";
 
 import {
@@ -134,6 +141,9 @@ export {
    TableFilterData,
    TableProps,
    TableRef,
+   Tooltip,
+   TooltipProps,
+   TooltipRef,
    Tabs,
    TabGroup,
    TabsProps,
@@ -141,9 +151,8 @@ export {
    Foldable,
    FoldableProps,
    FoldableRef,
-   Tooltip,
-   TooltipProps,
-   TooltipRef,
+   SideMenu,
+   MenuItem,
    // Hooks
    useBetterHtmlContext,
    useTheme,
@@ -173,6 +182,7 @@ export {
    // Variable Functions
    loaderControls,
    alertControls,
+   sideMenuControls,
    colorThemeControls,
    filterHover,
    // LocalStorage

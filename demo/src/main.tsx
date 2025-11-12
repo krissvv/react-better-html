@@ -1,6 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
 
 import BetterHtmlProvider from "../../src/components/BetterHtmlProvider";
 import { alertsPlugin, BetterHtmlPlugin, reactRouterDomPlugin } from "../../src/index.ts";
@@ -20,6 +20,13 @@ createRoot(document.getElementById("root")!).render(
             config={{
                assets: {
                   logo: vite,
+               },
+               components: {
+                  button: {
+                     tagReplacement: {
+                        linkComponent: Link,
+                     },
+                  },
                },
             }}
             plugins={plugins}

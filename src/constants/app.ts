@@ -5,3 +5,4 @@ export const appConfig: AppConfig = {
 };
 
 export const defaultAlertDuration: number = 2.3 * 1000;
+export const defaultSideMenuWidth: number = 300;

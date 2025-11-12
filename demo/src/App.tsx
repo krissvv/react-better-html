@@ -10,7 +10,6 @@ import {
    Divider,
    Modal,
    ModalRef,
-   PageHolder,
    useTheme,
    Chip,
    InputField,
@@ -31,6 +30,7 @@ import {
    useAlertControls,
    useBooleanState,
    filterHover,
+   SideMenu,
 } from "../../src";
 
 const data: {
@@ -187,7 +187,37 @@ function App() {
 
    return (
       <>
-         <PageHolder>
+         <SideMenu
+            items={[
+               {
+                  text: "Main",
+                  iconName: "filter",
+                  href: "/",
+               },
+               {
+                  text: "With submenu",
+                  iconName: "filter",
+                  children: [
+                     {
+                        text: "Submenu item 1",
+                        iconName: "filter",
+                        href: "/submenu-item-1",
+                     },
+                     {
+                        text: "Submenu item 2",
+                        iconName: "filter",
+                        href: "/submenu-item-2",
+                     },
+                  ],
+               },
+            ]}
+            logoAssetName="logo"
+            logoText="ReactBetterHtml"
+            collapsable
+            widthMobileHandle
+         />
+
+         <SideMenu.pageHolder>
             <Div.column gap={theme.styles.space} marginBottom={theme.styles.space}>
                <ColorThemeSwitch />
                <ColorThemeSwitch.withText />
@@ -1434,7 +1464,7 @@ function App() {
                   <Div.column gap={theme.styles.space}></Div.column>
                </Tabs.content>
             </Tabs>
-         </PageHolder>
+         </SideMenu.pageHolder>
 
          {/* <PageHolder.center
             sideComponent={

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { createSearchParams, useInRouterContext, useNavigate, useSearchParams } from "react-router-dom";
+import { createSearchParams } from "react-router-dom";
 
 import { cssProps } from "../constants/css";
 
@@ -622,9 +622,9 @@ export function useUrlQuery() {
       );
    }
 
-   // const reactRouterDomPluginConfig = reactRouterDomPlugin.getConfig();
+   const reactRouterDomPluginConfig = reactRouterDomPlugin.getConfig();
 
-   const isInRouterContext = useInRouterContext();
+   const isInRouterContext = reactRouterDomPluginConfig.useInRouterContext();
 
    if (!isInRouterContext) {
       throw new Error(
@@ -632,8 +632,8 @@ export function useUrlQuery() {
       );
    }
 
-   const navigate = useNavigate();
-   const [searchParams] = useSearchParams();
+   const navigate = reactRouterDomPluginConfig.useNavigate();
+   const [searchParams] = reactRouterDomPluginConfig.useSearchParams();
 
    const setQuery = useCallback(
       (query: Record<string, string | number>, keepHistory = true) => {

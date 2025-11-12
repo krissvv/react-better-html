@@ -13,6 +13,8 @@ import { LoaderConfig, LoaderName } from "../types/loader";
 import { Alert } from "../types/alert";
 import { BetterHtmlPlugin, PluginName } from "../types/plugin";
 
+import { useBooleanState } from "../utils/hooks";
+
 import { TabGroup, TabsComponentState } from "./Tabs";
 import AlertsHolder from "./alerts/AlertsHolder";
 
@@ -48,6 +50,10 @@ export type BetterHtmlInternalConfig = BetterHtmlConfig & {
    setLoaders: React.Dispatch<React.SetStateAction<Partial<LoaderConfig>>>;
    alerts: Alert[];
    setAlerts: React.Dispatch<React.SetStateAction<Alert[]>>;
+   sideMenuIsCollapsed: boolean;
+   setSideMenuIsCollapsed: ReturnType<typeof useBooleanState>[1];
+   sideMenuIsOpenMobile: boolean;
+   setSideMenuIsOpenMobile: ReturnType<typeof useBooleanState>[1];
    plugins: BetterHtmlPlugin[];
    componentsState: {
       tabs: TabsComponentState;
@@ -213,6 +219,8 @@ function BetterHtmlProvider({ config, plugins, children }: BetterHtmlProviderPro
    );
    const [loaders, setLoaders] = useState<Partial<LoaderConfig>>(config?.loaders ?? {});
    const [alerts, setAlerts] = useState<Alert[]>([]);
+   const [sideMenuIsCollapsed, setSideMenuIsCollapsed] = useBooleanState();
+   const [sideMenuIsOpenMobile, setSideMenuIsOpenMobile] = useBooleanState();
    const [tabGroups, setTabGroups] = useState<TabGroup[]>([]);
    const [tabsWithDots, setTabsWithDots] = useState<string[]>([]);
 
@@ -251,6 +259,10 @@ function BetterHtmlProvider({ config, plugins, children }: BetterHtmlProviderPro
          setLoaders,
          alerts,
          setAlerts,
+         sideMenuIsCollapsed,
+         setSideMenuIsCollapsed,
+         sideMenuIsOpenMobile,
+         setSideMenuIsOpenMobile,
          components: {
             ...config?.components,
          },
@@ -264,7 +276,7 @@ function BetterHtmlProvider({ config, plugins, children }: BetterHtmlProviderPro
             },
          },
       }),
-      [config, colorTheme, loaders, alerts, tabGroups, tabsWithDots],
+      [config, colorTheme, loaders, alerts, sideMenuIsCollapsed, sideMenuIsOpenMobile, tabGroups, tabsWithDots],
    );
 
    useEffect(() => {

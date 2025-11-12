@@ -28,5 +28,9 @@ export type BetterHtmlConfig = {
          style?: ComponentStyleConfig<"default" | "secondary" | "destructive" | "icon" | "upload">;
          tagReplacement?: ComponentTagReplacementConfig<"buttonComponent" | "linkComponent">;
       };
+      sideMenu?: {
+         /** @default 300 */
+         width?: number;
+      };
    };
 };
