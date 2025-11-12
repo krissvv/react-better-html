@@ -210,6 +210,14 @@ function App() {
                      },
                   ],
                },
+               {
+                  text: "With onClick",
+                  iconName: "filter",
+                  // onClickCloseSideMenu: false,
+                  onClick: () => {
+                     console.log("Clicked");
+                  },
+               },
             ]}
             bottomItems={[
                {

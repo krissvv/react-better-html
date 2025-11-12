@@ -24,10 +24,12 @@ export type SideMenuItem = {
    text: string;
    iconName: IconName | AnyOtherString;
    href?: string;
-   onClick?: (item: SideMenuItem) => void;
    disabled?: boolean;
    hidden?: boolean;
    children?: SideMenuItem[];
+   /** @default true */
+   onClickCloseSideMenu?: boolean;
+   onClick?: (item: SideMenuItem) => void;
 };
 
 type MenuItemComponentProps = {
@@ -56,7 +58,7 @@ const MenuItemComponent = memo(function MenuItemComponent({ item, onClick }: Men
    const onClickElement = useCallback(() => {
       if (item.disabled) return;
 
-      onClick?.();
+      if (item.onClickCloseSideMenu !== false) onClick?.();
       item.onClick?.(item);
    }, [onClick, item]);
 
@@ -96,7 +98,7 @@ const MenuItemComponent = memo(function MenuItemComponent({ item, onClick }: Men
          overflow={isCollapsed ? "hidden" : undefined}
          cursor={item.disabled ? "not-allowed" : "pointer"}
          opacity={item.disabled ? 0.6 : undefined}
-         onClick={item.children ? setIsOpened.toggle : undefined}
+         onClick={item.children ? setIsOpened.toggle : onClickElement}
       >
          <Icon name={item.iconName} color={theme.colors.primary} size={iconSize} flexShrink={0} />
 
