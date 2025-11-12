@@ -356,9 +356,11 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
    );
 };
 
-type SideMenuPageHolderProps = PageHolderProps & {};
+type SideMenuPageHolderProps = PageHolderProps & {
+   outsideComponent?: React.ReactNode;
+};
 
-SideMenuComponent.pageHolder = function SideMenuPageHolder({ ...props }) {
+SideMenuComponent.pageHolder = function SideMenuPageHolder({ outsideComponent, ...props }) {
    const theme = useTheme();
    const mediaQuery = useMediaQuery();
    const { components, sideMenuIsCollapsed } = useBetterHtmlContextInternal();
@@ -368,12 +370,15 @@ SideMenuComponent.pageHolder = function SideMenuPageHolder({ ...props }) {
 
    return (
       <Div
+         position="relative"
          width="100%"
          paddingLeft={
             !mediaQuery.size1000 ? (!sideMenuIsCollapsed ? sideMenuWidth : sideMenuCollapsedWidth) : undefined
          }
          transition={theme.styles.transition}
       >
+         {outsideComponent}
+
          <PageHolder {...props} />
       </Div>
    );
