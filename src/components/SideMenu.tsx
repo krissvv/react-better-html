@@ -191,6 +191,7 @@ const MenuItemComponent = memo(function MenuItemComponent({ item, onClick }: Men
 
 type SideMenuProps = {
    items: MenuItem[];
+   topSpace?: number;
    logoAssetName?: AssetName | AnyOtherString;
    logoUrl?: string;
    logoText?: string;
@@ -206,6 +207,7 @@ type SideMenuComponentType = {
 
 const SideMenuComponent: SideMenuComponentType = function SideMenu({
    items,
+   topSpace = 0,
    logoAssetName,
    logoUrl,
    logoText,
@@ -236,7 +238,9 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
       <Div.column
          position="fixed"
          width={mediaQuery.size1000 ? "100%" : isCollapsed ? sideMenuCollapsedWidth : sideMenuWidth}
-         height="100svh"
+         height={`calc(100svh - ${topSpace}px)`}
+         top={topSpace}
+         left={0}
          backgroundColor={theme.colors.backgroundBase}
          borderRight={`solid 1px ${theme.colors.border}`}
          transform={!mediaQuery.size1000 || sideMenuIsOpenMobile ? "translateX(0)" : "translateX(-100%)"}

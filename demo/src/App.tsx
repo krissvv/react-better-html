@@ -211,6 +211,7 @@ function App() {
                   ],
                },
             ]}
+            topSpace={60}
             logoAssetName="logo"
             logoText="ReactBetterHtml"
             collapsable
