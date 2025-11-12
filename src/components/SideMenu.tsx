@@ -18,6 +18,7 @@ import Text from "./Text";
 import Image from "./Image";
 import PageHolder, { PageHolderProps } from "./PageHolder";
 import { useBetterHtmlContextInternal, usePlugin, useTheme } from "./BetterHtmlProvider";
+import { darkenColor, lightenColor } from "../utils/colorManipulation";
 
 export type MenuItem = {
    text: string;
@@ -80,7 +81,13 @@ const MenuItemComponent = memo(function MenuItemComponent({ item, onClick }: Men
          alignItems="center"
          gap={iconGap}
          whiteSpace="nowrap"
-         backgroundColor={isActive ? `${theme.colors.primary}20` : theme.colors.backgroundBase}
+         backgroundColor={
+            isActive
+               ? colorTheme === "dark"
+                  ? lightenColor(theme.colors.primary, 0.7)
+                  : lightenColor(theme.colors.primary, 0.85)
+               : theme.colors.backgroundContent
+         }
          borderRadius={theme.styles.borderRadius}
          paddingBlock={paddingBlock}
          paddingLeft={isCollapsed ? theme.styles.space : paddingLeft}
@@ -177,9 +184,9 @@ const MenuItemComponent = memo(function MenuItemComponent({ item, onClick }: Men
                      left={0}
                      border={`${lineWidth}px solid ${theme.colors.border}`}
                      borderRadius={999}
-                     borderTopColor={theme.colors.backgroundBase}
-                     borderLeftColor={theme.colors.backgroundBase}
-                     borderRightColor={theme.colors.backgroundBase}
+                     borderTopColor={theme.colors.backgroundContent}
+                     borderLeftColor={theme.colors.backgroundContent}
+                     borderRightColor={theme.colors.backgroundContent}
                      transform="rotate(45deg)"
                   />
                </Div>
@@ -203,6 +210,7 @@ type SideMenuProps = {
 type SideMenuComponentType = {
    (props: SideMenuProps): React.ReactElement;
    pageHolder: (props: SideMenuPageHolderProps) => React.ReactElement;
+   burgerButton: () => React.ReactElement;
 };
 
 const SideMenuComponent: SideMenuComponentType = function SideMenu({
@@ -241,7 +249,7 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
          height={`calc(100svh - ${topSpace}px)`}
          top={topSpace}
          left={0}
-         backgroundColor={theme.colors.backgroundBase}
+         backgroundColor={theme.colors.backgroundContent}
          borderRight={`solid 1px ${theme.colors.border}`}
          transform={!mediaQuery.size1000 || sideMenuIsOpenMobile ? "translateX(0)" : "translateX(-100%)"}
          paddingInline={theme.styles.space}
@@ -307,7 +315,7 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
                <Div.row
                   alignItems="center"
                   justifyContent="center"
-                  backgroundColor={theme.colors.backgroundBase}
+                  backgroundColor={theme.colors.backgroundContent}
                   borderRadius={theme.styles.borderRadius}
                   marginTop="auto"
                   cursor="pointer"
@@ -332,7 +340,7 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
                position="absolute"
                top={theme.styles.space}
                left="100%"
-               backgroundColor={theme.colors.backgroundBase}
+               backgroundColor={theme.colors.backgroundContent}
                border={`solid 1px ${theme.colors.border}`}
                borderLeft="none"
                borderTopRightRadius={theme.styles.borderRadius}
@@ -388,10 +396,69 @@ SideMenuComponent.pageHolder = function SideMenuPageHolder({ outsideComponent, .
    );
 } as SideMenuComponentType["pageHolder"];
 
+SideMenuComponent.burgerButton = function BurgerButton() {
+   const theme = useTheme();
+   const { sideMenuIsOpenMobile, setSideMenuIsOpenMobile } = useBetterHtmlContextInternal();
+
+   const [isHovered, setIsHovered] = useBooleanState();
+
+   const width = 2;
+
+   return (
+      <Div
+         position="relative"
+         width={32}
+         height={20}
+         cursor="pointer"
+         onMouseOver={setIsHovered.setTrue}
+         onMouseLeave={setIsHovered.setFalse}
+         onMouseOut={setIsHovered.setFalse}
+         onClick={setSideMenuIsOpenMobile.toggle}
+      >
+         <Div
+            position="absolute"
+            width={isHovered || sideMenuIsOpenMobile ? "100%" : "50%"}
+            height={width}
+            top={sideMenuIsOpenMobile ? `calc(50% - ${width / 2}px)` : 0}
+            left={0}
+            backgroundColor={theme.colors.border}
+            borderRadius={999}
+            transform={sideMenuIsOpenMobile ? "rotate(45deg)" : undefined}
+            transition={theme.styles.transition}
+         />
+         <Div
+            position="absolute"
+            width={isHovered ? "100%" : "100%"}
+            height={width}
+            top="50%"
+            left={0}
+            backgroundColor={theme.colors.border}
+            borderRadius={999}
+            transform="translateY(-50%)"
+            opacity={sideMenuIsOpenMobile ? 0 : undefined}
+            transition={theme.styles.transition}
+         />
+         <Div
+            position="absolute"
+            width={isHovered || sideMenuIsOpenMobile ? "100%" : "75%"}
+            height={width}
+            bottom={sideMenuIsOpenMobile ? `calc(50% - ${width / 2}px)` : 0}
+            left={0}
+            backgroundColor={theme.colors.border}
+            borderRadius={999}
+            transform={sideMenuIsOpenMobile ? "rotate(-45deg)" : undefined}
+            transition={theme.styles.transition}
+         />
+      </Div>
+   );
+} as SideMenuComponentType["burgerButton"];
+
 const SideMenu = memo(SideMenuComponent) as any as typeof SideMenuComponent & {
    pageHolder: typeof SideMenuComponent.pageHolder;
+   burgerButton: typeof SideMenuComponent.burgerButton;
 };
 
 SideMenu.pageHolder = SideMenuComponent.pageHolder;
+SideMenu.burgerButton = SideMenuComponent.burgerButton;
 
 export default SideMenu;

@@ -211,7 +211,7 @@ function App() {
                   ],
                },
             ]}
-            topSpace={60}
+            // topSpace={60}
             logoAssetName="logo"
             logoText="ReactBetterHtml"
             collapsable
@@ -219,14 +219,9 @@ function App() {
          />
 
          <SideMenu.pageHolder>
-            <Div.column gap={theme.styles.space} marginBottom={theme.styles.space}>
-               <ColorThemeSwitch />
-               <ColorThemeSwitch.withText />
-               <ColorThemeSwitch.withText withMoon />
-            </Div.column>
-
             <Tabs
                tabs={[
+                  "SideMenu",
                   "PageHeader",
                   "Text",
                   "Div",
@@ -248,7 +243,11 @@ function App() {
                style="borderRadiusTop"
                // style="box"
             >
-               <Tabs.content tab="PageHeader" tabWithDot>
+               <Tabs.content tab="SideMenu" tabWithDot>
+                  <SideMenu.burgerButton />
+               </Tabs.content>
+
+               <Tabs.content tab="PageHeader">
                   <Div.column gap={theme.styles.space}>
                      <PageHeader
                         title="Hello there"
@@ -1465,6 +1464,12 @@ function App() {
                   <Div.column gap={theme.styles.space}></Div.column>
                </Tabs.content>
             </Tabs>
+
+            <Div.column gap={theme.styles.space} marginBottom={theme.styles.space} marginTop={theme.styles.space * 2}>
+               <ColorThemeSwitch />
+               <ColorThemeSwitch.withText />
+               <ColorThemeSwitch.withText withMoon />
+            </Div.column>
          </SideMenu.pageHolder>
 
          {/* <PageHolder.center

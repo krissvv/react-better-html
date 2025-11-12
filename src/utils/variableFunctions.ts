@@ -68,6 +68,11 @@ export const sideMenuControls = {
 
       externalBetterHtmlContextValue.setSideMenuIsCollapsed.setTrue();
    },
+   toggleExpanded: () => {
+      if (!checkBetterHtmlContextValue(externalBetterHtmlContextValue, "sideMenuControls.toggleExpanded")) return;
+
+      externalBetterHtmlContextValue.setSideMenuIsCollapsed.toggle();
+   },
    open: () => {
       if (!checkBetterHtmlContextValue(externalBetterHtmlContextValue, "sideMenuControls.open")) return;
 
@@ -77,6 +82,11 @@ export const sideMenuControls = {
       if (!checkBetterHtmlContextValue(externalBetterHtmlContextValue, "sideMenuControls.close")) return;
 
       externalBetterHtmlContextValue.setSideMenuIsOpenMobile.setFalse();
+   },
+   toggleOpened: () => {
+      if (!checkBetterHtmlContextValue(externalBetterHtmlContextValue, "sideMenuControls.toggleOpened")) return;
+
+      externalBetterHtmlContextValue.setSideMenuIsOpenMobile.toggle();
    },
 };
 
