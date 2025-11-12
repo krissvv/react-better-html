@@ -198,6 +198,7 @@ const MenuItemComponent = memo(function MenuItemComponent({ item, onClick }: Men
 
 type SideMenuProps = {
    items: SideMenuItem[];
+   bottomItems?: SideMenuItem[];
    topSpace?: number;
    logoAssetName?: AssetName | AnyOtherString;
    logoUrl?: string;
@@ -216,6 +217,7 @@ type SideMenuComponentType = {
 
 const SideMenuComponent: SideMenuComponentType = function SideMenu({
    items,
+   bottomItems,
    topSpace = 0,
    logoAssetName,
    logoUrl,
@@ -235,7 +237,9 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
    }, []);
 
    const readyItems = useMemo(() => items.filter((item) => !item.hidden), [items]);
+   const readyBottomItems = useMemo(() => bottomItems?.filter((item) => !item.hidden), [bottomItems]);
 
+   const isCollapsable = collapsable && !mediaQuery.size1000;
    const isCollapsed = sideMenuIsCollapsed && !mediaQuery.size1000;
 
    const LinkComponentTag = components.button?.tagReplacement?.linkComponent ?? "a";
@@ -254,9 +258,7 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
          backgroundColor={theme.colors.backgroundContent}
          borderRight={`solid 1px ${theme.colors.border}`}
          transform={!mediaQuery.size1000 || sideMenuIsOpenMobile ? "translateX(0)" : "translateX(-100%)"}
-         paddingInline={theme.styles.space}
          paddingTop={logoAssetName || logoUrl ? theme.styles.gap : theme.styles.space}
-         paddingBottom={theme.styles.space}
          transition={
             mediaQuery.size1000
                ? !isCollapsed
@@ -265,11 +267,11 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
                : theme.styles.transition
          }
          userSelect="none"
-         zIndex={11}
+         zIndex={10}
       >
          <Div.column width="100%" height="100%" gap={theme.styles.space}>
             {(logoAssetName || logoUrl || (withCloseButton && mediaQuery.size1000)) && (
-               <Div.row alignItems="center">
+               <Div.row alignItems="center" paddingInline={theme.styles.space}>
                   {(logoAssetName || logoUrl) && (
                      <LinkComponentTag to="/" href="/" onClick={onClickXButton}>
                         <Div.row
@@ -309,33 +311,62 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
                </Div.row>
             )}
 
-            <Div.column gap={theme.styles.gap / 2}>
-               {readyItems.map((item) => (
-                  <MenuItemComponent item={item} onClick={onClickXButton} key={item.text} />
-               ))}
+            <Div.column
+               width="100%"
+               height="100%"
+               overflowY="auto"
+               paddingInline={theme.styles.space}
+               paddingBottom={!isCollapsable && !readyBottomItems ? theme.styles.space : undefined}
+            >
+               <Div.column gap={theme.styles.gap / 2}>
+                  {readyItems.map((item) => (
+                     <MenuItemComponent item={item} onClick={onClickXButton} key={item.text} />
+                  ))}
+               </Div.column>
             </Div.column>
 
-            {collapsable && !mediaQuery.size1000 && (
-               <Div.row
-                  alignItems="center"
-                  justifyContent="center"
-                  backgroundColor={theme.colors.backgroundContent}
-                  borderRadius={theme.styles.borderRadius}
+            {readyBottomItems && (
+               <Div.column
+                  borderTop={`solid 1px ${theme.colors.border}`}
+                  gap={theme.styles.gap / 2}
                   marginTop="auto"
-                  cursor="pointer"
-                  filterHover={filterHover().z1}
-                  paddingBlock={theme.styles.gap}
-                  isTabAccessed
-                  onClick={setSideMenuIsCollapsed.toggle}
+                  paddingTop={theme.styles.space}
+                  paddingInline={theme.styles.space}
+                  paddingBottom={!isCollapsable ? theme.styles.space : undefined}
                >
-                  <Icon
-                     name="chevronRight"
-                     size={20}
-                     color={theme.colors.textSecondary}
-                     transform={`rotate(${isCollapsed ? 0 : 180}deg)`}
-                     transition={theme.styles.transition}
-                  />
-               </Div.row>
+                  {readyBottomItems.map((item) => (
+                     <MenuItemComponent item={item} onClick={onClickXButton} key={item.text} />
+                  ))}
+               </Div.column>
+            )}
+
+            {isCollapsable && (
+               <Div
+                  borderTop={`solid 1px ${theme.colors.border}`}
+                  marginTop={!readyBottomItems ? "auto" : undefined}
+                  paddingInline={theme.styles.space}
+                  paddingBlock={theme.styles.space}
+               >
+                  <Div.row
+                     alignItems="center"
+                     justifyContent="center"
+                     backgroundColor={theme.colors.backgroundContent}
+                     borderRadius={theme.styles.borderRadius}
+                     cursor="pointer"
+                     filterHover={filterHover().z1}
+                     isTabAccessed
+                     paddingBlock={theme.styles.gap}
+                     onClick={setSideMenuIsCollapsed.toggle}
+                  >
+                     <Icon
+                        name="chevronRight"
+                        size={20}
+                        color={theme.colors.textSecondary}
+                        transform={`rotate(${isCollapsed ? 0 : 180}deg)`}
+                        transition={theme.styles.transition}
+                     />
+                  </Div.row>
+               </Div>
             )}
          </Div.column>
 

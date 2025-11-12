@@ -211,6 +211,13 @@ function App() {
                   ],
                },
             ]}
+            bottomItems={[
+               {
+                  text: "Main 2",
+                  iconName: "filter",
+                  href: "/main-2",
+               },
+            ]}
             // topSpace={60}
             logoAssetName="logo"
             logoText="ReactBetterHtml"
