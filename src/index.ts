@@ -20,7 +20,7 @@ import Table, { type TableColumn, type TableFilterData, type TableProps, type Ta
 import Tooltip, { type TooltipProps, type TooltipRef } from "./components/Tooltip";
 import Tabs, { type TabGroup, type TabsProps, type TabsRef } from "./components/Tabs";
 import Foldable, { type FoldableProps, type FoldableRef } from "./components/Foldable";
-import SideMenu, { type MenuItem } from "./components/SideMenu";
+import SideMenu, { type SideMenuItem } from "./components/SideMenu";
 
 import BetterHtmlProvider, {
    useBetterHtmlContext,
@@ -152,7 +152,7 @@ export {
    FoldableProps,
    FoldableRef,
    SideMenu,
-   MenuItem,
+   SideMenuItem,
    // Hooks
    useBetterHtmlContext,
    useTheme,

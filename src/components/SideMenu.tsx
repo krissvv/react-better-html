@@ -8,6 +8,7 @@ import { AssetName } from "../types/asset";
 
 import { useBooleanState, useMediaQuery } from "../utils/hooks";
 import { filterHover } from "../utils/variableFunctions";
+import { lightenColor } from "../utils/colorManipulation";
 
 import { ReactRouterDomPluginOptions } from "../plugins";
 
@@ -18,20 +19,19 @@ import Text from "./Text";
 import Image from "./Image";
 import PageHolder, { PageHolderProps } from "./PageHolder";
 import { useBetterHtmlContextInternal, usePlugin, useTheme } from "./BetterHtmlProvider";
-import { darkenColor, lightenColor } from "../utils/colorManipulation";
 
-export type MenuItem = {
+export type SideMenuItem = {
    text: string;
    iconName: IconName | AnyOtherString;
    href?: string;
-   onClick?: (item: MenuItem) => void;
+   onClick?: (item: SideMenuItem) => void;
    disabled?: boolean;
    hidden?: boolean;
-   children?: MenuItem[];
+   children?: SideMenuItem[];
 };
 
 type MenuItemComponentProps = {
-   item: MenuItem;
+   item: SideMenuItem;
    onClick?: () => void;
 };
 
@@ -197,13 +197,14 @@ const MenuItemComponent = memo(function MenuItemComponent({ item, onClick }: Men
 });
 
 type SideMenuProps = {
-   items: MenuItem[];
+   items: SideMenuItem[];
    topSpace?: number;
    logoAssetName?: AssetName | AnyOtherString;
    logoUrl?: string;
    logoText?: string;
    logoFontFamily?: string;
    collapsable?: boolean;
+   withCloseButton?: boolean;
    widthMobileHandle?: boolean;
 };
 
@@ -221,6 +222,7 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
    logoText,
    logoFontFamily,
    collapsable,
+   withCloseButton,
    widthMobileHandle,
 }: SideMenuProps) {
    const theme = useTheme();
@@ -266,7 +268,7 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
          zIndex={11}
       >
          <Div.column width="100%" height="100%" gap={theme.styles.space}>
-            {(logoAssetName || logoUrl || mediaQuery.size1000) && (
+            {(logoAssetName || logoUrl || (withCloseButton && mediaQuery.size1000)) && (
                <Div.row alignItems="center">
                   {(logoAssetName || logoUrl) && (
                      <LinkComponentTag to="/" href="/" onClick={onClickXButton}>
@@ -301,7 +303,9 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
                      </LinkComponentTag>
                   )}
 
-                  {mediaQuery.size1000 && <Button.icon icon="XMark" marginLeft="auto" onClick={onClickXButton} />}
+                  {withCloseButton && mediaQuery.size1000 && (
+                     <Button.icon icon="XMark" marginLeft="auto" onClick={onClickXButton} />
+                  )}
                </Div.row>
             )}
 
