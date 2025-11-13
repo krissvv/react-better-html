@@ -9,7 +9,7 @@ import { useBooleanState } from "../utils/hooks";
 
 import Div, { DivProps } from "./Div";
 import Icon from "./Icon";
-import Text from "./Text";
+import Text, { TextAs } from "./Text";
 import Image from "./Image";
 import Divider from "./Divider";
 import { useTheme } from "./BetterHtmlProvider";
@@ -21,7 +21,15 @@ export type FoldableProps = {
    isOpen?: boolean;
    defaultOpen?: boolean;
    title?: string;
+   /** @default "h3" */
+   titleAs?: TextAs;
+   /** @default textPrimary */
+   titleColor?: React.CSSProperties["color"];
+   titleRightElement?: React.ReactNode;
    description?: string;
+   /** @default textSecondary */
+   descriptionColor?: React.CSSProperties["color"];
+   rightElement?: React.ReactNode;
    icon?: IconName | AnyOtherString;
    image?: AssetName | AnyOtherString;
    headerPaddingBlock?: React.CSSProperties["paddingBlock"];
@@ -48,7 +56,12 @@ const FoldableComponent: FoldableComponentType = forwardRef<FoldableRef, Foldabl
       isOpen: controlledIsOpen,
       defaultOpen = false,
       title,
+      titleAs = "h3",
+      titleColor,
+      titleRightElement,
       description,
+      descriptionColor,
+      rightElement,
       icon,
       image,
       headerPaddingBlock,
@@ -135,7 +148,7 @@ const FoldableComponent: FoldableComponentType = forwardRef<FoldableRef, Foldabl
             <Div.row
                width="100%"
                alignItems="center"
-               gap={theme.styles.gap}
+               gap={theme.styles.space}
                paddingBlock={headerPaddingBlock ?? theme.styles.gap}
                paddingInline={headerPaddingInline}
                cursor="pointer"
@@ -148,14 +161,25 @@ const FoldableComponent: FoldableComponentType = forwardRef<FoldableRef, Foldabl
 
                   <Div.column gap={theme.styles.gap / 2}>
                      {title && (
-                        <Text as="h3" fontWeight={700} lineHeight="20px">
-                           {title}
-                        </Text>
+                        <Div.row alignItems="center" gap={theme.styles.space}>
+                           <Text
+                              as={titleAs}
+                              fontWeight={700}
+                              lineHeight="20px"
+                              color={titleColor ?? theme.colors.textPrimary}
+                           >
+                              {title}
+                           </Text>
+
+                           {titleRightElement}
+                        </Div.row>
                      )}
 
-                     {description && <Text color={theme.colors.textSecondary}>{description}</Text>}
+                     {description && <Text color={descriptionColor ?? theme.colors.textSecondary}>{description}</Text>}
                   </Div.column>
                </Div.row>
+
+               {rightElement}
 
                <Icon
                   name="chevronDown"

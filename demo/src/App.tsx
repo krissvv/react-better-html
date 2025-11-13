@@ -1311,6 +1311,22 @@ function App() {
                         </Foldable>
 
                         <Foldable
+                           icon="magnifyingGlass"
+                           title="Lorem ipsum dolor"
+                           titleColor="red"
+                           titleRightElement={<Text>Hello</Text>}
+                           description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum, ullam, necessitatibus harum"
+                           rightElement={<Text>Hello</Text>}
+                        >
+                           <Text>
+                              Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum, ullam, necessitatibus
+                              harum error voluptas natus iste labore amet, itaque enim quae delectus exercitationem!
+                              Ullam saepe, harum deserunt qui labore officiis id nisi atque nobis laudantium impedit
+                              adipisci reprehenderit. Consequatur, vel.
+                           </Text>
+                        </Foldable>
+
+                        <Foldable
                            image="logo"
                            title="Lorem ipsum dolor"
                            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum, ullam, necessitatibus harum"

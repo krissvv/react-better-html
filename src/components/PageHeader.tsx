@@ -15,12 +15,13 @@ export type PageHeaderProps = {
    imageUrl?: string;
    imageSize?: number;
    title?: string;
+   /** @default "h1" */
    titleAs?: TextAs;
-   /** @default theme.colors.textPrimary */
+   /** @default textPrimary */
    titleColor?: React.CSSProperties["color"];
    titleRightElement?: React.ReactNode;
    description?: string;
-   /** @default theme.colors.textSecondary */
+   /** @default textSecondary */
    descriptionColor?: React.CSSProperties["color"];
    textAlign?: React.CSSProperties["textAlign"];
    rightElement?: React.ReactNode;
@@ -37,7 +38,7 @@ const PageHeaderComponent: PageHeaderComponentType = forwardRef(function PageHea
       imageUrl,
       imageSize = 60,
       title,
-      titleAs,
+      titleAs = "h1",
       titleColor,
       titleRightElement,
       description,
@@ -73,7 +74,7 @@ const PageHeaderComponent: PageHeaderComponentType = forwardRef(function PageHea
                gap={theme.styles.space}
             >
                <Text
-                  as={titleAs ?? "h1"}
+                  as={titleAs}
                   textAlign={textAlign}
                   color={titleColor ?? (lightMode ? theme.colors.base : theme.colors.textPrimary)}
                >

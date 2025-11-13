@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { createSearchParams } from "react-router-dom";
 
 import { cssProps } from "../constants/css";
 
@@ -634,6 +633,7 @@ export function useUrlQuery() {
 
    const navigate = reactRouterDomPluginConfig.useNavigate();
    const [searchParams] = reactRouterDomPluginConfig.useSearchParams();
+   const createSearchParams = reactRouterDomPluginConfig.createSearchParams;
 
    const setQuery = useCallback(
       (query: Record<string, string | number>, keepHistory = true) => {
