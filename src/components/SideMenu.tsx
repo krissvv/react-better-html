@@ -34,10 +34,11 @@ export type SideMenuItem = {
 
 type MenuItemComponentProps = {
    item: SideMenuItem;
+   backgroundColor?: React.CSSProperties["backgroundColor"];
    onClick?: () => void;
 };
 
-const MenuItemComponent = memo(function MenuItemComponent({ item, onClick }: MenuItemComponentProps) {
+const MenuItemComponent = memo(function MenuItemComponent({ item, backgroundColor, onClick }: MenuItemComponentProps) {
    const reactRouterDomPlugin = usePlugin<ReactRouterDomPluginOptions>("react-router-dom");
 
    if (!reactRouterDomPlugin) {
@@ -69,6 +70,8 @@ const MenuItemComponent = memo(function MenuItemComponent({ item, onClick }: Men
          : location.pathname.startsWith(item.href) && item.href !== "/"
       : false;
 
+   const readyBackgroundColor = backgroundColor ?? theme.colors.backgroundContent;
+
    const iconSize = 16;
    const paddingBlock = theme.styles.gap;
    const paddingLeft = theme.styles.gap + 2;
@@ -88,7 +91,7 @@ const MenuItemComponent = memo(function MenuItemComponent({ item, onClick }: Men
                ? colorTheme === "dark"
                   ? lightenColor(theme.colors.primary, 0.7)
                   : lightenColor(theme.colors.primary, 0.85)
-               : theme.colors.backgroundContent
+               : readyBackgroundColor
          }
          borderRadius={theme.styles.borderRadius}
          paddingBlock={paddingBlock}
@@ -161,7 +164,12 @@ const MenuItemComponent = memo(function MenuItemComponent({ item, onClick }: Men
                transition={`max-height ${theme.styles.transition}, margin-top ${theme.styles.transition}`}
             >
                {item.children.map((child) => (
-                  <MenuItemComponent item={child} onClick={onClick} key={child.text} />
+                  <MenuItemComponent
+                     item={child}
+                     backgroundColor={readyBackgroundColor}
+                     onClick={onClick}
+                     key={child.text}
+                  />
                ))}
 
                <Div
@@ -186,9 +194,9 @@ const MenuItemComponent = memo(function MenuItemComponent({ item, onClick }: Men
                      left={0}
                      border={`${lineWidth}px solid ${theme.colors.border}`}
                      borderRadius={999}
-                     borderTopColor={theme.colors.backgroundContent}
-                     borderLeftColor={theme.colors.backgroundContent}
-                     borderRightColor={theme.colors.backgroundContent}
+                     borderTopColor={readyBackgroundColor}
+                     borderLeftColor={readyBackgroundColor}
+                     borderRightColor={readyBackgroundColor}
                      transform="rotate(45deg)"
                   />
                </Div>
@@ -209,6 +217,8 @@ type SideMenuProps = {
    collapsable?: boolean;
    withCloseButton?: boolean;
    widthMobileHandle?: boolean;
+   /** @default backgroundContent */
+   backgroundColor?: React.CSSProperties["backgroundColor"];
 };
 
 type SideMenuComponentType = {
@@ -228,6 +238,7 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
    collapsable,
    withCloseButton,
    widthMobileHandle,
+   backgroundColor,
 }: SideMenuProps) {
    const theme = useTheme();
    const mediaQuery = useMediaQuery();
@@ -246,8 +257,9 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
 
    const LinkComponentTag = components.button?.tagReplacement?.linkComponent ?? "a";
    const sideMenuWidth = components.sideMenu?.width ?? defaultSideMenuWidth;
-   const sideMenuCollapsedWidth = theme.styles.space + theme.styles.space * 2 + 16 + 1 + theme.styles.space;
+   const sideMenuCollapsedWidth = theme.styles.space + theme.styles.space * 2 + 16 + theme.styles.space;
 
+   const readyBackgroundColor = backgroundColor ?? theme.colors.backgroundContent;
    const logoSize = sideMenuCollapsedWidth - theme.styles.space * 2;
 
    return (
@@ -257,7 +269,7 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
          height={`calc(100svh - ${topSpace}px)`}
          top={topSpace}
          left={0}
-         backgroundColor={theme.colors.backgroundContent}
+         backgroundColor={readyBackgroundColor}
          borderRight={`solid 1px ${theme.colors.border}`}
          transform={!mediaQuery.size1000 || sideMenuIsOpenMobile ? "translateX(0)" : "translateX(-100%)"}
          paddingTop={logoAssetName || logoUrl ? theme.styles.gap : theme.styles.space}
@@ -322,7 +334,12 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
             >
                <Div.column gap={theme.styles.gap / 2}>
                   {readyItems.map((item) => (
-                     <MenuItemComponent item={item} onClick={onClickXButton} key={item.text} />
+                     <MenuItemComponent
+                        item={item}
+                        backgroundColor={readyBackgroundColor}
+                        onClick={onClickXButton}
+                        key={item.text}
+                     />
                   ))}
                </Div.column>
             </Div.column>
@@ -337,7 +354,12 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
                   paddingBottom={!isCollapsable ? theme.styles.space : undefined}
                >
                   {readyBottomItems.map((item) => (
-                     <MenuItemComponent item={item} onClick={onClickXButton} key={item.text} />
+                     <MenuItemComponent
+                        item={item}
+                        backgroundColor={readyBackgroundColor}
+                        onClick={onClickXButton}
+                        key={item.text}
+                     />
                   ))}
                </Div.column>
             )}
@@ -352,7 +374,7 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
                   <Div.row
                      alignItems="center"
                      justifyContent="center"
-                     backgroundColor={theme.colors.backgroundContent}
+                     backgroundColor={readyBackgroundColor}
                      borderRadius={theme.styles.borderRadius}
                      cursor="pointer"
                      filterHover={filterHover().z1}
@@ -377,7 +399,7 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
                position="absolute"
                top={theme.styles.space}
                left="100%"
-               backgroundColor={theme.colors.backgroundContent}
+               backgroundColor={readyBackgroundColor}
                border={`solid 1px ${theme.colors.border}`}
                borderLeft="none"
                borderTopRightRadius={theme.styles.borderRadius}
@@ -415,7 +437,7 @@ SideMenuComponent.pageHolder = function SideMenuPageHolder({ outsideComponent, .
    const { components, sideMenuIsCollapsed } = useBetterHtmlContextInternal();
 
    const sideMenuWidth = components.sideMenu?.width ?? defaultSideMenuWidth;
-   const sideMenuCollapsedWidth = theme.styles.space + theme.styles.space * 2 + 16 + 1 + theme.styles.space;
+   const sideMenuCollapsedWidth = theme.styles.space + theme.styles.space * 2 + 16 + theme.styles.space;
 
    return (
       <Div
