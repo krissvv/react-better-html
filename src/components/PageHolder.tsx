@@ -24,6 +24,8 @@ type PageHolderComponentType = {
             pageBackgroundColor?: React.CSSProperties["backgroundColor"];
             pageBackgroundImage?: React.CSSProperties["backgroundImage"];
             contentMaxWidth?: React.CSSProperties["maxWidth"];
+            /** @default true */
+            contentInsideBox?: boolean;
             behindComponent?: React.ReactNode;
             sideComponent?: React.ReactNode;
             /** @default "right" */
@@ -60,6 +62,7 @@ PageHolderComponent.center = forwardRef(function Center(
       pageBackgroundColor,
       pageBackgroundImage,
       contentMaxWidth,
+      contentInsideBox,
       behindComponent,
       sideComponent,
       sideComponentPosition = "right",
@@ -76,6 +79,8 @@ PageHolderComponent.center = forwardRef(function Center(
    const breakingPoint = mediaQuery.size1000;
 
    const withSideComponent = sideComponent && !breakingPoint;
+
+   const ContentTag = contentInsideBox !== false ? Div.box : Div;
 
    return (
       <Div.row
@@ -104,7 +109,7 @@ PageHolderComponent.center = forwardRef(function Center(
          {sideComponentPosition === "left" && withSideComponent && <Div width="50%" />}
 
          <Div.column position="relative" width={`${withSideComponent ? 50 : 100}%`} alignItems="center" zIndex={2}>
-            <Div.box
+            <ContentTag
                width={`calc(100% - ${theme.styles.space * 2}px)`}
                maxWidth={!noMaxContentWidth ? contentMaxWidth ?? app.contentMaxWidth / 2 : undefined}
                marginInline={theme.styles.space}
@@ -113,7 +118,7 @@ PageHolderComponent.center = forwardRef(function Center(
                ref={ref}
             >
                {children}
-            </Div.box>
+            </ContentTag>
          </Div.column>
 
          {sideComponentPosition === "right" && withSideComponent && <Div width="50%" />}
