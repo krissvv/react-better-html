@@ -50,9 +50,7 @@ export type BetterHtmlInternalConfig = BetterHtmlConfig & {
    setLoaders: React.Dispatch<React.SetStateAction<Partial<LoaderConfig>>>;
    alerts: Alert[];
    setAlerts: React.Dispatch<React.SetStateAction<Alert[]>>;
-   sideMenuIsCollapsed: boolean;
    setSideMenuIsCollapsed: ReturnType<typeof useBooleanState>[1];
-   sideMenuIsOpenMobile: boolean;
    setSideMenuIsOpenMobile: ReturnType<typeof useBooleanState>[1];
    plugins: BetterHtmlPlugin[];
    componentsState: {

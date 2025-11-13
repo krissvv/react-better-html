@@ -329,10 +329,10 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
 
             {readyBottomItems && (
                <Div.column
-                  borderTop={`solid 1px ${theme.colors.border}`}
+                  borderTop={mediaQuery.size1000 ? `solid 1px ${theme.colors.border}` : undefined}
                   gap={theme.styles.gap / 2}
                   marginTop="auto"
-                  paddingTop={theme.styles.space}
+                  paddingTop={mediaQuery.size1000 ? theme.styles.space : undefined}
                   paddingInline={theme.styles.space}
                   paddingBottom={!isCollapsable ? theme.styles.space : undefined}
                >

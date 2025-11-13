@@ -23,6 +23,8 @@ export type BetterHtmlConfig = {
    icons: Partial<IconsConfig>;
    assets: Partial<AssetsConfig>;
    loaders: Partial<LoaderConfig>;
+   sideMenuIsCollapsed: boolean;
+   sideMenuIsOpenMobile: boolean;
    components: {
       button?: {
          style?: ComponentStyleConfig<"default" | "secondary" | "destructive" | "icon" | "upload">;
