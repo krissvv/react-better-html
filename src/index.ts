@@ -21,6 +21,7 @@ import Tooltip, { type TooltipProps, type TooltipRef } from "./components/Toolti
 import Tabs, { type TabGroup, type TabsProps, type TabsRef } from "./components/Tabs";
 import Foldable, { type FoldableProps, type FoldableRef } from "./components/Foldable";
 import SideMenu, { type SideMenuItem } from "./components/SideMenu";
+import Pagination from "./components/Pagination";
 
 import BetterHtmlProvider, {
    useBetterHtmlContext,
@@ -153,6 +154,7 @@ export {
    FoldableRef,
    SideMenu,
    SideMenuItem,
+   Pagination,
    // Hooks
    useBetterHtmlContext,
    useTheme,

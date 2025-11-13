@@ -31,6 +31,7 @@ import {
    useBooleanState,
    filterHover,
    SideMenu,
+   Pagination,
 } from "../../src";
 
 const data: {
@@ -247,6 +248,7 @@ function App() {
                      "Alert",
                      "Icon & Image",
                      "Divider",
+                     "Pagination",
                      "Chip",
                      "InputField",
                      "Dropdown",
@@ -481,6 +483,15 @@ function App() {
                         <Div height={100}>
                            <Divider.vertical />
                         </Div>
+                     </Div.column>
+                  </Tabs.content>
+
+                  <Tabs.content tab="Pagination">
+                     <Div.column gap={theme.styles.space}>
+                        <Pagination />
+                        <Pagination itemsLength={80} itemsPerPage={10} />
+                        <Pagination itemsLength={800} itemsPerPage={10} />
+                        <Pagination pageCount={10} onChangePage={(page) => console.log(page)} />
                      </Div.column>
                   </Tabs.content>
 

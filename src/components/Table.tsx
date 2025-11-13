@@ -31,6 +31,7 @@ import InputField from "./InputField";
 import Form from "./Form";
 import Label from "./Label";
 import Icon from "./Icon";
+import Pagination from "./Pagination";
 import { useBetterHtmlContextInternal, useTheme } from "./BetterHtmlProvider";
 
 const defaultImageWidth = 160;
@@ -843,30 +844,6 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
 
    const pageCountInternal = pageCount ?? (pageSize !== undefined ? Math.ceil(dataAfterFilter.length / pageSize) : 1);
 
-   const paginationItems = useMemo(() => {
-      const halfRange = Math.floor(maximumVisiblePages / 2);
-
-      let startPage = Math.max(1, currentPage - halfRange);
-      let endPage = Math.min(pageCountInternal, currentPage + halfRange);
-
-      if (endPage - startPage + 1 < maximumVisiblePages) {
-         startPage = Math.max(1, endPage - maximumVisiblePages + 1);
-         endPage = Math.min(pageCountInternal, startPage + maximumVisiblePages - 1);
-      }
-
-      return Array.from(
-         {
-            length: endPage - startPage + 1,
-         },
-         (_, index) => startPage + index,
-      );
-   }, [pageCountInternal, currentPage]);
-   const onClickNextPage = useCallback(() => {
-      setCurrentPage((oldValue) => (oldValue >= pageCountInternal ? pageCountInternal : oldValue + 1));
-   }, [pageCountInternal]);
-   const onClickPreviousPage = useCallback(() => {
-      setCurrentPage((oldValue) => (oldValue <= 1 ? 1 : oldValue - 1));
-   }, []);
    const onClickSelectAllFilterListItems = useCallback(
       () => setFilterListSelectedItems(possibleFilterListValues.map((item) => item.value)),
       [possibleFilterListValues],
@@ -1059,64 +1036,14 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                                  {currentPage} / {pageCountInternal}
                               </Text>
 
-                              <Div.row alignItems="center" justifyContent="center" gap={theme.styles.gap * 2}>
-                                 {pageCountInternal > maximumVisiblePages && (
-                                    <Button.icon
-                                       icon="doubleChevronLeft"
-                                       disabled={currentPage === 1}
-                                       value={1}
-                                       onClickWithValue={setCurrentPage}
-                                    />
-                                 )}
-                                 <Button.icon
-                                    icon="chevronLeft"
-                                    disabled={currentPage === 1}
-                                    onClick={onClickPreviousPage}
-                                 />
-
-                                 <Div.row
-                                    alignItems="center"
-                                    justifyContent="center"
-                                    flexWrap={mobileFooterBreakingPoint ? "wrap" : undefined}
-                                    gap={theme.styles.gap}
-                                 >
-                                    {paginationItems.map((pageIndex) => {
-                                       const isActive = currentPage === pageIndex;
-
-                                       return (
-                                          <Div
-                                             cursor="pointer"
-                                             userSelect="none"
-                                             value={pageIndex}
-                                             onClickWithValue={setCurrentPage}
-                                             key={pageIndex}
-                                          >
-                                             <Text
-                                                fontWeight={isActive ? 700 : 400}
-                                                color={isActive ? theme.colors.primary : theme.colors.textSecondary}
-                                                transition={theme.styles.transition}
-                                             >
-                                                {pageIndex}
-                                             </Text>
-                                          </Div>
-                                       );
-                                    })}
-                                 </Div.row>
-
-                                 <Button.icon
-                                    icon="chevronRight"
-                                    disabled={currentPage === pageCountInternal}
-                                    onClick={onClickNextPage}
-                                 />
-                                 {pageCountInternal > maximumVisiblePages && (
-                                    <Button.icon
-                                       icon="doubleChevronRight"
-                                       disabled={currentPage === pageCountInternal}
-                                       onClickWithValue={setCurrentPage}
-                                       value={pageCountInternal}
-                                    />
-                                 )}
-                              </Div.row>
+                              <Pagination
+                                 currentPage={currentPage}
+                                 itemsLength={dataAfterFilter.length}
+                                 itemsPerPage={pageSize}
+                                 pageCount={pageCount}
+                                 maximumVisiblePages={maximumVisiblePages}
+                                 onChangePage={setCurrentPage}
+                              />
                            </Div.column>
                         </td>
                      </tr>
