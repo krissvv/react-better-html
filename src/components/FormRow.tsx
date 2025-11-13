@@ -43,6 +43,7 @@ type FormRowComponentType = {
             titleFontSize?: React.CSSProperties["fontSize"];
             description?: string;
             descriptionFontSize?: React.CSSProperties["fontSize"];
+            required?: boolean;
             alignChildren?: React.CSSProperties["justifyContent"];
             isLoading?: boolean;
             withActions?: boolean;
@@ -83,6 +84,7 @@ FormRowComponent.withTitle = forwardRef(function WithTitle(
       titleFontSize,
       description,
       descriptionFontSize,
+      required,
       alignChildren = "flex-start",
       isLoading,
       withActions,
@@ -108,6 +110,13 @@ FormRowComponent.withTitle = forwardRef(function WithTitle(
             <Div.column flex={1} gap={theme.styles.gap / 2}>
                <Text as={titleAs} fontSize={titleFontSize}>
                   {title}
+
+                  {required && (
+                     <Text as="span" fontSize={16} color={theme.colors.error}>
+                        {" "}
+                        *
+                     </Text>
+                  )}
                </Text>
 
                {description && (

@@ -770,7 +770,12 @@ function App() {
                         </Form>
 
                         <Form form={form} withDividers submitButtonText="Create" onClickCancel={() => {}}>
-                           <FormRow.withTitle title="Title" description="Description" withActions={form.isDirty}>
+                           <FormRow.withTitle
+                              title="Title"
+                              description="Description"
+                              required
+                              withActions={form.isDirty}
+                           >
                               <InputField placeholder="Hello" {...form.getInputFieldProps("name")} />
                            </FormRow.withTitle>
                            <FormRow.withTitle title="Title" description="Description" withActions={form.isDirty}>
