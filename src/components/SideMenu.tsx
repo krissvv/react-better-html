@@ -217,6 +217,8 @@ type SideMenuProps = {
    collapsable?: boolean;
    withCloseButton?: boolean;
    widthMobileHandle?: boolean;
+   absoluteComponent?: React.ReactNode;
+   additionalComponent?: React.ReactNode;
    /** @default backgroundContent */
    backgroundColor?: React.CSSProperties["backgroundColor"];
    paddingTop?: React.CSSProperties["paddingTop"];
@@ -239,6 +241,8 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
    collapsable,
    withCloseButton,
    widthMobileHandle,
+   absoluteComponent,
+   additionalComponent,
    backgroundColor,
    paddingTop,
 }: SideMenuProps) {
@@ -366,6 +370,8 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
                </Div.column>
             )}
 
+            {additionalComponent}
+
             {isCollapsable && (
                <Div
                   borderTop={`solid 1px ${theme.colors.border}`}
@@ -424,6 +430,12 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
                   transition={theme.styles.transition}
                />
             </Div.row>
+         )}
+
+         {absoluteComponent && (
+            <Div position="absolute" top={0} left={0} pointerEvents="none" zIndex={2}>
+               <Div pointerEvents="all">{absoluteComponent}</Div>
+            </Div>
          )}
       </Div.column>
    );
