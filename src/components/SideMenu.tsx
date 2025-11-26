@@ -219,6 +219,7 @@ type SideMenuProps = {
    widthMobileHandle?: boolean;
    /** @default backgroundContent */
    backgroundColor?: React.CSSProperties["backgroundColor"];
+   paddingTop?: React.CSSProperties["paddingTop"];
 };
 
 type SideMenuComponentType = {
@@ -239,6 +240,7 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
    withCloseButton,
    widthMobileHandle,
    backgroundColor,
+   paddingTop,
 }: SideMenuProps) {
    const theme = useTheme();
    const mediaQuery = useMediaQuery();
@@ -272,7 +274,7 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
          backgroundColor={readyBackgroundColor}
          borderRight={`solid 1px ${theme.colors.border}`}
          transform={!mediaQuery.size1000 || sideMenuIsOpenMobile ? "translateX(0)" : "translateX(-100%)"}
-         paddingTop={logoAssetName || logoUrl ? theme.styles.gap : theme.styles.space}
+         paddingTop={paddingTop ?? (logoAssetName || logoUrl ? theme.styles.gap : theme.styles.space)}
          transition={
             mediaQuery.size1000
                ? !isCollapsed

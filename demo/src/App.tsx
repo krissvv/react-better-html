@@ -231,7 +231,9 @@ function App() {
             logoAssetName="logo"
             logoText="ReactBetterHtml"
             collapsable
+            withCloseButton
             widthMobileHandle
+            paddingTop={30}
          />
 
          <Div
