@@ -233,6 +233,7 @@ function App() {
             collapsable
             withCloseButton
             widthMobileHandle
+            // isLoading
             additionalComponent={
                <Div marginInline={theme.styles.space}>
                   <Div.box>Hello there</Div.box>

@@ -19,6 +19,7 @@ import Text from "./Text";
 import Image from "./Image";
 import PageHolder, { PageHolderProps } from "./PageHolder";
 import { useBetterHtmlContextInternal, usePlugin, useTheme } from "./BetterHtmlProvider";
+import Loader from "./Loader";
 
 export type SideMenuItem = {
    text: string;
@@ -219,6 +220,7 @@ type SideMenuProps = {
    widthMobileHandle?: boolean;
    absoluteComponent?: React.ReactNode;
    additionalComponent?: React.ReactNode;
+   isLoading?: boolean;
    /** @default backgroundContent */
    backgroundColor?: React.CSSProperties["backgroundColor"];
    paddingTop?: React.CSSProperties["paddingTop"];
@@ -243,6 +245,7 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
    widthMobileHandle,
    absoluteComponent,
    additionalComponent,
+   isLoading,
    backgroundColor,
    paddingTop,
 }: SideMenuProps) {
@@ -331,43 +334,51 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
                </Div.row>
             )}
 
-            <Div.column
-               width="100%"
-               height="100%"
-               overflowY="auto"
-               paddingInline={theme.styles.space}
-               paddingBottom={!isCollapsable && !readyBottomItems ? theme.styles.space : undefined}
-            >
-               <Div.column gap={theme.styles.gap / 2}>
-                  {readyItems.map((item) => (
-                     <MenuItemComponent
-                        item={item}
-                        backgroundColor={readyBackgroundColor}
-                        onClick={onClickXButton}
-                        key={item.text}
-                     />
-                  ))}
-               </Div.column>
-            </Div.column>
+            {!isLoading ? (
+               <>
+                  <Div.column
+                     width="100%"
+                     height="100%"
+                     overflowY="auto"
+                     paddingInline={theme.styles.space}
+                     paddingBottom={!isCollapsable && !readyBottomItems ? theme.styles.space : undefined}
+                  >
+                     <Div.column gap={theme.styles.gap / 2}>
+                        {readyItems.map((item) => (
+                           <MenuItemComponent
+                              item={item}
+                              backgroundColor={readyBackgroundColor}
+                              onClick={onClickXButton}
+                              key={item.text}
+                           />
+                        ))}
+                     </Div.column>
+                  </Div.column>
 
-            {readyBottomItems && (
-               <Div.column
-                  borderTop={mediaQuery.size1000 ? `solid 1px ${theme.colors.border}` : undefined}
-                  gap={theme.styles.gap / 2}
-                  marginTop="auto"
-                  paddingTop={mediaQuery.size1000 ? theme.styles.space : undefined}
-                  paddingInline={theme.styles.space}
-                  paddingBottom={!isCollapsable ? theme.styles.space : undefined}
-               >
-                  {readyBottomItems.map((item) => (
-                     <MenuItemComponent
-                        item={item}
-                        backgroundColor={readyBackgroundColor}
-                        onClick={onClickXButton}
-                        key={item.text}
-                     />
-                  ))}
-               </Div.column>
+                  {readyBottomItems && (
+                     <Div.column
+                        borderTop={mediaQuery.size1000 ? `solid 1px ${theme.colors.border}` : undefined}
+                        gap={theme.styles.gap / 2}
+                        marginTop="auto"
+                        paddingTop={mediaQuery.size1000 ? theme.styles.space : undefined}
+                        paddingInline={theme.styles.space}
+                        paddingBottom={!isCollapsable ? theme.styles.space : undefined}
+                     >
+                        {readyBottomItems.map((item) => (
+                           <MenuItemComponent
+                              item={item}
+                              backgroundColor={readyBackgroundColor}
+                              onClick={onClickXButton}
+                              key={item.text}
+                           />
+                        ))}
+                     </Div.column>
+                  )}
+               </>
+            ) : (
+               <Div flex={1}>
+                  <Loader.box text={isCollapsed ? "" : undefined} />
+               </Div>
             )}
 
             {additionalComponent}
