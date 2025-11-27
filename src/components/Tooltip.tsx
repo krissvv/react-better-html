@@ -16,6 +16,7 @@ type TooltipContainerProps = {
    theme: Theme;
    position: TooltipPosition;
    align?: TooltipAlign;
+   pointerEvents?: React.CSSProperties["pointerEvents"];
    withArrow?: boolean;
    arrowSize?: number;
    isOpen: boolean;
@@ -86,11 +87,11 @@ const tooltipPositionStyle = (
 
 const TooltipContainer = styled.div.withConfig({
    shouldForwardProp: (prop) =>
-      !["theme", "position", "align", "withArrow", "arrowSize", "isOpen", "gap"].includes(prop),
+      !["theme", "position", "align", "pointerEvents", "withArrow", "arrowSize", "isOpen", "gap"].includes(prop),
 })<TooltipContainerProps>`
    position: absolute;
    opacity: ${(props) => (props.isOpen ? 1 : 0)};
-   pointer-events: ${(props) => (props.isOpen ? "auto" : "none")};
+   pointer-events: ${(props) => (props.isOpen ? props.pointerEvents : "none")};
    transition: ${(props) => props.theme.styles.transition};
    z-index: 1000;
 
@@ -219,9 +220,11 @@ export type TooltipProps = {
    content: React.ReactNode;
    contentWidth?: React.CSSProperties["width"];
    contentMinWidth?: React.CSSProperties["minWidth"];
+   contentPointerEvents?: React.CSSProperties["pointerEvents"];
    /** @default "fit-content" */
    childrenWrapperWidth?: React.CSSProperties["width"];
    childrenWrapperHeight?: React.CSSProperties["height"];
+   disabled?: boolean;
    withArrow?: boolean;
    isSmall?: boolean;
    backgroundColor?: string;
@@ -253,8 +256,10 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
       content,
       contentWidth,
       contentMinWidth,
+      contentPointerEvents = "auto",
       childrenWrapperWidth = "fit-content",
       childrenWrapperHeight,
+      disabled,
       withArrow,
       isSmall,
       backgroundColor,
@@ -284,6 +289,7 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
    const totalGap = arrowSize + gap;
 
    const openTooltip = useCallback(() => {
+      if (disabled) return;
       if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
 
       setIsOpen(true);
@@ -313,7 +319,7 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
       }, 1);
 
       onOpen?.();
-   }, [onOpen, outsideScreenGap, totalGap]);
+   }, [disabled, onOpen, outsideScreenGap, totalGap]);
    const closeTooltip = useCallback(() => {
       setIsOpen(false);
       closeTimerRef.current = setTimeout(() => setIsOpenLate(false), 300);
@@ -394,6 +400,7 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
             theme={theme}
             position={position}
             align={align}
+            pointerEvents={contentPointerEvents}
             withArrow={withArrow}
             arrowSize={arrowSize}
             gap={gap}

@@ -255,7 +255,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
                         filter={isFocused ? (isDisabled ? "brightness(0.95)" : "brightness(0.9)") : undefined}
                         filterHover={focusedOptionIndex === undefined && !isDisabled ? "brightness(0.9)" : undefined}
                         cursor={isDisabled ? "not-allowed" : "pointer"}
-                        padding={`${theme.styles.space / 2}px ${theme.styles.space + theme.styles.gap}px`}
+                        padding={`${theme.styles.gap}px ${theme.styles.space}px`}
                         value={option}
                         onClickWithValue={onClickOption}
                         onMouseMove={() => setFocusedOptionIndex(undefined)}

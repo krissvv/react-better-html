@@ -18,8 +18,9 @@ import Button from "./Button";
 import Text from "./Text";
 import Image from "./Image";
 import PageHolder, { PageHolderProps } from "./PageHolder";
-import { useBetterHtmlContextInternal, usePlugin, useTheme } from "./BetterHtmlProvider";
 import Loader from "./Loader";
+import Tooltip from "./Tooltip";
+import { useBetterHtmlContextInternal, usePlugin, useTheme } from "./BetterHtmlProvider";
 
 export type SideMenuItem = {
    text: string;
@@ -53,18 +54,25 @@ const MenuItemComponent = memo(function MenuItemComponent({ item, backgroundColo
    const theme = useTheme();
    const mediaQuery = useMediaQuery();
    const location = reactRouterDomPluginConfig.useLocation();
-   const { colorTheme, components, sideMenuIsCollapsed } = useBetterHtmlContextInternal();
+   const { colorTheme, components, sideMenuIsCollapsed, setSideMenuIsCollapsed } = useBetterHtmlContextInternal();
 
    const [isOpened, setIsOpened] = useBooleanState();
+
+   const isCollapsed = sideMenuIsCollapsed && !mediaQuery.size1000;
 
    const onClickElement = useCallback(() => {
       if (item.disabled) return;
 
-      if (item.onClickCloseSideMenu !== false) onClick?.();
-      item.onClick?.(item);
-   }, [onClick, item]);
+      if (item.children) {
+         setSideMenuIsCollapsed.setFalse();
+         if (isCollapsed) setTimeout(setIsOpened.setTrue, 0.1 * 1000);
+         else setIsOpened.toggle();
+      } else {
+         if (item.onClickCloseSideMenu !== false) onClick?.();
+         item.onClick?.(item);
+      }
+   }, [onClick, item, isCollapsed]);
 
-   const isCollapsed = sideMenuIsCollapsed && !mediaQuery.size1000;
    const isActive = item.href
       ? location.pathname === "/"
          ? location.pathname === item.href
@@ -83,49 +91,58 @@ const MenuItemComponent = memo(function MenuItemComponent({ item, backgroundColo
    const lineEndRadius = iconSize / 2 + iconGap * 2;
 
    const content = (
-      <Div.row
-         alignItems="center"
-         gap={iconGap}
-         whiteSpace="nowrap"
-         backgroundColor={
-            isActive
-               ? colorTheme === "dark"
-                  ? lightenColor(theme.colors.primary, 0.7)
-                  : lightenColor(theme.colors.primary, 0.85)
-               : readyBackgroundColor
-         }
-         borderRadius={theme.styles.borderRadius}
-         paddingBlock={paddingBlock}
-         paddingLeft={isCollapsed ? theme.styles.space : paddingLeft}
-         paddingRight={theme.styles.space}
-         filterHover={`brightness(${colorTheme === "dark" ? (isActive ? 0.8 : 1.3) : isActive ? 0.8 : 0.95})`}
-         overflow={isCollapsed ? "hidden" : undefined}
-         cursor={item.disabled ? "not-allowed" : "pointer"}
-         opacity={item.disabled ? 0.6 : undefined}
-         onClick={item.children ? setIsOpened.toggle : onClickElement}
+      <Tooltip
+         content={<Text whiteSpace="nowrap">{item.text}</Text>}
+         contentPointerEvents="none"
+         withArrow
+         childrenWrapperWidth="100%"
+         disabled={!isCollapsed}
+         position="right"
       >
-         <Icon name={item.iconName} color={theme.colors.primary} size={iconSize} flexShrink={0} />
-
-         <Text
-            flex={1}
-            lineHeight={`${lineHeight}px`}
-            color={isActive ? theme.colors.primary : theme.colors.textPrimary}
-            opacity={isCollapsed ? 0 : undefined}
-            transition={theme.styles.transition}
+         <Div.row
+            alignItems="center"
+            gap={iconGap}
+            whiteSpace="nowrap"
+            backgroundColor={
+               isActive
+                  ? colorTheme === "dark"
+                     ? lightenColor(theme.colors.primary, 0.7)
+                     : lightenColor(theme.colors.primary, 0.85)
+                  : readyBackgroundColor
+            }
+            borderRadius={theme.styles.borderRadius}
+            paddingBlock={paddingBlock}
+            paddingLeft={isCollapsed ? theme.styles.space : paddingLeft}
+            paddingRight={theme.styles.space}
+            filterHover={`brightness(${colorTheme === "dark" ? (isActive ? 0.8 : 1.3) : isActive ? 0.8 : 0.95})`}
+            overflow={isCollapsed ? "hidden" : undefined}
+            cursor={item.disabled ? "not-allowed" : "pointer"}
+            opacity={item.disabled ? 0.6 : undefined}
+            onClick={onClickElement}
          >
-            {item.text}
-         </Text>
+            <Icon name={item.iconName} color={theme.colors.primary} size={iconSize} flexShrink={0} />
 
-         {item.children && (
-            <Icon
-               name="chevronDown"
-               color={theme.colors.textSecondary}
-               size={14}
-               transform={isOpened ? "rotate(180deg)" : undefined}
+            <Text
+               flex={1}
+               lineHeight={`${lineHeight}px`}
+               color={isActive ? theme.colors.primary : theme.colors.textPrimary}
+               opacity={isCollapsed ? 0 : undefined}
                transition={theme.styles.transition}
-            />
-         )}
-      </Div.row>
+            >
+               {item.text}
+            </Text>
+
+            {item.children && (
+               <Icon
+                  name="chevronDown"
+                  color={theme.colors.textSecondary}
+                  size={14}
+                  transform={isOpened ? "rotate(180deg)" : undefined}
+                  transition={theme.styles.transition}
+               />
+            )}
+         </Div.row>
+      </Tooltip>
    );
 
    useEffect(() => {
@@ -339,7 +356,7 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
                   <Div.column
                      width="100%"
                      height="100%"
-                     overflowY="auto"
+                     overflowY={!isCollapsed ? "auto" : undefined}
                      paddingInline={theme.styles.space}
                      paddingBottom={!isCollapsable && !readyBottomItems ? theme.styles.space : undefined}
                   >

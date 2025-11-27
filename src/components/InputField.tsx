@@ -683,12 +683,19 @@ InputFieldComponent.phoneNumber = forwardRef(function PhoneNumber(
       ),
       [],
    );
+   const onChangeDropdown = useCallback(
+      (value: string | undefined) => {
+         setDropdownValue(value);
+         onChangeValue?.(value ? `+${value}${inputFieldValue}` : inputFieldValue); //? Same line as onChangeValueElement
+      },
+      [onChangeValue, inputFieldValue],
+   );
    const onChangeValueElement = useCallback(
       (value: string) => {
          const readyValue = value.replace(/\D/g, "");
 
          setInputFieldValue(readyValue);
-         onChangeValue?.(dropdownValue ? `+${dropdownValue}${readyValue}` : readyValue);
+         onChangeValue?.(dropdownValue ? `+${dropdownValue}${readyValue}` : readyValue); //? Same line as onChangeDropdown
       },
       [onChangeValue, dropdownValue],
    );
@@ -760,7 +767,7 @@ InputFieldComponent.phoneNumber = forwardRef(function PhoneNumber(
                defaultValue={defaultValue}
                value={dropdownValue}
                disabled={props.disabled}
-               onChange={setDropdownValue}
+               onChange={onChangeDropdown}
                withoutClearButton
                withoutRenderingOptionsWhenClosed
             />

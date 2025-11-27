@@ -623,8 +623,9 @@ function App() {
                               <Text
                                  fontSize={12}
                                  color={theme.colors.textSecondary}
-                                 paddingBlock={theme.styles.gap}
-                                 paddingInline={theme.styles.space + theme.styles.gap}
+                                 paddingTop={theme.styles.gap}
+                                 paddingBottom={theme.styles.gap / 2}
+                                 paddingInline={theme.styles.space}
                               >
                                  Divider
                               </Text>
