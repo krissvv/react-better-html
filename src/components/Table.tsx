@@ -240,8 +240,8 @@ type FilterPreset =
    | "nextYear";
 
 type ListFilterValue = {
+   value: number | string | boolean;
    label?: string;
-   value: number | string;
    count: number;
 };
 
@@ -1166,7 +1166,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                                        isActive={isActive}
                                        value={value.value}
                                        onClickWithValue={onClickFilterListItem}
-                                       key={value.value}
+                                       key={value.value.toString()}
                                     >
                                        <Div.row alignItems="center" gap={theme.styles.gap / 2}>
                                           <Text>{value.label || value.value}</Text>
