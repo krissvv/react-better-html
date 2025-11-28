@@ -88,13 +88,13 @@ const MenuItemComponent = memo(function MenuItemComponent({ item, backgroundColo
    const onClickElement = useCallback(() => {
       if (item.disabled) return;
 
+      if (!item.children) setActiveItem(undefined);
+
       if (item.children) {
          setSideMenuIsCollapsed.setFalse();
          if (isCollapsed) setTimeout(setIsOpened.setTrue, 0.1 * 1000);
          else setIsOpened.toggle();
       } else {
-         setActiveItem(undefined);
-
          if (item.onClickCloseSideMenu !== false) onClick?.();
          item.onClick?.(item);
       }
