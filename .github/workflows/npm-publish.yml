@@ -40,6 +40,17 @@ jobs:
               echo "Current version: $CURRENT_VERSION"
               echo "Latest tag version: $LATEST_VERSION"
 
+              # Check if version is a prerelease (contains -, alpha, beta, rc, etc.)
+              if [[ "$CURRENT_VERSION" =~ -|alpha|beta|rc ]]; then
+                echo "is_prerelease=true" >> $GITHUB_OUTPUT
+                echo "npm_tag=beta" >> $GITHUB_OUTPUT
+                echo "Detected prerelease version"
+              else
+                echo "is_prerelease=false" >> $GITHUB_OUTPUT
+                echo "npm_tag=latest" >> $GITHUB_OUTPUT
+                echo "Detected stable version"
+              fi
+
               if [ "$LATEST_VERSION" != "$CURRENT_VERSION" ]; then
                 echo "version_changed=true" >> $GITHUB_OUTPUT
                 echo "new_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
@@ -59,7 +70,7 @@ jobs:
 
          - name: Publish to NPM
            if: steps.check.outputs.version_changed == 'true'
-           run: npm publish --provenance --access public
+           run: npm publish --provenance --access public --tag ${{ steps.check.outputs.npm_tag }}
 
          - name: Create and push git tag
            if: steps.check.outputs.version_changed == 'true'
