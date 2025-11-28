@@ -88,6 +88,8 @@ const MenuItemComponent = memo(function MenuItemComponent({ item, backgroundColo
    const onClickElement = useCallback(() => {
       if (item.disabled) return;
 
+      setActiveItem(undefined);
+
       if (item.children) {
          setSideMenuIsCollapsed.setFalse();
          if (isCollapsed) setTimeout(setIsOpened.setTrue, 0.1 * 1000);
@@ -113,7 +115,13 @@ const MenuItemComponent = memo(function MenuItemComponent({ item, backgroundColo
 
    const content = (
       <Tooltip
-         content={<Text whiteSpace="nowrap">{item.text}</Text>}
+         content={
+            <Div.row alignItems="center" gap={theme.styles.gap}>
+               <Text whiteSpace="nowrap">{item.text}</Text>
+
+               {item.children && <Icon name="chevronDown" color={theme.colors.textSecondary} size={14} />}
+            </Div.row>
+         }
          contentPointerEvents="none"
          withArrow
          childrenWrapperWidth="100%"
