@@ -88,7 +88,7 @@ const MenuItemComponent = memo(function MenuItemComponent({ item, backgroundColo
    const onClickElement = useCallback(() => {
       if (item.disabled) return;
 
-      if (!item.children) setActiveItem(undefined);
+      if (!item.children) setActiveItem((oldValue) => (oldValue?.href === item.href ? oldValue : undefined));
 
       if (item.children) {
          setSideMenuIsCollapsed.setFalse();
