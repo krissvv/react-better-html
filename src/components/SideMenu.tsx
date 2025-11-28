@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useMemo } from "react";
+import { createContext, memo, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 import { defaultSideMenuWidth } from "../constants/app";
 
@@ -21,6 +21,29 @@ import PageHolder, { PageHolderProps } from "./PageHolder";
 import Loader from "./Loader";
 import Tooltip from "./Tooltip";
 import { useBetterHtmlContextInternal, usePlugin, useTheme } from "./BetterHtmlProvider";
+
+type SideMenuActiveItem = {
+   href: string;
+   length: number;
+};
+
+type SideMenuContext = {
+   activeItem: SideMenuActiveItem | undefined;
+   setActiveItem: React.Dispatch<React.SetStateAction<SideMenuActiveItem | undefined>>;
+};
+
+const sideMenuContext = createContext<SideMenuContext | undefined>(undefined);
+
+const SideMenuContextProvider = sideMenuContext.Provider;
+const useSideMenuContext = () => {
+   const context = useContext(sideMenuContext);
+
+   if (!context) {
+      throw new Error("`useSideMenuContext` must be used within a `<SideMenuContextProvider>` component");
+   }
+
+   return context;
+};
 
 export type SideMenuItem = {
    text: string;
@@ -56,6 +79,8 @@ const MenuItemComponent = memo(function MenuItemComponent({ item, backgroundColo
    const location = reactRouterDomPluginConfig.useLocation();
    const { colorTheme, components, sideMenuIsCollapsed, setSideMenuIsCollapsed } = useBetterHtmlContextInternal();
 
+   const { activeItem, setActiveItem } = useSideMenuContext();
+
    const [isOpened, setIsOpened] = useBooleanState();
 
    const isCollapsed = sideMenuIsCollapsed && !mediaQuery.size1000;
@@ -73,11 +98,7 @@ const MenuItemComponent = memo(function MenuItemComponent({ item, backgroundColo
       }
    }, [onClick, item, isCollapsed]);
 
-   const isActive = item.href
-      ? location.pathname === "/"
-         ? location.pathname === item.href
-         : location.pathname.startsWith(item.href) && item.href !== "/"
-      : false;
+   const isActive = activeItem && item.href && activeItem.href === item.href;
 
    const readyBackgroundColor = backgroundColor ?? theme.colors.backgroundContent;
 
@@ -146,6 +167,27 @@ const MenuItemComponent = memo(function MenuItemComponent({ item, backgroundColo
    );
 
    useEffect(() => {
+      if (!item.href) return;
+
+      const isActive =
+         location.pathname === "/"
+            ? location.pathname === item.href
+            : location.pathname.startsWith(item.href) && item.href !== "/";
+
+      if (!isActive) return;
+
+      setActiveItem((oldValue) =>
+         item.href
+            ? oldValue && oldValue.length > item.href.length
+               ? oldValue
+               : {
+                    href: item.href,
+                    length: item.href.length,
+                 }
+            : undefined,
+      );
+   }, [location.pathname]);
+   useEffect(() => {
       if (!item.children) return;
 
       const toBeOpened = item.children.some((child) =>
@@ -158,6 +200,11 @@ const MenuItemComponent = memo(function MenuItemComponent({ item, backgroundColo
 
       setIsOpened.setState(toBeOpened);
    }, [item]);
+   useEffect(() => {
+      if (!isCollapsed) return;
+
+      setIsOpened.setFalse();
+   }, [isCollapsed]);
 
    const LinkComponentTag = components.button?.tagReplacement?.linkComponent ?? "a";
 
@@ -271,12 +318,22 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
    const { components, sideMenuIsCollapsed, setSideMenuIsCollapsed, sideMenuIsOpenMobile, setSideMenuIsOpenMobile } =
       useBetterHtmlContextInternal();
 
+   const [activeItem, setActiveItem] = useState<SideMenuActiveItem>();
+
    const onClickXButton = useCallback(() => {
       setSideMenuIsOpenMobile.setFalse();
    }, []);
 
    const readyItems = useMemo(() => items.filter((item) => !item.hidden), [items]);
    const readyBottomItems = useMemo(() => bottomItems?.filter((item) => !item.hidden), [bottomItems]);
+
+   const contextValue = useMemo<SideMenuContext>(
+      () => ({
+         activeItem,
+         setActiveItem,
+      }),
+      [activeItem],
+   );
 
    const isCollapsable = collapsable && !mediaQuery.size1000;
    const isCollapsed = sideMenuIsCollapsed && !mediaQuery.size1000;
@@ -289,183 +346,185 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
    const logoSize = sideMenuCollapsedWidth - theme.styles.space * 2;
 
    return (
-      <Div.column
-         position="fixed"
-         width={mediaQuery.size1000 ? "100%" : isCollapsed ? sideMenuCollapsedWidth : sideMenuWidth}
-         height={`calc(100svh - ${topSpace}px)`}
-         top={topSpace}
-         left={0}
-         backgroundColor={readyBackgroundColor}
-         borderRight={`solid 1px ${theme.colors.border}`}
-         transform={!mediaQuery.size1000 || sideMenuIsOpenMobile ? "translateX(0)" : "translateX(-100%)"}
-         paddingTop={paddingTop ?? (logoAssetName || logoUrl ? theme.styles.gap : theme.styles.space)}
-         transition={
-            mediaQuery.size1000
-               ? !isCollapsed
-                  ? `transform ${theme.styles.transition}`
-                  : "none"
-               : theme.styles.transition
-         }
-         userSelect="none"
-         zIndex={10}
-      >
-         <Div.column width="100%" height="100%" gap={theme.styles.space}>
-            {(logoAssetName || logoUrl || (withCloseButton && mediaQuery.size1000)) && (
-               <Div.row alignItems="center" paddingInline={theme.styles.space}>
-                  {(logoAssetName || logoUrl) && (
-                     <LinkComponentTag to="/" href="/" onClick={onClickXButton}>
-                        <Div.row
-                           alignItems="center"
-                           width={sideMenuCollapsedWidth ? logoSize : undefined}
-                           height={logoSize}
-                           whiteSpace="nowrap"
-                           gap={theme.styles.gap}
-                        >
-                           <Image
-                              name={logoAssetName}
-                              src={logoUrl}
-                              width={logoSize}
+      <SideMenuContextProvider value={contextValue}>
+         <Div.column
+            position="fixed"
+            width={mediaQuery.size1000 ? "100%" : isCollapsed ? sideMenuCollapsedWidth : sideMenuWidth}
+            height={`calc(100svh - ${topSpace}px)`}
+            top={topSpace}
+            left={0}
+            backgroundColor={readyBackgroundColor}
+            borderRight={`solid 1px ${theme.colors.border}`}
+            transform={!mediaQuery.size1000 || sideMenuIsOpenMobile ? "translateX(0)" : "translateX(-100%)"}
+            paddingTop={paddingTop ?? (logoAssetName || logoUrl ? theme.styles.gap : theme.styles.space)}
+            transition={
+               mediaQuery.size1000
+                  ? !isCollapsed
+                     ? `transform ${theme.styles.transition}`
+                     : "none"
+                  : theme.styles.transition
+            }
+            userSelect="none"
+            zIndex={10}
+         >
+            <Div.column width="100%" height="100%" gap={theme.styles.space}>
+               {(logoAssetName || logoUrl || (withCloseButton && mediaQuery.size1000)) && (
+                  <Div.row alignItems="center" paddingInline={theme.styles.space}>
+                     {(logoAssetName || logoUrl) && (
+                        <LinkComponentTag to="/" href="/" onClick={onClickXButton}>
+                           <Div.row
+                              alignItems="center"
+                              width={sideMenuCollapsedWidth ? logoSize : undefined}
                               height={logoSize}
-                              objectFit="contain"
-                           />
+                              whiteSpace="nowrap"
+                              gap={theme.styles.gap}
+                           >
+                              <Image
+                                 name={logoAssetName}
+                                 src={logoUrl}
+                                 width={logoSize}
+                                 height={logoSize}
+                                 objectFit="contain"
+                              />
 
-                           {logoText && (
-                              <Text
-                                 fontFamily={logoFontFamily}
-                                 fontSize={22}
-                                 fontWeight={800}
-                                 opacity={!isCollapsed ? 1 : 0}
-                                 transition={theme.styles.transition}
-                                 userSelect="none"
-                              >
-                                 {logoText}
-                              </Text>
-                           )}
-                        </Div.row>
-                     </LinkComponentTag>
-                  )}
+                              {logoText && (
+                                 <Text
+                                    fontFamily={logoFontFamily}
+                                    fontSize={22}
+                                    fontWeight={800}
+                                    opacity={!isCollapsed ? 1 : 0}
+                                    transition={theme.styles.transition}
+                                    userSelect="none"
+                                 >
+                                    {logoText}
+                                 </Text>
+                              )}
+                           </Div.row>
+                        </LinkComponentTag>
+                     )}
 
-                  {withCloseButton && mediaQuery.size1000 && (
-                     <Button.icon icon="XMark" marginLeft="auto" onClick={onClickXButton} />
-                  )}
+                     {withCloseButton && mediaQuery.size1000 && (
+                        <Button.icon icon="XMark" marginLeft="auto" onClick={onClickXButton} />
+                     )}
+                  </Div.row>
+               )}
+
+               {!isLoading ? (
+                  <>
+                     <Div.column
+                        width="100%"
+                        height="100%"
+                        overflowY={!isCollapsed ? "auto" : undefined}
+                        paddingInline={theme.styles.space}
+                        paddingBottom={!isCollapsable && !readyBottomItems ? theme.styles.space : undefined}
+                     >
+                        <Div.column gap={theme.styles.gap / 2}>
+                           {readyItems.map((item) => (
+                              <MenuItemComponent
+                                 item={item}
+                                 backgroundColor={readyBackgroundColor}
+                                 onClick={onClickXButton}
+                                 key={item.text}
+                              />
+                           ))}
+                        </Div.column>
+                     </Div.column>
+
+                     {readyBottomItems && (
+                        <Div.column
+                           borderTop={mediaQuery.size1000 ? `solid 1px ${theme.colors.border}` : undefined}
+                           gap={theme.styles.gap / 2}
+                           marginTop="auto"
+                           paddingTop={mediaQuery.size1000 ? theme.styles.space : undefined}
+                           paddingInline={theme.styles.space}
+                           paddingBottom={!isCollapsable ? theme.styles.space : undefined}
+                        >
+                           {readyBottomItems.map((item) => (
+                              <MenuItemComponent
+                                 item={item}
+                                 backgroundColor={readyBackgroundColor}
+                                 onClick={onClickXButton}
+                                 key={item.text}
+                              />
+                           ))}
+                        </Div.column>
+                     )}
+                  </>
+               ) : (
+                  <Div flex={1}>
+                     <Loader.box text={isCollapsed ? "" : undefined} />
+                  </Div>
+               )}
+
+               {additionalComponent}
+
+               {isCollapsable && (
+                  <Div
+                     borderTop={`solid 1px ${theme.colors.border}`}
+                     marginTop={!readyBottomItems ? "auto" : undefined}
+                     paddingInline={theme.styles.space}
+                     paddingBlock={theme.styles.space}
+                  >
+                     <Div.row
+                        alignItems="center"
+                        justifyContent="center"
+                        backgroundColor={readyBackgroundColor}
+                        borderRadius={theme.styles.borderRadius}
+                        cursor="pointer"
+                        filterHover={filterHover().z1}
+                        isTabAccessed
+                        paddingBlock={theme.styles.gap}
+                        onClick={setSideMenuIsCollapsed.toggle}
+                     >
+                        <Icon
+                           name="chevronRight"
+                           size={20}
+                           color={theme.colors.textSecondary}
+                           transform={`rotate(${isCollapsed ? 0 : 180}deg)`}
+                           transition={theme.styles.transition}
+                        />
+                     </Div.row>
+                  </Div>
+               )}
+            </Div.column>
+
+            {widthMobileHandle && (
+               <Div.row
+                  position="absolute"
+                  top={theme.styles.space}
+                  left="100%"
+                  backgroundColor={readyBackgroundColor}
+                  border={`solid 1px ${theme.colors.border}`}
+                  borderLeft="none"
+                  borderTopRightRadius={theme.styles.borderRadius}
+                  borderBottomRightRadius={theme.styles.borderRadius}
+                  alignItems="center"
+                  cursor="pointer"
+                  opacity={!mediaQuery.size1000 ? 0 : undefined}
+                  pointerEvents={!mediaQuery.size1000 ? "none" : undefined}
+                  padding={theme.styles.gap}
+                  paddingRight={(theme.styles.space + theme.styles.gap) / 2}
+                  transform={!mediaQuery.size1000 ? "translateX(-100%)" : undefined}
+                  transition={theme.styles.transition}
+                  onClick={setSideMenuIsOpenMobile.toggle}
+               >
+                  <Icon
+                     name="chevronRight"
+                     size={20}
+                     color={theme.colors.textSecondary}
+                     transform={sideMenuIsOpenMobile ? "rotate(180deg)" : undefined}
+                     transition={theme.styles.transition}
+                  />
                </Div.row>
             )}
 
-            {!isLoading ? (
-               <>
-                  <Div.column
-                     width="100%"
-                     height="100%"
-                     overflowY={!isCollapsed ? "auto" : undefined}
-                     paddingInline={theme.styles.space}
-                     paddingBottom={!isCollapsable && !readyBottomItems ? theme.styles.space : undefined}
-                  >
-                     <Div.column gap={theme.styles.gap / 2}>
-                        {readyItems.map((item) => (
-                           <MenuItemComponent
-                              item={item}
-                              backgroundColor={readyBackgroundColor}
-                              onClick={onClickXButton}
-                              key={item.text}
-                           />
-                        ))}
-                     </Div.column>
-                  </Div.column>
-
-                  {readyBottomItems && (
-                     <Div.column
-                        borderTop={mediaQuery.size1000 ? `solid 1px ${theme.colors.border}` : undefined}
-                        gap={theme.styles.gap / 2}
-                        marginTop="auto"
-                        paddingTop={mediaQuery.size1000 ? theme.styles.space : undefined}
-                        paddingInline={theme.styles.space}
-                        paddingBottom={!isCollapsable ? theme.styles.space : undefined}
-                     >
-                        {readyBottomItems.map((item) => (
-                           <MenuItemComponent
-                              item={item}
-                              backgroundColor={readyBackgroundColor}
-                              onClick={onClickXButton}
-                              key={item.text}
-                           />
-                        ))}
-                     </Div.column>
-                  )}
-               </>
-            ) : (
-               <Div flex={1}>
-                  <Loader.box text={isCollapsed ? "" : undefined} />
-               </Div>
-            )}
-
-            {additionalComponent}
-
-            {isCollapsable && (
-               <Div
-                  borderTop={`solid 1px ${theme.colors.border}`}
-                  marginTop={!readyBottomItems ? "auto" : undefined}
-                  paddingInline={theme.styles.space}
-                  paddingBlock={theme.styles.space}
-               >
-                  <Div.row
-                     alignItems="center"
-                     justifyContent="center"
-                     backgroundColor={readyBackgroundColor}
-                     borderRadius={theme.styles.borderRadius}
-                     cursor="pointer"
-                     filterHover={filterHover().z1}
-                     isTabAccessed
-                     paddingBlock={theme.styles.gap}
-                     onClick={setSideMenuIsCollapsed.toggle}
-                  >
-                     <Icon
-                        name="chevronRight"
-                        size={20}
-                        color={theme.colors.textSecondary}
-                        transform={`rotate(${isCollapsed ? 0 : 180}deg)`}
-                        transition={theme.styles.transition}
-                     />
-                  </Div.row>
+            {absoluteComponent && (
+               <Div position="absolute" top={0} left={0} pointerEvents="none" zIndex={2}>
+                  <Div pointerEvents="all">{absoluteComponent}</Div>
                </Div>
             )}
          </Div.column>
-
-         {widthMobileHandle && (
-            <Div.row
-               position="absolute"
-               top={theme.styles.space}
-               left="100%"
-               backgroundColor={readyBackgroundColor}
-               border={`solid 1px ${theme.colors.border}`}
-               borderLeft="none"
-               borderTopRightRadius={theme.styles.borderRadius}
-               borderBottomRightRadius={theme.styles.borderRadius}
-               alignItems="center"
-               cursor="pointer"
-               opacity={!mediaQuery.size1000 ? 0 : undefined}
-               pointerEvents={!mediaQuery.size1000 ? "none" : undefined}
-               padding={theme.styles.gap}
-               paddingRight={(theme.styles.space + theme.styles.gap) / 2}
-               transform={!mediaQuery.size1000 ? "translateX(-100%)" : undefined}
-               transition={theme.styles.transition}
-               onClick={setSideMenuIsOpenMobile.toggle}
-            >
-               <Icon
-                  name="chevronRight"
-                  size={20}
-                  color={theme.colors.textSecondary}
-                  transform={sideMenuIsOpenMobile ? "rotate(180deg)" : undefined}
-                  transition={theme.styles.transition}
-               />
-            </Div.row>
-         )}
-
-         {absoluteComponent && (
-            <Div position="absolute" top={0} left={0} pointerEvents="none" zIndex={2}>
-               <Div pointerEvents="all">{absoluteComponent}</Div>
-            </Div>
-         )}
-      </Div.column>
+      </SideMenuContextProvider>
    );
 };
 

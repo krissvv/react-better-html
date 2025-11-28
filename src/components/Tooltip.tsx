@@ -365,6 +365,11 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
          };
       }
    }, [trigger, onClickOutside]);
+   useEffect(() => {
+      if (!disabled) return;
+
+      closeTooltip();
+   }, [disabled]);
 
    useImperativeHandle(
       ref,
