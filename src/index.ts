@@ -48,6 +48,7 @@ import {
    eventPreventDefault,
    eventStopPropagation,
    eventPreventStop,
+   getPluralWord,
 } from "./utils/functions";
 import { lightenColor, darkenColor, saturateColor, desaturateColor } from "./utils/colorManipulation";
 import {
@@ -176,6 +177,7 @@ export {
    eventPreventDefault,
    eventStopPropagation,
    eventPreventStop,
+   getPluralWord,
    // Color Manipulation
    lightenColor,
    darkenColor,

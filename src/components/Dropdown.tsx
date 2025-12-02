@@ -9,6 +9,7 @@ import { Country } from "../types/countries";
 
 import { useBooleanState } from "../utils/hooks";
 import { useDebounceState } from "../utils/hooks";
+import { getPluralWord } from "../utils/functions";
 
 import Text from "./Text";
 import Div, { DivProps } from "./Div";
@@ -17,6 +18,7 @@ import Icon from "./Icon";
 import Button from "./Button";
 import Loader from "./Loader";
 import Image from "./Image";
+import Chip from "./Chip";
 import { useTheme } from "./BetterHtmlProvider";
 
 export type DropdownOption<Value, Data = unknown> = {
@@ -39,8 +41,6 @@ export type DropdownProps<Value, Data = unknown> = {
    /** @default false */
    disabled?: boolean;
    options: DropdownOption<Value, Data>[];
-   value?: Value;
-   defaultValue?: Value;
    placeholder?: string;
    leftIcon?: IconName | AnyOtherString;
    inputFieldClassName?: string;
@@ -57,7 +57,6 @@ export type DropdownProps<Value, Data = unknown> = {
    withoutClearButton?: boolean;
    /** @default false */
    withoutRenderingOptionsWhenClosed?: boolean;
-   onChange?: (value: Value | undefined) => void;
    onChangeSearch?: (query: string) => void;
    renderOption?: (option: DropdownOption<Value, Data>, index: number, isSelected: boolean) => React.ReactNode;
    renderOptionDivider?: (
@@ -66,7 +65,21 @@ export type DropdownProps<Value, Data = unknown> = {
       previousOptionIndex: number,
       nextOptionIndex: number,
    ) => React.ReactNode;
-} & OmitProps<DivProps, "onChange" | "defaultChecked">;
+} & OmitProps<DivProps, "onChange" | "defaultChecked"> &
+   (
+      | {
+           withMultiselect?: false;
+           value?: Value;
+           defaultValue?: Value;
+           onChange?: (value: Value | undefined) => void;
+        }
+      | {
+           withMultiselect?: true;
+           value?: Value[];
+           defaultValue?: Value[];
+           onChange?: (value: Value[] | undefined) => void;
+        }
+   );
 
 type DropdownComponentType = {
    <Value, Data>(props: ComponentPropWithRef<HTMLDivElement, DropdownProps<Value, Data>>): React.ReactElement;
@@ -101,6 +114,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
       onChangeSearch,
       renderOption,
       renderOptionDivider,
+      withMultiselect,
       id,
       ...props
    }: DropdownProps<Value, Data>,
@@ -123,7 +137,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
    );
    const [focusedOptionIndex, setFocusedOptionIndex] = useState<number | undefined>();
 
-   const [internalValue, setInternalValue] = useState<Value | undefined>(defaultValue);
+   const [internalValue, setInternalValue] = useState<Value | Value[] | undefined>(defaultValue);
 
    const value = controlledValue ?? internalValue;
 
@@ -151,9 +165,18 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
                   const option = filteredOptions[focusedOptionIndex];
 
                   if (!option.disabled) {
-                     if (controlledValue === undefined) setInternalValue(option.value);
+                     const clickedValue = option.value;
+                     const newValue = withMultiselect
+                        ? Array.isArray(internalValue)
+                           ? internalValue?.includes(clickedValue)
+                              ? internalValue.filter((value) => value !== clickedValue)
+                              : [...internalValue, clickedValue]
+                           : [clickedValue]
+                        : clickedValue;
 
-                     onChange?.(option.value);
+                     if (controlledValue === undefined) setInternalValue(newValue);
+
+                     onChange?.(newValue as any);
 
                      setIsOpen.setFalse();
                      inputRef.current?.blur();
@@ -189,14 +212,33 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
             }
          }
       },
-      [disabled, withSearch, isOpen, filteredOptions, focusedOptionIndex, controlledValue, onChange],
+      [
+         disabled,
+         withSearch,
+         isOpen,
+         filteredOptions,
+         focusedOptionIndex,
+         internalValue,
+         controlledValue,
+         onChange,
+         withMultiselect,
+      ],
    );
    const onClickOption = useCallback(
       (option: DropdownOption<Value, Data>) => {
          if (!option.disabled) {
-            if (controlledValue === undefined) setInternalValue(option.value);
+            const clickedValue = option.value;
+            const newValue = withMultiselect
+               ? Array.isArray(internalValue)
+                  ? internalValue?.includes(clickedValue)
+                     ? internalValue.filter((value) => value !== clickedValue)
+                     : [...internalValue, clickedValue]
+                  : [clickedValue]
+               : clickedValue;
 
-            onChange?.(option.value);
+            if (controlledValue === undefined) setInternalValue(newValue);
+
+            onChange?.(newValue as any);
 
             setIsOpen.setFalse();
             inputRef.current?.blur();
@@ -204,7 +246,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
             setFocusedOptionIndex(undefined);
          }
       },
-      [onChange, controlledValue],
+      [onChange, internalValue, controlledValue, withMultiselect],
    );
    const onClickClearButton = useCallback(
       (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -230,14 +272,24 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
       [withDebounce, onChangeSearch],
    );
 
-   const selectedOption = useMemo(() => options.find((option) => option.value === value), [options, value]);
+   const selectedOption = useMemo(
+      () =>
+         withMultiselect
+            ? options.filter((option) => (Array.isArray(value) ? value.includes(option.value) : false))
+            : options.find((option) => option.value === value),
+      [options, value],
+   );
    const renderedOptions = useMemo(
       (): React.ReactNode => (
          <>
             {renderOptionDivider ? renderOptionDivider(undefined, filteredOptions[0], -1, 0) : undefined}
 
             {filteredOptions.map((option, index) => {
-               const isSelected = option.value === value;
+               const isSelected = withMultiselect
+                  ? Array.isArray(value)
+                     ? value.includes(option.value)
+                     : false
+                  : option.value === value;
                const isDisabled = option.disabled;
                const isFocused = index === focusedOptionIndex;
 
@@ -279,7 +331,16 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
             })}
          </>
       ),
-      [filteredOptions, value, focusedOptionIndex, theme.colors, onClickOption, renderOption, renderOptionDivider],
+      [
+         withMultiselect,
+         filteredOptions,
+         value,
+         focusedOptionIndex,
+         theme.colors,
+         onClickOption,
+         renderOption,
+         renderOptionDivider,
+      ],
    );
 
    useEffect(() => {
@@ -329,37 +390,78 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
       onChangeSearch?.(debouncedSearchQuery);
    }, [withDebounce, onChangeSearch, debouncedSearchQuery]);
 
-   const displayValue = withSearch && isFocused ? searchQuery : selectedOption?.label ?? "";
-   const withClearButton = isOpen && selectedOption;
-   const readyPlaceholder = placeholder ?? `Select an ${label?.toLowerCase() ?? "option"}`;
+   const displayValue =
+      (withSearch && isFocused && searchQuery.length > 0
+         ? searchQuery
+         : !Array.isArray(selectedOption)
+         ? selectedOption?.label
+         : undefined) ?? "";
+   const withClearButton = isOpen && (Array.isArray(selectedOption) ? selectedOption.length > 0 : selectedOption);
+   const readyPlaceholder =
+      placeholder ??
+      `Select ${!withMultiselect ? "an " : ""}${
+         label?.toLowerCase() ?? getPluralWord("option", withMultiselect ? 2 : 1)
+      }`;
 
    return (
       <Div.column width="100%" position="relative" userSelect="none" {...props}>
-         <Div.row position="relative" width="100%">
-            <InputField
-               label={label}
-               labelColor={labelColor}
-               errorText={errorText}
-               infoText={infoText}
-               required={required}
-               name={name}
-               disabled={disabled}
-               readOnly={!withSearch}
-               value={displayValue}
-               id={id}
-               cursor={!withSearch ? "pointer" : undefined}
-               placeholder={withSearch ? (selectedOption ? selectedOption.label : readyPlaceholder) : readyPlaceholder}
-               leftIcon={leftIcon}
-               autoComplete="off"
-               className={`react-better-html-dropdown${isOpen ? " react-better-html-dropdown-open" : ""}${
-                  isOpenLate ? " react-better-html-dropdown-open-late" : ""
-               }${inputFieldClassName ? ` ${inputFieldClassName}` : ""}`}
-               onClick={!disabled ? setIsOpen.toggle : undefined}
-               onFocus={setIsFocused.setTrue}
-               onBlur={setIsFocused.setFalse}
-               onKeyDown={onKeyDownInputField}
-               onChangeValue={withSearch ? onChangeValue : undefined}
-               insideInputFieldComponent={
+         <InputField
+            label={label}
+            labelColor={labelColor}
+            errorText={errorText}
+            infoText={infoText}
+            required={required}
+            name={name}
+            disabled={disabled}
+            readOnly={!withSearch}
+            value={displayValue}
+            id={id}
+            cursor={!withSearch ? "pointer" : undefined}
+            placeholder={
+               withSearch
+                  ? selectedOption && !Array.isArray(selectedOption)
+                     ? selectedOption.label
+                     : readyPlaceholder
+                  : readyPlaceholder
+            }
+            leftIcon={leftIcon}
+            autoComplete="off"
+            className={`react-better-html-dropdown${
+               Array.isArray(selectedOption) && selectedOption.length > 0
+                  ? " react-better-html-dropdown-multiselect"
+                  : ""
+            }${isOpen ? " react-better-html-dropdown-open" : ""}${
+               isOpenLate ? " react-better-html-dropdown-open-late" : ""
+            }${inputFieldClassName ? ` ${inputFieldClassName}` : ""}`}
+            onClick={!disabled ? setIsOpen.toggle : undefined}
+            onFocus={setIsFocused.setTrue}
+            onBlur={setIsFocused.setFalse}
+            onKeyDown={onKeyDownInputField}
+            onChangeValue={withSearch ? onChangeValue : undefined}
+            insideInputFieldBeforeComponent={
+               Array.isArray(selectedOption) && selectedOption.length > 0 ? (
+                  <Div
+                     width="100%"
+                     backgroundColor={theme.colors.backgroundContent}
+                     border={`solid 1px ${theme.colors.border}`}
+                     borderColor={isFocused ? theme.colors.primary : undefined}
+                     borderBottom="none"
+                     borderTopLeftRadius={theme.styles.borderRadius}
+                     borderTopRightRadius={theme.styles.borderRadius}
+                     paddingBlock={theme.styles.gap}
+                     paddingInline={(theme.styles.space + theme.styles.gap) / 2}
+                     transition={theme.styles.transition}
+                  >
+                     <Div.row width="100%" flexWrap="wrap" gap={theme.styles.gap}>
+                        {selectedOption.map((option) => (
+                           <Chip text={option.label} key={JSON.stringify(option)} />
+                        ))}
+                     </Div.row>
+                  </Div>
+               ) : undefined
+            }
+            insideInputFieldAfterComponent={
+               <>
                   <Div
                      position="absolute"
                      top="100%"
@@ -402,54 +504,55 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
                         </Div>
                      )}
                   </Div>
-               }
-               role="combobox"
-               aria-expanded={isOpen}
-               aria-controls="dropdown-list"
-               aria-haspopup="listbox"
-               aria-label={label}
-               holderRef={inputFieldHolderRef}
-               ref={inputRef}
-            />
 
-            <Div.row
-               position="absolute"
-               top={46 / 2 + (label ? 16 + theme.styles.gap / 2 : 0)}
-               right={theme.styles.space + 1}
-               alignItems="center"
-               gap={theme.styles.gap}
-               transform="translateY(-50%)"
-               pointerEvents="none"
-               filter={disabled ? "brightness(0.9)" : undefined}
-               opacity={disabled ? 0.6 : undefined}
-               zIndex={isOpen || isOpenLate ? 1001 : undefined}
-               ref={buttonsRef}
-            >
-               {!withoutClearButton && (
-                  <Button.icon
-                     icon="XMark"
-                     position="relative"
-                     size={10}
-                     iconSize={14}
-                     opacity={!withClearButton ? 0 : undefined}
-                     pointerEvents={withClearButton ? "all" : undefined}
-                     onClick={onClickClearButton}
-                     disabled={!withClearButton}
-                  />
-               )}
+                  <Div.row
+                     position="absolute"
+                     top={46 / 2}
+                     right={theme.styles.space + 1}
+                     alignItems="center"
+                     gap={theme.styles.gap}
+                     transform="translateY(-50%)"
+                     pointerEvents="none"
+                     filter={disabled ? "brightness(0.9)" : undefined}
+                     opacity={disabled ? 0.6 : undefined}
+                     zIndex={isOpen || isOpenLate ? 1001 : undefined}
+                     ref={buttonsRef}
+                  >
+                     {!withoutClearButton && (
+                        <Button.icon
+                           icon="XMark"
+                           position="relative"
+                           size={10}
+                           iconSize={14}
+                           opacity={!withClearButton ? 0 : undefined}
+                           pointerEvents={withClearButton ? "all" : undefined}
+                           onClick={onClickClearButton}
+                           disabled={!withClearButton}
+                        />
+                     )}
 
-               <Icon
-                  name="chevronDown"
-                  position="relative"
-                  size={16}
-                  color={theme.colors.textSecondary}
-                  transform={`rotate(${isOpen ? 180 : 0}deg)`}
-                  transition={theme.styles.transition}
-                  pointerEvents="none"
-                  aria-hidden
-               />
-            </Div.row>
-         </Div.row>
+                     <Icon
+                        name="chevronDown"
+                        position="relative"
+                        size={16}
+                        color={theme.colors.textSecondary}
+                        transform={`rotate(${isOpen ? 180 : 0}deg)`}
+                        transition={theme.styles.transition}
+                        pointerEvents="none"
+                        aria-hidden
+                     />
+                  </Div.row>
+               </>
+            }
+            role="combobox"
+            aria-expanded={isOpen}
+            aria-controls="dropdown-list"
+            aria-multiselectable={withMultiselect ? "true" : "false"}
+            aria-haspopup="listbox"
+            aria-label={label}
+            holderRef={inputFieldHolderRef}
+            ref={inputRef}
+         />
       </Div.column>
    );
 }) as any;
@@ -487,7 +590,7 @@ DropdownComponent.countries = forwardRef(function Countries({ ...props }, ref) {
          renderOption={renderOption}
          withoutRenderingOptionsWhenClosed
          ref={ref}
-         {...props}
+         {...(props as any)}
       />
    );
 }) as DropdownComponentType["countries"];

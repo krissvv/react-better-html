@@ -341,7 +341,11 @@ export function useDebounceState<Value>(
    return [value, debouncedValue, setValue, isLoading];
 }
 
-export function useForm<FormFields extends Record<string | number, string | number | boolean | undefined>>(options: {
+type FormFieldValue = string | number | boolean;
+
+export function useForm<
+   FormFields extends Record<string | number, FormFieldValue | FormFieldValue[] | undefined>,
+>(options: {
    defaultValues: FormFields;
    requiredFields?: (keyof FormFields)[];
    onSubmit?: (values: FormFields) => void | Promise<void>;
@@ -450,14 +454,12 @@ export function useForm<FormFields extends Record<string | number, string | numb
       [values, setFieldValue, inputTypes, errors],
    );
    const getDropdownFieldProps = useCallback(
-      <FieldName extends keyof FormFields>(
-         field: FieldName,
-      ): OmitProps<ComponentPropWithRef<HTMLDivElement, DropdownProps<FormFields[FieldName]>>, "options"> => {
+      <FieldName extends keyof FormFields>(field: FieldName): any => {
          return {
             required: requiredFields?.includes(field),
             value: values[field],
             name: field.toString(),
-            onChange: (value) => {
+            onChange: (value: any) => {
                setFieldValue(field, value);
             },
             ref: (element) => {
@@ -466,7 +468,7 @@ export function useForm<FormFields extends Record<string | number, string | numb
                dropdownRefs.current[field] = element;
             },
             errorText: errors[field],
-         };
+         } as OmitProps<ComponentPropWithRef<HTMLDivElement, DropdownProps<FormFields[FieldName]>>, "options">;
       },
       [values, errors, setFieldValue],
    );

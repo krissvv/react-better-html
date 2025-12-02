@@ -167,3 +167,13 @@ export const decryptString = <ReturnValue extends string>(text: string): ReturnV
 
    return decrypted.toString(CryptoJS.enc.Utf8) as ReturnValue;
 };
+
+export const getPluralWord = (word: string, count: number): string => {
+   if (count === 1) return word;
+
+   const needChangeY = word.slice(-1) === "y" && !["a", "e", "o", "u", "i"].includes(word.slice(-2, -1));
+
+   const pluralWord = needChangeY ? word.slice(0, -1) + "ies" : word.slice(-1) === "s" ? word + "es" : word + "s";
+
+   return pluralWord;
+};

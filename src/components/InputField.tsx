@@ -149,6 +149,12 @@ const InputElement = styled.input.withConfig({
    &.react-better-html-dropdown {
       padding-right: ${(props) => props.theme.styles.space + 16 + props.theme.styles.space - 1}px;
 
+      &.react-better-html-dropdown-multiselect {
+         border-top: none;
+         border-top-left-radius: 0px;
+         border-top-right-radius: 0px;
+      }
+
       &.react-better-html-dropdown-open {
          border-bottom-left-radius: 0px;
          border-bottom-right-radius: 0px;
@@ -232,7 +238,8 @@ export type InputFieldProps = {
    prefixBackgroundColor?: string;
    suffix?: React.ReactNode;
    suffixBackgroundColor?: string;
-   insideInputFieldComponent?: React.ReactNode;
+   insideInputFieldBeforeComponent?: React.ReactNode;
+   insideInputFieldAfterComponent?: React.ReactNode;
    /** @default false */
    withDebounce?: boolean;
    /** @default 0.5s */
@@ -302,7 +309,8 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
       prefixBackgroundColor,
       suffix,
       suffixBackgroundColor,
-      insideInputFieldComponent,
+      insideInputFieldBeforeComponent,
+      insideInputFieldAfterComponent,
       withDebounce,
       debounceDelay = 0.5,
       onChange,
@@ -391,61 +399,66 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
             )}
 
             <Div position="relative" width="100%" height="fit-content" ref={holderRef}>
-               {leftIcon && (
-                  <Icon
-                     name={leftIcon}
-                     position="absolute"
-                     top={
-                        (props.type === "date" || props.type === "time" || props.type === "datetime-local" ? 48 : 46) /
-                        2
-                     }
-                     left={theme.styles.space + 1}
-                     transform="translateY(-50%)"
-                     pointerEvents="none"
-                     zIndex={leftIconZIndex}
-                  />
-               )}
+               {insideInputFieldBeforeComponent}
 
-               <InputElement
-                  theme={theme}
-                  withLeftIcon={leftIcon !== undefined}
-                  withRightIcon={rightIcon !== undefined}
-                  withPrefix={prefix !== undefined}
-                  withSuffix={suffix !== undefined}
-                  required={required}
-                  placeholder={placeholder ?? label}
-                  id={readyId}
-                  onChange={onChangeElement}
-                  {...styledComponentStylesWithoutExcluded}
-                  {...dataProps}
-                  {...ariaProps}
-                  {...restProps}
-                  ref={ref}
-               />
-
-               {rightIcon ? (
-                  onClickRightIcon ? (
-                     <Button.icon
-                        icon={rightIcon}
-                        position="absolute"
-                        top={46 / 2}
-                        right={theme.styles.space + 1 - theme.styles.space / 2}
-                        transform="translateY(-50%)"
-                        onClick={onClickRightIcon}
-                     />
-                  ) : (
+               <Div position="relative" width="100%" height="fit-content">
+                  {leftIcon && (
                      <Icon
-                        name={rightIcon}
+                        name={leftIcon}
                         position="absolute"
-                        top={46 / 2}
-                        right={theme.styles.space + 1}
+                        top={
+                           (props.type === "date" || props.type === "time" || props.type === "datetime-local"
+                              ? 48
+                              : 46) / 2
+                        }
+                        left={theme.styles.space + 1}
                         transform="translateY(-50%)"
                         pointerEvents="none"
+                        zIndex={leftIconZIndex}
                      />
-                  )
-               ) : undefined}
+                  )}
 
-               {insideInputFieldComponent}
+                  <InputElement
+                     theme={theme}
+                     withLeftIcon={leftIcon !== undefined}
+                     withRightIcon={rightIcon !== undefined}
+                     withPrefix={prefix !== undefined}
+                     withSuffix={suffix !== undefined}
+                     required={required}
+                     placeholder={placeholder ?? label}
+                     id={readyId}
+                     onChange={onChangeElement}
+                     {...styledComponentStylesWithoutExcluded}
+                     {...dataProps}
+                     {...ariaProps}
+                     {...restProps}
+                     ref={ref}
+                  />
+
+                  {rightIcon ? (
+                     onClickRightIcon ? (
+                        <Button.icon
+                           icon={rightIcon}
+                           position="absolute"
+                           top={46 / 2}
+                           right={theme.styles.space + 1 - theme.styles.space / 2}
+                           transform="translateY(-50%)"
+                           onClick={onClickRightIcon}
+                        />
+                     ) : (
+                        <Icon
+                           name={rightIcon}
+                           position="absolute"
+                           top={46 / 2}
+                           right={theme.styles.space + 1}
+                           transform="translateY(-50%)"
+                           pointerEvents="none"
+                        />
+                     )
+                  ) : undefined}
+
+                  {insideInputFieldAfterComponent}
+               </Div>
             </Div>
 
             {suffix && (
@@ -806,7 +819,7 @@ InputFieldComponent.date = forwardRef(function Date({ minDate, maxDate, ...props
    return (
       <InputFieldComponent
          type="date"
-         insideInputFieldComponent={
+         insideInputFieldAfterComponent={
             !isMobileIOS ? (
                <Div
                   position="absolute"
@@ -910,7 +923,7 @@ InputFieldComponent.dateTime = forwardRef(function DateTime(
    return (
       <InputFieldComponent
          type="datetime-local"
-         insideInputFieldComponent={
+         insideInputFieldAfterComponent={
             !isMobileIOS ? (
                <Div
                   position="absolute"
@@ -1074,7 +1087,7 @@ InputFieldComponent.time = forwardRef(function Time({ ...props }, ref) {
    return (
       <InputFieldComponent
          type="time"
-         insideInputFieldComponent={
+         insideInputFieldAfterComponent={
             !isMobileIOS ? (
                <Div
                   position="absolute"
@@ -1181,7 +1194,7 @@ InputFieldComponent.color = forwardRef(function Color({ value, onChangeValue, ..
    return (
       <InputFieldComponent
          type="color"
-         insideInputFieldComponent={
+         insideInputFieldAfterComponent={
             <Div.row
                position="absolute"
                width="100%"

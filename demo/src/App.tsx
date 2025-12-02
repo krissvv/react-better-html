@@ -167,6 +167,7 @@ function App() {
       defaultValues: {
          name: "",
          number: undefined as number | undefined,
+         awd: undefined as string[] | undefined,
          email: "",
          phone: "",
          option: undefined as 1 | 2 | 3 | undefined,
@@ -712,6 +713,16 @@ function App() {
                            withSearch
                            withDebounce
                         />
+                        <Dropdown
+                           options={[
+                              { label: "Option 1", value: "1" },
+                              { label: "Option 2", value: "2" },
+                              { label: "Option 3", value: "3" },
+                           ]}
+                           label="With multiselect"
+                           withSearch
+                           withMultiselect
+                        />
                      </Div.column>
                   </Tabs.content>
 
@@ -769,6 +780,17 @@ function App() {
                               ]}
                               withSearch
                               {...form.getDropdownFieldProps("option")}
+                           />
+
+                           <Dropdown
+                              options={[
+                                 { label: "Option 1 hello multiselect", value: 1 },
+                                 { label: "Option 2 this multiselect", value: 2 },
+                                 { label: "Option 3 ll multiselect", value: 3 },
+                              ]}
+                              label="With multiselect"
+                              withMultiselect
+                              {...form.getDropdownFieldProps("awd")}
                            />
 
                            <ToggleInput.checkbox
