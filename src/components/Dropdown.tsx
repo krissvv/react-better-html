@@ -410,7 +410,13 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
             labelColor={labelColor}
             errorText={errorText}
             infoText={infoText}
-            required={required}
+            required={
+               withMultiselect
+                  ? (Array.isArray(value) ? value.length > 0 : value !== undefined)
+                     ? false
+                     : required
+                  : required
+            }
             name={name}
             disabled={disabled}
             readOnly={!withSearch}

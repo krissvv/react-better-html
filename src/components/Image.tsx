@@ -88,6 +88,7 @@ Image.profileImage = forwardRef(function ProfileImage({ size = 40, letters, back
          width={size}
          height={size}
          backgroundColor={backgroundColor ?? theme.colors.backgroundSecondary}
+         border={`solid 1px ${theme.colors.border}`}
          borderRadius={999}
          alignItems="center"
          justifyContent="center"
