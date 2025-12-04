@@ -27,10 +27,10 @@ export type ChipProps<Value = unknown> = {
 
 type ChipComponentType = {
    <Value>(props: ComponentPropWithRef<HTMLDivElement, ChipProps<Value>>): React.ReactElement;
-   colored: (
+   colored: <Value>(
       props: ComponentPropWithRef<
          HTMLDivElement,
-         OmitProps<ChipProps, "color" | "backgroundColor"> & {
+         OmitProps<ChipProps<Value>, "color" | "backgroundColor"> & {
             color?: string;
          }
       >,
