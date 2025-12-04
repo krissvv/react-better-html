@@ -100,7 +100,15 @@ Image.profileImage = forwardRef(function ProfileImage({ size = 40, letters, back
          </Text>
       </Div.row>
    ) : (
-      <Image width={size} height={size} borderRadius={999} objectFit="cover" ref={ref} {...props} />
+      <Image
+         width={size}
+         height={size}
+         border={`solid 1px ${theme.colors.border}`}
+         borderRadius={999}
+         objectFit="cover"
+         ref={ref}
+         {...props}
+      />
    );
 }) as ImageComponent["profileImage"];
 
