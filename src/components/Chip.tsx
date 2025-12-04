@@ -26,7 +26,7 @@ export type ChipProps<Value = unknown> = {
    Pick<TextProps, "fontFamily" | "fontSize" | "fontWeight" | "fontStyle">;
 
 type ChipComponentType = {
-   <Value>(props: ComponentPropWithRef<HTMLDivElement, ChipProps>): React.ReactElement;
+   <Value>(props: ComponentPropWithRef<HTMLDivElement, ChipProps<Value>>): React.ReactElement;
    colored: (
       props: ComponentPropWithRef<
          HTMLDivElement,
