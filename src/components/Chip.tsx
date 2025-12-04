@@ -69,6 +69,7 @@ const ChipComponent: ChipComponentType = forwardRef(function Chip<Value>(
          paddingBlock={theme.styles.gap / 2}
          paddingInline={theme.styles.space / 1.5}
          onClick={onClickElement}
+         cursor={onClick || onClickWithValue ? "pointer" : undefined}
          {...props}
          ref={ref}
       >
