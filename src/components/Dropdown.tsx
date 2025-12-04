@@ -74,7 +74,7 @@ export type DropdownProps<Value, Data = unknown> = {
            onChange?: (value: Value | undefined) => void;
         }
       | {
-           withMultiselect?: true;
+           withMultiselect: true;
            value?: Value[];
            defaultValue?: Value[];
            onChange?: (value: Value[] | undefined) => void;
@@ -576,7 +576,7 @@ DropdownComponent.countries = forwardRef(function Countries({ ...props }, ref) {
       [],
    );
 
-   const options = useMemo<DropdownOption<string, Country>[]>(
+   const options = useMemo(
       () =>
          countries.map(
             (country): DropdownOption<string, Country> => ({

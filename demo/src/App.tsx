@@ -167,7 +167,7 @@ function App() {
       defaultValues: {
          name: "",
          number: undefined as number | undefined,
-         awd: undefined as string[] | undefined,
+         numbers: undefined as number[] | undefined,
          email: "",
          phone: "",
          option: undefined as 1 | 2 | 3 | undefined,
@@ -779,6 +779,7 @@ function App() {
                                  { label: "Option 3 ll", value: 3 },
                               ]}
                               withSearch
+                              // onChange={(value) => {}}
                               {...form.getDropdownFieldProps("option")}
                            />
 
@@ -790,7 +791,8 @@ function App() {
                               ]}
                               label="With multiselect"
                               withMultiselect
-                              {...form.getDropdownFieldProps("awd")}
+                              // onChange={(value) => {}}
+                              {...form.getDropdownFieldProps("numbers")}
                            />
 
                            <ToggleInput.checkbox
