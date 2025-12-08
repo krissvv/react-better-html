@@ -430,7 +430,7 @@ export function useForm<
             errorText: errors[field],
          };
       },
-      [values, setFieldValue, inputTypes, errors],
+      [values, setFieldValue, inputTypes, errors, requiredFields],
    );
    const getTextAreaProps = useCallback(
       <FieldName extends keyof FormFields>(
@@ -451,7 +451,7 @@ export function useForm<
             errorText: errors[field],
          };
       },
-      [values, setFieldValue, inputTypes, errors],
+      [values, setFieldValue, inputTypes, errors, requiredFields],
    );
    const getDropdownFieldProps = useCallback(
       <FieldName extends keyof FormFields>(field: FieldName): any => {
@@ -470,7 +470,7 @@ export function useForm<
             errorText: errors[field],
          } as OmitProps<ComponentPropWithRef<HTMLDivElement, DropdownProps<FormFields[FieldName]>>, "options">;
       },
-      [values, errors, setFieldValue],
+      [values, errors, setFieldValue, requiredFields],
    );
    const getCheckboxProps = useCallback(
       <FieldName extends keyof FormFields>(
@@ -491,7 +491,7 @@ export function useForm<
             errorText: errors[field],
          };
       },
-      [values, errors, setFieldValue],
+      [values, errors, setFieldValue, requiredFields],
    );
    const getRadioButtonProps = useCallback(
       <FieldName extends keyof FormFields>(
@@ -514,7 +514,7 @@ export function useForm<
             errorText: errors[field],
          };
       },
-      [values, errors, setFieldValue],
+      [values, errors, setFieldValue, requiredFields],
    );
    const getSwitchProps = useCallback(
       <FieldName extends keyof FormFields>(
@@ -535,7 +535,7 @@ export function useForm<
             errorText: errors[field],
          };
       },
-      [values, errors, setFieldValue],
+      [values, errors, setFieldValue, requiredFields],
    );
    const focusField = useCallback((field: keyof FormFields) => {
       inputFieldRefs.current[field]?.focus();

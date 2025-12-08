@@ -514,6 +514,24 @@ function App() {
                         </Div.row>
 
                         <Div.row alignItems="center" gap={theme.styles.gap} overflowX="auto">
+                           <Chip text="Some text" onClick={() => {}} />
+                           <Chip
+                              text="Some text"
+                              backgroundColor="#ff0000"
+                              color={theme.colors.base}
+                              onClick={() => {}}
+                           />
+                           <Chip text="Some text" backgroundColor="#abe435" onClick={() => {}} />
+                           <Chip
+                              text="Some text"
+                              backgroundColor="#395fec"
+                              color={theme.colors.base}
+                              onClick={() => {}}
+                           />
+                           <Chip text="Some text" backgroundColor="#f5bc1e" onClick={() => {}} />
+                        </Div.row>
+
+                        <Div.row alignItems="center" gap={theme.styles.gap} overflowX="auto">
                            <Chip text="Some text" isCircle />
                            <Chip text="Some text" backgroundColor="#ff0000" color={theme.colors.base} isCircle />
                            <Chip text="Some text" backgroundColor="#abe435" isCircle />

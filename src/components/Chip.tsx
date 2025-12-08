@@ -4,6 +4,7 @@ import { ComponentPropWithRef } from "../types/components";
 import { OmitProps } from "../types/app";
 
 import { darkenColor, lightenColor } from "../utils/colorManipulation";
+import { filterHover } from "../utils/variableFunctions";
 
 import Div, { DivProps } from "./Div";
 import Text, { TextProps } from "./Text";
@@ -68,6 +69,7 @@ const ChipComponent: ChipComponentType = forwardRef(function Chip<Value>(
          borderRadius={isCircle ? 999 : borderRadius ?? theme.styles.borderRadius / 1.3}
          paddingBlock={theme.styles.gap / 2}
          paddingInline={theme.styles.space / 1.5}
+         filterHover={onClick || onClickWithValue ? filterHover().z1 : undefined}
          onClick={onClickElement}
          cursor={onClick || onClickWithValue ? "pointer" : undefined}
          {...props}

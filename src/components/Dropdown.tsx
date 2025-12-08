@@ -159,7 +159,8 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
             event.preventDefault();
 
             if (!disabled) {
-               setIsOpen.toggle();
+               if (withMultiselect) setIsOpen.setTrue();
+               else setIsOpen.toggle();
 
                if (isOpen && filteredOptions.length > 0 && focusedOptionIndex !== undefined) {
                   const option = filteredOptions[focusedOptionIndex];
@@ -178,10 +179,12 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
 
                      onChange?.(newValue as any);
 
-                     setIsOpen.setFalse();
-                     inputRef.current?.blur();
-                     setSearchQuery("");
-                     setFocusedOptionIndex(undefined);
+                     if (!withMultiselect) {
+                        setIsOpen.setFalse();
+                        inputRef.current?.blur();
+                        setSearchQuery("");
+                        setFocusedOptionIndex(undefined);
+                     }
                   }
                }
             }
@@ -240,10 +243,12 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
 
             onChange?.(newValue as any);
 
-            setIsOpen.setFalse();
-            inputRef.current?.blur();
-            setSearchQuery("");
-            setFocusedOptionIndex(undefined);
+            if (!withMultiselect) {
+               setIsOpen.setFalse();
+               inputRef.current?.blur();
+               setSearchQuery("");
+               setFocusedOptionIndex(undefined);
+            }
          }
       },
       [onChange, internalValue, controlledValue, withMultiselect],

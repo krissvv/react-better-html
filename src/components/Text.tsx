@@ -23,6 +23,7 @@ export type TextAs = "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "p" | "span" | "l
 export type TextProps<As extends TextAs = "p"> = {
    /** @default "p" */
    as?: As;
+   htmlContentTranslate?: React.ComponentProps<"div">["translate"];
 } & OmitProps<React.ComponentProps<As>, "style"> &
    ComponentStyle &
    ComponentHoverStyle;
@@ -34,7 +35,7 @@ type TextComponentType = {
 };
 
 const TextComponent: TextComponentType = forwardRef(function Text<As extends TextAs>(
-   { children, ...props }: TextProps<As>,
+   { htmlContentTranslate, children, ...props }: TextProps<As>,
    ref: React.ForwardedRef<HTMLParagraphElement>,
 ) {
    const theme = useTheme();
@@ -47,6 +48,7 @@ const TextComponent: TextComponentType = forwardRef(function Text<As extends Tex
    return (
       <TextStyledComponent
          as={props.as}
+         translate={htmlContentTranslate}
          {...(styledComponentStyles as any)}
          {...dataProps}
          {...ariaProps}
