@@ -347,6 +347,7 @@ export type TableProps<DataItem> = {
    isInsideTableExpandRow?: boolean;
    containsOverflowComponents?: boolean;
    wrapperComponentRef?: React.Ref<HTMLDivElement>;
+   defaultFilterData?: Record<number, TableFilterData | undefined>;
    /**
     * @default false
     * @requires name
@@ -390,6 +391,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
       isInsideTableExpandRow,
       containsOverflowComponents,
       wrapperComponentRef,
+      defaultFilterData,
       memoizeFilters,
       memoizeFiltersLifespan = 7200000,
       getRowStyle,
@@ -418,15 +420,15 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
    const [currentPage, setCurrentPage] = useState<number>(1);
 
    const [filterData, setFilterData] = useState<Record<number, TableFilterData | undefined>>(() => {
-      if (!memoizeFilters || !name) return {};
+      if (!memoizeFilters || !name) return defaultFilterData ?? {};
 
       const localStorageData = JSON.parse(localStorage.getItem(`react-better-html-table-filters-${name}`) || "{}");
 
       const timestamp = localStorageData.timestamp;
-      const data = localStorageData.data ?? {};
+      const data = localStorageData.data ?? defaultFilterData ?? {};
 
       const timeDiff = Date.now() - timestamp;
-      if (timeDiff > memoizeFiltersLifespan) return {};
+      if (timeDiff > memoizeFiltersLifespan) return defaultFilterData ?? {};
 
       return data;
    });
