@@ -977,37 +977,41 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                         </td>
                      </tr>
                   ) : dataAfterPagination.length > 0 ? (
-                     dataAfterPagination.map((item, rowIndex) => (
-                        <Fragment key={JSON.stringify(item) + rowIndex}>
-                           <tr
-                              className={
-                                 isInsideTableExpandRow && onClickRow === undefined && expandColumn === undefined
-                                    ? "withoutHover"
-                                    : undefined
-                              }
-                              style={getRowStyle?.(item, rowIndex)}
-                              onClick={() => onClickRowElement(item, rowIndex)}
-                           >
-                              {readyColumns.map((column, colIndex) => (
-                                 <TdStyledComponent
-                                    textAlign={column.align}
-                                    onClick={(event) => {
-                                       if (column.clickStopPropagation) event.stopPropagation();
-                                    }}
-                                    key={column.type + column.label + colIndex}
-                                 >
-                                    {renderCellContent(column, item, rowIndex)}
-                                 </TdStyledComponent>
-                              ))}
-                           </tr>
+                     dataAfterPagination.map((item, rowIndex) => {
+                        const realRowIndex = rowIndex + (pageSize ? (currentPage - 1) * pageSize : 0);
 
-                           {expandedRows[rowIndex] && (
-                              <tr className="withoutHover isExpandRow">
-                                 <td colSpan={readyColumns.length}>{renderExpandedRow(item, rowIndex)}</td>
+                        return (
+                           <Fragment key={JSON.stringify(item) + realRowIndex}>
+                              <tr
+                                 className={
+                                    isInsideTableExpandRow && onClickRow === undefined && expandColumn === undefined
+                                       ? "withoutHover"
+                                       : undefined
+                                 }
+                                 style={getRowStyle?.(item, realRowIndex)}
+                                 onClick={() => onClickRowElement(item, realRowIndex)}
+                              >
+                                 {readyColumns.map((column, colIndex) => (
+                                    <TdStyledComponent
+                                       textAlign={column.align}
+                                       onClick={(event) => {
+                                          if (column.clickStopPropagation) event.stopPropagation();
+                                       }}
+                                       key={column.type + column.label + colIndex}
+                                    >
+                                       {renderCellContent(column, item, realRowIndex)}
+                                    </TdStyledComponent>
+                                 ))}
                               </tr>
-                           )}
-                        </Fragment>
-                     ))
+
+                              {expandedRows[realRowIndex] && (
+                                 <tr className="withoutHover isExpandRow">
+                                    <td colSpan={readyColumns.length}>{renderExpandedRow(item, realRowIndex)}</td>
+                                 </tr>
+                              )}
+                           </Fragment>
+                        );
+                     })
                   ) : (
                      <tr className="withoutHover">
                         <td className="noData" colSpan={readyColumns.length}>

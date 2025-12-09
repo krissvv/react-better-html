@@ -1232,6 +1232,7 @@ function App() {
                            ]}
                            data={data}
                            pageSize={3}
+                           onClickRow={(...cons) => console.log(...cons)}
                            containsOverflowComponents
                         />
 
