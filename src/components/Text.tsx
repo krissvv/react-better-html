@@ -4,14 +4,14 @@ import styled from "styled-components";
 import { ComponentHoverStyle, ComponentPropWithRef, ComponentStyle } from "../types/components";
 import { OmitProps } from "../types/app";
 
-import { useComponentPropsWithoutStyle, useComponentPropsWithPrefix, useStyledComponentStyles } from "../utils/hooks";
+import { useComponentPropsGrouper, useComponentPropsWithPrefix } from "../utils/hooks";
 
 import { useTheme } from "./BetterHtmlProvider";
 
 const TextStyledComponent = styled.p.withConfig({
-   shouldForwardProp: (prop) => !["normalStyle", "hoverStyle"].includes(prop),
-})<{ normalStyle: ComponentStyle; hoverStyle: ComponentStyle }>`
-   ${(props) => props.normalStyle as any}
+   shouldForwardProp: (prop) => !["style", "hoverStyle"].includes(prop),
+})<{ style: ComponentStyle; hoverStyle: ComponentStyle }>`
+   ${(props) => props.style as any}
 
    &:hover {
       ${(props) => props.hoverStyle as any}
@@ -38,21 +38,19 @@ const TextComponent: TextComponentType = forwardRef(function Text<As extends Tex
    { htmlContentTranslate, children, ...props }: TextProps<As>,
    ref: React.ForwardedRef<HTMLParagraphElement>,
 ) {
-   const theme = useTheme();
-
-   const styledComponentStyles = useStyledComponentStyles(props, theme);
-   const dataProps = useComponentPropsWithPrefix(props, "data");
-   const ariaProps = useComponentPropsWithPrefix(props, "aria");
-   const restProps = useComponentPropsWithoutStyle(props);
+   const { style, hoverStyle, restProps } = useComponentPropsGrouper(props);
+   const dataProps = useComponentPropsWithPrefix(restProps, "data");
+   const ariaProps = useComponentPropsWithPrefix(restProps, "aria");
 
    return (
       <TextStyledComponent
-         as={props.as}
+         as={props.as as any}
          translate={htmlContentTranslate}
-         {...(styledComponentStyles as any)}
+         style={style}
+         hoverStyle={hoverStyle}
+         {...restProps}
          {...dataProps}
          {...ariaProps}
-         {...restProps}
          ref={ref}
       >
          {children}

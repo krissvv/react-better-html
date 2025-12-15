@@ -13,11 +13,9 @@ import { Country } from "../types/countries";
 import {
    useBooleanState,
    useComponentInputFieldDateProps,
-   useComponentPropsWithExcludedStyle,
-   useComponentPropsWithoutStyle,
+   useComponentPropsGrouper,
    useComponentPropsWithPrefix,
    useDebounceState,
-   useStyledComponentStyles,
 } from "../utils/hooks";
 import { getBrowser } from "../utils/functions";
 import { darkenColor, lightenColor } from "../utils/colorManipulation";
@@ -39,16 +37,14 @@ const colorPickerValueWidth = 12 + 74 + colorPickerSpacing;
 
 const InputElement = styled.input.withConfig({
    shouldForwardProp: (prop) =>
-      !["theme", "withLeftIcon", "withRightIcon", "withPrefix", "withSuffix", "normalStyle", "hoverStyle"].includes(
-         prop,
-      ),
+      !["theme", "withLeftIcon", "withRightIcon", "withPrefix", "withSuffix", "style", "hoverStyle"].includes(prop),
 })<{
    theme: Theme;
    withLeftIcon?: boolean;
    withRightIcon?: boolean;
    withPrefix?: boolean;
    withSuffix?: boolean;
-   normalStyle: ComponentStyle;
+   style: ComponentStyle;
    hoverStyle: ComponentStyle;
 }>`
    position: relative;
@@ -174,7 +170,7 @@ const InputElement = styled.input.withConfig({
       z-index: 1001;
    }
 
-   ${(props) => props.normalStyle as any}
+   ${(props) => props.style as any}
 
    &:hover {
       ${(props) => props.hoverStyle as any}
@@ -182,12 +178,12 @@ const InputElement = styled.input.withConfig({
 `;
 
 const TextareaElement = styled.textarea.withConfig({
-   shouldForwardProp: (prop) => !["theme", "withLeftIcon", "withRightIcon", "normalStyle", "hoverStyle"].includes(prop),
+   shouldForwardProp: (prop) => !["theme", "withLeftIcon", "withRightIcon", "style", "hoverStyle"].includes(prop),
 })<{
    theme: Theme;
    withLeftIcon?: boolean;
    withRightIcon?: boolean;
-   normalStyle: ComponentStyle;
+   style: ComponentStyle;
    hoverStyle: ComponentStyle;
 }>`
    width: 100%;
@@ -217,7 +213,7 @@ const TextareaElement = styled.textarea.withConfig({
       border-color: ${(props) => props.theme.colors.primary};
    }
 
-   ${(props) => props.normalStyle as any}
+   ${(props) => props.style as any}
 
    &:hover {
       ${(props) => props.hoverStyle as any}
@@ -332,11 +328,9 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
       debounceDelay,
    );
 
-   const styledComponentStylesWithoutExcluded = useStyledComponentStyles(props, theme, true);
-   const styledComponentStylesWithExcluded = useComponentPropsWithExcludedStyle(props);
-   const dataProps = useComponentPropsWithPrefix(props, "data");
-   const ariaProps = useComponentPropsWithPrefix(props, "aria");
-   const restProps = useComponentPropsWithoutStyle(props);
+   const { style, hoverStyle, excludeStyle, restProps } = useComponentPropsGrouper(props, true);
+   const dataProps = useComponentPropsWithPrefix(restProps, "data");
+   const ariaProps = useComponentPropsWithPrefix(restProps, "aria");
 
    const onChangeElement = useCallback(
       (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -372,7 +366,7 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
    const readyId = id ?? internalId;
 
    return (
-      <Div.column width="100%" gap={theme.styles.gap / 2} {...styledComponentStylesWithExcluded}>
+      <Div.column width="100%" gap={theme.styles.gap / 2} {...excludeStyle}>
          {label && (
             <Label text={label} color={labelColor} required={required} isError={!!errorText} htmlFor={readyId} />
          )}
@@ -428,10 +422,11 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
                      placeholder={placeholder ?? label}
                      id={readyId}
                      onChange={onChangeElement}
-                     {...styledComponentStylesWithoutExcluded}
+                     style={style}
+                     hoverStyle={hoverStyle}
+                     {...restProps}
                      {...dataProps}
                      {...ariaProps}
-                     {...restProps}
                      ref={ref}
                   />
 
@@ -516,10 +511,9 @@ InputFieldComponent.multiline = forwardRef(function Multiline(
    const theme = useTheme();
    const internalId = useId();
 
-   const styledComponentStyles = useStyledComponentStyles(props, theme);
-   const dataProps = useComponentPropsWithPrefix(props, "data");
-   const ariaProps = useComponentPropsWithPrefix(props, "aria");
-   const restProps = useComponentPropsWithoutStyle(props);
+   const { style, hoverStyle, restProps } = useComponentPropsGrouper(props);
+   const dataProps = useComponentPropsWithPrefix(restProps, "data");
+   const ariaProps = useComponentPropsWithPrefix(restProps, "aria");
 
    const onChangeElement = useCallback(
       (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -555,10 +549,11 @@ InputFieldComponent.multiline = forwardRef(function Multiline(
                placeholder={placeholder ?? label}
                onChange={onChangeElement}
                id={readyId}
-               {...styledComponentStyles}
+               style={style}
+               hoverStyle={hoverStyle}
+               {...restProps}
                {...dataProps}
                {...ariaProps}
-               {...restProps}
                ref={ref}
             />
 

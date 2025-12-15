@@ -6,16 +6,16 @@ import { isMobileDevice } from "../constants";
 import { ComponentHoverStyle, ComponentPropWithRef, ComponentStyle } from "../types/components";
 import { OmitProps } from "../types/app";
 
-import { useStyledComponentStyles, useComponentPropsWithPrefix, useComponentPropsWithoutStyle } from "../utils/hooks";
+import { useComponentPropsWithPrefix, useComponentPropsGrouper } from "../utils/hooks";
 
 import Divider from "./Divider";
 import PageHeader, { PageHeaderProps } from "./PageHeader";
 import { useTheme } from "./BetterHtmlProvider";
 
 const DivStyledComponent = styled.div.withConfig({
-   shouldForwardProp: (prop) => !["normalStyle", "hoverStyle"].includes(prop),
-})<{ normalStyle: ComponentStyle; hoverStyle: ComponentStyle }>`
-   ${(props) => props.normalStyle as any}
+   shouldForwardProp: (prop) => !["style", "hoverStyle"].includes(prop),
+})<{ style: ComponentStyle; hoverStyle: ComponentStyle }>`
+   ${(props) => props.style as any}
 
    &:hover {
       ${(props) => props.hoverStyle as any}
@@ -84,12 +84,9 @@ const DivComponent: DivComponentType = forwardRef(function Div<Value>(
    }: DivProps<Value>,
    ref: React.ForwardedRef<HTMLDivElement>,
 ) {
-   const theme = useTheme();
-
-   const styledComponentStyles = useStyledComponentStyles(props, theme);
-   const dataProps = useComponentPropsWithPrefix(props, "data");
-   const ariaProps = useComponentPropsWithPrefix(props, "aria");
-   const restProps = useComponentPropsWithoutStyle(props);
+   const { style, hoverStyle, restProps } = useComponentPropsGrouper(props);
+   const dataProps = useComponentPropsWithPrefix(restProps, "data");
+   const ariaProps = useComponentPropsWithPrefix(restProps, "aria");
 
    const onClickElement = useCallback(
       (event: React.MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
@@ -120,10 +117,11 @@ const DivComponent: DivComponentType = forwardRef(function Div<Value>(
          role={role ?? (onClick ? "button" : undefined)}
          onClick={onClickElement}
          onKeyDown={onKeyDownElement}
-         {...styledComponentStyles}
+         style={style}
+         hoverStyle={hoverStyle}
+         {...restProps}
          {...dataProps}
          {...ariaProps}
-         {...restProps}
          ref={ref}
       >
          {children}

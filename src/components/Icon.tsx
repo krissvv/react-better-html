@@ -6,7 +6,7 @@ import { ComponentHoverStyle, ComponentPropWithRef, ComponentStyle } from "../ty
 import { IconName } from "../types/icon";
 import { Theme } from "../types/theme";
 
-import { useComponentPropsWithoutStyle, useComponentPropsWithPrefix, useStyledComponentStyles } from "../utils/hooks";
+import { useComponentPropsGrouper, useComponentPropsWithPrefix } from "../utils/hooks";
 
 import { useBetterHtmlContextInternal, useTheme } from "./BetterHtmlProvider";
 
@@ -23,9 +23,9 @@ type IconComponent = {
 };
 
 const IconElement = styled.svg.withConfig({
-   shouldForwardProp: (prop) => !["theme", "normalStyle", "hoverStyle", "hoverColor"].includes(prop),
-})<{ theme: Theme; normalStyle: ComponentStyle; hoverStyle: ComponentStyle; hoverColor?: string }>`
-   ${(props) => props.normalStyle as any}
+   shouldForwardProp: (prop) => !["theme", "style", "hoverStyle", "hoverColor"].includes(prop),
+})<{ theme: Theme; style: ComponentStyle; hoverStyle: ComponentStyle; hoverColor?: string }>`
+   ${(props) => props.style as any}
 
    path {
       ${(props) => (props.hoverColor ? `transition: ${props.theme.styles.transition};` : "")}
@@ -53,10 +53,9 @@ const Icon: IconComponent = forwardRef(function Icon(
    const theme = useTheme();
    const { icons } = useBetterHtmlContextInternal();
 
-   const styledComponentStyles = useStyledComponentStyles(props, theme);
-   const dataProps = useComponentPropsWithPrefix(props, "data");
-   const ariaProps = useComponentPropsWithPrefix(props, "aria");
-   const restProps = useComponentPropsWithoutStyle(props);
+   const { style, hoverStyle, restProps } = useComponentPropsGrouper(props);
+   const dataProps = useComponentPropsWithPrefix(restProps, "data");
+   const ariaProps = useComponentPropsWithPrefix(restProps, "aria");
 
    const svgColor = props.color ?? theme.colors.textPrimary;
    const svgHoverColorColor = props.colorHover;
@@ -77,10 +76,11 @@ const Icon: IconComponent = forwardRef(function Icon(
          xmlns="http://www.w3.org/2000/svg"
          theme={theme}
          hoverColor={svgHoverColorColor}
-         {...styledComponentStyles}
+         style={style}
+         hoverStyle={hoverStyle}
+         {...restProps}
          {...dataProps}
          {...ariaProps}
-         {...restProps}
          ref={ref}
       >
          {icons[name.toString()]?.paths.map((path) => (

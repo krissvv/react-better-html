@@ -5,13 +5,7 @@ import { ComponentHoverStyle, ComponentPropWithRef, ComponentStyle } from "../ty
 import { OmitProps } from "../types/app";
 import { Theme } from "../types/theme";
 
-import {
-   useBooleanState,
-   useComponentPropsWithExcludedStyle,
-   useComponentPropsWithoutStyle,
-   useComponentPropsWithPrefix,
-   useStyledComponentStyles,
-} from "../utils/hooks";
+import { useBooleanState, useComponentPropsGrouper, useComponentPropsWithPrefix } from "../utils/hooks";
 
 import Text from "./Text";
 import Div from "./Div";
@@ -24,8 +18,8 @@ const switchComponentBallGap = 3;
 const switchComponentMouseDownDifference = 4;
 
 const InputElement = styled.input.withConfig({
-   shouldForwardProp: (prop) => !["theme", "normalStyle", "hoverStyle"].includes(prop),
-})<{ theme: Theme; normalStyle: ComponentStyle; hoverStyle: ComponentStyle }>`
+   shouldForwardProp: (prop) => !["theme", "style", "hoverStyle"].includes(prop),
+})<{ theme: Theme; style: ComponentStyle; hoverStyle: ComponentStyle }>`
    position: relative;
    appearance: none;
    width: ${componentSize}px;
@@ -51,7 +45,7 @@ const InputElement = styled.input.withConfig({
       cursor: not-allowed;
    }
 
-   ${(props) => props.normalStyle as any}
+   ${(props) => props.style as any}
 
    &:hover {
       border-color: ${(props) => props.theme.colors.primary};
@@ -61,14 +55,13 @@ const InputElement = styled.input.withConfig({
 `;
 
 const SwitchElement = styled.div.withConfig({
-   shouldForwardProp: (prop) =>
-      !["theme", "checked", "disabled", "isMouseDown", "normalStyle", "hoverStyle"].includes(prop),
+   shouldForwardProp: (prop) => !["theme", "checked", "disabled", "isMouseDown", "style", "hoverStyle"].includes(prop),
 })<{
    theme: Theme;
    checked: boolean;
    disabled: boolean;
    isMouseDown: boolean;
-   normalStyle: ComponentStyle;
+   style: ComponentStyle;
    hoverStyle: ComponentStyle;
 }>`
    --width: ${(props) => componentSize * 2 - props.theme.styles.gap / 2}px;
@@ -129,7 +122,7 @@ const SwitchElement = styled.div.withConfig({
       }
    }
 
-   ${(props) => props.normalStyle as any}
+   ${(props) => props.style as any}
 
    &:hover {
       ${(props) => props.hoverStyle as any}
@@ -178,11 +171,9 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
    const theme = useTheme();
    const internalId = useId();
 
-   const styledComponentStyles = useStyledComponentStyles(props, theme, true);
-   const styledComponentStylesWithExcluded = useComponentPropsWithExcludedStyle(props);
-   const dataProps = useComponentPropsWithPrefix(props, "data");
-   const ariaProps = useComponentPropsWithPrefix(props, "aria");
-   const restProps = useComponentPropsWithoutStyle(props);
+   const { style, hoverStyle, excludeStyle, restProps } = useComponentPropsGrouper(props, true);
+   const dataProps = useComponentPropsWithPrefix(restProps, "data");
+   const ariaProps = useComponentPropsWithPrefix(restProps, "aria");
 
    const [internalChecked, setInternalChecked] = useState(false);
 
@@ -208,7 +199,7 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
    const readyId = id ?? internalId;
 
    return (
-      <Div.column gap={theme.styles.gap} {...styledComponentStylesWithExcluded}>
+      <Div.column gap={theme.styles.gap} {...excludeStyle}>
          {label && (
             <Label text={label} color={labelColor} required={required} isError={!!errorText} htmlFor={readyId} />
          )}
@@ -221,10 +212,11 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
                   checked={checked}
                   onChange={onChangeElement}
                   id={readyId}
-                  {...styledComponentStyles}
+                  style={style}
+                  hoverStyle={hoverStyle}
+                  {...restProps}
                   {...dataProps}
                   {...ariaProps}
-                  {...restProps}
                />
 
                {props.type === "checkbox" ? (
@@ -326,11 +318,9 @@ export default {
       const theme = useTheme();
       const internalId = useId();
 
-      const styledComponentStyles = useStyledComponentStyles(props, theme, true);
-      const styledComponentStylesWithExcluded = useComponentPropsWithExcludedStyle(props);
-      const dataProps = useComponentPropsWithPrefix(props, "data");
-      const ariaProps = useComponentPropsWithPrefix(props, "aria");
-      const restProps = useComponentPropsWithoutStyle(props);
+      const { style, hoverStyle, excludeStyle, restProps } = useComponentPropsGrouper(props, true);
+      const dataProps = useComponentPropsWithPrefix(restProps, "data");
+      const ariaProps = useComponentPropsWithPrefix(restProps, "aria");
 
       const [internalChecked, setInternalChecked] = useBooleanState();
       const [isMouseDown, setIsMouseDown] = useBooleanState();
@@ -349,7 +339,7 @@ export default {
       const readyId = id ?? internalId;
 
       return (
-         <Div.column width="fit-content" gap={theme.styles.gap} {...styledComponentStylesWithExcluded}>
+         <Div.column width="fit-content" gap={theme.styles.gap} {...excludeStyle}>
             {label && (
                <Label text={label} color={labelColor} required={required} isError={!!errorText} htmlFor={readyId} />
             )}
@@ -376,10 +366,11 @@ export default {
                   role="switch"
                   aria-checked={checked}
                   aria-disabled={disabled ?? false}
-                  {...styledComponentStyles}
+                  style={style}
+                  hoverStyle={hoverStyle}
+                  {...restProps}
                   {...dataProps}
                   {...ariaProps}
-                  {...restProps}
                />
             </Div.row>
 

@@ -5,20 +5,20 @@ import { AnyOtherString, OmitProps } from "../types/app";
 import { ComponentHoverStyle, ComponentPropWithRef, ComponentStyle } from "../types/components";
 import { AssetName } from "../types/asset";
 
-import { useComponentPropsWithoutStyle, useComponentPropsWithPrefix, useStyledComponentStyles } from "../utils/hooks";
+import { useComponentPropsGrouper, useComponentPropsWithPrefix } from "../utils/hooks";
 
 import Div from "./Div";
 import Text from "./Text";
 import { useBetterHtmlContextInternal, useTheme } from "./BetterHtmlProvider";
 
 const ImageElement = styled.img.withConfig({
-   shouldForwardProp: (prop) => !["normalStyle", "hoverStyle"].includes(prop),
-})<{ normalStyle: ComponentStyle; hoverStyle: ComponentStyle }>`
+   shouldForwardProp: (prop) => !["style", "hoverStyle"].includes(prop),
+})<{ style: ComponentStyle; hoverStyle: ComponentStyle }>`
    display: block;
    user-select: none;
    -webkit-user-drag: none;
 
-   ${(props) => props.normalStyle as any}
+   ${(props) => props.style as any}
 
    &:hover {
       ${(props) => props.hoverStyle as any}
@@ -50,13 +50,11 @@ const Image: ImageComponent = forwardRef(function Image(
    { name, src, ...props }: ImageProps,
    ref: React.ForwardedRef<HTMLImageElement>,
 ) {
-   const theme = useTheme();
    const { assets } = useBetterHtmlContextInternal();
 
-   const styledComponentStyles = useStyledComponentStyles(props, theme);
-   const dataProps = useComponentPropsWithPrefix(props, "data");
-   const ariaProps = useComponentPropsWithPrefix(props, "aria");
-   const restProps = useComponentPropsWithoutStyle(props);
+   const { style, hoverStyle, restProps } = useComponentPropsGrouper(props);
+   const dataProps = useComponentPropsWithPrefix(restProps, "data");
+   const ariaProps = useComponentPropsWithPrefix(restProps, "aria");
 
    useEffect(() => {
       if (!name) return;
@@ -69,12 +67,12 @@ const Image: ImageComponent = forwardRef(function Image(
 
    return (
       <ImageElement
-         {...styledComponentStyles}
          src={name ? assets[name.toString()] : src}
-         {...styledComponentStyles}
+         style={style}
+         hoverStyle={hoverStyle}
+         {...restProps}
          {...dataProps}
          {...ariaProps}
-         {...restProps}
          ref={ref}
       />
    );

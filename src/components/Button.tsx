@@ -8,7 +8,7 @@ import { AnyOtherString, OmitProps } from "../types/app";
 import { ComponentHoverStyle, ComponentStyle } from "../types/components";
 import { Color, ColorTheme, Theme } from "../types/theme";
 
-import { useComponentPropsWithoutStyle, useComponentPropsWithPrefix, useStyledComponentStyles } from "../utils/hooks";
+import { useComponentPropsGrouper, useComponentPropsWithPrefix } from "../utils/hooks";
 
 import Div from "./Div";
 import Icon from "./Icon";
@@ -18,11 +18,11 @@ import { useTheme, useLoader, useBetterHtmlContextInternal } from "./BetterHtmlP
 
 const ButtonElement = styled.button.withConfig({
    shouldForwardProp: (prop) =>
-      !["theme", "colorTheme", "normalStyle", "hoverStyle", "isSmall", "withText", "isLoading"].includes(prop),
+      !["theme", "colorTheme", "style", "hoverStyle", "isSmall", "withText", "isLoading"].includes(prop),
 })<{
    theme: Theme;
    colorTheme: ColorTheme;
-   normalStyle: ComponentStyle;
+   style: ComponentStyle;
    hoverStyle: ComponentStyle;
    isSmall?: boolean;
    withText?: boolean;
@@ -78,10 +78,10 @@ const ButtonElement = styled.button.withConfig({
       background-color: ${(props) => props.theme.colors.backgroundContent};
       background-image: none;
 
-      ${(props) => props.normalStyle as any}
+      ${(props) => props.style as any}
    }
 
-   ${(props) => props.normalStyle as any}
+   ${(props) => props.style as any}
 
    &:hover {
       ${(props) => props.hoverStyle as any}
@@ -188,16 +188,12 @@ const ButtonComponent: ButtonComponent = function Button<Value>({
 
    const isLoadingElement = isLoading || isLoadingHook;
 
-   const styledComponentStyles = useStyledComponentStyles(
-      {
-         ...betterHtmlContext.components.button?.style?.default,
-         ...props,
-      },
-      theme,
-   );
-   const dataProps = useComponentPropsWithPrefix(props, "data");
-   const ariaProps = useComponentPropsWithPrefix(props, "aria");
-   const restProps = useComponentPropsWithoutStyle(props);
+   const { style, hoverStyle, restProps } = useComponentPropsGrouper({
+      ...betterHtmlContext.components.button?.style?.default,
+      ...props,
+   });
+   const dataProps = useComponentPropsWithPrefix(restProps, "data");
+   const ariaProps = useComponentPropsWithPrefix(restProps, "aria");
 
    const onClickElement = useCallback(
       (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -212,7 +208,7 @@ const ButtonComponent: ButtonComponent = function Button<Value>({
          <Icon
             name={icon}
             color={iconColor ?? props.color ?? theme.colors.base}
-            size={iconSize ?? parseInt(styledComponentStyles.normalStyle.fontSize?.toString() ?? "16")}
+            size={iconSize ?? parseInt(style.fontSize?.toString() ?? "16")}
          />
       </Div.row>
    ) : undefined;
@@ -220,7 +216,7 @@ const ButtonComponent: ButtonComponent = function Button<Value>({
       <Image
          name={image}
          color={iconColor ?? props.color ?? theme.colors.base}
-         width={imageWidth ?? parseInt(styledComponentStyles.normalStyle.fontSize?.toString() ?? "16")}
+         width={imageWidth ?? parseInt(style.fontSize?.toString() ?? "16")}
          height={imageHeight}
       />
    ) : undefined;
@@ -243,10 +239,11 @@ const ButtonComponent: ButtonComponent = function Button<Value>({
          target={target}
          type={isSubmit && !isLoadingElement ? "submit" : "button"}
          onClick={!disabled && !isLoadingElement ? onClickElement : undefined}
-         {...styledComponentStyles}
+         style={style}
+         hoverStyle={hoverStyle}
+         {...restProps}
          {...dataProps}
          {...ariaProps}
-         {...restProps}
       >
          <Div.row
             alignItems="center"

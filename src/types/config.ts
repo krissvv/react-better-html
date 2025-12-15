@@ -4,16 +4,16 @@ import { IconsConfig } from "./icon";
 import { LoaderConfig } from "./loader";
 import { ComponentHoverStyle, ComponentStyle } from "./components";
 
-export type AppConfig = {
-   contentMaxWidth: number;
-};
-
 type ComponentStyleConfig<Subcomponents extends string> = {
    [key in Subcomponents]?: ComponentStyle & ComponentHoverStyle;
 };
 
 type ComponentTagReplacementConfig<Subcomponents extends string> = {
    [key in Subcomponents]?: React.ElementType;
+};
+
+export type AppConfig = {
+   contentMaxWidth: number;
 };
 
 export type BetterHtmlConfig = {

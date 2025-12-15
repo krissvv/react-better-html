@@ -57,3 +57,5 @@ This is enough for the components to work with the default configurations that t
 ## Problems?
 
 Ask for help on [Stack Overflow](https://stackoverflow.com/questions/ask), on our [GitHub repository](https://github.com/krissvv/react-better-html/issues/new) or contact the contributors.
+
+<!-- Continue with the form group of components -->

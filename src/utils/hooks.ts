@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { cssProps } from "../constants/css";
+import { cssProps, cssPropsToExclude } from "../constants/css";
 
 import { ReactRouterDomPluginOptions } from "../plugins";
 
 import { ComponentHoverStyle, ComponentPropWithRef, ComponentStyle } from "../types/components";
-import { Theme } from "../types/theme";
 import { OmitProps, PartialRecord } from "../types/app";
 
 import { InputFieldProps, TextareaFieldProps } from "../components/InputField";
@@ -13,77 +12,62 @@ import { DropdownProps } from "../components/Dropdown";
 import { ToggleInputProps, ToggleInputRef } from "../components/ToggleInput";
 import { usePlugin, useTheme } from "../components/BetterHtmlProvider";
 
-const cssPropsToExclude: (keyof React.CSSProperties)[] = [
-   "position",
-   "top",
-   "right",
-   "bottom",
-   "left",
-   "width",
-   "height",
-   "minWidth",
-   "minHeight",
-   "maxWidth",
-   "maxHeight",
-   "margin",
-   "marginTop",
-   "marginBottom",
-   "marginLeft",
-   "marginRight",
-   "marginBlock",
-   "marginInline",
-   "marginBlockStart",
-   "marginBlockEnd",
-   "marginInlineStart",
-   "marginInlineEnd",
-   "marginTrim",
-   "zIndex",
-];
-
-export function useStyledComponentStyles(
+export function useComponentPropsGrouper<Props extends object = {}>(
    props: ComponentStyle & ComponentHoverStyle,
-   theme?: Theme,
    /** @default false */
-   excludeProps?: boolean,
+   excludeStyleProps?: boolean,
 ): {
-   normalStyle: ComponentStyle;
+   style: ComponentStyle;
    hoverStyle: ComponentStyle;
+   excludeStyle: ComponentStyle;
+   restProps: Props;
 } {
+   const theme = useTheme();
+
    return useMemo(() => {
-      const normalStyle: ComponentStyle = {};
+      const style: ComponentStyle = {};
       const hoverStyle: ComponentStyle = {};
+      const excludeStyle: ComponentStyle = {};
+      const restProps = {} as Props;
 
       let haveHover = false;
 
       for (const key in props) {
-         if (excludeProps && cssPropsToExclude.includes(key as keyof React.CSSProperties)) continue;
+         const keyName = key as keyof ComponentStyle;
 
-         if (key.endsWith("Hover")) {
-            haveHover = true;
-
-            const normalKey = key.slice(0, -5) as keyof ComponentStyle;
-            (hoverStyle[normalKey] as any) = props[key as keyof ComponentStyle];
-
-            if (normalKey === "transition") hoverStyle.WebkitTransition = hoverStyle.transition;
+         if (excludeStyleProps && cssPropsToExclude.has(keyName.toLowerCase())) {
+            if (cssProps.has(keyName.toLowerCase())) {
+               (excludeStyle[keyName] as any) = props[keyName];
+            }
          } else {
-            if (!cssProps[key.toLowerCase()]) continue;
+            if (cssProps.has(keyName.toLowerCase())) {
+               (style[keyName] as any) = props[keyName];
 
-            (normalStyle[key as keyof ComponentStyle] as any) = props[key as keyof ComponentStyle];
+               if (keyName === "transition") style.WebkitTransition = style.transition;
+            } else if (keyName.endsWith("Hover") && cssProps.has(keyName.slice(0, -5).toLowerCase())) {
+               haveHover = true;
 
-            if (key === "transition") normalStyle.WebkitTransition = normalStyle.transition;
+               (hoverStyle[keyName.slice(0, -5) as keyof ComponentStyle] as any) = props[keyName];
+
+               if (keyName.slice(0, -5) === "transition") hoverStyle.WebkitTransition = hoverStyle.transition;
+            } else {
+               (restProps[keyName as keyof Props] as any) = props[keyName];
+            }
          }
       }
 
-      if (haveHover) {
-         normalStyle.transition = theme?.styles.transition ?? "";
-         normalStyle.WebkitTransition = normalStyle.transition;
+      if (haveHover && !style.transition) {
+         style.transition = theme.styles.transition;
+         style.WebkitTransition = theme.styles.transition;
       }
 
       return {
-         normalStyle,
+         style,
          hoverStyle,
+         excludeStyle,
+         restProps,
       };
-   }, [props, theme]);
+   }, [props]);
 }
 
 export function useComponentPropsWithPrefix<Props extends Record<string, any>, Prefix extends string>(
@@ -103,34 +87,6 @@ export function useComponentPropsWithPrefix<Props extends Record<string, any>, P
    }, [props, prefix]);
 }
 
-export function useComponentPropsWithExcludedStyle<Props extends Record<string, any>>(props: Props) {
-   return useMemo(
-      () =>
-         Object.keys(props).reduce((previousValue, currentValue) => {
-            const key = currentValue as keyof React.CSSProperties;
-
-            if (!cssPropsToExclude.includes(key)) return previousValue;
-
-            (previousValue[key] as any) = props[key];
-
-            return previousValue;
-         }, {} as Partial<Props>),
-      [props],
-   );
-}
-
-export function useComponentPropsWithoutStyle<Props extends Record<string, any>>(props: Props) {
-   return useMemo(
-      () =>
-         Object.keys(props).reduce((previousValue, currentValue) => {
-            if (!cssProps[currentValue.toLowerCase()]) previousValue[currentValue as keyof Props] = props[currentValue];
-
-            return previousValue;
-         }, {} as Partial<Props>),
-      [props],
-   );
-}
-
 export function useComponentInputFieldDateProps(
    props: InputFieldProps,
    holderRef?: React.RefObject<HTMLDivElement | null>,
@@ -139,7 +95,7 @@ export function useComponentInputFieldDateProps(
    internalValue: string;
    setInternalValue: React.Dispatch<React.SetStateAction<string>>;
    inputFieldProps: InputFieldProps;
-   insideInputFieldComponentProps: React.CSSProperties;
+   insideInputFieldComponentProps: ComponentStyle;
    isOpen: boolean;
 } {
    const theme = useTheme();
@@ -177,7 +133,7 @@ export function useComponentInputFieldDateProps(
       }),
       [props, internalValue, isOpen, isOpenLate, disabled],
    );
-   const insideInputFieldComponentProps = useMemo<React.CSSProperties>(
+   const insideInputFieldComponentProps = useMemo<ComponentStyle>(
       () => ({
          border: `1px solid ${isFocused ? theme.colors.primary : theme.colors.border}`,
          borderTop: "none",
