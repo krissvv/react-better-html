@@ -28,7 +28,25 @@ export type DropdownOption<Value, Data = unknown> = {
    disabled?: boolean;
    searchValues?: string[];
    data?: Data;
-};
+} & (
+   | {
+        renderType?: "default";
+     }
+   | {
+        renderType?: "chip";
+        chipProps?: OmitProps<
+           React.ComponentProps<typeof Chip>,
+           "text" | "value" | "onClick" | "onClickWithValue" | "ref"
+        >;
+     }
+   | {
+        renderType?: "chip.colored";
+        chipProps?: OmitProps<
+           React.ComponentProps<typeof Chip.colored>,
+           "text" | "value" | "onClick" | "onClickWithValue" | "ref"
+        >;
+     }
+);
 
 export type DropdownProps<Value, Data = unknown> = {
    label?: string;
@@ -320,7 +338,19 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
                         aria-selected={isSelected}
                         aria-disabled={isDisabled}
                      >
-                        {renderOption ? renderOption(option, index, isSelected) : <Text>{option.label}</Text>}
+                        {renderOption ? (
+                           renderOption(option, index, isSelected)
+                        ) : (
+                           <>
+                              {!option.renderType || option.renderType === "default" ? (
+                                 <Text>{option.label}</Text>
+                              ) : option.renderType === "chip" ? (
+                                 <Chip text={option.label} {...option.chipProps} />
+                              ) : option.renderType === "chip.colored" ? (
+                                 <Chip.colored text={option.label} withWhiteBackground {...option.chipProps} />
+                              ) : undefined}
+                           </>
+                        )}
                      </Div>
 
                      {renderOptionDivider
@@ -464,9 +494,25 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
                      transition={theme.styles.transition}
                   >
                      <Div.row width="100%" flexWrap="wrap" gap={theme.styles.gap}>
-                        {selectedOption.map((option) => (
-                           <Chip text={option.label} key={JSON.stringify(option)} />
-                        ))}
+                        {selectedOption.map((option) => {
+                           const ChipComponentTag =
+                              !option.renderType || option.renderType === "default" || option.renderType === "chip"
+                                 ? Chip
+                                 : option.renderType === "chip.colored"
+                                 ? Chip.colored
+                                 : Chip;
+
+                           return (
+                              <ChipComponentTag
+                                 text={option.label}
+                                 {...(option.renderType === "chip" || option.renderType === "chip.colored"
+                                    ? option.chipProps
+                                    : [])}
+                                 withWhiteBackground={option.renderType === "chip.colored"}
+                                 key={JSON.stringify(option)}
+                              />
+                           );
+                        })}
                      </Div.row>
                   </Div>
                ) : undefined

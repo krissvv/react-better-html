@@ -446,10 +446,16 @@ function App() {
                // highlight-start
                keyName: "age",
                filter: "list",
-               getValueForList: (item) => ({
-                  label: `Age ${item.age}`,
-                  value: item.age
-               })
+               list: [
+                  {
+                     value: 23,
+                     label: "Age 23"
+                  },
+                  {
+                     value: 28,
+                     label: "Age 28"
+                  }
+               ]
                // highlight-end
             }
          ]}
@@ -467,4 +473,4 @@ List filter support the following props:
 -  **`filter`** - must be set to `"list"`
 -  **`withTotalNumber`** - whether to show the total number of items in the filter modal
 -  **`withSearch`** - whether to render a search input in the filter modal
--  **`getValueForList`** - function to get the array of items to be displayed in the list as possible filter values
+-  **`list`** - the array of items to be displayed in the list as possible filter values

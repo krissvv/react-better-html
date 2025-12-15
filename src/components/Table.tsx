@@ -245,6 +245,8 @@ type ListFilterValue = {
    count: number;
 };
 
+export type TableListFilterListItem = OmitProps<ListFilterValue, "count">;
+
 export type TableFilterData =
    | {
         type: "number";
@@ -258,7 +260,7 @@ export type TableFilterData =
      }
    | {
         type: "list";
-        list?: ListFilterValue["value"][];
+        list: ListFilterValue["value"][];
      };
 
 //? Column types
@@ -308,7 +310,8 @@ type ListFilter<DataItem> = {
    filter?: "list";
    withTotalNumber?: boolean;
    withSearch?: boolean;
-   getValueForList?: (item: DataItem) => OmitProps<ListFilterValue, "count">;
+   list: TableListFilterListItem[];
+   getItemValue?: (item: DataItem) => ListFilterValue["value"];
 };
 
 export type TableColumn<DataItem> = {
@@ -778,7 +781,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                   if (filter.max !== undefined && maxDate && itemValue > maxDate) return false;
                } else if (column.filter === "list" && filter.type === "list") {
                   const itemValue: ListFilterValue["value"] =
-                     column.getValueForList?.(item).value ??
+                     column.getItemValue?.(item) ??
                      (column.type === "text" && column.keyName ? String(item[column.keyName]) : "");
 
                   if (!filter.list?.includes(itemValue)) return false;
@@ -802,46 +805,28 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
       return data.length > 0 && checkedItems.every((checked) => checked) && checkedItems.length === data.length;
    }, [data, checkedItems]);
    const possibleFilterListValues = useMemo<ListFilterValue[]>(() => {
-      if (!openedFilterColumn) return [];
+      if (!openedFilterColumn || openedFilterColumn.filter !== "list") return [];
 
-      return data.reduce((previousValue, currentValue) => {
-         const valueFromList =
-            openedFilterColumn.filter === "list" && openedFilterColumn.getValueForList
-               ? openedFilterColumn.getValueForList(currentValue)
-               : undefined;
+      return openedFilterColumn.list
+         .map<ListFilterValue>((item) => ({
+            ...item,
+            count: data.reduce<number>((previousValue, currentValue) => {
+               const value: ListFilterValue["value"] =
+                  openedFilterColumn.getItemValue?.(currentValue) ??
+                  (openedFilterColumn.type === "text" && openedFilterColumn.keyName
+                     ? String(currentValue[openedFilterColumn.keyName])
+                     : "");
 
-         const value: ListFilterValue["value"] | undefined = valueFromList
-            ? valueFromList.value
-            : openedFilterColumn.type === "text" && openedFilterColumn.keyName
-            ? String(currentValue[openedFilterColumn.keyName])
-            : undefined;
-         const label = valueFromList ? valueFromList.label : value;
-
-         let searchPassed = openedFilterColumn.filter === "list" && openedFilterColumn.withSearch ? false : true;
-         if (openedFilterColumn.filter === "list" && openedFilterColumn.withSearch) {
-            searchPassed = label?.toString().toLowerCase().includes(filterForm.values.search.toLowerCase()) ?? false;
-         }
-
-         if (value !== undefined && value !== null && value !== "" && searchPassed) {
-            if (previousValue.some((item) => item.value === value)) {
-               previousValue = previousValue.map((item) =>
-                  item.value === value
-                     ? {
-                          ...item,
-                          count: item.count + 1,
-                       }
-                     : item,
-               );
-            } else
-               previousValue.push({
-                  label: label?.toString() ?? "",
-                  value,
-                  count: 1,
-               });
-         }
-
-         return previousValue;
-      }, [] as ListFilterValue[]);
+               return previousValue + (item.value === value ? 1 : 0);
+            }, 0),
+         }))
+         .reduce<ListFilterValue[]>(
+            (previousValue, currentValue) =>
+               !previousValue.some((item) => item.value === currentValue.value)
+                  ? [...previousValue, currentValue]
+                  : previousValue,
+            [],
+         );
    }, [data, openedFilterColumn, filterForm.values.search]);
 
    const pageCountInternal = pageCount ?? (pageSize !== undefined ? Math.ceil(dataAfterFilter.length / pageSize) : 1);

@@ -10,6 +10,8 @@ import Div, { DivProps } from "./Div";
 import Text, { TextProps } from "./Text";
 import { useBetterHtmlContextInternal, useTheme } from "./BetterHtmlProvider";
 
+const borderRadiusOffset = 1.3;
+
 export type ChipProps<Value = unknown> = {
    text: string;
    /** @default theme.colors.textPrimary */
@@ -33,6 +35,8 @@ type ChipComponentType = {
          HTMLDivElement,
          OmitProps<ChipProps<Value>, "color" | "backgroundColor"> & {
             color?: string;
+            /** @default false */
+            withWhiteBackground?: boolean;
          }
       >,
    ) => React.ReactElement;
@@ -66,7 +70,7 @@ const ChipComponent: ChipComponentType = forwardRef(function Chip<Value>(
       <Div
          width="fit-content"
          backgroundColor={backgroundColor ?? theme.colors.backgroundSecondary}
-         borderRadius={isCircle ? 999 : borderRadius ?? theme.styles.borderRadius / 1.3}
+         borderRadius={isCircle ? 999 : borderRadius ?? theme.styles.borderRadius / borderRadiusOffset}
          paddingBlock={theme.styles.gap / 2}
          paddingInline={theme.styles.space / 1.5}
          filterHover={onClick || onClickWithValue ? filterHover().z1 : undefined}
@@ -80,13 +84,13 @@ const ChipComponent: ChipComponentType = forwardRef(function Chip<Value>(
    );
 }) as any;
 
-ChipComponent.colored = forwardRef(function Colored({ color, ...props }, ref) {
+ChipComponent.colored = forwardRef(function Colored({ color, withWhiteBackground, ...props }, ref) {
    const theme = useTheme();
    const { colorTheme } = useBetterHtmlContextInternal();
 
    const readyColor = color ?? theme.colors.textSecondary;
 
-   return (
+   const chip = (
       <ChipComponent
          color={colorTheme === "light" ? darkenColor(readyColor, 0.7) : lightenColor(readyColor, 0.7)}
          backgroundColor={readyColor + "40"}
@@ -94,6 +98,20 @@ ChipComponent.colored = forwardRef(function Colored({ color, ...props }, ref) {
          ref={ref}
          {...props}
       />
+   );
+
+   return withWhiteBackground ? (
+      <Div
+         width="fit-content"
+         backgroundColor={withWhiteBackground ? (colorTheme === "light" ? "#ffffff" : "#000000") : undefined}
+         borderRadius={
+            withWhiteBackground ? props.borderRadius ?? theme.styles.borderRadius / borderRadiusOffset + 0.3 : undefined
+         }
+      >
+         {chip}
+      </Div>
+   ) : (
+      chip
    );
 }) as ChipComponentType["colored"];
 

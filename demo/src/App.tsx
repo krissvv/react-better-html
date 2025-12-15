@@ -32,6 +32,7 @@ import {
    filterHover,
    SideMenu,
    Pagination,
+   TableListFilterListItem,
 } from "../../src";
 
 const data: {
@@ -101,7 +102,7 @@ const data: {
       email: "awd@awd.com",
       image: "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg",
       date: "2025-06-24T14:04:59.180489",
-      color: "green",
+      color: "blue",
    },
 ];
 
@@ -741,6 +742,31 @@ function App() {
                            withSearch
                            withMultiselect
                         />
+                        <Dropdown
+                           options={[
+                              {
+                                 label: "Option 1",
+                                 value: "1",
+                                 renderType: "chip.colored",
+                                 chipProps: { color: "#ff0000" },
+                              },
+                              {
+                                 label: "Option 2",
+                                 value: "2",
+                                 renderType: "chip.colored",
+                                 chipProps: { color: "#00ff00" },
+                              },
+                              {
+                                 label: "Option 3",
+                                 value: "3",
+                                 renderType: "chip.colored",
+                                 chipProps: { color: "#0000ff" },
+                              },
+                           ]}
+                           label="With multiselect"
+                           withSearch
+                           withMultiselect
+                        />
                      </Div.column>
                   </Tabs.content>
 
@@ -1099,10 +1125,14 @@ function App() {
                                  filter: "list",
                                  withTotalNumber: true,
                                  withSearch: true,
-                                 getValueForList: (item) => ({
-                                    label: `${item.color[0].toUpperCase()}${item.color.slice(1)}`,
-                                    value: item.color,
-                                 }),
+                                 list: data.reduce<TableListFilterListItem[]>((previousValue, currentValue) => {
+                                    previousValue.push({
+                                       value: currentValue.color,
+                                       label: `${currentValue.color[0].toUpperCase()}${currentValue.color.slice(1)}`,
+                                    });
+
+                                    return previousValue;
+                                 }, []),
                               },
                               {
                                  type: "text",
