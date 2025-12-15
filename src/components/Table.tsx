@@ -310,7 +310,7 @@ type ListFilter<DataItem> = {
    filter?: "list";
    withTotalNumber?: boolean;
    withSearch?: boolean;
-   list: TableListFilterListItem[];
+   list: (TableListFilterListItem | undefined)[];
    getItemValue?: (item: DataItem) => ListFilterValue["value"];
 };
 
@@ -808,6 +808,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
       if (!openedFilterColumn || openedFilterColumn.filter !== "list") return [];
 
       return openedFilterColumn.list
+         .filter((item) => item !== undefined)
          .map<ListFilterValue>((item) => ({
             ...item,
             count: data.reduce<number>((previousValue, currentValue) => {
