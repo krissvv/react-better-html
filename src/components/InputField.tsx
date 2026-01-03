@@ -1,24 +1,26 @@
 import { forwardRef, memo, useCallback, useState, useEffect, useMemo, useRef, useId } from "react";
+import {
+   AnyOtherString,
+   Country,
+   darkenColor,
+   lightenColor,
+   OmitProps,
+   useBooleanState,
+   useDebounceState,
+   countries,
+   IconName,
+   Theme,
+   useTheme,
+   useBetterCoreContext,
+} from "react-better-core";
 import styled from "styled-components";
 
-import { countries } from "../constants/countries";
 import { isMobileDevice } from "../constants";
 
 import { ComponentHoverStyle, ComponentPropWithRef, ComponentStyle } from "../types/components";
-import { AnyOtherString, OmitProps } from "../types/app";
-import { Theme } from "../types/theme";
-import { IconName } from "../types/icon";
-import { Country } from "../types/countries";
 
-import {
-   useBooleanState,
-   useComponentInputFieldDateProps,
-   useComponentPropsGrouper,
-   useComponentPropsWithPrefix,
-   useDebounceState,
-} from "../utils/hooks";
+import { useComponentInputFieldDateProps, useComponentPropsGrouper, useComponentPropsWithPrefix } from "../utils/hooks";
 import { getBrowser } from "../utils/functions";
-import { darkenColor, lightenColor } from "../utils/colorManipulation";
 
 import Text from "./Text";
 import Div from "./Div";
@@ -28,7 +30,6 @@ import Label from "./Label";
 import Dropdown, { DropdownOption } from "./Dropdown";
 import Image from "./Image";
 import Calendar from "./Calendar";
-import { useBetterHtmlContextInternal, useTheme } from "./BetterHtmlProvider";
 
 const buttonWidth = 50;
 const colorPickerSpacing = 4;
@@ -322,7 +323,7 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
 ) {
    const theme = useTheme();
    const internalId = useId();
-   const { colorTheme } = useBetterHtmlContextInternal();
+   const { colorTheme } = useBetterCoreContext();
    const [_, debouncedValue, setDebouncedValue] = useDebounceState<string>(
       props.value?.toString() ?? "",
       debounceDelay,
@@ -1183,6 +1184,8 @@ InputFieldComponent.color = forwardRef(function Color({ value, onChangeValue, ..
    );
 
    useEffect(() => {
+      if (value === undefined) return;
+
       setInputFieldValue(value);
    }, [value]);
 

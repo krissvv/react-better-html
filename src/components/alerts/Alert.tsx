@@ -1,10 +1,10 @@
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ThemeConfig, useTheme } from "react-better-core";
 import styled from "styled-components";
 
 import { defaultAlertDuration } from "../../constants/app";
 
 import { AlertDuration, Alert as AlertT, AlertType } from "../../types/alert";
-import { ThemeConfig } from "../../types/theme";
 
 import { AlertsPluginOptions, defaultAlertsPluginOptions } from "../../plugins";
 
@@ -12,7 +12,7 @@ import Div from "../Div";
 import Icon from "../Icon";
 import Text from "../Text";
 import Button from "../Button";
-import { useAlertControls, usePlugin, useTheme } from "../BetterHtmlProvider";
+import { useAlertControls, usePlugin } from "../BetterHtmlProvider";
 
 const StyledDiv = styled.div.withConfig({
    shouldForwardProp: (prop) => !["theme"].includes(prop),

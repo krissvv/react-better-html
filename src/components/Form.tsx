@@ -1,15 +1,13 @@
 import { Children, forwardRef, Fragment, memo, useMemo } from "react";
+import { AnyOtherString, LoaderName, OmitProps, useTheme } from "react-better-core";
 
 import { ComponentMarginProps, ComponentPropWithRef } from "../types/components";
-import { LoaderName } from "../types/loader";
-import { AnyOtherString, OmitProps } from "../types/app";
 
 import { useForm } from "../utils/hooks";
 
 import Div from "./Div";
 import Button from "./Button";
 import Divider from "./Divider";
-import { useTheme } from "./BetterHtmlProvider";
 
 export type FormProps = {
    form?: OmitProps<ReturnType<typeof useForm>, "focusField">;

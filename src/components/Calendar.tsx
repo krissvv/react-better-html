@@ -1,13 +1,11 @@
 import { useCallback, useMemo, useState, memo, useEffect, useId } from "react";
+import { Theme, useTheme } from "react-better-core";
 import styled from "styled-components";
-
-import { Theme } from "../types/theme";
 
 import Div from "./Div";
 import Text from "./Text";
 import Button from "./Button";
 import Icon from "./Icon";
-import { useTheme } from "./BetterHtmlProvider";
 
 const getMonthName = (month: number, short = false) => {
    return [

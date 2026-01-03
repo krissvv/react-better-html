@@ -1,4 +1,5 @@
 import { forwardRef, memo } from "react";
+import { useTheme } from "react-better-core";
 
 import { ComponentMarginProps, ComponentPropWithRef } from "../types/components";
 
@@ -7,7 +8,7 @@ import { useMediaQuery } from "../utils/hooks";
 import Div from "./Div";
 import Text, { TextAs } from "./Text";
 import Image from "./Image";
-import { useBetterHtmlContextInternal, useTheme } from "./BetterHtmlProvider";
+import { useBetterHtmlContextInternal } from "./BetterHtmlProvider";
 
 //* Used in DIV.box
 

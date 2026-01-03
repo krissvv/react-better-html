@@ -1,12 +1,10 @@
 import { ComponentProps, forwardRef, memo } from "react";
+import { OmitProps, useTheme } from "react-better-core";
 import styled from "styled-components";
 
 import { ComponentHoverStyle, ComponentPropWithRef, ComponentStyle } from "../types/components";
-import { OmitProps } from "../types/app";
 
 import { useComponentPropsGrouper, useComponentPropsWithPrefix } from "../utils/hooks";
-
-import { useTheme } from "./BetterHtmlProvider";
 
 const TextStyledComponent = styled.p.withConfig({
    shouldForwardProp: (prop) => !["style", "hoverStyle"].includes(prop),

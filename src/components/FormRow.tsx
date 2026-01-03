@@ -1,9 +1,7 @@
 import { forwardRef, memo } from "react";
+import { AnyOtherString, IconName, LoaderName, useTheme } from "react-better-core";
 
-import { IconName } from "../types/icon";
-import { AnyOtherString } from "../types/app";
 import { ComponentMarginProps, ComponentPropWithRef } from "../types/components";
-import { LoaderName } from "../types/loader";
 
 import { useMediaQuery } from "../utils/hooks";
 
@@ -12,7 +10,6 @@ import Icon from "./Icon";
 import Text, { TextAs } from "./Text";
 import Button from "./Button";
 import Loader from "./Loader";
-import { useTheme } from "./BetterHtmlProvider";
 
 export type FormRowProps = {
    oneItemOnly?: boolean;

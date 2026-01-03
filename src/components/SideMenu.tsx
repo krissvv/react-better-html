@@ -1,14 +1,18 @@
 import { createContext, memo, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import {
+   AnyOtherString,
+   AssetName,
+   IconName,
+   lightenColor,
+   useBetterCoreContext,
+   useBooleanState,
+   useTheme,
+} from "react-better-core";
 
 import { defaultSideMenuWidth } from "../constants/app";
 
-import { AnyOtherString } from "../types/app";
-import { IconName } from "../types/icon";
-import { AssetName } from "../types/asset";
-
-import { useBooleanState, useMediaQuery } from "../utils/hooks";
+import { useMediaQuery } from "../utils/hooks";
 import { filterHover } from "../utils/variableFunctions";
-import { lightenColor } from "../utils/colorManipulation";
 
 import { ReactRouterDomPluginOptions } from "../plugins";
 
@@ -20,7 +24,7 @@ import Image from "./Image";
 import PageHolder, { PageHolderProps } from "./PageHolder";
 import Loader from "./Loader";
 import Tooltip from "./Tooltip";
-import { useBetterHtmlContextInternal, usePlugin, useTheme } from "./BetterHtmlProvider";
+import { useBetterHtmlContextInternal, usePlugin } from "./BetterHtmlProvider";
 
 type SideMenuActiveItem = {
    href: string;
@@ -77,7 +81,8 @@ const MenuItemComponent = memo(function MenuItemComponent({ item, backgroundColo
    const theme = useTheme();
    const mediaQuery = useMediaQuery();
    const location = reactRouterDomPluginConfig.useLocation();
-   const { colorTheme, components, sideMenuIsCollapsed, setSideMenuIsCollapsed } = useBetterHtmlContextInternal();
+   const { components, sideMenuIsCollapsed, setSideMenuIsCollapsed } = useBetterHtmlContextInternal();
+   const { colorTheme } = useBetterCoreContext();
 
    const { activeItem, setActiveItem } = useSideMenuContext();
 

@@ -1,16 +1,15 @@
 import { forwardRef, memo, useCallback } from "react";
+import { OmitProps, useTheme } from "react-better-core";
 import styled, { WebTarget } from "styled-components";
 
 import { isMobileDevice } from "../constants";
 
 import { ComponentHoverStyle, ComponentPropWithRef, ComponentStyle } from "../types/components";
-import { OmitProps } from "../types/app";
 
 import { useComponentPropsWithPrefix, useComponentPropsGrouper } from "../utils/hooks";
 
 import Divider from "./Divider";
 import PageHeader, { PageHeaderProps } from "./PageHeader";
-import { useTheme } from "./BetterHtmlProvider";
 
 const DivStyledComponent = styled.div.withConfig({
    shouldForwardProp: (prop) => !["style", "hoverStyle"].includes(prop),

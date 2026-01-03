@@ -1,18 +1,13 @@
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
+import { AnyOtherString, AssetName, IconName, useBooleanState, useTheme } from "react-better-core";
 
-import { AnyOtherString } from "../types/app";
 import { ComponentPropWithRef } from "../types/components";
-import { IconName } from "../types/icon";
-import { AssetName } from "../types/asset";
-
-import { useBooleanState } from "../utils/hooks";
 
 import Div, { DivProps } from "./Div";
 import Icon from "./Icon";
 import Text, { TextAs } from "./Text";
 import Image from "./Image";
 import Divider from "./Divider";
-import { useTheme } from "./BetterHtmlProvider";
 
 const animationDurationClose = 0.15;
 const animationDurationOpen = animationDurationClose * 2;

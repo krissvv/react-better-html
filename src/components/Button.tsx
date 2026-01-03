@@ -1,12 +1,20 @@
 import { ComponentProps, memo, useCallback } from "react";
+import {
+   AnyOtherString,
+   AssetName,
+   Color,
+   ColorTheme,
+   IconName,
+   LoaderName,
+   OmitProps,
+   Theme,
+   useBetterCoreContext,
+   useLoader,
+   useTheme,
+} from "react-better-core";
 import styled, { css } from "styled-components";
 
-import { IconName } from "../types/icon";
-import { AssetName } from "../types/asset";
-import { LoaderName } from "../types/loader";
-import { AnyOtherString, OmitProps } from "../types/app";
 import { ComponentHoverStyle, ComponentStyle } from "../types/components";
-import { Color, ColorTheme, Theme } from "../types/theme";
 
 import { useComponentPropsGrouper, useComponentPropsWithPrefix } from "../utils/hooks";
 
@@ -14,7 +22,7 @@ import Div from "./Div";
 import Icon from "./Icon";
 import Loader from "./Loader";
 import Image from "./Image";
-import { useTheme, useLoader, useBetterHtmlContextInternal } from "./BetterHtmlProvider";
+import { useBetterHtmlContextInternal } from "./BetterHtmlProvider";
 
 const ButtonElement = styled.button.withConfig({
    shouldForwardProp: (prop) =>
@@ -184,12 +192,13 @@ const ButtonComponent: ButtonComponent = function Button<Value>({
 }: ButtonProps<Value>) {
    const theme = useTheme();
    const isLoadingHook = useLoader(loaderName);
-   const betterHtmlContext = useBetterHtmlContextInternal();
+   const { components } = useBetterHtmlContextInternal();
+   const { colorTheme } = useBetterCoreContext();
 
    const isLoadingElement = isLoading || isLoadingHook;
 
    const { style, hoverStyle, restProps } = useComponentPropsGrouper({
-      ...betterHtmlContext.components.button?.style?.default,
+      ...components.button?.style?.default,
       ...props,
    });
    const dataProps = useComponentPropsWithPrefix(restProps, "data");
@@ -221,14 +230,14 @@ const ButtonComponent: ButtonComponent = function Button<Value>({
       />
    ) : undefined;
 
-   const linkComponentTag = betterHtmlContext.components.button?.tagReplacement?.linkComponent ?? "a";
-   const buttonComponentTag = betterHtmlContext.components.button?.tagReplacement?.buttonComponent ?? "button";
+   const linkComponentTag = components.button?.tagReplacement?.linkComponent ?? "a";
+   const buttonComponentTag = components.button?.tagReplacement?.buttonComponent ?? "button";
 
    return (
       <ButtonElement
          as={(href ? linkComponentTag : buttonComponentTag) as any}
          theme={theme}
-         colorTheme={betterHtmlContext.colorTheme}
+         colorTheme={colorTheme}
          isSmall={isSmall}
          withText={text !== undefined}
          isLoading={isLoadingElement}

@@ -1,12 +1,18 @@
 import { memo, useCallback, forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import {
+   AnyOtherString,
+   ColorTheme,
+   IconName,
+   LoaderName,
+   OmitProps,
+   Theme,
+   useBetterCoreContext,
+   useTheme,
+} from "react-better-core";
 import styled from "styled-components";
 
-import { ColorTheme, Theme } from "../types/theme";
 import { ComponentPropWithRef } from "../types/components";
-import { AnyOtherString, OmitProps } from "../types/app";
-import { LoaderName } from "../types/loader";
-import { IconName } from "../types/icon";
 
 import { useUrlQuery } from "../utils/hooks";
 
@@ -14,7 +20,7 @@ import Div from "./Div";
 import Button from "./Button";
 import Text from "./Text";
 import Divider from "./Divider";
-import { useBetterHtmlContextInternal, usePlugin, useTheme } from "./BetterHtmlProvider";
+import { useBetterHtmlContextInternal, usePlugin } from "./BetterHtmlProvider";
 
 const DialogStylesElement = styled.dialog.withConfig({
    shouldForwardProp: (prop) => !["theme", "colorTheme", "opacity"].includes(prop),
@@ -139,7 +145,8 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
    const urlQuery = reactRouterDomPlugin ? useUrlQuery() : undefined;
 
    const theme = useTheme();
-   const { app, colorTheme } = useBetterHtmlContextInternal();
+   const { app } = useBetterHtmlContextInternal();
+   const { colorTheme } = useBetterCoreContext();
 
    const dialogRef = useRef<HTMLDialogElement>(null);
 

@@ -1,16 +1,13 @@
 import { memo, useCallback, useRef, useState, useEffect, forwardRef, useImperativeHandle, useMemo } from "react";
+import { AnyOtherString, IconName, OmitProps, Theme, useTheme } from "react-better-core";
 import styled, { css, RuleSet } from "styled-components";
 
-import { Theme } from "../types/theme";
 import { ComponentPropWithRef } from "../types/components";
-import { IconName } from "../types/icon";
-import { AnyOtherString, OmitProps } from "../types/app";
 
 import Div, { DivProps } from "./Div";
 import Text, { TextProps } from "./Text";
 import Divider, { HorizontalDividerProps } from "./Divider";
 import Icon from "./Icon";
-import { useTheme } from "./BetterHtmlProvider";
 
 type TooltipContainerProps = {
    theme: Theme;

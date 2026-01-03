@@ -1,11 +1,11 @@
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { useTheme } from "react-better-core";
 
 import { useMediaQuery } from "../utils/hooks";
 
 import Div from "./Div";
 import Button from "./Button";
 import Text from "./Text";
-import { useTheme } from "./BetterHtmlProvider";
 
 type PaginationProps = {
    currentPage?: number;

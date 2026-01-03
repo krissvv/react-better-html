@@ -1,14 +1,11 @@
-import { memo, useEffect } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
+import { useTheme } from "react-better-core";
 
 import { ComponentMarginProps } from "../types/components";
-
-import { useForm } from "../utils/hooks";
-import { colorThemeControls } from "../utils/variableFunctions";
 
 import Div from "./Div";
 import Text from "./Text";
 import ToggleInput from "./ToggleInput";
-import { useTheme } from "./BetterHtmlProvider";
 
 export type ColorThemeSwitchProps = {
    /** @default false */
@@ -26,15 +23,14 @@ const ColorThemeSwitchComponent: ColorThemeSwitchComponentType = function ColorT
    className,
    ...props
 }: ColorThemeSwitchProps) {
-   const form = useForm({
-      defaultValues: {
-         darkMode: localStorage.getItem("theme") === "dark",
-      },
-   });
+   const [value, setValue] = useState(localStorage.getItem("theme") === "dark");
 
-   useEffect(() => {
-      colorThemeControls.toggleTheme(form.values.darkMode ? "dark" : "light");
-   }, [form.values.darkMode]);
+   const onChangeSwitch = useCallback((checked: boolean) => {
+      setValue(checked);
+
+      document.querySelector("html")?.setAttribute("data-theme", checked ? "dark" : "light");
+   }, []);
+
    useEffect(() => {
       const html = document.querySelector("html");
 
@@ -43,13 +39,14 @@ const ColorThemeSwitchComponent: ColorThemeSwitchComponentType = function ColorT
       const observer = new MutationObserver((mutations) => {
          mutations.forEach((mutation) => {
             if (mutation.type === "attributes") {
-               form.setFieldValue("darkMode", html.getAttribute("data-theme") === "dark");
+               setValue(html.getAttribute("data-theme") === "dark");
             }
          });
       });
 
       observer.observe(html, {
          attributes: true,
+         attributeFilter: ["data-theme"],
       });
 
       return () => {
@@ -62,7 +59,8 @@ const ColorThemeSwitchComponent: ColorThemeSwitchComponentType = function ColorT
          className={`react-better-html-color-theme-switch ${
             withMoon ? ` react-better-html-color-theme-switch-with-moon` : ""
          }${className ? ` ${className}` : ""}`}
-         {...form.getSwitchProps("darkMode")}
+         checked={value}
+         onChange={onChangeSwitch}
          {...props}
       />
    );

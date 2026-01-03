@@ -10,14 +10,12 @@ import {
    useEffect,
    Fragment,
 } from "react";
+import { ColorTheme, darkenColor, OmitProps, Theme, useBetterCoreContext, useTheme } from "react-better-core";
 import styled, { css } from "styled-components";
 
-import { ColorTheme, Theme } from "../types/theme";
 import { ComponentMarginProps, ComponentPropWithRef, ComponentStyle } from "../types/components";
-import { OmitProps } from "../types/app";
 
 import { useForm, useMediaQuery } from "../utils/hooks";
-import { darkenColor } from "../utils/colorManipulation";
 
 import Div from "./Div";
 import ToggleInput, { ToggleInputProps } from "./ToggleInput";
@@ -32,7 +30,6 @@ import Form from "./Form";
 import Label from "./Label";
 import Icon from "./Icon";
 import Pagination from "./Pagination";
-import { useBetterHtmlContextInternal, useTheme } from "./BetterHtmlProvider";
 
 const defaultImageWidth = 160;
 const maximumVisiblePages = 11;
@@ -409,7 +406,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
 ) {
    const theme = useTheme();
    const mediaQuery = useMediaQuery();
-   const { colorTheme } = useBetterHtmlContextInternal();
+   const { colorTheme } = useBetterCoreContext();
 
    const filterModalRef = useRef<ModalRef>(null);
 

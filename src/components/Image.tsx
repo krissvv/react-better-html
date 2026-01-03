@@ -1,15 +1,13 @@
 import { forwardRef, memo, useEffect } from "react";
+import { AnyOtherString, AssetName, OmitProps, useBetterCoreContext, useTheme } from "react-better-core";
 import styled from "styled-components";
 
-import { AnyOtherString, OmitProps } from "../types/app";
 import { ComponentHoverStyle, ComponentPropWithRef, ComponentStyle } from "../types/components";
-import { AssetName } from "../types/asset";
 
 import { useComponentPropsGrouper, useComponentPropsWithPrefix } from "../utils/hooks";
 
 import Div from "./Div";
 import Text from "./Text";
-import { useBetterHtmlContextInternal, useTheme } from "./BetterHtmlProvider";
 
 const ImageElement = styled.img.withConfig({
    shouldForwardProp: (prop) => !["style", "hoverStyle"].includes(prop),
@@ -50,7 +48,7 @@ const Image: ImageComponent = forwardRef(function Image(
    { name, src, ...props }: ImageProps,
    ref: React.ForwardedRef<HTMLImageElement>,
 ) {
-   const { assets } = useBetterHtmlContextInternal();
+   const { assets } = useBetterCoreContext();
 
    const { style, hoverStyle, restProps } = useComponentPropsGrouper(props);
    const dataProps = useComponentPropsWithPrefix(restProps, "data");

@@ -1,5 +1,3 @@
-import { AssetsConfig } from "../types/asset";
+import { AssetsConfig } from "react-better-core";
 
-export const assets: AssetsConfig = {
-   logo: "",
-};
+export const assets: Partial<AssetsConfig> = {};

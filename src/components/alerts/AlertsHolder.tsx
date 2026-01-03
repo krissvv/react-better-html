@@ -1,10 +1,11 @@
 import { memo } from "react";
+import { useTheme } from "react-better-core";
 
 import { AlertsPluginOptions } from "../../plugins";
 
 import Div from "../Div";
 import Alert from "./Alert";
-import { useBetterHtmlContextInternal, usePlugin, useTheme } from "../BetterHtmlProvider";
+import { useBetterHtmlContextInternal, usePlugin } from "../BetterHtmlProvider";
 
 function AlertsHolder() {
    const theme = useTheme();

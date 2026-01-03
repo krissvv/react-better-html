@@ -1,10 +1,10 @@
 import { forwardRef, memo } from "react";
+import { useTheme } from "react-better-core";
 
 import { ComponentMarginProps, ComponentPropWithRef } from "../types/components";
 
 import Div from "./Div";
 import Text from "./Text";
-import { useTheme } from "./BetterHtmlProvider";
 
 type DividerProps = {
    /** @default 1 */

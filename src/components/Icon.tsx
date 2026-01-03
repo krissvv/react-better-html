@@ -1,14 +1,10 @@
 import { forwardRef, memo, useEffect } from "react";
+import { AnyOtherString, IconName, OmitProps, Theme, useBetterCoreContext, useTheme } from "react-better-core";
 import styled from "styled-components";
 
-import { AnyOtherString, OmitProps } from "../types/app";
 import { ComponentHoverStyle, ComponentPropWithRef, ComponentStyle } from "../types/components";
-import { IconName } from "../types/icon";
-import { Theme } from "../types/theme";
 
 import { useComponentPropsGrouper, useComponentPropsWithPrefix } from "../utils/hooks";
-
-import { useBetterHtmlContextInternal, useTheme } from "./BetterHtmlProvider";
 
 export type IconProps = {
    name: IconName | AnyOtherString;
@@ -51,7 +47,7 @@ const Icon: IconComponent = forwardRef(function Icon(
    ref: React.ForwardedRef<SVGSVGElement>,
 ) {
    const theme = useTheme();
-   const { icons } = useBetterHtmlContextInternal();
+   const { icons } = useBetterCoreContext();
 
    const { style, hoverStyle, restProps } = useComponentPropsGrouper(props);
    const dataProps = useComponentPropsWithPrefix(restProps, "data");

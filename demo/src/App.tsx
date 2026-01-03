@@ -365,6 +365,7 @@ function App() {
                            height={120}
                            backgroundColor={theme.colors.backgroundContent}
                            filterHover={filterHover().z1}
+                           cursor="pointer"
                         >
                            hover
                         </Div>
@@ -373,6 +374,7 @@ function App() {
                            height={120}
                            backgroundColor={theme.colors.backgroundContent}
                            filterHover={filterHover().z2}
+                           cursor="pointer"
                         >
                            hover
                         </Div>
@@ -381,6 +383,7 @@ function App() {
                            height={120}
                            backgroundColor={theme.colors.backgroundContent}
                            filterHover={filterHover().z3}
+                           cursor="pointer"
                         >
                            hover
                         </Div>

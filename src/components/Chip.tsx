@@ -1,14 +1,12 @@
 import { forwardRef, memo, useCallback } from "react";
+import { darkenColor, lightenColor, OmitProps, useBetterCoreContext, useTheme } from "react-better-core";
 
 import { ComponentPropWithRef } from "../types/components";
-import { OmitProps } from "../types/app";
 
-import { darkenColor, lightenColor } from "../utils/colorManipulation";
 import { filterHover } from "../utils/variableFunctions";
 
 import Div, { DivProps } from "./Div";
 import Text, { TextProps } from "./Text";
-import { useBetterHtmlContextInternal, useTheme } from "./BetterHtmlProvider";
 
 const borderRadiusOffset = 1.3;
 
@@ -86,7 +84,7 @@ const ChipComponent: ChipComponentType = forwardRef(function Chip<Value>(
 
 ChipComponent.colored = forwardRef(function Colored({ color, withWhiteBackground, ...props }, ref) {
    const theme = useTheme();
-   const { colorTheme } = useBetterHtmlContextInternal();
+   const { colorTheme } = useBetterCoreContext();
 
    const readyColor = color ?? theme.colors.textSecondary;
 

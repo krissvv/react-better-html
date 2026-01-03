@@ -1,7 +1,7 @@
 import { memo } from "react";
+import { useTheme } from "react-better-core";
 
 import Text from "./Text";
-import { useTheme } from "./BetterHtmlProvider";
 
 export type LabelProps = {
    text?: string;

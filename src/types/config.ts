@@ -1,7 +1,3 @@
-import { ColorTheme, ThemeConfig } from "./theme";
-import { AssetsConfig } from "./asset";
-import { IconsConfig } from "./icon";
-import { LoaderConfig } from "./loader";
 import { ComponentHoverStyle, ComponentStyle } from "./components";
 
 type ComponentStyleConfig<Subcomponents extends string> = {
@@ -18,11 +14,6 @@ export type AppConfig = {
 
 export type BetterHtmlConfig = {
    app: AppConfig;
-   theme: ThemeConfig;
-   colorTheme: ColorTheme;
-   icons: Partial<IconsConfig>;
-   assets: Partial<AssetsConfig>;
-   loaders: Partial<LoaderConfig>;
    sideMenuIsCollapsed: boolean;
    sideMenuIsOpenMobile: boolean;
    components: {

@@ -1,15 +1,17 @@
 import { forwardRef, Fragment, memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
-
-import { countries } from "../constants/countries";
+import {
+   getPluralWord,
+   OmitProps,
+   useBooleanState,
+   useDebounceState,
+   AnyOtherString,
+   Country,
+   countries,
+   IconName,
+   useTheme,
+} from "react-better-core";
 
 import { ComponentPropWithRef } from "../types/components";
-import { AnyOtherString, OmitProps } from "../types/app";
-import { IconName } from "../types/icon";
-import { Country } from "../types/countries";
-
-import { useBooleanState } from "../utils/hooks";
-import { useDebounceState } from "../utils/hooks";
-import { getPluralWord } from "../utils/functions";
 
 import Text from "./Text";
 import Div, { DivProps } from "./Div";
@@ -19,7 +21,6 @@ import Button from "./Button";
 import Loader from "./Loader";
 import Image from "./Image";
 import Chip from "./Chip";
-import { useTheme } from "./BetterHtmlProvider";
 
 export type DropdownOption<Value, Data = unknown> = {
    value: Value;

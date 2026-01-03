@@ -1,12 +1,9 @@
 import { memo } from "react";
+import { Color, OmitProps, useTheme } from "react-better-core";
 import styled from "styled-components";
-
-import { Color } from "../types/theme";
-import { OmitProps } from "../types/app";
 
 import Div, { DivProps } from "./Div";
 import Text from "./Text";
-import { useTheme } from "./BetterHtmlProvider";
 
 const StyledDiv = styled.div`
    @keyframes loaderAnimation {

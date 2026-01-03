@@ -1,17 +1,15 @@
 import { forwardRef, useCallback, useId, useState } from "react";
+import { OmitProps, Theme, useBooleanState, useTheme } from "react-better-core";
 import styled from "styled-components";
 
 import { ComponentHoverStyle, ComponentPropWithRef, ComponentStyle } from "../types/components";
-import { OmitProps } from "../types/app";
-import { Theme } from "../types/theme";
 
-import { useBooleanState, useComponentPropsGrouper, useComponentPropsWithPrefix } from "../utils/hooks";
+import { useComponentPropsGrouper, useComponentPropsWithPrefix } from "../utils/hooks";
 
 import Text from "./Text";
 import Div from "./Div";
 import Icon from "./Icon";
 import Label from "./Label";
-import { useTheme } from "./BetterHtmlProvider";
 
 const componentSize = 26;
 const switchComponentBallGap = 3;

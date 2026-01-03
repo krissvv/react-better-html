@@ -1,24 +1,30 @@
 import { createContext, memo, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import {
+   useBooleanState,
+   OmitProps,
+   DeepPartialRecord,
+   colorThemeControls,
+   useTheme,
+   Color,
+   BetterCoreProvider,
+   BetterCoreProviderConfig,
+   BetterCoreConfig,
+   useBetterCoreContext,
+} from "react-better-core";
 import { createGlobalStyle } from "styled-components";
 
-import { theme } from "../constants/theme";
+import { appConfig } from "../constants/app";
 import { icons } from "../constants/icons";
 import { assets } from "../constants/assets";
-import { appConfig } from "../constants/app";
 
 import { BetterHtmlConfig } from "../types/config";
-import { AnyOtherString, DeepPartialRecord, OmitProps } from "../types/app";
-import { ColorTheme } from "../types/theme";
-import { LoaderConfig, LoaderName } from "../types/loader";
 import { Alert } from "../types/alert";
 import { BetterHtmlPlugin, PluginName } from "../types/plugin";
-
-import { useBooleanState } from "../utils/hooks";
 
 import { TabGroup, TabsComponentState } from "./Tabs";
 import AlertsHolder from "./alerts/AlertsHolder";
 
-const GlobalStyle = createGlobalStyle<{ fontFamily: string; color: string; backgroundColor: string }>`
+const GlobalStyle = createGlobalStyle<{ fontFamily: string; color: Color; backgroundColor: Color }>`
    html {
       background-color: ${(props) => props.backgroundColor};
    }
@@ -47,7 +53,6 @@ const GlobalStyle = createGlobalStyle<{ fontFamily: string; color: string; backg
 `;
 
 export type BetterHtmlInternalConfig = BetterHtmlConfig & {
-   setLoaders: React.Dispatch<React.SetStateAction<Partial<LoaderConfig>>>;
    alerts: Alert[];
    setAlerts: React.Dispatch<React.SetStateAction<Alert[]>>;
    setSideMenuIsCollapsed: ReturnType<typeof useBooleanState>[1];
@@ -59,10 +64,11 @@ export type BetterHtmlInternalConfig = BetterHtmlConfig & {
 };
 
 const betterHtmlContext = createContext<BetterHtmlInternalConfig | undefined>(undefined);
-
+export let externalBetterCoreContextValue: BetterCoreConfig | undefined;
 export let externalBetterHtmlContextValue: BetterHtmlInternalConfig | undefined;
 
-export const useBetterHtmlContext = (): BetterHtmlConfig => {
+export const useBetterHtmlContext = (): BetterHtmlConfig & BetterCoreConfig => {
+   const coreContext = useBetterCoreContext();
    const context = useContext(betterHtmlContext);
 
    if (context === undefined)
@@ -70,9 +76,13 @@ export const useBetterHtmlContext = (): BetterHtmlConfig => {
          "`useBetterHtmlContext()` must be used within a `<BetterHtmlProvider>`. Make sure to add one at the root of your component tree.",
       );
 
-   const { setLoaders, plugins, componentsState, ...rest } = context;
+   const { alerts, setAlerts, setSideMenuIsCollapsed, setSideMenuIsOpenMobile, plugins, componentsState, ...rest } =
+      context;
 
-   return rest;
+   return {
+      ...coreContext,
+      ...rest,
+   };
 };
 
 export const useBetterHtmlContextInternal = (): BetterHtmlInternalConfig => {
@@ -84,58 +94,6 @@ export const useBetterHtmlContextInternal = (): BetterHtmlInternalConfig => {
       );
 
    return context;
-};
-
-export const useTheme = () => {
-   const context = useContext(betterHtmlContext);
-
-   if (context === undefined)
-      throw new Error(
-         "`useTheme()` must be used within a `<BetterHtmlProvider>`. Make sure to add one at the root of your component tree.",
-      );
-
-   return {
-      ...context.theme,
-      colors: context.theme.colors[context.colorTheme] ?? context.theme.colors.light,
-   };
-};
-
-export const useLoader = (loaderName?: LoaderName | AnyOtherString): boolean => {
-   const context = useContext(betterHtmlContext);
-
-   if (context === undefined)
-      throw new Error(
-         "`useLoader()` must be used within a `<BetterHtmlProvider>`. Make sure to add one at the root of your component tree.",
-      );
-
-   return loaderName ? context.loaders[loaderName.toString()] ?? false : false;
-};
-
-export const useLoaderControls = () => {
-   const context = useContext(betterHtmlContext);
-
-   if (context === undefined)
-      throw new Error(
-         "`useLoaderControls()` must be used within a `<BetterHtmlProvider>`. Make sure to add one at the root of your component tree.",
-      );
-
-   const startLoading = useCallback((loaderName: LoaderName | AnyOtherString) => {
-      context.setLoaders((oldValue) => ({
-         ...oldValue,
-         [loaderName.toString()]: true,
-      }));
-   }, []);
-   const stopLoading = useCallback((loaderName: LoaderName | AnyOtherString) => {
-      context.setLoaders((oldValue) => ({
-         ...oldValue,
-         [loaderName.toString()]: false,
-      }));
-   }, []);
-
-   return {
-      startLoading,
-      stopLoading,
-   };
 };
 
 export const useAlertControls = () => {
@@ -180,11 +138,11 @@ export const usePlugin = <T extends object>(pluginName: PluginName): BetterHtmlP
    ) as any;
 };
 
-type BetterHtmlProviderContentProps = {
+type BetterHtmlProviderInternalContentProps = {
    children?: React.ReactNode;
 };
 
-function BetterHtmlProviderContent({ children }: BetterHtmlProviderContentProps) {
+function BetterHtmlProviderInternalContent({ children }: BetterHtmlProviderInternalContentProps) {
    const theme = useTheme();
    const alertsPlugin = usePlugin("alerts");
 
@@ -205,17 +163,18 @@ function BetterHtmlProviderContent({ children }: BetterHtmlProviderContentProps)
 
 export type BetterHtmlProviderConfig = DeepPartialRecord<BetterHtmlConfig>;
 
-type BetterHtmlProviderProps = {
-   config?: BetterHtmlProviderConfig;
+type BetterProviderCommonProps = {
    plugins?: BetterHtmlPlugin[];
    children?: React.ReactNode;
 };
 
-function BetterHtmlProvider({ config, plugins, children }: BetterHtmlProviderProps) {
-   const [colorTheme, setColorTheme] = useState<ColorTheme>(
-      localStorage.getItem("theme") === "dark" ? "dark" : config?.colorTheme ?? "light",
-   );
-   const [loaders, setLoaders] = useState<Partial<LoaderConfig>>(config?.loaders ?? {});
+type BetterHtmlProviderInternalProps = BetterProviderCommonProps & {
+   config?: BetterHtmlProviderConfig;
+};
+
+function BetterHtmlProviderInternal({ config, plugins, children }: BetterHtmlProviderInternalProps) {
+   const betterCoreContext = useBetterCoreContext();
+
    const [alerts, setAlerts] = useState<Alert[]>([]);
    const [sideMenuIsCollapsed, setSideMenuIsCollapsed] = useBooleanState();
    const [sideMenuIsOpenMobile, setSideMenuIsOpenMobile] = useBooleanState();
@@ -228,33 +187,6 @@ function BetterHtmlProvider({ config, plugins, children }: BetterHtmlProviderPro
             ...appConfig,
             ...config?.app,
          },
-         theme: {
-            styles: {
-               ...theme.styles,
-               ...config?.theme?.styles,
-            },
-            colors: {
-               light: {
-                  ...theme.colors.light,
-                  ...config?.theme?.colors?.light,
-               },
-               dark: {
-                  ...theme.colors.dark,
-                  ...config?.theme?.colors?.dark,
-               },
-            },
-         },
-         colorTheme,
-         icons: {
-            ...icons,
-            ...config?.icons,
-         },
-         assets: {
-            ...assets,
-            ...config?.assets,
-         },
-         loaders,
-         setLoaders,
          alerts,
          setAlerts,
          sideMenuIsCollapsed,
@@ -274,7 +206,7 @@ function BetterHtmlProvider({ config, plugins, children }: BetterHtmlProviderPro
             },
          },
       }),
-      [config, colorTheme, loaders, alerts, sideMenuIsCollapsed, sideMenuIsOpenMobile, tabGroups, tabsWithDots],
+      [config, alerts, sideMenuIsCollapsed, sideMenuIsOpenMobile, plugins, tabGroups, tabsWithDots],
    );
 
    useEffect(() => {
@@ -284,21 +216,70 @@ function BetterHtmlProvider({ config, plugins, children }: BetterHtmlProviderPro
          plugin.initialize?.();
       });
    }, []);
+
+   externalBetterCoreContextValue = betterCoreContext;
+   externalBetterHtmlContextValue = readyConfig;
+
+   return (
+      <betterHtmlContext.Provider value={readyConfig}>
+         <BetterHtmlProviderInternalContent>{children}</BetterHtmlProviderInternalContent>
+      </betterHtmlContext.Provider>
+   );
+}
+
+type BetterHtmlProviderProps = BetterProviderCommonProps & {
+   config?: BetterCoreProviderConfig & BetterHtmlProviderConfig;
+};
+
+function BetterHtmlProvider({ config, ...props }: BetterHtmlProviderProps) {
+   const coreConfig = useMemo<BetterCoreProviderConfig>(
+      () => ({
+         theme: config?.theme,
+         colorTheme: config?.colorTheme ?? (localStorage.getItem("theme") === "dark" ? "dark" : "light"),
+         icons: {
+            ...icons,
+            ...config?.icons,
+         },
+         assets: {
+            ...assets,
+            ...config?.assets,
+         },
+         loaders: config?.loaders,
+      }),
+      [config],
+   );
+
+   const htmlConfig = useMemo<BetterHtmlProviderConfig>(
+      () => ({
+         app: config?.app,
+         sideMenuIsCollapsed: config?.sideMenuIsCollapsed,
+         sideMenuIsOpenMobile: config?.sideMenuIsOpenMobile,
+         components: config?.components,
+      }),
+      [config],
+   );
+
    useEffect(() => {
       const html = document.querySelector("html");
 
       if (!html) return;
 
+      html.setAttribute("data-theme", localStorage.getItem("theme") === "dark" ? "dark" : "light");
+
       const observer = new MutationObserver((mutations) => {
          mutations.forEach((mutation) => {
             if (mutation.type === "attributes") {
-               setColorTheme(html.getAttribute("data-theme") === "dark" ? "dark" : config?.colorTheme ?? "light");
+               const newColorTheme = html.getAttribute("data-theme") === "dark" ? "dark" : "light";
+
+               colorThemeControls.toggleTheme(newColorTheme);
+               localStorage.setItem("theme", newColorTheme);
             }
          });
       });
 
       observer.observe(html, {
          attributes: true,
+         attributeFilter: ["data-theme"],
       });
 
       return () => {
@@ -306,13 +287,11 @@ function BetterHtmlProvider({ config, plugins, children }: BetterHtmlProviderPro
       };
    }, []);
 
-   externalBetterHtmlContextValue = readyConfig;
-
    return (
-      <betterHtmlContext.Provider value={readyConfig}>
-         <BetterHtmlProviderContent>{children}</BetterHtmlProviderContent>
-      </betterHtmlContext.Provider>
+      <BetterCoreProvider config={coreConfig}>
+         <BetterHtmlProviderInternal config={htmlConfig} {...props} />
+      </BetterCoreProvider>
    );
 }
 
-export default memo(BetterHtmlProvider) as typeof BetterHtmlProvider;
+export default memo(BetterHtmlProvider);

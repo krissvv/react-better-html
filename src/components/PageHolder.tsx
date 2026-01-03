@@ -1,11 +1,12 @@
 import { forwardRef, memo } from "react";
+import { useTheme } from "react-better-core";
 
 import { ComponentPaddingProps, ComponentPropWithRef } from "../types/components";
 
 import { useMediaQuery } from "../utils/hooks";
 
 import Div from "./Div";
-import { useBetterHtmlContextInternal, useTheme } from "./BetterHtmlProvider";
+import { useBetterHtmlContextInternal } from "./BetterHtmlProvider";
 
 export type PageHolderProps = {
    /** @default false */

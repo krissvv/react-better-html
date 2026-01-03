@@ -1,13 +1,13 @@
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
+import { Color, useBetterCoreContext, useTheme } from "react-better-core";
 
-import { Color } from "../types/theme";
 import { ComponentMarginProps, ComponentPropWithRef } from "../types/components";
 
 import { useUrlQuery } from "../utils/hooks";
 
 import Div from "./Div";
 import Text from "./Text";
-import { useBetterHtmlContextInternal, usePlugin, useTheme } from "./BetterHtmlProvider";
+import { useBetterHtmlContextInternal, usePlugin } from "./BetterHtmlProvider";
 
 const tabBottomLineWidth = 2;
 const tabDotSize = 6;
@@ -52,7 +52,8 @@ const TabsComponent: TabsComponent = forwardRef(function Tabs(
 
    const theme = useTheme();
    const urlQuery = reactRouterDomPlugin ? useUrlQuery() : undefined;
-   const { colorTheme, componentsState } = useBetterHtmlContextInternal();
+   const { componentsState } = useBetterHtmlContextInternal();
+   const { colorTheme } = useBetterCoreContext();
 
    const firstRenderPassedRef = useRef<boolean>(false);
    const tabsRef = useRef<Record<string, HTMLDivElement | null>>({});
