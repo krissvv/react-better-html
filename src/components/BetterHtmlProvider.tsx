@@ -14,6 +14,7 @@ import {
 import { createGlobalStyle } from "styled-components";
 
 import { appConfig } from "../constants/app";
+import { theme } from "../constants/theme";
 import { icons } from "../constants/icons";
 import { assets } from "../constants/assets";
 
@@ -161,7 +162,7 @@ function BetterHtmlProviderInternalContent({ children }: BetterHtmlProviderInter
    );
 }
 
-export type BetterHtmlProviderConfig = DeepPartialRecord<BetterHtmlConfig>;
+export type BetterHtmlProviderInternalConfig = DeepPartialRecord<BetterHtmlConfig>;
 
 type BetterProviderCommonProps = {
    plugins?: BetterHtmlPlugin[];
@@ -169,7 +170,7 @@ type BetterProviderCommonProps = {
 };
 
 type BetterHtmlProviderInternalProps = BetterProviderCommonProps & {
-   config?: BetterHtmlProviderConfig;
+   config?: BetterHtmlProviderInternalConfig;
 };
 
 function BetterHtmlProviderInternal({ config, plugins, children }: BetterHtmlProviderInternalProps) {
@@ -227,14 +228,19 @@ function BetterHtmlProviderInternal({ config, plugins, children }: BetterHtmlPro
    );
 }
 
+export type BetterHtmlProviderConfig = BetterCoreProviderConfig & BetterHtmlProviderInternalConfig;
+
 type BetterHtmlProviderProps = BetterProviderCommonProps & {
-   config?: BetterCoreProviderConfig & BetterHtmlProviderConfig;
+   config?: BetterHtmlProviderConfig;
 };
 
 function BetterHtmlProvider({ config, ...props }: BetterHtmlProviderProps) {
    const coreConfig = useMemo<BetterCoreProviderConfig>(
       () => ({
-         theme: config?.theme,
+         theme: {
+            ...theme,
+            ...config?.theme,
+         },
          colorTheme: config?.colorTheme ?? (localStorage.getItem("theme") === "dark" ? "dark" : "light"),
          icons: {
             ...icons,
@@ -249,7 +255,7 @@ function BetterHtmlProvider({ config, ...props }: BetterHtmlProviderProps) {
       [config],
    );
 
-   const htmlConfig = useMemo<BetterHtmlProviderConfig>(
+   const htmlConfig = useMemo<BetterHtmlProviderInternalConfig>(
       () => ({
          app: config?.app,
          sideMenuIsCollapsed: config?.sideMenuIsCollapsed,
