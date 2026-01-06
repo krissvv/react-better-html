@@ -162,7 +162,7 @@ function BetterHtmlProviderInternalContent({ children }: BetterHtmlProviderInter
    );
 }
 
-export type BetterHtmlProviderInternalConfig = DeepPartialRecord<BetterHtmlConfig>;
+type BetterHtmlProviderInternalConfig = DeepPartialRecord<BetterHtmlConfig>;
 
 type BetterProviderCommonProps = {
    plugins?: BetterHtmlPlugin[];
