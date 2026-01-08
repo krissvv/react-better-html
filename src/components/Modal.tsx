@@ -1,4 +1,4 @@
-import { memo, useCallback, forwardRef, useImperativeHandle, useRef, useState } from "react";
+import { memo, useCallback, forwardRef, useImperativeHandle, useRef, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import {
    AnyOtherString,
@@ -9,6 +9,7 @@ import {
    PickValue,
    Theme,
    useBetterCoreContext,
+   useBooleanState,
    useTheme,
 } from "react-better-core";
 import styled from "styled-components";
@@ -84,6 +85,8 @@ export type ModalProps = {
    name?: string;
    overflow?: React.CSSProperties["overflow"];
    withoutCloseButton?: boolean;
+   /** @default false */
+   defaultIsOpened?: boolean;
    onOpen?: () => void;
    onClose?: () => void;
    children?: React.ReactNode;
@@ -141,6 +144,7 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
       name,
       overflow,
       withoutCloseButton,
+      defaultIsOpened = false,
       onOpen,
       onClose,
       children,
@@ -156,14 +160,14 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
 
    const dialogRef = useRef<HTMLDialogElement>(null);
 
-   const [isOpened, setIsOpened] = useState<boolean>(false);
-   const [isOpenedLate, setIsOpenedLate] = useState<boolean>(false);
+   const [isOpened, setIsOpened] = useBooleanState(false);
+   const [isOpenedLate, setIsOpenedLate] = useBooleanState(false);
 
    const onClickOpen = useCallback(() => {
       dialogRef.current?.showModal();
 
-      setIsOpened(true);
-      setIsOpenedLate(true);
+      setIsOpened.setTrue();
+      setIsOpenedLate.setTrue();
 
       if (urlQuery && name) {
          urlQuery.setQuery(
@@ -177,14 +181,14 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
       onOpen?.();
    }, [onOpen, urlQuery, name]);
    const onClickClose = useCallback(() => {
-      setIsOpened(false);
+      setIsOpened.setFalse();
       onClose?.();
 
       if (urlQuery && name) urlQuery.removeQuery(`${name}-modal`, false);
 
       setTimeout(() => {
          dialogRef.current?.close();
-         setIsOpenedLate(false);
+         setIsOpenedLate.setFalse();
       }, 0.2 * 1000);
    }, [onClose, urlQuery, name]);
    const onKeyDown = useCallback(
@@ -197,6 +201,12 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
       },
       [withoutCloseButton],
    );
+
+   useEffect(() => {
+      if (!defaultIsOpened) return;
+
+      onClickOpen();
+   }, []);
 
    useImperativeHandle(
       ref,

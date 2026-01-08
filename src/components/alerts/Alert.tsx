@@ -4,7 +4,7 @@ import styled from "styled-components";
 
 import { defaultAlertDuration } from "../../constants/app";
 
-import { AlertDuration, Alert as AlertT, AlertType } from "../../types/alert";
+import { AlertDisplay, AlertDuration, Alert as AlertT, AlertType } from "../../types/alert";
 
 import { AlertsPluginOptions, defaultAlertsPluginOptions } from "../../plugins";
 
@@ -161,6 +161,11 @@ function Alert({ alert }: AlertProps) {
       alert.duration ?? pluginConfig.defaultDuration ?? defaultAlertsPluginOptions.defaultDuration,
       alert,
    );
+   const defaultAlertDisplay: AlertDisplay =
+      alert.display ??
+      pluginConfig.defaultDisplay?.[alert.type] ??
+      defaultAlertsPluginOptions.defaultDisplay[alert.type] ??
+      "default";
 
    const intervalRef = useRef<number>(undefined);
    const startTimeRef = useRef<number>(Date.now());
@@ -189,7 +194,7 @@ function Alert({ alert }: AlertProps) {
          if (newProgress <= 0) {
             if (intervalRef.current) clearInterval(intervalRef.current);
 
-            if (alert.display === "prominent") return;
+            if (defaultAlertDisplay === "prominent") return;
 
             setIsRemoved(true);
 
@@ -203,7 +208,7 @@ function Alert({ alert }: AlertProps) {
             }, 0.2 * 1000 - 10);
          }
       }, updateInterval);
-   }, [alert, progress]);
+   }, [alert, progress, defaultAlertDisplay]);
    const onClickCloseAlert = useCallback(() => {
       setIsRemoved(true);
 
@@ -271,13 +276,6 @@ function Alert({ alert }: AlertProps) {
    );
 
    useEffect(() => {
-      if (alert.display === "prominent") {
-         setTimeout(() => {
-            modalRef.current?.open();
-         }, 0.1 * 1000);
-      }
-   }, []);
-   useEffect(() => {
       startTimeRef.current = Date.now();
       remainingTimeRef.current = defaultAlertDurationNumber;
       startProgressTimer();
@@ -299,8 +297,9 @@ function Alert({ alert }: AlertProps) {
 
    const alertTitle = alert.title ?? alertData[alert.type].title;
 
-   return alert.display === "prominent" ? (
+   return defaultAlertDisplay === "prominent" ? (
       <Modal
+         defaultIsOpened
          icon={alertData[alert.type].icon}
          title={alertTitle}
          description={alert.message}

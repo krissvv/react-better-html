@@ -1,4 +1,6 @@
-import { AlertDuration } from "../types/alert";
+import { PartialRecord } from "react-better-core";
+
+import { AlertDisplay, AlertDuration, AlertType } from "../types/alert";
 import { BetterHtmlPluginConstructor } from "../types/plugin";
 
 export type AlertsPluginOptions = {
@@ -8,6 +10,7 @@ export type AlertsPluginOptions = {
    align?: "left" | "center" | "right";
    /** @default "auto" */
    defaultDuration?: AlertDuration;
+   defaultDisplay?: PartialRecord<AlertType, AlertDisplay>;
    /** @default 460 */
    maxWidth?: number;
    /** @default true */
@@ -20,6 +23,7 @@ export const defaultAlertsPluginOptions: Required<AlertsPluginOptions> = {
    position: "bottom",
    align: "right",
    defaultDuration: "auto",
+   defaultDisplay: {},
    maxWidth: 460,
    withLoaderBar: true,
    withCloseButton: true,
