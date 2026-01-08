@@ -469,6 +469,69 @@ function App() {
                               }}
                            />
                         </Div.row>
+
+                        <Div.row gap={theme.styles.gap}>
+                           <Button
+                              text="Short info alert prominent"
+                              onClick={() => {
+                                 alertControls.createAlert({
+                                    type: "info",
+                                    message: "Lorem ipsum",
+                                    display: "prominent",
+                                 });
+                              }}
+                           />
+                           <Button
+                              text="Info alert prominent"
+                              onClick={() => {
+                                 alertControls.createAlert({
+                                    type: "info",
+                                    title: "Hello there",
+                                    message: "Lorem ipsum dolor sit amet consectetur",
+                                    duration: 1000,
+                                    display: "prominent",
+                                    onClose: (alert) => {
+                                       console.log("Alert closed", alert.id);
+                                    },
+                                 });
+                              }}
+                           />
+                           <Button
+                              text="Success alert prominent"
+                              onClick={() => {
+                                 alertControls.createAlert({
+                                    type: "success",
+                                    title: "Hello there",
+                                    message: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+                                    display: "prominent",
+                                 });
+                              }}
+                           />
+                           <Button
+                              text="Warning alert prominent"
+                              onClick={() => {
+                                 alertControls.createAlert({
+                                    type: "warning",
+                                    title: "Hello there",
+                                    message:
+                                       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ipsa nobis aspernatur.",
+                                    display: "prominent",
+                                 });
+                              }}
+                           />
+                           <Button
+                              text="Error alert prominent"
+                              onClick={() => {
+                                 alertControls.createAlert({
+                                    type: "error",
+                                    title: "Hello there",
+                                    message:
+                                       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ipsa nobis aspernatur. Commodi ipsa nobis aspernatur.",
+                                    display: "prominent",
+                                 });
+                              }}
+                           />
+                        </Div.row>
                      </Div.column>
                   </Tabs.content>
 

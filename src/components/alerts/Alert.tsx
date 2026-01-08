@@ -12,6 +12,7 @@ import Div from "../Div";
 import Icon from "../Icon";
 import Text from "../Text";
 import Button from "../Button";
+import Modal, { ModalRef } from "../Modal";
 import { useAlertControls, usePlugin } from "../BetterHtmlProvider";
 
 const StyledDiv = styled.div.withConfig({
@@ -154,6 +155,8 @@ function Alert({ alert }: AlertProps) {
 
    const pluginConfig = alertsPlugin?.getConfig() ?? {};
 
+   const modalRef = useRef<ModalRef>(null);
+
    const defaultAlertDurationNumber: number = getAlertDurationFromAuto(
       alert.duration ?? pluginConfig.defaultDuration ?? defaultAlertsPluginOptions.defaultDuration,
       alert,
@@ -185,6 +188,8 @@ function Alert({ alert }: AlertProps) {
 
          if (newProgress <= 0) {
             if (intervalRef.current) clearInterval(intervalRef.current);
+
+            if (alert.display === "prominent") return;
 
             setIsRemoved(true);
 
@@ -225,6 +230,19 @@ function Alert({ alert }: AlertProps) {
       setIsPaused(false);
       startProgressTimer();
    }, [startProgressTimer]);
+   const onClickAlertModalDone = useCallback(() => {
+      setIsRemoved(true);
+      modalRef.current?.close();
+
+      setTimeout(() => {
+         alertControls.removeAlert(alert.id);
+
+         if (!calledOnCloseRef.current) {
+            alert.onClose?.(alert);
+            calledOnCloseRef.current = true;
+         }
+      }, 0.2 * 1000 - 10);
+   }, [alert]);
 
    const alertData = useMemo<Record<AlertType, AlertData>>(
       () => ({
@@ -253,6 +271,13 @@ function Alert({ alert }: AlertProps) {
    );
 
    useEffect(() => {
+      if (alert.display === "prominent") {
+         setTimeout(() => {
+            modalRef.current?.open();
+         }, 0.1 * 1000);
+      }
+   }, []);
+   useEffect(() => {
       startTimeRef.current = Date.now();
       remainingTimeRef.current = defaultAlertDurationNumber;
       startProgressTimer();
@@ -272,7 +297,29 @@ function Alert({ alert }: AlertProps) {
            ]
    } ${theme.styles.transition}`;
 
-   return (
+   const alertTitle = alert.title ?? alertData[alert.type].title;
+
+   return alert.display === "prominent" ? (
+      <Modal
+         icon={alertData[alert.type].icon}
+         title={alertTitle}
+         description={alert.message}
+         titleColor={theme.colors.base}
+         descriptionColor={theme.colors.base + "a0"}
+         headerTextAlign="center"
+         headerBackgroundColor={alertData[alert.type].backgroundColor}
+         withoutCloseButton
+         ref={modalRef}
+      >
+         <Div.row width="100%" alignItems="center" justifyContent="center">
+            <Button
+               text="Close"
+               backgroundColor={alertData[alert.type].backgroundColor}
+               onClick={onClickAlertModalDone}
+            />
+         </Div.row>
+      </Modal>
+   ) : (
       <StyledDiv theme={theme}>
          <Div.box
             width="fit-content"
@@ -304,7 +351,7 @@ function Alert({ alert }: AlertProps) {
 
                   <Div.column flex={1} gap={theme.styles.gap / 2}>
                      <Text fontSize={18} fontWeight={700}>
-                        {alert.title ?? alertData[alert.type].title}
+                        {alertTitle}
                      </Text>
 
                      <Text color={theme.colors.textSecondary}>{alert.message}</Text>

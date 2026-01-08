@@ -1,5 +1,5 @@
 import { forwardRef, memo } from "react";
-import { useTheme } from "react-better-core";
+import { AnyOtherString, AssetName, IconName, useTheme } from "react-better-core";
 
 import { ComponentMarginProps, ComponentPropWithRef } from "../types/components";
 
@@ -8,13 +8,18 @@ import { useMediaQuery } from "../utils/hooks";
 import Div from "./Div";
 import Text, { TextAs } from "./Text";
 import Image from "./Image";
+import Icon from "./Icon";
 import { useBetterHtmlContextInternal } from "./BetterHtmlProvider";
 
 //* Used in DIV.box
 
 export type PageHeaderProps = {
+   icon?: IconName | AnyOtherString;
+   image?: AssetName | AnyOtherString;
    imageUrl?: string;
    imageSize?: number;
+   /** @default false */
+   imageAzProfileImage?: boolean;
    title?: string;
    /** @default "h1" */
    titleAs?: TextAs;
@@ -36,8 +41,11 @@ type PageHeaderComponentType = {
 
 const PageHeaderComponent: PageHeaderComponentType = forwardRef(function PageHeader(
    {
+      icon,
+      image,
       imageUrl,
       imageSize = 60,
+      imageAzProfileImage,
       title,
       titleAs = "h1",
       titleColor,
@@ -55,6 +63,9 @@ const PageHeaderComponent: PageHeaderComponentType = forwardRef(function PageHea
    const { app } = useBetterHtmlContextInternal();
    const mediaQuery = useMediaQuery();
 
+   const ImageTag = imageAzProfileImage ? Image.profileImage : Image;
+   const readyImageSize = imageSize ?? (mediaQuery.size600 ? 46 : 60);
+
    return (
       <Div.row
          alignItems="center"
@@ -62,7 +73,17 @@ const PageHeaderComponent: PageHeaderComponentType = forwardRef(function PageHea
          marginBottom={marginBottom ?? theme.styles.space * 2}
          ref={ref}
       >
-         {imageUrl && <Image.profileImage src={imageUrl} size={imageSize ?? (mediaQuery.size600 ? 46 : 60)} />}
+         {icon && <Icon name={icon} size={20} flexShrink={0} />}
+         {(image || imageUrl) && (
+            <ImageTag
+               name={image}
+               src={imageUrl}
+               width={readyImageSize}
+               height={readyImageSize}
+               size={readyImageSize}
+               flexShrink={0}
+            />
+         )}
 
          <Div.column
             alignItems={textAlign === "center" ? "center" : textAlign === "right" ? "flex-end" : undefined}

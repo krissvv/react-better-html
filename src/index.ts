@@ -50,7 +50,7 @@ import { isMobileDevice } from "./constants";
 
 import { type AppConfig, type BetterHtmlConfig } from "./types/config";
 import { type ComponentMarginProps, type ComponentPaddingProps, type ComponentHoverStyle } from "./types/components";
-import { type AlertType, type Alert } from "./types/alert";
+import { type AlertType, type AlertDuration, type AlertDisplay, type Alert } from "./types/alert";
 import { type PluginName, type BetterHtmlPlugin } from "./types/plugin";
 import { type BrowserName } from "./types/other";
 
@@ -108,6 +108,8 @@ export {
    ComponentPaddingProps,
    ComponentHoverStyle,
    AlertType,
+   AlertDuration,
+   AlertDisplay,
    Alert,
    PluginName,
    BetterHtmlPlugin,

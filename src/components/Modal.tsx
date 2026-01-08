@@ -6,6 +6,7 @@ import {
    IconName,
    LoaderName,
    OmitProps,
+   PickValue,
    Theme,
    useBetterCoreContext,
    useTheme,
@@ -20,6 +21,7 @@ import Div from "./Div";
 import Button from "./Button";
 import Text from "./Text";
 import Divider from "./Divider";
+import Icon from "./Icon";
 import { useBetterHtmlContextInternal, usePlugin } from "./BetterHtmlProvider";
 
 const DialogStylesElement = styled.dialog.withConfig({
@@ -70,10 +72,12 @@ export type ModalProps = {
     * @default 30% smaller than app.contentMaxWidth
     * */
    maxWidth?: number;
+   icon?: IconName | AnyOtherString;
    title?: string;
    titleColor?: React.CSSProperties["color"];
    description?: string;
    descriptionColor?: React.CSSProperties["color"];
+   headerTextAlign?: PickValue<NonNullable<React.CSSProperties["textAlign"]>, "left" | "center">;
    headerBackgroundColor?: React.CSSProperties["backgroundColor"];
    backgroundColor?: React.CSSProperties["backgroundColor"];
    /** @requires ReactRouterDomPlugin */
@@ -126,10 +130,12 @@ type ModalComponent = {
 const ModalComponent: ModalComponent = forwardRef(function Modal(
    {
       maxWidth,
+      icon,
       title,
       titleColor,
       description,
       descriptionColor,
+      headerTextAlign,
       headerBackgroundColor,
       backgroundColor,
       name,
@@ -204,6 +210,8 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
       [onClickOpen, onClickClose, isOpened],
    );
 
+   const headerVertical = headerTextAlign === "center";
+
    return createPortal(
       <DialogStylesElement
          theme={theme}
@@ -248,24 +256,59 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
                            paddingBlock={theme.styles.space}
                            transition={theme.styles.transition}
                         >
-                           <Div.column flex={1} gap={theme.styles.gap / 2}>
-                              <Text
-                                 as="h1"
-                                 color={titleColor ?? theme.colors.textPrimary}
-                                 transition={theme.styles.transition}
-                              >
-                                 {title}
-                              </Text>
+                           <Div.row
+                              flex={1}
+                              alignItems="center"
+                              gap={headerVertical ? theme.styles.space * 2 : theme.styles.space}
+                              invertFlexDirection={headerVertical}
+                           >
+                              {icon &&
+                                 (headerVertical ? (
+                                    <Div.row
+                                       width={76}
+                                       height={76}
+                                       alignItems="center"
+                                       justifyContent="center"
+                                       backgroundColor={titleColor ?? theme.colors.textPrimary}
+                                       borderRadius={999}
+                                    >
+                                       <Icon
+                                          name={icon}
+                                          size={36}
+                                          color={headerBackgroundColor ?? theme.colors.backgroundBase}
+                                          flexShrink={0}
+                                       />
+                                    </Div.row>
+                                 ) : (
+                                    <Icon
+                                       name={icon}
+                                       size={24}
+                                       color={titleColor ?? theme.colors.textPrimary}
+                                       flexShrink={0}
+                                    />
+                                 ))}
 
-                              {description && (
+                              <Div.column flex={1} gap={theme.styles.gap / 2}>
                                  <Text
-                                    color={descriptionColor ?? theme.colors.textSecondary}
+                                    as="h1"
+                                    textAlign={headerTextAlign}
+                                    color={titleColor ?? theme.colors.textPrimary}
                                     transition={theme.styles.transition}
                                  >
-                                    {description}
+                                    {title}
                                  </Text>
-                              )}
-                           </Div.column>
+
+                                 {description && (
+                                    <Text
+                                       textAlign={headerTextAlign}
+                                       color={descriptionColor ?? theme.colors.textSecondary}
+                                       transition={theme.styles.transition}
+                                    >
+                                       {description}
+                                    </Text>
+                                 )}
+                              </Div.column>
+                           </Div.row>
 
                            {!withoutCloseButton && (
                               <Button.icon

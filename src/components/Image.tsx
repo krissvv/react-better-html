@@ -81,8 +81,6 @@ Image.profileImage = forwardRef(function ProfileImage({ size = 40, letters, back
 
    return letters ? (
       <Div.row
-         width={size}
-         height={size}
          backgroundColor={backgroundColor ?? theme.colors.backgroundSecondary}
          border={`solid 1px ${theme.colors.border}`}
          borderRadius={999}
@@ -90,6 +88,8 @@ Image.profileImage = forwardRef(function ProfileImage({ size = 40, letters, back
          justifyContent="center"
          ref={ref}
          {...props}
+         width={size}
+         height={size}
       >
          <Text fontSize={size / 2.5} fontWeight={700}>
             {letters.toUpperCase().slice(0, 2)}
