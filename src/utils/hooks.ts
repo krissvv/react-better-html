@@ -539,13 +539,13 @@ export function useUrlQuery() {
 
    const reactRouterDomPluginConfig = reactRouterDomPlugin.getConfig();
 
-   const isInRouterContext = reactRouterDomPluginConfig.useInRouterContext();
+   // const isInRouterContext = reactRouterDomPluginConfig.useInRouterContext();
 
-   if (!isInRouterContext) {
-      throw new Error(
-         "`useUrlQuery` hook must be used inside a React Router context. Make sure your component is wrapped in a `<BrowserRouter>`, or another Router component.",
-      );
-   }
+   // if (!isInRouterContext) {
+   //    throw new Error(
+   //       "`useUrlQuery` hook must be used inside a React Router context. Make sure your component is wrapped in a `<BrowserRouter>`, or another Router component.",
+   //    );
+   // }
 
    const navigate = reactRouterDomPluginConfig.useNavigate();
    const [searchParams] = reactRouterDomPluginConfig.useSearchParams();
