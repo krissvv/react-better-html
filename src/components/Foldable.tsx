@@ -1,5 +1,5 @@
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
-import { AnyOtherString, AssetName, IconName, useBooleanState, useTheme } from "react-better-core";
+import { AnyOtherString, AssetName, IconName, OmitProps, useBooleanState, useTheme } from "react-better-core";
 
 import { ComponentPropWithRef } from "../types/components";
 
@@ -32,7 +32,7 @@ export type FoldableProps = {
    renderHeader?: (isOpen: boolean, toggleOpen: () => void) => React.ReactNode;
    onOpenChange?: (isOpen: boolean) => void;
    children?: React.ReactNode;
-} & DivProps;
+} & OmitProps<DivProps, "ref">;
 
 export type FoldableRef = {
    isOpen: boolean;
