@@ -30,6 +30,7 @@ export type LoaderProps = {
    disabled?: boolean;
 } & OmitProps<
    DivProps,
+   | "children"
    | "width"
    | "height"
    | "color"

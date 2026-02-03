@@ -42,8 +42,8 @@ export type FoldableRef = {
 };
 
 type FoldableComponentType = {
-   (props: ComponentPropWithRef<HTMLDivElement, FoldableProps>): React.ReactElement;
-   box: (props: ComponentPropWithRef<HTMLDivElement, FoldableProps>) => React.ReactElement;
+   (props: ComponentPropWithRef<FoldableRef, FoldableProps>): React.ReactElement;
+   box: (props: ComponentPropWithRef<FoldableRef, FoldableProps>) => React.ReactElement;
 };
 
 const FoldableComponent: FoldableComponentType = forwardRef<FoldableRef, FoldableProps>(function Foldable(
@@ -122,18 +122,14 @@ const FoldableComponent: FoldableComponentType = forwardRef<FoldableRef, Foldabl
       };
    }, [isOpen]);
 
-   useImperativeHandle(
-      ref,
-      (): FoldableRef => {
-         return {
-            open,
-            close,
-            toggle: toggleOpen,
-            isOpen,
-         };
-      },
-      [open, close, toggleOpen, isOpen],
-   );
+   useImperativeHandle(ref, (): FoldableRef => {
+      return {
+         open,
+         close,
+         toggle: toggleOpen,
+         isOpen,
+      };
+   }, [open, close, toggleOpen, isOpen]);
 
    return (
       <Div.column width="100%" {...props}>
