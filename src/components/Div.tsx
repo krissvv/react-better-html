@@ -62,6 +62,8 @@ type DivComponentType = {
          DivProps<Value> &
             OmitProps<PageHeaderProps, "marginBottom"> & {
                headerBackgroundColor?: string;
+               /** @default theme.colors.primary */
+               activeColor?: string;
                isActive?: boolean;
             }
       >,
@@ -172,6 +174,7 @@ DivComponent.box = forwardRef(function Box(
       rightElement,
       lightMode,
       headerBackgroundColor,
+      activeColor,
       isActive,
       children,
       ...props
@@ -182,13 +185,15 @@ DivComponent.box = forwardRef(function Box(
 
    const withClick = props.onClick || props.onClickWithValue;
 
+   const readyActiveColor = activeColor ?? theme.colors.primary;
+
    return (
       <DivComponent
          color={isActive ? theme.colors.base : undefined}
-         backgroundColor={isActive ? theme.colors.primary : theme.colors.backgroundContent}
-         border={`1px solid ${isActive ? theme.colors.primary : theme.colors.border}`}
+         backgroundColor={isActive ? readyActiveColor : theme.colors.backgroundContent}
+         border={`1px solid ${isActive ? readyActiveColor : theme.colors.border}`}
          borderRadius={theme.styles.borderRadius}
-         borderColorHover={withClick && !isActive ? theme.colors.primary : undefined}
+         borderColorHover={withClick && !isActive ? readyActiveColor : undefined}
          filterHover={withClick && isActive ? "brightness(0.9)" : undefined}
          cursor={withClick ? "pointer" : undefined}
          paddingBlock={title ? theme.styles.space : theme.styles.gap}
