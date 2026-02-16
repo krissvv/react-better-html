@@ -20,13 +20,13 @@ export type PageHeaderProps = {
    imageSize?: number;
    /** @default false */
    imageAzProfileImage?: boolean;
-   title?: string;
+   title?: string | React.ReactNode;
    /** @default "h1" */
    titleAs?: TextAs;
    /** @default textPrimary */
    titleColor?: React.CSSProperties["color"];
    titleRightElement?: React.ReactNode;
-   description?: string;
+   description?: string | React.ReactNode;
    /** @default textSecondary */
    descriptionColor?: React.CSSProperties["color"];
    textAlign?: React.CSSProperties["textAlign"];
@@ -95,27 +95,34 @@ const PageHeaderComponent: PageHeaderComponentType = forwardRef(function PageHea
                justifyContent={textAlign === "center" ? "center" : textAlign === "right" ? "flex-end" : undefined}
                gap={theme.styles.space}
             >
-               <Text
-                  as={titleAs}
-                  textAlign={textAlign}
-                  color={titleColor ?? (lightMode ? theme.colors.base : theme.colors.textPrimary)}
-               >
-                  {title}
-               </Text>
+               {typeof title === "string" ? (
+                  <Text
+                     as={titleAs}
+                     textAlign={textAlign}
+                     color={titleColor ?? (lightMode ? theme.colors.base : theme.colors.textPrimary)}
+                  >
+                     {title}
+                  </Text>
+               ) : (
+                  title
+               )}
 
                {titleRightElement}
             </Div.row>
 
-            {description && (
-               <Text
-                  maxWidth={!mediaQuery.size600 ? app.contentMaxWidth * 0.6 : undefined}
-                  textAlign={textAlign}
-                  color={descriptionColor ?? (lightMode ? theme.colors.base : theme.colors.textSecondary)}
-                  opacity={lightMode ? 0.7 : undefined}
-               >
-                  {description}
-               </Text>
-            )}
+            {description &&
+               (typeof description === "string" ? (
+                  <Text
+                     maxWidth={!mediaQuery.size600 ? app.contentMaxWidth * 0.6 : undefined}
+                     textAlign={textAlign}
+                     color={descriptionColor ?? (lightMode ? theme.colors.base : theme.colors.textSecondary)}
+                     opacity={lightMode ? 0.7 : undefined}
+                  >
+                     {description}
+                  </Text>
+               ) : (
+                  description
+               ))}
          </Div.column>
 
          {rightElement}

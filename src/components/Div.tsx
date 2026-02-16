@@ -162,8 +162,11 @@ DivComponent.grid = forwardRef(function Grid(props, ref) {
 
 DivComponent.box = forwardRef(function Box(
    {
+      icon,
+      image,
       imageUrl,
       imageSize,
+      imageAzProfileImage,
       title,
       titleAs,
       titleColor,
@@ -213,8 +216,11 @@ DivComponent.box = forwardRef(function Box(
                paddingTop={theme.styles.space}
             >
                <PageHeader
+                  icon={icon}
+                  image={image}
                   imageUrl={imageUrl}
                   imageSize={imageSize}
+                  imageAzProfileImage={imageAzProfileImage}
                   title={title}
                   titleAs={titleAs}
                   titleColor={titleColor}
