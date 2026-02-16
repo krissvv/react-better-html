@@ -324,8 +324,8 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
                            isDisabled
                               ? theme.colors.textSecondary + "80"
                               : isSelected
-                              ? theme.colors.base
-                              : theme.colors.textPrimary
+                                ? theme.colors.base
+                                : theme.colors.textPrimary
                         }
                         backgroundColor={isSelected ? theme.colors.primary : theme.colors.backgroundContent}
                         filter={isFocused ? (isDisabled ? "brightness(0.95)" : "brightness(0.9)") : undefined}
@@ -427,11 +427,8 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
    }, [withDebounce, onChangeSearch, debouncedSearchQuery]);
 
    const displayValue =
-      (withSearch && isFocused && searchQuery.length > 0
-         ? searchQuery
-         : !Array.isArray(selectedOption)
-         ? selectedOption?.label
-         : undefined) ?? "";
+      (withSearch && isFocused ? searchQuery : !Array.isArray(selectedOption) ? selectedOption?.label : undefined) ??
+      "";
    const withClearButton = isOpen && (Array.isArray(selectedOption) ? selectedOption.length > 0 : selectedOption);
    const readyPlaceholder =
       placeholder ??
@@ -475,7 +472,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
             }${isOpen ? " react-better-html-dropdown-open" : ""}${
                isOpenLate ? " react-better-html-dropdown-open-late" : ""
             }${inputFieldClassName ? ` ${inputFieldClassName}` : ""}`}
-            onClick={!disabled ? setIsOpen.toggle : undefined}
+            onClick={!disabled ? (withMultiselect ? setIsOpen.setTrue : setIsOpen.toggle) : undefined}
             onFocus={setIsFocused.setTrue}
             onBlur={setIsFocused.setFalse}
             onKeyDown={onKeyDownInputField}
@@ -500,8 +497,8 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
                               !option.renderType || option.renderType === "default" || option.renderType === "chip"
                                  ? Chip
                                  : option.renderType === "chip.colored"
-                                 ? Chip.colored
-                                 : Chip;
+                                   ? Chip.colored
+                                   : Chip;
 
                            return (
                               <ChipComponentTag
