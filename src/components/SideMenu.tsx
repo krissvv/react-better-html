@@ -26,6 +26,8 @@ import Loader from "./Loader";
 import Tooltip from "./Tooltip";
 import { useBetterHtmlContextInternal, usePlugin } from "./BetterHtmlProvider";
 
+const tabDotSize = 6;
+
 type SideMenuActiveItem = {
    href: string;
    length: number;
@@ -55,6 +57,7 @@ export type SideMenuItem = {
    href?: string;
    disabled?: boolean;
    hidden?: boolean;
+   withDot?: boolean;
    children?: SideMenuItem[];
    /** @default true */
    onClickCloseSideMenu?: boolean;
@@ -104,6 +107,11 @@ const MenuItemComponent = memo(function MenuItemComponent({ item, backgroundColo
          item.onClick?.(item);
       }
    }, [onClick, item, isCollapsed]);
+
+   const childrenHaveDot = useMemo<boolean>(
+      () => item.children?.some((child) => child.withDot) ?? false,
+      [item.children],
+   );
 
    const isActive = activeItem && item.href && activeItem.href === item.href;
 
@@ -175,6 +183,18 @@ const MenuItemComponent = memo(function MenuItemComponent({ item, backgroundColo
                   transition={theme.styles.transition}
                />
             )}
+
+            <Div
+               position="absolute"
+               top={(theme.styles.space - tabDotSize) / 2}
+               right={(theme.styles.space - tabDotSize) / 2}
+               width={tabDotSize}
+               height={tabDotSize}
+               backgroundColor={theme.colors.primary}
+               borderRadius={999}
+               opacity={item.withDot || (childrenHaveDot && !isOpened) ? 1 : 0}
+               transition={theme.styles.transition}
+            />
          </Div.row>
       </Tooltip>
    );
@@ -284,7 +304,7 @@ const MenuItemComponent = memo(function MenuItemComponent({ item, backgroundColo
    );
 });
 
-type SideMenuProps = {
+export type SideMenuProps = {
    items: SideMenuItem[];
    bottomItems?: SideMenuItem[];
    topSpace?: number;

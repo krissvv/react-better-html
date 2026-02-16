@@ -87,7 +87,7 @@ import Table, {
 import Tooltip, { type TooltipProps, type TooltipRef } from "./components/Tooltip";
 import Tabs, { type TabGroup, type TabsProps, type TabsRef } from "./components/Tabs";
 import Foldable, { type FoldableProps, type FoldableRef } from "./components/Foldable";
-import SideMenu, { type SideMenuItem } from "./components/SideMenu";
+import SideMenu, { type SideMenuProps, type SideMenuItem } from "./components/SideMenu";
 import Pagination from "./components/Pagination";
 
 export * from "./plugins";
@@ -194,6 +194,7 @@ export {
    FoldableProps,
    FoldableRef,
    SideMenu,
+   SideMenuProps,
    SideMenuItem,
    Pagination,
 };

@@ -195,6 +195,7 @@ function App() {
                {
                   text: "Main",
                   iconName: "filter",
+                  withDot: true,
                   href: "/",
                },
                {
@@ -204,6 +205,7 @@ function App() {
                      {
                         text: "Submenu item 1",
                         iconName: "filter",
+                        withDot: true,
                         href: "/submenu-item-1",
                      },
                      {
