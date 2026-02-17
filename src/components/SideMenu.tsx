@@ -231,8 +231,8 @@ const MenuItemComponent = memo(function MenuItemComponent({ item, backgroundColo
             : false,
       );
 
-      setIsOpened.setState(toBeOpened);
-   }, [item]);
+      if (!isCollapsed) setIsOpened.setState(toBeOpened);
+   }, [item, isCollapsed]);
    useEffect(() => {
       if (!isCollapsed) return;
 
