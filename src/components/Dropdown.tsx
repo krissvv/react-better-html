@@ -499,10 +499,26 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
                                  : option.renderType === "chip.colored"
                                    ? Chip.colored
                                    : Chip;
+                           const withXButton = isFocused || isOpen;
 
                            return (
                               <ChipComponentTag
                                  text={option.label}
+                                 afterText={
+                                    withXButton && (
+                                       <Button.icon
+                                          icon="XMark"
+                                          color={theme.colors.textSecondary}
+                                          size={14}
+                                          buttonSize={20}
+                                          value={option}
+                                          onClickWithValue={onClickOption}
+                                       />
+                                    )
+                                 }
+                                 height={20 + theme.styles.gap}
+                                 paddingRight={withXButton ? theme.styles.gap / 2 : undefined}
+                                 transition="none"
                                  {...(option.renderType === "chip" || option.renderType === "chip.colored"
                                     ? option.chipProps
                                     : [])}

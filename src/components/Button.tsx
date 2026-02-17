@@ -66,18 +66,18 @@ const ButtonElement = styled.button.withConfig({
               cursor: not-allowed;
            `
          : !props.isLoading
-         ? css`
-              cursor: pointer;
+           ? css`
+                cursor: pointer;
 
-              &:not(.secondary):hover {
-                 filter: ${props.colorTheme === "dark" ? "brightness(1.2)" : "brightness(0.9)"};
-              }
+                &:not(.secondary):hover {
+                   filter: ${props.colorTheme === "dark" ? "brightness(1.2)" : "brightness(0.9)"};
+                }
 
-              &.secondary:hover {
-                 border-color: ${props.theme.colors.primary};
-              }
-           `
-         : ""}
+                &.secondary:hover {
+                   border-color: ${props.theme.colors.primary};
+                }
+             `
+           : ""}
 
    &.secondary {
       padding-block: ${(props) =>
@@ -147,6 +147,7 @@ type ButtonComponent = {
          icon: IconName | AnyOtherString;
          /** @default 16 */
          size?: number;
+         buttonSize?: number;
          /** @default "#000000" */
          backgroundButtonColor?: string;
       },
@@ -213,7 +214,11 @@ const ButtonComponent: ButtonComponent = function Button<Value>({
    );
 
    const iconComponent = icon ? (
-      <Div.row height={20} alignItems="center" justifyContent="center">
+      <Div.row
+         height={iconSize ?? parseInt(style.fontSize?.toString() ?? "16")}
+         alignItems="center"
+         justifyContent="center"
+      >
          <Icon
             name={icon}
             color={iconColor ?? props.color ?? theme.colors.base}
@@ -321,18 +326,18 @@ ButtonComponent.destructive = function Destructive(props) {
    );
 } as ButtonComponent["destructive"];
 
-ButtonComponent.icon = function Icon({ size = 16, backgroundButtonColor, ...props }) {
+ButtonComponent.icon = function Icon({ size = 16, buttonSize, backgroundButtonColor, ...props }) {
    const theme = useTheme();
    const betterHtmlContext = useBetterHtmlContextInternal();
 
-   const buttonSize = size + theme.styles.space;
+   const readyButtonSize = buttonSize ?? size + theme.styles.space;
    const backgroundButtonColorReady = backgroundButtonColor ?? theme.colors.textPrimary;
 
    return (
       <ButtonComponent
          {...betterHtmlContext.components.button?.style?.icon}
-         width={buttonSize}
-         height={buttonSize}
+         width={readyButtonSize}
+         height={readyButtonSize}
          color={theme.colors.textPrimary}
          backgroundColor={backgroundButtonColorReady + "00"}
          backgroundImage="none"

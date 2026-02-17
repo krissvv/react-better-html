@@ -1,7 +1,7 @@
 import { forwardRef, memo, useCallback } from "react";
 import { darkenColor, lightenColor, OmitProps, useBetterCoreContext, useTheme } from "react-better-core";
 
-import { ComponentPropWithRef } from "../types/components";
+import { ComponentPaddingProps, ComponentPropWithRef } from "../types/components";
 
 import { filterHover } from "../utils/variableFunctions";
 
@@ -11,7 +11,9 @@ import Text, { TextProps } from "./Text";
 const borderRadiusOffset = 1.3;
 
 export type ChipProps<Value = unknown> = {
-   text: string;
+   text: string | React.ReactNode;
+   beforeText?: React.ReactNode;
+   afterText?: React.ReactNode;
    /** @default theme.colors.textPrimary */
    color?: string;
    /** @default backgroundSecondary */
@@ -23,7 +25,10 @@ export type ChipProps<Value = unknown> = {
    value?: Value;
    onClick?: (event: React.MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => void;
    onClickWithValue?: (value: Value) => void;
-} & Pick<DivProps, "border" | "borderColor" | "borderWidth" | "borderStyle"> &
+} & Pick<
+   DivProps,
+   "border" | "borderColor" | "borderWidth" | "borderStyle" | keyof ComponentPaddingProps | "transition" | "height"
+> &
    Pick<TextProps, "fontFamily" | "fontSize" | "fontWeight" | "fontStyle">;
 
 type ChipComponentType = {
@@ -43,6 +48,8 @@ type ChipComponentType = {
 const ChipComponent: ChipComponentType = forwardRef(function Chip<Value>(
    {
       text,
+      beforeText,
+      afterText,
       color,
       backgroundColor,
       borderRadius,
@@ -68,7 +75,7 @@ const ChipComponent: ChipComponentType = forwardRef(function Chip<Value>(
       <Div
          width="fit-content"
          backgroundColor={backgroundColor ?? theme.colors.backgroundSecondary}
-         borderRadius={isCircle ? 999 : borderRadius ?? theme.styles.borderRadius / borderRadiusOffset}
+         borderRadius={isCircle ? 999 : (borderRadius ?? theme.styles.borderRadius / borderRadiusOffset)}
          paddingBlock={theme.styles.gap / 2}
          paddingInline={theme.styles.space / 1.5}
          filterHover={onClick || onClickWithValue ? filterHover().z1 : undefined}
@@ -77,7 +84,11 @@ const ChipComponent: ChipComponentType = forwardRef(function Chip<Value>(
          {...props}
          ref={ref}
       >
-         <Text color={color ?? theme.colors.textPrimary}>{text}</Text>
+         <Div.row height="100%" alignItems="center" gap={theme.styles.gap}>
+            {beforeText}
+            {typeof text === "string" ? <Text color={color ?? theme.colors.textPrimary}>{text}</Text> : text}
+            {afterText}
+         </Div.row>
       </Div>
    );
 }) as any;
@@ -103,7 +114,9 @@ ChipComponent.colored = forwardRef(function Colored({ color, withWhiteBackground
          width="fit-content"
          backgroundColor={withWhiteBackground ? (colorTheme === "light" ? "#ffffff" : "#000000") : undefined}
          borderRadius={
-            withWhiteBackground ? props.borderRadius ?? theme.styles.borderRadius / borderRadiusOffset + 0.3 : undefined
+            withWhiteBackground
+               ? (props.borderRadius ?? theme.styles.borderRadius / borderRadiusOffset + 0.3)
+               : undefined
          }
       >
          {chip}
