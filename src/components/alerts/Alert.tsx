@@ -198,28 +198,34 @@ function Alert({ alert }: AlertProps) {
 
             setIsRemoved(true);
 
-            setTimeout(() => {
-               alertControls.removeAlert(alert.id);
+            setTimeout(
+               () => {
+                  alertControls.removeAlert(alert.id);
 
-               if (!calledOnCloseRef.current) {
-                  alert.onClose?.(alert);
-                  calledOnCloseRef.current = true;
-               }
-            }, 0.2 * 1000 - 10);
+                  if (!calledOnCloseRef.current) {
+                     alert.onClose?.(alert);
+                     calledOnCloseRef.current = true;
+                  }
+               },
+               0.2 * 1000 - 10,
+            );
          }
       }, updateInterval);
    }, [alert, progress, defaultAlertDisplay]);
    const onClickCloseAlert = useCallback(() => {
       setIsRemoved(true);
 
-      setTimeout(() => {
-         alertControls.removeAlert(alert.id);
+      setTimeout(
+         () => {
+            alertControls.removeAlert(alert.id);
 
-         if (!calledOnCloseRef.current) {
-            alert.onClose?.(alert);
-            calledOnCloseRef.current = true;
-         }
-      }, 0.2 * 1000 - 10);
+            if (!calledOnCloseRef.current) {
+               alert.onClose?.(alert);
+               calledOnCloseRef.current = true;
+            }
+         },
+         0.2 * 1000 - 10,
+      );
    }, [alert]);
    const onMouseEnter = useCallback(() => {
       setIsPaused(true);
@@ -239,14 +245,17 @@ function Alert({ alert }: AlertProps) {
       setIsRemoved(true);
       modalRef.current?.close();
 
-      setTimeout(() => {
-         alertControls.removeAlert(alert.id);
+      setTimeout(
+         () => {
+            alertControls.removeAlert(alert.id);
 
-         if (!calledOnCloseRef.current) {
-            alert.onClose?.(alert);
-            calledOnCloseRef.current = true;
-         }
-      }, 0.2 * 1000 - 10);
+            if (!calledOnCloseRef.current) {
+               alert.onClose?.(alert);
+               calledOnCloseRef.current = true;
+            }
+         },
+         0.2 * 1000 - 10,
+      );
    }, [alert]);
 
    const alertData = useMemo<Record<AlertType, AlertData>>(
@@ -353,7 +362,7 @@ function Alert({ alert }: AlertProps) {
                         {alertTitle}
                      </Text>
 
-                     <Text color={theme.colors.textSecondary}>{alert.message}</Text>
+                     {alert.message && <Text color={theme.colors.textSecondary}>{alert.message}</Text>}
                   </Div.column>
 
                   {pluginConfig.withCloseButton && (
