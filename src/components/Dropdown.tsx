@@ -290,6 +290,8 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
       (newValue: string) => {
          setSearchQuery(newValue);
 
+         setIsOpen.setTrue();
+
          if (withDebounce) setDebouncedSearchQuery(newValue);
          else onChangeSearch?.(newValue);
       },

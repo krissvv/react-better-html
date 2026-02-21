@@ -67,14 +67,14 @@ const InputElement = styled.input.withConfig({
       props.withLeftIcon
          ? `${props.theme.styles.space + 16 + props.theme.styles.space - 1}px`
          : props.withPrefix
-         ? `${props.theme.styles.space}px`
-         : undefined};
+           ? `${props.theme.styles.space}px`
+           : undefined};
    padding-right: ${(props) =>
       props.withRightIcon
          ? `${props.theme.styles.space + 16 + props.theme.styles.space - 1}px`
          : props.withSuffix
-         ? `${props.theme.styles.space}px`
-         : undefined};
+           ? `${props.theme.styles.space}px`
+           : undefined};
    transition: ${(props) => props.theme.styles.transition};
 
    &::placeholder {
@@ -483,7 +483,7 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
                as="span"
                display="block"
                fontSize={14}
-               color={errorText ? theme.colors.error : labelColor ?? theme.colors.textSecondary}
+               color={errorText ? theme.colors.error : (labelColor ?? theme.colors.textSecondary)}
             >
                {errorText || infoText}
             </Text>
@@ -586,7 +586,7 @@ InputFieldComponent.multiline = forwardRef(function Multiline(
                as="span"
                display="block"
                marginTop={theme.styles.gap / 2}
-               color={errorText ? theme.colors.error : props.labelColor ?? theme.colors.textSecondary}
+               color={errorText ? theme.colors.error : (props.labelColor ?? theme.colors.textSecondary)}
                fontSize={14}
             >
                {errorText || infoText}

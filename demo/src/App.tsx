@@ -650,6 +650,7 @@ function App() {
                         />
                         <InputField label="With prefix" placeholder="Placeholder" prefix={<>Hello</>} />
                         <InputField label="With suffix" placeholder="Placeholder" suffix={<>Hello</>} />
+                        <InputField type="number" label="Number input" />
                         <InputField.email />
                         <InputField.password />
                         <InputField.search />
