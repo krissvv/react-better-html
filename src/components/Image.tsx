@@ -38,6 +38,7 @@ type ImageComponent = {
             /** @default 40 */
             size?: number;
             letters?: string;
+            letterColor?: string;
             backgroundColor?: string;
          }
       >,
@@ -76,7 +77,10 @@ const Image: ImageComponent = forwardRef(function Image(
    );
 }) as any;
 
-Image.profileImage = forwardRef(function ProfileImage({ size = 40, letters, backgroundColor, ...props }, ref) {
+Image.profileImage = forwardRef(function ProfileImage(
+   { size = 40, letters, letterColor, backgroundColor, ...props },
+   ref,
+) {
    const theme = useTheme();
 
    return letters ? (
@@ -91,7 +95,7 @@ Image.profileImage = forwardRef(function ProfileImage({ size = 40, letters, back
          width={size}
          height={size}
       >
-         <Text fontSize={size / 2.5} fontWeight={700}>
+         <Text fontSize={size / 2.5} fontWeight={700} color={letterColor ?? theme.colors.textPrimary}>
             {letters.toUpperCase().slice(0, 2)}
          </Text>
       </Div.row>
