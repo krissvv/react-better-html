@@ -20,7 +20,7 @@ import { isMobileDevice } from "../constants";
 import { ComponentHoverStyle, ComponentPropWithRef, ComponentStyle } from "../types/components";
 
 import { useComponentInputFieldDateProps, useComponentPropsGrouper, useComponentPropsWithPrefix } from "../utils/hooks";
-import { getBrowser } from "../utils/functions";
+import { findClosestNumber, getBrowser } from "../utils/functions";
 
 import Text from "./Text";
 import Div from "./Div";
@@ -251,6 +251,8 @@ export type InputFieldProps = {
 export type TextareaFieldProps = OmitProps<InputFieldProps, "type"> &
    OmitProps<React.ComponentProps<"textarea">, "style" | "ref">;
 
+type InputFieldDateTimeExcludeProps = Pick<InputFieldProps, "min" | "max" | "minLength" | "maxLength">;
+
 type InputFieldComponentType = {
    (props: ComponentPropWithRef<HTMLInputElement, InputFieldProps>): React.ReactElement;
    multiline: (props: ComponentPropWithRef<HTMLTextAreaElement, TextareaFieldProps>) => React.ReactElement;
@@ -280,7 +282,9 @@ type InputFieldComponentType = {
    dateTime: (
       props: ComponentPropWithRef<
          HTMLInputElement,
-         InputFieldProps & {
+         OmitProps<InputFieldProps, keyof InputFieldDateTimeExcludeProps> & {
+            hoursToRender?: number[];
+            minutesToRender?: number[];
             minDate?: Date;
             maxDate?: Date;
             /** @default today */
@@ -290,7 +294,19 @@ type InputFieldComponentType = {
          }
       >,
    ) => React.ReactElement;
-   time: (props: ComponentPropWithRef<HTMLInputElement, InputFieldProps>) => React.ReactElement;
+   time: (
+      props: ComponentPropWithRef<
+         HTMLInputElement,
+         OmitProps<InputFieldProps, keyof InputFieldDateTimeExcludeProps>
+      > & {
+         hoursToRender?: number[];
+         minutesToRender?: number[];
+         /** @default 00:00 */
+         minTime?: string;
+         /** @default 23:59 */
+         maxTime?: string;
+      },
+   ) => React.ReactElement;
    color: (props: ComponentPropWithRef<HTMLInputElement, InputFieldProps>) => React.ReactElement;
 };
 
@@ -842,7 +858,15 @@ InputFieldComponent.date = forwardRef(function Date({ minDate, maxDate, ...props
 }) as InputFieldComponentType["date"];
 
 InputFieldComponent.dateTime = forwardRef(function DateTime(
-   { minDate, maxDate, defaultDateAfterTimePick, defaultTimeAfterDatePick = "00:00", ...props },
+   {
+      hoursToRender,
+      minutesToRender,
+      minDate,
+      maxDate,
+      defaultDateAfterTimePick,
+      defaultTimeAfterDatePick = "00:00",
+      ...props
+   },
    ref,
 ) {
    const theme = useTheme();
@@ -856,6 +880,15 @@ InputFieldComponent.dateTime = forwardRef(function DateTime(
    const { internalValue, setInternalValue, inputFieldProps, insideInputFieldComponentProps, isOpen } =
       useComponentInputFieldDateProps(props, holderRef, isMobileIOS);
 
+   const readyHours = useMemo<number[]>(
+      () => hoursToRender?.filter((hour) => hour >= 0 && hour <= 23) ?? hours,
+      [hoursToRender],
+   );
+   const readyMinutes = useMemo<number[]>(
+      () => minutesToRender?.filter((hour) => hour >= 0 && hour <= 59) ?? minutes,
+      [minutesToRender],
+   );
+
    const onChange = useCallback(
       (date?: string) => {
          const newValue = date ? `${date}T${internalValue?.toString().split("T")[1] ?? defaultTimeAfterDatePick}` : "";
@@ -864,6 +897,43 @@ InputFieldComponent.dateTime = forwardRef(function DateTime(
          setInternalValue(newValue);
       },
       [internalValue, defaultTimeAfterDatePick, inputFieldProps.onChangeValue],
+   );
+   const onBlur = useCallback(
+      (event: React.FocusEvent<HTMLInputElement>) => {
+         if (hoursToRender || minutesToRender) {
+            const value = event.target.value;
+
+            const hours = parseInt(value.split(":")[0] || "0");
+            const minutes = parseInt(value.split(":")[1] || "0");
+
+            const readyHour = readyHours.includes(hours) ? hours : findClosestNumber(readyHours, hours);
+            const readyMinute = readyMinutes.includes(minutes) ? minutes : findClosestNumber(readyMinutes, minutes);
+
+            const newTime = `${readyHour.toString().padStart(2, "0")}:${readyMinute.toString().padStart(2, "0")}`;
+
+            const today =
+               defaultDateAfterTimePick ??
+               `${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, "0")}-${new Date()
+                  .getDate()
+                  .toString()
+                  .padStart(2, "0")}`;
+            const newValue = `${(internalValue.trim() || today)?.toString().split("T")[0]}T${newTime}`;
+
+            inputFieldProps.onChangeValue?.(newValue);
+         }
+
+         inputFieldProps.onBlur?.(event);
+      },
+      [
+         defaultDateAfterTimePick,
+         internalValue,
+         hoursToRender,
+         minutesToRender,
+         readyHours,
+         readyMinutes,
+         inputFieldProps.onChangeValue,
+         inputFieldProps.onBlur,
+      ],
    );
    const onClickHour = useCallback(
       (hour: number) => {
@@ -956,7 +1026,7 @@ InputFieldComponent.dateTime = forwardRef(function DateTime(
                               overflowY="auto"
                               tabIndex={-1}
                            >
-                              {hours.map((hour) => {
+                              {readyHours.map((hour) => {
                                  const isSelected = hour.toString() === valueHour;
 
                                  return (
@@ -997,7 +1067,7 @@ InputFieldComponent.dateTime = forwardRef(function DateTime(
                               overflowY="auto"
                               tabIndex={-1}
                            >
-                              {minutes.map((minute) => {
+                              {readyMinutes.map((minute) => {
                                  const isSelected = minute.toString() === valueMinute;
 
                                  return (
@@ -1034,11 +1104,15 @@ InputFieldComponent.dateTime = forwardRef(function DateTime(
          ref={ref}
          {...props}
          {...inputFieldProps}
+         onBlur={onBlur}
       />
    );
 }) as InputFieldComponentType["dateTime"];
 
-InputFieldComponent.time = forwardRef(function Time({ ...props }, ref) {
+InputFieldComponent.time = forwardRef(function Time(
+   { hoursToRender, minutesToRender, minTime, maxTime, ...props },
+   ref,
+) {
    const theme = useTheme();
 
    const holderRef = useRef<HTMLDivElement>(null);
@@ -1047,9 +1121,69 @@ InputFieldComponent.time = forwardRef(function Time({ ...props }, ref) {
 
    const isMobileIOS = isMobileDevice && getBrowser() === "safari";
 
+   const minHours = minTime ? parseInt(minTime.split(":")[0]) : undefined;
+   const minMinutes = minTime ? parseInt(minTime.split(":")[1]) : undefined;
+
+   const maxHours = maxTime ? parseInt(maxTime.split(":")[0]) : undefined;
+   const maxMinutes = maxTime ? parseInt(maxTime.split(":")[1]) : undefined;
+
    const { internalValue, setInternalValue, inputFieldProps, insideInputFieldComponentProps, isOpen } =
       useComponentInputFieldDateProps(props, holderRef, isMobileIOS);
 
+   const readyHours = useMemo<number[]>(
+      () => hoursToRender?.filter((hour) => hour >= 0 && hour <= 23) ?? hours,
+      [hoursToRender],
+   );
+   const readyMinutes = useMemo<number[]>(
+      () => minutesToRender?.filter((hour) => hour >= 0 && hour <= 59) ?? minutes,
+      [minutesToRender],
+   );
+
+   const onBlur = useCallback(
+      (event: React.FocusEvent<HTMLInputElement>) => {
+         if (!!minHours || !!maxHours || !!minMinutes || !!maxMinutes || hoursToRender || minutesToRender) {
+            const value = event.target.value;
+
+            const hours = parseInt(value.split(":")[0] || "0");
+            const minutes = parseInt(value.split(":")[1] || "0");
+
+            const readyHour = readyHours.includes(hours) ? hours : findClosestNumber(readyHours, hours);
+            const readyMinute = readyMinutes.includes(minutes) ? minutes : findClosestNumber(readyMinutes, minutes);
+
+            const newValue = `${(minHours && readyHour < minHours
+               ? minHours
+               : maxHours && readyHour > maxHours
+                 ? maxHours
+                 : readyHour
+            )
+               .toString()
+               .padStart(2, "0")}:${(minMinutes && readyMinute < minMinutes
+               ? minMinutes
+               : maxHours && readyMinute > maxHours
+                 ? maxHours
+                 : readyMinute
+            )
+               .toString()
+               .padStart(2, "0")}`;
+
+            inputFieldProps.onChangeValue?.(newValue);
+         }
+
+         inputFieldProps.onBlur?.(event);
+      },
+      [
+         minHours,
+         maxHours,
+         minMinutes,
+         maxMinutes,
+         hoursToRender,
+         minutesToRender,
+         readyHours,
+         readyMinutes,
+         inputFieldProps.onChangeValue,
+         inputFieldProps.onBlur,
+      ],
+   );
    const onClickHour = useCallback(
       (hour: number) => {
          const value = `${hour.toString().padStart(2, "0")}:${internalValue?.toString().split(":")[1] || "00"}`;
@@ -1107,8 +1241,9 @@ InputFieldComponent.time = forwardRef(function Time({ ...props }, ref) {
                         overflowY="auto"
                         tabIndex={-1}
                      >
-                        {hours.map((hour) => {
+                        {readyHours.map((hour) => {
                            const isSelected = hour.toString() === valueHour;
+                           const isDisabled = (minHours && hour < minHours) || (maxHours && hour > maxHours);
 
                            return (
                               <Div.row
@@ -1117,10 +1252,11 @@ InputFieldComponent.time = forwardRef(function Time({ ...props }, ref) {
                                  color={isSelected ? theme.colors.base : theme.colors.textPrimary}
                                  backgroundColor={isSelected ? theme.colors.primary : theme.colors.backgroundContent}
                                  filterHover="brightness(0.9)"
-                                 cursor="pointer"
+                                 cursor={isDisabled ? "not-allowed" : "pointer"}
                                  padding={`${theme.styles.space / 2}px ${theme.styles.space + theme.styles.gap}px`}
+                                 opacity={isDisabled ? 0.6 : undefined}
                                  value={hour}
-                                 onClickWithValue={onClickHour}
+                                 onClickWithValue={!isDisabled ? onClickHour : undefined}
                                  ref={isSelected ? selectedHourRef : undefined}
                                  key={hour}
                               >
@@ -1137,8 +1273,10 @@ InputFieldComponent.time = forwardRef(function Time({ ...props }, ref) {
                         overflowY="auto"
                         tabIndex={-1}
                      >
-                        {minutes.map((minute) => {
+                        {readyMinutes.map((minute) => {
                            const isSelected = minute.toString() === valueMinute;
+                           const isDisabled =
+                              (minMinutes && minute < minMinutes) || (maxMinutes && minute > maxMinutes);
 
                            return (
                               <Div.row
@@ -1147,10 +1285,11 @@ InputFieldComponent.time = forwardRef(function Time({ ...props }, ref) {
                                  color={isSelected ? theme.colors.base : theme.colors.textPrimary}
                                  backgroundColor={isSelected ? theme.colors.primary : theme.colors.backgroundContent}
                                  filterHover="brightness(0.9)"
-                                 cursor="pointer"
+                                 cursor={isDisabled ? "not-allowed" : "pointer"}
                                  padding={`${theme.styles.space / 2}px ${theme.styles.space + theme.styles.gap}px`}
+                                 opacity={isDisabled ? 0.6 : undefined}
                                  value={minute}
-                                 onClickWithValue={onClickMinute}
+                                 onClickWithValue={!isDisabled ? onClickMinute : undefined}
                                  ref={isSelected ? selectedMinuteRef : undefined}
                                  key={minute}
                               >
@@ -1168,6 +1307,7 @@ InputFieldComponent.time = forwardRef(function Time({ ...props }, ref) {
          {...props}
          {...inputFieldProps}
          minWidth={buttonWidth * 2 + 2}
+         onBlur={onBlur}
       />
    );
 }) as InputFieldComponentType["time"];

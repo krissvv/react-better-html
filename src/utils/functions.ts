@@ -74,3 +74,19 @@ export const decryptString = <ReturnValue extends string>(text: string): ReturnV
 
    return decrypted.toString(CryptoJS.enc.Utf8) as ReturnValue;
 };
+
+export function findClosestNumber(numbers: number[], target: number): number {
+   let closest = numbers[0];
+   let minDistance = Math.abs(target - numbers[0]);
+
+   for (let index = 1; index < numbers.length; index++) {
+      const distance = Math.abs(target - numbers[index]);
+
+      if (distance < minDistance || (distance === minDistance && numbers[index] < closest)) {
+         closest = numbers[index];
+         minDistance = distance;
+      }
+   }
+
+   return closest;
+}

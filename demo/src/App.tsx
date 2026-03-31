@@ -659,7 +659,13 @@ function App() {
                         <InputField.phoneNumber label="Phone number" />
                         <InputField.date label="Date" leftIcon="XMark" />
                         <InputField.dateTime label="Date & Time" />
+                        <InputField.dateTime
+                           label="Date & Time with small hours"
+                           hoursToRender={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]}
+                        />
                         <InputField.time label="Time" />
+                        <InputField.time label="Time with small minutes" minutesToRender={[0, 15, 30, 45]} />
+                        <InputField.time label="Time with minTime" minTime="4:30" />
                         <InputField.color label="Color" />
 
                         <InputField.multiline placeholder="Placeholder" />
