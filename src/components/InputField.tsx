@@ -1154,12 +1154,9 @@ InputFieldComponent.time = forwardRef(function Time(
                minHours && readyHour < minHours ? minHours : maxHours && readyHour > maxHours ? maxHours : readyHour;
 
             const finalMinute =
-               minHours !== undefined && minMinutes !== undefined && finalHour === minHours && readyMinute < minMinutes
+               !!minHours && !!minMinutes && finalHour === minHours && readyMinute < minMinutes
                   ? minMinutes
-                  : maxHours !== undefined &&
-                      maxMinutes !== undefined &&
-                      finalHour === maxHours &&
-                      readyMinute > maxMinutes
+                  : !!maxHours && !!maxMinutes && finalHour === maxHours && readyMinute > maxMinutes
                     ? maxMinutes
                     : readyMinute;
 
