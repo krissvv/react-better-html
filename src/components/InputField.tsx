@@ -1150,21 +1150,20 @@ InputFieldComponent.time = forwardRef(function Time(
             const readyHour = readyHours.includes(hours) ? hours : findClosestNumber(readyHours, hours);
             const readyMinute = readyMinutes.includes(minutes) ? minutes : findClosestNumber(readyMinutes, minutes);
 
-            const newValue = `${(minHours && readyHour < minHours
-               ? minHours
-               : maxHours && readyHour > maxHours
-                 ? maxHours
-                 : readyHour
-            )
-               .toString()
-               .padStart(2, "0")}:${(minMinutes && readyMinute < minMinutes
-               ? minMinutes
-               : maxHours && readyMinute > maxHours
-                 ? maxHours
-                 : readyMinute
-            )
-               .toString()
-               .padStart(2, "0")}`;
+            const finalHour =
+               minHours && readyHour < minHours ? minHours : maxHours && readyHour > maxHours ? maxHours : readyHour;
+
+            const finalMinute =
+               minHours !== undefined && minMinutes !== undefined && finalHour === minHours && readyMinute < minMinutes
+                  ? minMinutes
+                  : maxHours !== undefined &&
+                      maxMinutes !== undefined &&
+                      finalHour === maxHours &&
+                      readyMinute > maxMinutes
+                    ? maxMinutes
+                    : readyMinute;
+
+            const newValue = `${finalHour.toString().padStart(2, "0")}:${finalMinute.toString().padStart(2, "0")}`;
 
             inputFieldProps.onChangeValue?.(newValue);
          }
@@ -1275,8 +1274,17 @@ InputFieldComponent.time = forwardRef(function Time(
                      >
                         {readyMinutes.map((minute) => {
                            const isSelected = minute.toString() === valueMinute;
+
+                           const currentHour = parseInt(valueHour);
                            const isDisabled =
-                              (minMinutes && minute < minMinutes) || (maxMinutes && minute > maxMinutes);
+                              (minHours !== undefined &&
+                                 minMinutes !== undefined &&
+                                 currentHour === minHours &&
+                                 minute < minMinutes) ||
+                              (maxHours !== undefined &&
+                                 maxMinutes !== undefined &&
+                                 currentHour === maxHours &&
+                                 minute > maxMinutes);
 
                            return (
                               <Div.row
