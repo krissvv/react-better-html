@@ -763,7 +763,7 @@ InputFieldComponent.phoneNumber = forwardRef(function PhoneNumber(
       }
 
       setDropdownValue(country.phoneNumberExtension);
-      setInputFieldValue(newValue.slice(country?.phoneNumberExtension.length + 1));
+      setInputFieldValue(newValue.slice(country.phoneNumberExtension.length + 1));
    }, [value]);
 
    const readyId = id ?? internalId;
