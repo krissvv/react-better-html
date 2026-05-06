@@ -180,17 +180,22 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
 
       onOpen?.();
    }, [onOpen, urlQuery, name]);
-   const onClickClose = useCallback(() => {
-      setIsOpened.setFalse();
-      onClose?.();
+   const onClickClose = useCallback(
+      (event?: React.SyntheticEvent) => {
+         event?.stopPropagation();
 
-      if (urlQuery && name) urlQuery.removeQuery(`${name}-modal`, false);
+         setIsOpened.setFalse();
+         onClose?.();
 
-      setTimeout(() => {
-         dialogRef.current?.close();
-         setIsOpenedLate.setFalse();
-      }, 0.2 * 1000);
-   }, [onClose, urlQuery, name]);
+         if (urlQuery && name) urlQuery.removeQuery(`${name}-modal`, false);
+
+         setTimeout(() => {
+            dialogRef.current?.close();
+            setIsOpenedLate.setFalse();
+         }, 0.2 * 1000);
+      },
+      [onClose, urlQuery, name],
+   );
    const onKeyDown = useCallback(
       (event: React.KeyboardEvent<HTMLDialogElement>) => {
          if (event.key === "Escape") {
@@ -208,17 +213,13 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
       onClickOpen();
    }, []);
 
-   useImperativeHandle(
-      ref,
-      (): ModalRef => {
-         return {
-            open: onClickOpen,
-            close: onClickClose,
-            isOpened,
-         };
-      },
-      [onClickOpen, onClickClose, isOpened],
-   );
+   useImperativeHandle(ref, (): ModalRef => {
+      return {
+         open: onClickOpen,
+         close: onClickClose,
+         isOpened,
+      };
+   }, [onClickOpen, onClickClose, isOpened]);
 
    const headerVertical = headerTextAlign === "center";
 
