@@ -61,6 +61,7 @@ import { getBrowser, getFormErrorObject } from "./utils/functions";
 import { alertControls, sideMenuControls, filterHover } from "./utils/variableFunctions";
 import { generateLocalStorage } from "./utils/localStorage";
 import { generateApi } from "./utils/api";
+import { generateEventEmitter } from "./utils/eventEmitter";
 
 import Div, { type DivProps } from "./components/Div";
 import Text, { type TextProps, type TextAs } from "./components/Text";
@@ -145,6 +146,9 @@ export {
 
    // API
    generateApi,
+
+   // EventEmitter
+   generateEventEmitter,
 
    // Components
    Div,

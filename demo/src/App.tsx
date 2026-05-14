@@ -34,6 +34,7 @@ import {
    Pagination,
    TableListFilterListItem,
    generateApi,
+   generateEventEmitter,
 } from "../../src";
 
 const data: {
@@ -185,6 +186,16 @@ const api = generateApi<{
       },
    },
 );
+
+const eventEmitter = generateEventEmitter<{
+   testEvent: {
+      message: string;
+   };
+}>();
+
+eventEmitter.emit("testEvent", {
+   message: "Hello",
+});
 
 function App() {
    const theme = useTheme();
