@@ -206,6 +206,7 @@ function BetterHtmlProviderInternal({ config, plugins, children }: BetterHtmlPro
                setTabsWithDots,
             },
          },
+         devMode: config?.devMode,
       }),
       [config, alerts, sideMenuIsCollapsed, sideMenuIsOpenMobile, plugins, tabGroups, tabsWithDots],
    );
@@ -261,6 +262,7 @@ function BetterHtmlProvider({ config, ...props }: BetterHtmlProviderProps) {
          sideMenuIsCollapsed: config?.sideMenuIsCollapsed,
          sideMenuIsOpenMobile: config?.sideMenuIsOpenMobile,
          components: config?.components,
+         devMode: config?.devMode,
       }),
       [config],
    );

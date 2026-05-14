@@ -26,4 +26,5 @@ export type BetterHtmlConfig = {
          width?: number;
       };
    };
+   devMode?: boolean;
 };

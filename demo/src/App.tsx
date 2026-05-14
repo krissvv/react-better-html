@@ -1,4 +1,4 @@
-import { memo, useRef } from "react";
+import { memo, useEffect, useRef } from "react";
 
 import {
    Div,
@@ -33,6 +33,7 @@ import {
    SideMenu,
    Pagination,
    TableListFilterListItem,
+   generateApi,
 } from "../../src";
 
 const data: {
@@ -149,6 +150,42 @@ const data2 = [
    },
 ];
 
+const api = generateApi<{
+   getAllTodos: {
+      body: {};
+      response: {
+         userId: number;
+         id: number;
+         title: string;
+         completed: boolean;
+      }[];
+   };
+   getTodoById: {
+      body: {};
+      response: {
+         userId: number;
+         id: number;
+         title: string;
+         completed: boolean;
+      };
+      path: [id: number];
+   };
+}>(
+   {
+      baseUrl: "https://jsonplaceholder.typicode.com",
+   },
+   {
+      getAllTodos: {
+         method: "GET",
+         path: "/todos",
+      },
+      getTodoById: {
+         method: "GET",
+         path: "/todos",
+      },
+   },
+);
+
 function App() {
    const theme = useTheme();
    const alertControls = useAlertControls();
@@ -187,6 +224,18 @@ function App() {
          console.log(values);
       },
    });
+
+   useEffect(() => {
+      api("getAllTodos").then((res) => {
+         console.log(res);
+      });
+
+      api("getTodoById", {
+         path: [1],
+      }).then((res) => {
+         console.log(res);
+      });
+   }, []);
 
    return (
       <>
