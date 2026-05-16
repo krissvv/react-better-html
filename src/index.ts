@@ -28,6 +28,7 @@ export {
    type APIConfigItem,
    type UrlQuery,
    type APIResponse,
+   type APIError,
    type HttpHeaders as HttpHeader,
    type HttpMethod,
    type Unsubscribe,
@@ -46,6 +47,7 @@ export {
    loaderControls,
    colorThemeControls,
    generateApi,
+   isApiError,
    generateEventEmitter,
    log,
 } from "react-better-core";
