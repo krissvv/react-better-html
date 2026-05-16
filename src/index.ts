@@ -47,6 +47,7 @@ export {
    colorThemeControls,
    generateApi,
    generateEventEmitter,
+   log,
 } from "react-better-core";
 
 import BetterHtmlProvider, {
