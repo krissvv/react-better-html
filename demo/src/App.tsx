@@ -35,6 +35,7 @@ import {
    TableListFilterListItem,
    generateApi,
    generateEventEmitter,
+   useBetterHtmlContext,
 } from "../../src";
 
 const data: {
@@ -200,6 +201,9 @@ eventEmitter.emit("testEvent", {
 function App() {
    const theme = useTheme();
    const alertControls = useAlertControls();
+   const { devMode } = useBetterHtmlContext();
+
+   console.log({ devMode });
 
    const testLoaderIsLoading = useLoader("testLoader");
 

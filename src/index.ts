@@ -24,6 +24,13 @@ export {
    type Styles,
    type Theme,
    type ThemeConfig,
+   type API,
+   type APIConfigItem,
+   type UrlQuery,
+   type APIResponse,
+   type HttpHeaders as HttpHeader,
+   type HttpMethod,
+   type Unsubscribe,
    lightenColor,
    darkenColor,
    saturateColor,
@@ -38,6 +45,8 @@ export {
    useDebounceState,
    loaderControls,
    colorThemeControls,
+   generateApi,
+   generateEventEmitter,
 } from "react-better-core";
 
 import BetterHtmlProvider, {
@@ -52,16 +61,12 @@ import { type AppConfig, type BetterHtmlConfig } from "./types/config";
 import { type ComponentMarginProps, type ComponentPaddingProps, type ComponentHoverStyle } from "./types/components";
 import { type AlertType, type AlertDuration, type AlertDisplay, type Alert } from "./types/alert";
 import { type PluginName, type BetterHtmlPlugin } from "./types/plugin";
-import { type API, type APIConfigItem, type UrlQuery, type APIResponse } from "./types/api";
-import { type HttpHeaders, type HttpMethod } from "./types/http";
 import { type BrowserName } from "./types/other";
 
 import { usePageResize, usePageScroll, useMediaQuery, useForm, useUrlQuery } from "./utils/hooks";
 import { getBrowser, getFormErrorObject } from "./utils/functions";
 import { alertControls, sideMenuControls, filterHover } from "./utils/variableFunctions";
 import { generateLocalStorage } from "./utils/localStorage";
-import { generateApi } from "./utils/api";
-import { generateEventEmitter } from "./utils/eventEmitter";
 
 import Div, { type DivProps } from "./components/Div";
 import Text, { type TextProps, type TextAs } from "./components/Text";
@@ -117,12 +122,6 @@ export {
    Alert,
    PluginName,
    BetterHtmlPlugin,
-   API,
-   APIConfigItem,
-   UrlQuery,
-   APIResponse,
-   HttpHeaders as HttpHeader,
-   HttpMethod,
    BrowserName,
 
    // Hooks
@@ -143,12 +142,6 @@ export {
 
    // LocalStorage
    generateLocalStorage,
-
-   // API
-   generateApi,
-
-   // EventEmitter
-   generateEventEmitter,
 
    // Components
    Div,

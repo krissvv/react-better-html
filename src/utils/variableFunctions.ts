@@ -20,6 +20,7 @@ export const checkBetterCoreContextValue = (
 
    return value !== undefined;
 };
+
 export const checkBetterHtmlContextValue = (
    value: BetterHtmlInternalConfig | undefined,
    functionsName: string,

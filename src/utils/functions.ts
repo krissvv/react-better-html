@@ -2,7 +2,6 @@ import { PartialRecord } from "react-better-core";
 import CryptoJS from "crypto-js";
 
 import { BrowserName } from "../types/other";
-import { UrlQuery } from "../types/api";
 
 import { LocalStoragePluginOptions } from "../plugins";
 import { checkBetterHtmlContextValue } from "./variableFunctions";
@@ -91,17 +90,3 @@ export function findClosestNumber(numbers: number[], target: number): number {
 
    return closest;
 }
-
-export const constructQuery = (query?: UrlQuery): string => {
-   if (!query) return "";
-
-   return Object.entries(query)
-      .filter(([_, queryVale]) => queryVale !== undefined && queryVale !== null)
-      .map(([queryName, queryVale]) =>
-         typeof queryVale === "object"
-            ? queryVale.map((value) => `${queryName}=${value}`)
-            : [`${queryName}=${queryVale}`],
-      )
-      .flat()
-      .join("&");
-};
