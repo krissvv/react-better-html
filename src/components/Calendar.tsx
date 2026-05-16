@@ -222,7 +222,7 @@ function Calendar({ value, minDate, maxDate, onChange }: CalendarProps) {
                      justifyContent="center"
                      backgroundColor={isSelected ? theme.colors.primary : theme.colors.backgroundContent}
                      filterHover={day && !isDisabled ? "brightness(0.9)" : undefined}
-                     border={`1px solid ${isToday ? theme.colors.primary : theme.colors.primary + "00"}`}
+                     border={`${theme.styles.borderWidth}px solid ${isToday ? theme.colors.primary : theme.colors.primary + "00"}`}
                      borderRadius={theme.styles.borderRadius / 2}
                      padding={theme.styles.space / 2}
                      cursor={day ? (!isDisabled ? "pointer" : "not-allowed") : undefined}
@@ -238,10 +238,10 @@ function Calendar({ value, minDate, maxDate, onChange }: CalendarProps) {
                               isDisabled
                                  ? theme.colors.textSecondary + "80"
                                  : isSelected
-                                 ? theme.colors.base
-                                 : isWeekend
-                                 ? theme.colors.textSecondary
-                                 : undefined
+                                   ? theme.colors.base
+                                   : isWeekend
+                                     ? theme.colors.textSecondary
+                                     : undefined
                            }
                         >
                            {day}

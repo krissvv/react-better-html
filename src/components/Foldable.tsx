@@ -181,7 +181,7 @@ const FoldableComponent: FoldableComponentType = forwardRef<FoldableRef, Foldabl
          )}
 
          <Div height={isOpen ? 1 : 0} opacity={isOpen ? 1 : 0} transition={theme.styles.transition}>
-            <Divider.horizontal />
+            <Divider.horizontal width={theme.styles.borderWidth} />
          </Div>
 
          <Div
@@ -208,7 +208,7 @@ FoldableComponent.box = forwardRef(function Box({ ...props }, ref) {
    return (
       <FoldableComponent
          backgroundColor={theme.colors.backgroundContent}
-         border={`1px solid ${theme.colors.border}`}
+         border={`${theme.styles.borderWidth}px solid ${theme.colors.border}`}
          borderRadius={theme.styles.borderRadius}
          headerPaddingBlock={(theme.styles.gap + theme.styles.space) / 2}
          headerPaddingInline={theme.styles.space}

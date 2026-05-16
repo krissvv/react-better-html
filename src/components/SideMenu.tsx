@@ -387,7 +387,7 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
             top={topSpace}
             left={0}
             backgroundColor={readyBackgroundColor}
-            borderRight={`solid 1px ${theme.colors.border}`}
+            borderRight={`solid ${theme.styles.borderWidth}px ${theme.colors.border}`}
             transform={!mediaQuery.size1000 || sideMenuIsOpenMobile ? "translateX(0)" : "translateX(-100%)"}
             paddingTop={paddingTop ?? (logoAssetName || logoUrl ? theme.styles.gap : theme.styles.space)}
             transition={
@@ -465,7 +465,11 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
 
                      {readyBottomItems && (
                         <Div.column
-                           borderTop={mediaQuery.size1000 ? `solid 1px ${theme.colors.border}` : undefined}
+                           borderTop={
+                              mediaQuery.size1000
+                                 ? `solid ${theme.styles.borderWidth}px ${theme.colors.border}`
+                                 : undefined
+                           }
                            gap={theme.styles.gap / 2}
                            marginTop="auto"
                            paddingTop={mediaQuery.size1000 ? theme.styles.space : undefined}
@@ -493,7 +497,7 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
 
                {isCollapsable && (
                   <Div
-                     borderTop={`solid 1px ${theme.colors.border}`}
+                     borderTop={`solid ${theme.styles.borderWidth}px ${theme.colors.border}`}
                      marginTop={!readyBottomItems ? "auto" : undefined}
                      paddingInline={theme.styles.space}
                      paddingBlock={theme.styles.space}
@@ -527,7 +531,7 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
                   top={theme.styles.space}
                   left="100%"
                   backgroundColor={readyBackgroundColor}
-                  border={`solid 1px ${theme.colors.border}`}
+                  border={`solid ${theme.styles.borderWidth}px ${theme.colors.border}`}
                   borderLeft="none"
                   borderTopRightRadius={theme.styles.borderRadius}
                   borderBottomRightRadius={theme.styles.borderRadius}

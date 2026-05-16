@@ -194,7 +194,7 @@ DivComponent.box = forwardRef(function Box(
       <DivComponent
          color={isActive ? theme.colors.base : undefined}
          backgroundColor={isActive ? readyActiveColor : theme.colors.backgroundContent}
-         border={`1px solid ${isActive ? readyActiveColor : theme.colors.border}`}
+         border={`${theme.styles.borderWidth}px solid ${isActive ? readyActiveColor : theme.colors.border}`}
          borderRadius={theme.styles.borderRadius}
          borderColorHover={withClick && !isActive ? readyActiveColor : undefined}
          filterHover={withClick && isActive ? "brightness(0.9)" : undefined}
@@ -207,8 +207,16 @@ DivComponent.box = forwardRef(function Box(
          {title && (
             <Div
                backgroundColor={headerBackgroundColor}
-               borderTopLeftRadius={props.borderTopLeftRadius ?? props.borderRadius ?? theme.styles.borderRadius - 1}
-               borderTopRightRadius={props.borderTopRightRadius ?? props.borderRadius ?? theme.styles.borderRadius - 1}
+               borderTopLeftRadius={
+                  props.borderTopLeftRadius ??
+                  props.borderRadius ??
+                  theme.styles.borderRadius - theme.styles.borderWidth
+               }
+               borderTopRightRadius={
+                  props.borderTopRightRadius ??
+                  props.borderRadius ??
+                  theme.styles.borderRadius - theme.styles.borderWidth
+               }
                marginInline={-theme.styles.space}
                marginTop={-theme.styles.space}
                marginBottom={theme.styles.space}
@@ -234,7 +242,7 @@ DivComponent.box = forwardRef(function Box(
                />
 
                <Div width={`calc(100% + ${theme.styles.space * 2}px)`} marginLeft={-theme.styles.space}>
-                  <Divider.horizontal />
+                  <Divider.horizontal width={theme.styles.borderWidth} />
                </Div>
             </Div>
          )}

@@ -135,7 +135,7 @@ export function useComponentInputFieldDateProps(
    );
    const insideInputFieldComponentProps = useMemo<ComponentStyle>(
       () => ({
-         border: `1px solid ${isFocused ? theme.colors.primary : theme.colors.border}`,
+         border: `${theme.styles.borderWidth}px solid ${isFocused ? theme.colors.primary : theme.colors.border}`,
          borderTop: "none",
          opacity: !isOpen ? 0 : undefined,
          pointerEvents: !isOpen ? "none" : undefined,

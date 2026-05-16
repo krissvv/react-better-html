@@ -92,7 +92,9 @@ const FormComponent: FormComponentType = forwardRef(function Form(
                           <Fragment key={index}>
                              {child}
 
-                             {index < Children.toArray(children).length - 1 && <Divider.horizontal />}
+                             {index < Children.toArray(children).length - 1 && (
+                                <Divider.horizontal width={theme.styles.borderWidth} />
+                             )}
                           </Fragment>
                        ))
                      : children}
@@ -108,8 +110,8 @@ const FormComponent: FormComponentType = forwardRef(function Form(
                      actionButtonsLocation === "left"
                         ? "flex-start"
                         : actionButtonsLocation === "center"
-                        ? "center"
-                        : "flex-end"
+                          ? "center"
+                          : "flex-end"
                   }
                   gap={theme.styles.gap}
                   marginTop={theme.styles.space}

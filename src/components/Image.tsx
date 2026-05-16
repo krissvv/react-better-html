@@ -86,7 +86,7 @@ Image.profileImage = forwardRef(function ProfileImage(
    return letters ? (
       <Div.row
          backgroundColor={backgroundColor ?? theme.colors.backgroundSecondary}
-         border={`solid 1px ${theme.colors.border}`}
+         border={`solid ${theme.styles.borderWidth}px ${theme.colors.border}`}
          borderRadius={999}
          alignItems="center"
          justifyContent="center"
@@ -103,7 +103,7 @@ Image.profileImage = forwardRef(function ProfileImage(
       <Image
          width={size}
          height={size}
-         border={`solid 1px ${theme.colors.border}`}
+         border={`solid ${theme.styles.borderWidth}px ${theme.colors.border}`}
          borderRadius={999}
          objectFit="cover"
          ref={ref}

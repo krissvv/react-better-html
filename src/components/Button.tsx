@@ -51,8 +51,8 @@ const ButtonElement = styled.button.withConfig({
    border-radius: ${(props) => props.theme.styles.borderRadius}px;
    padding: ${(props) =>
       props.isSmall
-         ? `${props.theme.styles.gap + 1}px ${props.theme.styles.space}px`
-         : `${(props.theme.styles.gap + props.theme.styles.space) / 2 + 1}px ${
+         ? `${props.theme.styles.gap + props.theme.styles.borderWidth}px ${props.theme.styles.space}px`
+         : `${(props.theme.styles.gap + props.theme.styles.space) / 2 + props.theme.styles.borderWidth}px ${
               props.theme.styles.space + (props.withText ? props.theme.styles.gap : 0)
            }px`};
    user-select: none;
@@ -82,7 +82,7 @@ const ButtonElement = styled.button.withConfig({
    &.secondary {
       padding-block: ${(props) =>
          props.isSmall ? props.theme.styles.gap : (props.theme.styles.space + props.theme.styles.gap) / 2}px;
-      border: solid 1px ${(props) => props.theme.colors.border};
+      border: solid ${(props) => props.theme.styles.borderWidth}px ${(props) => props.theme.colors.border};
       background-color: ${(props) => props.theme.colors.backgroundContent};
       background-image: none;
 

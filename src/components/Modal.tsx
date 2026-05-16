@@ -333,7 +333,7 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
                            )}
                         </Div.row>
 
-                        <Divider.horizontal />
+                        <Divider.horizontal width={theme.styles.borderWidth} />
                      </>
                   ) : (
                      <>

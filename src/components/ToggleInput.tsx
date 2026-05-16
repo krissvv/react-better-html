@@ -23,7 +23,7 @@ const InputElement = styled.input.withConfig({
    width: ${componentSize}px;
    height: ${componentSize}px;
    background-color: ${(props) => props.theme.colors.backgroundContent};
-   border: 1px solid ${(props) => props.theme.colors.border};
+   border: ${(props) => props.theme.styles.borderWidth}px solid ${(props) => props.theme.colors.border};
    border-radius: ${(props) => props.theme.styles.borderRadius / 2}px;
    cursor: pointer;
    transition: ${(props) => props.theme.styles.transition};
@@ -275,7 +275,7 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
                as="span"
                display="block"
                fontSize={14}
-               color={errorText ? theme.colors.error : labelColor ?? theme.colors.textSecondary}
+               color={errorText ? theme.colors.error : (labelColor ?? theme.colors.textSecondary)}
             >
                {errorText || infoText}
             </Text>
@@ -377,7 +377,7 @@ export default {
                   as="span"
                   display="block"
                   fontSize={14}
-                  color={errorText ? theme.colors.error : labelColor ?? theme.colors.textSecondary}
+                  color={errorText ? theme.colors.error : (labelColor ?? theme.colors.textSecondary)}
                >
                   {errorText || infoText}
                </Text>

@@ -103,7 +103,7 @@ ChipComponent.colored = forwardRef(function Colored({ color, withWhiteBackground
       <ChipComponent
          color={colorTheme === "light" ? darkenColor(readyColor, 0.7) : lightenColor(readyColor, 0.7)}
          backgroundColor={readyColor + "40"}
-         border={`1px solid ${readyColor}`}
+         border={`${theme.styles.borderWidth}px solid ${readyColor}`}
          ref={ref}
          {...props}
       />

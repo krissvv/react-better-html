@@ -120,10 +120,10 @@ const arrowStyle = (props: ArrowProps, borderWidth?: number): Record<TooltipPosi
       left: borderWidth
          ? -props.size + borderWidth * 2
          : props.align === "center"
-         ? "50%"
-         : props.align === "left"
-         ? props.sideSpace
-         : undefined,
+           ? "50%"
+           : props.align === "left"
+             ? props.sideSpace
+             : undefined,
       right: !borderWidth && props.align === "right" ? props.sideSpace : undefined,
       bottom: -props.size + 1,
       transform: !borderWidth && props.align === "center" ? "translateX(-50%)" : undefined,
@@ -135,10 +135,10 @@ const arrowStyle = (props: ArrowProps, borderWidth?: number): Record<TooltipPosi
       left: borderWidth
          ? -props.size + borderWidth * 2
          : props.align === "center"
-         ? "50%"
-         : props.align === "left"
-         ? props.sideSpace
-         : undefined,
+           ? "50%"
+           : props.align === "left"
+             ? props.sideSpace
+             : undefined,
       right: !borderWidth && props.align === "right" ? props.sideSpace : undefined,
       transform: !borderWidth && props.align === "center" ? "translateX(-50%);" : undefined,
    },
@@ -148,10 +148,10 @@ const arrowStyle = (props: ArrowProps, borderWidth?: number): Record<TooltipPosi
       top: borderWidth
          ? -props.size + borderWidth * 2
          : props.align === "center"
-         ? "50%"
-         : props.align === "top"
-         ? props.sideSpace
-         : undefined,
+           ? "50%"
+           : props.align === "top"
+             ? props.sideSpace
+             : undefined,
       bottom: !borderWidth && props.align === "bottom" ? props.sideSpace : undefined,
       left: borderWidth ? -props.size : undefined,
       right: -props.size + 1,
@@ -163,10 +163,10 @@ const arrowStyle = (props: ArrowProps, borderWidth?: number): Record<TooltipPosi
       top: borderWidth
          ? -props.size + borderWidth * 2
          : props.align === "center"
-         ? "50%"
-         : props.align === "top"
-         ? props.sideSpace
-         : undefined,
+           ? "50%"
+           : props.align === "top"
+             ? props.sideSpace
+             : undefined,
       bottom: !borderWidth && props.align === "bottom" ? props.sideSpace : undefined,
       left: borderWidth ? borderWidth * 2 : -props.size + 1,
       transform: !borderWidth && props.align === "center" ? "translateY(-50%);" : undefined,
@@ -186,7 +186,7 @@ const Arrow = memo(function Arrow(props: ArrowProps) {
       [props, theme],
    );
 
-   const borderWidth = 1;
+   const borderWidth = theme.styles.borderWidth;
 
    return (
       <Div
@@ -368,17 +368,13 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
       closeTooltip();
    }, [disabled]);
 
-   useImperativeHandle(
-      ref,
-      (): TooltipRef => {
-         return {
-            isOpen,
-            open: openTooltip,
-            close: closeTooltip,
-         };
-      },
-      [isOpen, openTooltip, closeTooltip],
-   );
+   useImperativeHandle(ref, (): TooltipRef => {
+      return {
+         isOpen,
+         open: openTooltip,
+         close: closeTooltip,
+      };
+   }, [isOpen, openTooltip, closeTooltip]);
 
    return (
       <Div
@@ -522,7 +518,7 @@ TooltipComponent.item = forwardRef(function Item<Value>(
 TooltipComponent.divider = forwardRef(function DividerComponent(props, ref) {
    const theme = useTheme();
 
-   return <Divider.horizontal marginBlock={theme.styles.gap} {...props} ref={ref} />;
+   return <Divider.horizontal width={theme.styles.borderWidth} marginBlock={theme.styles.gap} {...props} ref={ref} />;
 }) as TooltipComponent["divider"];
 
 type TooltipSectionTitleProps = OmitProps<TextProps, "children"> & {

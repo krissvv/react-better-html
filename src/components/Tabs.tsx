@@ -152,16 +152,12 @@ const TabsComponent: TabsComponent = forwardRef(function Tabs(
       };
    }, []);
 
-   useImperativeHandle(
-      ref,
-      (): TabsRef => {
-         return {
-            selectedTab,
-            selectTab: onClickTab,
-         };
-      },
-      [selectedTab, onClickTab],
-   );
+   useImperativeHandle(ref, (): TabsRef => {
+      return {
+         selectedTab,
+         selectTab: onClickTab,
+      };
+   }, [selectedTab, onClickTab]);
 
    return (
       <Div.column width="100%" gap={theme.styles.space} {...props}>
@@ -185,7 +181,9 @@ const TabsComponent: TabsComponent = forwardRef(function Tabs(
                         borderTopLeftRadius={style === "borderRadiusTop" ? theme.styles.borderRadius : undefined}
                         borderTopRightRadius={style === "borderRadiusTop" ? theme.styles.borderRadius : undefined}
                         border={
-                           style === "box" ? `1px solid ${selected ? "transparent" : theme.colors.border}` : undefined
+                           style === "box"
+                              ? `${theme.styles.borderWidth}px solid ${selected ? "transparent" : theme.colors.border}`
+                              : undefined
                         }
                         filterHover={
                            colorTheme === "dark"

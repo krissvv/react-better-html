@@ -55,7 +55,7 @@ const InputElement = styled.input.withConfig({
    line-height: 20px;
    color: ${(props) => props.theme.colors.textPrimary};
    background: ${(props) => props.theme.colors.backgroundContent};
-   border: 1px solid ${(props) => props.theme.colors.border};
+   border: ${(props) => props.theme.styles.borderWidth}px solid ${(props) => props.theme.colors.border};
    border-radius: ${(props) => props.theme.styles.borderRadius}px;
    border-top-left-radius: ${(props) => (props.withPrefix ? 0 : undefined)};
    border-bottom-left-radius: ${(props) => (props.withPrefix ? 0 : undefined)};
@@ -144,7 +144,8 @@ const InputElement = styled.input.withConfig({
    }
 
    &.react-better-html-dropdown {
-      padding-right: ${(props) => props.theme.styles.space + 16 + props.theme.styles.space - 1}px;
+      padding-right: ${(props) =>
+         props.theme.styles.space + 16 + props.theme.styles.space - props.theme.styles.borderWidth}px;
 
       &.react-better-html-dropdown-multiselect {
          border-top: none;
@@ -195,14 +196,18 @@ const TextareaElement = styled.textarea.withConfig({
    line-height: 20px;
    color: ${(props) => props.theme.colors.textPrimary};
    background: ${(props) => props.theme.colors.backgroundContent};
-   border: 1px solid ${(props) => props.theme.colors.border};
+   border: ${(props) => props.theme.styles.borderWidth}px solid ${(props) => props.theme.colors.border};
    border-radius: ${(props) => props.theme.styles.borderRadius}px;
    outline: none;
    padding: ${(props) => `${(props.theme.styles.gap + props.theme.styles.space) / 2}px ${props.theme.styles.space}px`};
    padding-left: ${(props) =>
-      props.withLeftIcon ? `${props.theme.styles.space + 16 + props.theme.styles.space - 1}px` : undefined};
+      props.withLeftIcon
+         ? `${props.theme.styles.space + 16 + props.theme.styles.space - props.theme.styles.borderWidth}px`
+         : undefined};
    padding-right: ${(props) =>
-      props.withRightIcon ? `${props.theme.styles.space + 16 + props.theme.styles.space - 1}px` : undefined};
+      props.withRightIcon
+         ? `${props.theme.styles.space + 16 + props.theme.styles.space - props.theme.styles.borderWidth}px`
+         : undefined};
    resize: vertical;
    transition: border-color ${(props) => props.theme.styles.transition};
 
@@ -393,7 +398,7 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
                <Div.row
                   alignItems="center"
                   justifyContent="center"
-                  border={`1px solid ${theme.colors.border}`}
+                  border={`${theme.styles.borderWidth}px solid ${theme.colors.border}`}
                   borderRight="none"
                   backgroundColor={
                      prefixBackgroundColor ??
@@ -418,11 +423,13 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
                         name={leftIcon}
                         position="absolute"
                         top={
-                           (props.type === "date" || props.type === "time" || props.type === "datetime-local"
+                           ((props.type === "date" || props.type === "time" || props.type === "datetime-local"
                               ? 48
-                              : 46) / 2
+                              : 44) +
+                              theme.styles.borderWidth * 2) /
+                           2
                         }
-                        left={theme.styles.space + 1}
+                        left={theme.styles.space + theme.styles.borderWidth}
                         transform="translateY(-50%)"
                         pointerEvents="none"
                         zIndex={leftIconZIndex}
@@ -452,8 +459,8 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
                         <Button.icon
                            icon={rightIcon}
                            position="absolute"
-                           top={46 / 2}
-                           right={theme.styles.space + 1 - theme.styles.space / 2}
+                           top={(44 + theme.styles.borderWidth * 2) / 2}
+                           right={theme.styles.space + theme.styles.borderWidth - theme.styles.space / 2}
                            transform="translateY(-50%)"
                            onClick={onClickRightIcon}
                         />
@@ -461,8 +468,8 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
                         <Icon
                            name={rightIcon}
                            position="absolute"
-                           top={46 / 2}
-                           right={theme.styles.space + 1}
+                           top={(44 + theme.styles.borderWidth * 2) / 2}
+                           right={theme.styles.space + theme.styles.borderWidth}
                            transform="translateY(-50%)"
                            pointerEvents="none"
                         />
@@ -477,7 +484,7 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
                <Div.row
                   alignItems="center"
                   justifyContent="center"
-                  border={`1px solid ${theme.colors.border}`}
+                  border={`${theme.styles.borderWidth}px solid ${theme.colors.border}`}
                   borderLeft="none"
                   backgroundColor={
                      suffixBackgroundColor ??
@@ -551,8 +558,8 @@ InputFieldComponent.multiline = forwardRef(function Multiline(
                <Icon
                   name={leftIcon}
                   position="absolute"
-                  top={46 / 2}
-                  left={theme.styles.space + 1}
+                  top={(44 + theme.styles.borderWidth * 2) / 2}
+                  left={theme.styles.space + theme.styles.borderWidth}
                   transform="translateY(-50%)"
                   pointerEvents="none"
                />
@@ -579,8 +586,8 @@ InputFieldComponent.multiline = forwardRef(function Multiline(
                   <Button.icon
                      icon={rightIcon}
                      position="absolute"
-                     top={46 / 2}
-                     right={theme.styles.space + 1 - theme.styles.space / 2}
+                     top={(44 + theme.styles.borderWidth * 2) / 2}
+                     right={theme.styles.space + theme.styles.borderWidth - theme.styles.space / 2}
                      transform="translateY(-50%)"
                      onClick={onClickRightIcon}
                   />
@@ -588,8 +595,8 @@ InputFieldComponent.multiline = forwardRef(function Multiline(
                   <Icon
                      name={rightIcon}
                      position="absolute"
-                     top={46 / 2}
-                     right={theme.styles.space + 1}
+                     top={(44 + theme.styles.borderWidth * 2) / 2}
+                     right={theme.styles.space + theme.styles.borderWidth}
                      transform="translateY(-50%)"
                      pointerEvents="none"
                   />

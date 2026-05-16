@@ -61,18 +61,26 @@ const TableStyledComponent = styled.table.withConfig({
    thead {
       tr:first-child {
          border-top-left-radius: ${(props) =>
-            props.containsOverflowComponents ? `${props.theme.styles.borderRadius * 2 - 1}px` : undefined};
+            props.containsOverflowComponents
+               ? `${props.theme.styles.borderRadius * 2 - props.theme.styles.borderWidth}px`
+               : undefined};
          border-top-right-radius: ${(props) =>
-            props.containsOverflowComponents ? `${props.theme.styles.borderRadius * 2 - 1}px` : undefined};
+            props.containsOverflowComponents
+               ? `${props.theme.styles.borderRadius * 2 - props.theme.styles.borderWidth}px`
+               : undefined};
 
          th:first-child {
             border-top-left-radius: ${(props) =>
-               props.containsOverflowComponents ? `${props.theme.styles.borderRadius * 2 - 1}px` : undefined};
+               props.containsOverflowComponents
+                  ? `${props.theme.styles.borderRadius * 2 - props.theme.styles.borderWidth}px`
+                  : undefined};
          }
 
          th:last-child {
             border-top-right-radius: ${(props) =>
-               props.containsOverflowComponents ? `${props.theme.styles.borderRadius * 2 - 1}px` : undefined};
+               props.containsOverflowComponents
+                  ? `${props.theme.styles.borderRadius * 2 - props.theme.styles.borderWidth}px`
+                  : undefined};
          }
       }
    }
@@ -81,24 +89,24 @@ const TableStyledComponent = styled.table.withConfig({
       tr:last-child {
          border-bottom-left-radius: ${(props) =>
             props.containsOverflowComponents && !props.withFooter
-               ? `${props.theme.styles.borderRadius * 2 - 1}px`
+               ? `${props.theme.styles.borderRadius * 2 - props.theme.styles.borderWidth}px`
                : undefined};
          border-bottom-right-radius: ${(props) =>
             props.containsOverflowComponents && !props.withFooter
-               ? `${props.theme.styles.borderRadius * 2 - 1}px`
+               ? `${props.theme.styles.borderRadius * 2 - props.theme.styles.borderWidth}px`
                : undefined};
 
          td:first-child {
             border-bottom-left-radius: ${(props) =>
                props.containsOverflowComponents && !props.withFooter
-                  ? `${props.theme.styles.borderRadius * 2 - 1}px`
+                  ? `${props.theme.styles.borderRadius * 2 - props.theme.styles.borderWidth}px`
                   : undefined};
          }
 
          td:last-child {
             border-bottom-right-radius: ${(props) =>
                props.containsOverflowComponents && !props.withFooter
-                  ? `${props.theme.styles.borderRadius * 2 - 1}px`
+                  ? `${props.theme.styles.borderRadius * 2 - props.theme.styles.borderWidth}px`
                   : undefined};
          }
       }
@@ -107,18 +115,26 @@ const TableStyledComponent = styled.table.withConfig({
    tfoot {
       tr:last-child {
          border-bottom-left-radius: ${(props) =>
-            props.containsOverflowComponents ? `${props.theme.styles.borderRadius * 2 - 1}px` : undefined};
+            props.containsOverflowComponents
+               ? `${props.theme.styles.borderRadius * 2 - props.theme.styles.borderWidth}px`
+               : undefined};
          border-bottom-right-radius: ${(props) =>
-            props.containsOverflowComponents ? `${props.theme.styles.borderRadius * 2 - 1}px` : undefined};
+            props.containsOverflowComponents
+               ? `${props.theme.styles.borderRadius * 2 - props.theme.styles.borderWidth}px`
+               : undefined};
 
          td:first-child {
             border-bottom-left-radius: ${(props) =>
-               props.containsOverflowComponents ? `${props.theme.styles.borderRadius * 2 - 1}px` : undefined};
+               props.containsOverflowComponents
+                  ? `${props.theme.styles.borderRadius * 2 - props.theme.styles.borderWidth}px`
+                  : undefined};
          }
 
          td:last-child {
             border-bottom-right-radius: ${(props) =>
-               props.containsOverflowComponents ? `${props.theme.styles.borderRadius * 2 - 1}px` : undefined};
+               props.containsOverflowComponents
+                  ? `${props.theme.styles.borderRadius * 2 - props.theme.styles.borderWidth}px`
+                  : undefined};
          }
       }
    }
@@ -174,7 +190,8 @@ const TableStyledComponent = styled.table.withConfig({
       }
 
       td {
-         border-top: 1px solid ${(props) => props.theme.colors.border + (props.colorTheme === "light" ? "60" : "40")};
+         border-top: ${(props) => props.theme.styles.borderWidth}px solid
+            ${(props) => props.theme.colors.border + (props.colorTheme === "light" ? "60" : "40")};
          padding: ${(props) => props.theme.styles.gap}px ${(props) => props.theme.styles.space}px;
 
          &.noData {
@@ -459,19 +476,19 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                        max: values.max as number | undefined,
                     }
                   : openedFilterColumn.filter === "date" || openedFilterColumn.filter === "date-time"
-                  ? {
-                       type: openedFilterColumn.filter,
-                       min: values.min as string | undefined,
-                       max: values.max as string | undefined,
-                    }
-                  : openedFilterColumn.filter === "list"
-                  ? filterListSelectedItems && filterListSelectedItems.length > 0
-                     ? {
-                          type: openedFilterColumn.filter,
-                          list: filterListSelectedItems,
-                       }
-                     : undefined
-                  : undefined,
+                    ? {
+                         type: openedFilterColumn.filter,
+                         min: values.min as string | undefined,
+                         max: values.max as string | undefined,
+                      }
+                    : openedFilterColumn.filter === "list"
+                      ? filterListSelectedItems && filterListSelectedItems.length > 0
+                         ? {
+                              type: openedFilterColumn.filter,
+                              list: filterListSelectedItems,
+                           }
+                         : undefined
+                      : undefined,
          }));
 
          filterModalRef.current?.close();
@@ -857,18 +874,14 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
       onChangeFilterDataValue?.(dataAfterFilter);
    }, [onChangeFilterDataValue, dataAfterFilter]);
 
-   useImperativeHandle(
-      ref,
-      (): TableRef => {
-         return {
-            currentPage,
-            setCurrentPage,
-            pagesCount: pageCountInternal,
-            setCheckedItems,
-         };
-      },
-      [currentPage, setCurrentPage, pageCountInternal, setCheckedItems],
-   );
+   useImperativeHandle(ref, (): TableRef => {
+      return {
+         currentPage,
+         setCurrentPage,
+         pagesCount: pageCountInternal,
+         setCheckedItems,
+      };
+   }, [currentPage, setCurrentPage, pageCountInternal, setCheckedItems]);
 
    const withFooter = pageSize !== undefined && pageCountInternal > 1;
    const mobileFooterBreakingPoint = mediaQuery.size700 && pageCountInternal > maximumVisiblePages / 1.4;
@@ -876,7 +889,7 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
    return (
       <>
          <Div
-            border={`1px solid ${theme.colors.border}`}
+            border={`${theme.styles.borderWidth}px solid ${theme.colors.border}`}
             borderRadius={theme.styles.borderRadius * 2}
             overflow={!containsOverflowComponents ? "auto" : undefined}
             {...props}
@@ -900,10 +913,10 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                               (column.type === "image"
                                  ? defaultImageWidth
                                  : column.type === "checkbox"
-                                 ? 26
-                                 : column.type === "expand"
-                                 ? 16
-                                 : undefined)
+                                   ? 26
+                                   : column.type === "expand"
+                                     ? 16
+                                     : undefined)
                            }
                            minWidth={column.minWidth}
                            maxWidth={column.maxWidth}
@@ -917,10 +930,10 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                                  column.filter
                                     ? "space-between"
                                     : column.align === "center"
-                                    ? "center"
-                                    : column.align === "right"
-                                    ? "flex-end"
-                                    : "flex-start"
+                                      ? "center"
+                                      : column.align === "right"
+                                        ? "flex-end"
+                                        : "flex-start"
                               }
                               gap={theme.styles.gap}
                            >
@@ -1047,10 +1060,10 @@ const TableComponent: TableComponentType = forwardRef(function Table<DataItem>(
                openedFilterColumn?.filter === "number"
                   ? "Enter minimum and maximum values to filter"
                   : openedFilterColumn?.filter === "date" || openedFilterColumn?.filter === "date-time"
-                  ? "Enter minimum and maximum dates to filter"
-                  : openedFilterColumn?.filter === "list"
-                  ? "Select values to filter from the list bellow"
-                  : ""
+                    ? "Enter minimum and maximum dates to filter"
+                    : openedFilterColumn?.filter === "list"
+                      ? "Select values to filter from the list bellow"
+                      : ""
             }
             onClose={onCloseFilterModal}
             ref={filterModalRef}

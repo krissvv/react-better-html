@@ -484,7 +484,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
                   <Div
                      width="100%"
                      backgroundColor={theme.colors.backgroundContent}
-                     border={`solid 1px ${theme.colors.border}`}
+                     border={`solid ${theme.styles.borderWidth}px ${theme.colors.border}`}
                      borderColor={isFocused ? theme.colors.primary : undefined}
                      borderBottom="none"
                      borderTopLeftRadius={theme.styles.borderRadius}
@@ -542,7 +542,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
                      width="100%"
                      maxHeight={300}
                      backgroundColor={theme.colors.backgroundContent}
-                     border={`1px solid ${isFocused ? theme.colors.primary : theme.colors.border}`}
+                     border={`${theme.styles.borderWidth}px solid ${isFocused ? theme.colors.primary : theme.colors.border}`}
                      borderTop="none"
                      borderBottomLeftRadius={theme.styles.borderRadius}
                      borderBottomRightRadius={theme.styles.borderRadius}
