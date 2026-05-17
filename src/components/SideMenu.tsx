@@ -2,6 +2,7 @@ import { createContext, memo, useCallback, useContext, useEffect, useMemo, useSt
 import {
    AnyOtherString,
    AssetName,
+   calculateColorContrast,
    IconName,
    lightenColor,
    useBetterCoreContext,
@@ -67,10 +68,18 @@ export type SideMenuItem = {
 type MenuItemComponentProps = {
    item: SideMenuItem;
    backgroundColor?: React.CSSProperties["backgroundColor"];
+   activeItemColor?: string;
+   hoverItemColor?: string;
    onClick?: () => void;
 };
 
-const MenuItemComponent = memo(function MenuItemComponent({ item, backgroundColor, onClick }: MenuItemComponentProps) {
+const MenuItemComponent = memo(function MenuItemComponent({
+   item,
+   backgroundColor,
+   activeItemColor,
+   hoverItemColor,
+   onClick,
+}: MenuItemComponentProps) {
    const reactRouterDomPlugin = usePlugin<ReactRouterDomPluginOptions>("react-router-dom");
 
    if (!reactRouterDomPlugin) {
@@ -126,6 +135,8 @@ const MenuItemComponent = memo(function MenuItemComponent({ item, backgroundColo
    const lineWidth = 2;
    const lineEndRadius = iconSize / 2 + iconGap * 2;
 
+   const backgroundColorContrast = activeItemColor ? calculateColorContrast(activeItemColor, theme.colors.primary) : 21;
+
    const content = (
       <Tooltip
          content={
@@ -147,27 +158,44 @@ const MenuItemComponent = memo(function MenuItemComponent({ item, backgroundColo
             whiteSpace="nowrap"
             backgroundColor={
                isActive
-                  ? colorTheme === "dark"
-                     ? lightenColor(theme.colors.primary, 0.7)
-                     : lightenColor(theme.colors.primary, 0.85)
+                  ? (activeItemColor ??
+                    (colorTheme === "dark"
+                       ? lightenColor(theme.colors.primary, 0.7)
+                       : lightenColor(theme.colors.primary, 0.85)))
                   : readyBackgroundColor
             }
+            backgroundColorHover={hoverItemColor}
             borderRadius={theme.styles.borderRadius}
             paddingBlock={paddingBlock}
             paddingLeft={isCollapsed ? theme.styles.space : paddingLeft}
             paddingRight={theme.styles.space}
-            filterHover={`brightness(${colorTheme === "dark" ? (isActive ? 0.8 : 1.3) : isActive ? 0.8 : 0.95})`}
+            filterHover={
+               !hoverItemColor
+                  ? `brightness(${colorTheme === "dark" ? (isActive ? 0.8 : 1.3) : isActive ? 0.8 : 0.95})`
+                  : undefined
+            }
             overflow={isCollapsed ? "hidden" : undefined}
             cursor={item.disabled ? "not-allowed" : "pointer"}
             opacity={item.disabled ? 0.6 : undefined}
             onClick={onClickElement}
          >
-            <Icon name={item.iconName} color={theme.colors.primary} size={iconSize} flexShrink={0} />
+            <Icon
+               name={item.iconName}
+               color={isActive && backgroundColorContrast < 7 ? theme.colors.base : theme.colors.primary}
+               size={iconSize}
+               flexShrink={0}
+            />
 
             <Text
                flex={1}
                lineHeight={`${lineHeight}px`}
-               color={isActive ? theme.colors.primary : theme.colors.textPrimary}
+               color={
+                  isActive
+                     ? backgroundColorContrast < 7
+                        ? theme.colors.base
+                        : theme.colors.primary
+                     : theme.colors.textPrimary
+               }
                opacity={isCollapsed ? 0 : undefined}
                transition={theme.styles.transition}
             >
@@ -322,6 +350,9 @@ export type SideMenuProps = {
    isLoading?: boolean;
    /** @default backgroundContent */
    backgroundColor?: React.CSSProperties["backgroundColor"];
+   /** @default primary */
+   activeItemColor?: string;
+   hoverItemColor?: string;
    gap?: React.CSSProperties["gap"];
    paddingTop?: React.CSSProperties["paddingTop"];
    paddingBottom?: React.CSSProperties["paddingBottom"];
@@ -352,6 +383,8 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
    bottomItemsAdditionalComponent,
    isLoading,
    backgroundColor,
+   activeItemColor,
+   hoverItemColor,
    gap,
    paddingTop,
    paddingBottom,
@@ -405,6 +438,8 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
                <MenuItemComponent
                   item={item}
                   backgroundColor={readyBackgroundColor}
+                  activeItemColor={activeItemColor}
+                  hoverItemColor={hoverItemColor}
                   onClick={onClickXButton}
                   key={item.text}
                />
@@ -426,6 +461,8 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
             <MenuItemComponent
                item={item}
                backgroundColor={readyBackgroundColor}
+               activeItemColor={activeItemColor}
+               hoverItemColor={hoverItemColor}
                onClick={onClickXButton}
                key={item.text}
             />

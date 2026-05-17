@@ -1,7 +1,7 @@
 import { forwardRef, memo } from "react";
 import { useTheme } from "react-better-core";
 
-import { ComponentPaddingProps, ComponentPropWithRef } from "../types/components";
+import { ComponentMarginProps, ComponentPaddingProps, ComponentPropWithRef } from "../types/components";
 
 import { useMediaQuery } from "../utils/hooks";
 
@@ -22,6 +22,7 @@ type PageHolderComponentType = {
       props: ComponentPropWithRef<
          HTMLDivElement,
          PageHolderProps & {
+            height?: React.CSSProperties["height"];
             pageBackgroundColor?: React.CSSProperties["backgroundColor"];
             pageBackgroundImage?: React.CSSProperties["backgroundImage"];
             contentMaxWidth?: React.CSSProperties["maxWidth"];
@@ -31,7 +32,7 @@ type PageHolderComponentType = {
             sideComponent?: React.ReactNode;
             /** @default "right" */
             sideComponentPosition?: "left" | "right";
-         }
+         } & ComponentMarginProps
       >,
    ) => React.ReactElement;
 };
@@ -60,6 +61,7 @@ const PageHolderComponent: PageHolderComponentType = forwardRef(function PageHol
 
 PageHolderComponent.center = forwardRef(function Center(
    {
+      height,
       pageBackgroundColor,
       pageBackgroundImage,
       contentMaxWidth,
@@ -109,10 +111,17 @@ PageHolderComponent.center = forwardRef(function Center(
 
          {sideComponentPosition === "left" && withSideComponent && <Div width="50%" />}
 
-         <Div.column position="relative" width={`${withSideComponent ? 50 : 100}%`} alignItems="center" zIndex={2}>
+         <Div.column
+            position="relative"
+            width={`${withSideComponent ? 50 : 100}%`}
+            height={height}
+            alignItems="center"
+            zIndex={2}
+         >
             <ContentTag
                width={`calc(100% - ${theme.styles.space * 2}px)`}
-               maxWidth={!noMaxContentWidth ? contentMaxWidth ?? app.contentMaxWidth / 2 : undefined}
+               maxWidth={!noMaxContentWidth ? (contentMaxWidth ?? app.contentMaxWidth / 2) : undefined}
+               height={height}
                marginInline={theme.styles.space}
                marginBlock={theme.styles.space}
                {...props}

@@ -36,6 +36,7 @@ export {
    darkenColor,
    saturateColor,
    desaturateColor,
+   calculateColorContrast,
    generateRandomString,
    formatPhoneNumber,
    eventPreventDefault,
