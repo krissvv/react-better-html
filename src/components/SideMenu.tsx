@@ -381,6 +381,7 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
    return (
       <SideMenuContextProvider value={contextValue}>
          <Div.column
+            as="aside"
             position="fixed"
             width={mediaQuery.size1000 ? "100%" : isCollapsed ? sideMenuCollapsedWidth : sideMenuWidth}
             height={`calc(100svh - ${topSpace}px)`}
