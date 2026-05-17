@@ -181,7 +181,7 @@ const FoldableComponent: FoldableComponentType = forwardRef<FoldableRef, Foldabl
          )}
 
          <Div height={isOpen ? 1 : 0} opacity={isOpen ? 1 : 0} transition={theme.styles.transition}>
-            <Divider.horizontal width={theme.styles.borderWidth} />
+            <Divider.horizontal width={theme.styles.borderWidth === 0 ? 1 : theme.styles.borderWidth} />
          </Div>
 
          <Div

@@ -518,7 +518,14 @@ TooltipComponent.item = forwardRef(function Item<Value>(
 TooltipComponent.divider = forwardRef(function DividerComponent(props, ref) {
    const theme = useTheme();
 
-   return <Divider.horizontal width={theme.styles.borderWidth} marginBlock={theme.styles.gap} {...props} ref={ref} />;
+   return (
+      <Divider.horizontal
+         width={theme.styles.borderWidth === 0 ? 1 : theme.styles.borderWidth}
+         marginBlock={theme.styles.gap}
+         {...props}
+         ref={ref}
+      />
+   );
 }) as TooltipComponent["divider"];
 
 type TooltipSectionTitleProps = OmitProps<TextProps, "children"> & {

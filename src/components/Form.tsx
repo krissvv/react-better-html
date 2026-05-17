@@ -93,7 +93,9 @@ const FormComponent: FormComponentType = forwardRef(function Form(
                              {child}
 
                              {index < Children.toArray(children).length - 1 && (
-                                <Divider.horizontal width={theme.styles.borderWidth} />
+                                <Divider.horizontal
+                                   width={theme.styles.borderWidth === 0 ? 1 : theme.styles.borderWidth}
+                                />
                              )}
                           </Fragment>
                        ))

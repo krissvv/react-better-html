@@ -316,11 +316,17 @@ export type SideMenuProps = {
    withCloseButton?: boolean;
    widthMobileHandle?: boolean;
    absoluteComponent?: React.ReactNode;
-   additionalComponent?: React.ReactNode;
+   itemsAdditionalComponent?: React.ReactNode;
+   betweenItemsAdditionalComponent?: React.ReactNode;
+   bottomItemsAdditionalComponent?: React.ReactNode;
    isLoading?: boolean;
    /** @default backgroundContent */
    backgroundColor?: React.CSSProperties["backgroundColor"];
+   gap?: React.CSSProperties["gap"];
    paddingTop?: React.CSSProperties["paddingTop"];
+   paddingBottom?: React.CSSProperties["paddingBottom"];
+   renderItemsHolder?: (items: React.ReactNode) => React.ReactNode;
+   renderBottomItemsHolder?: (items: React.ReactNode) => React.ReactNode;
 };
 
 type SideMenuComponentType = {
@@ -341,10 +347,16 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
    withCloseButton,
    widthMobileHandle,
    absoluteComponent,
-   additionalComponent,
+   itemsAdditionalComponent,
+   betweenItemsAdditionalComponent,
+   bottomItemsAdditionalComponent,
    isLoading,
    backgroundColor,
+   gap,
    paddingTop,
+   paddingBottom,
+   renderItemsHolder,
+   renderBottomItemsHolder,
 }: SideMenuProps) {
    const theme = useTheme();
    const mediaQuery = useMediaQuery();
@@ -378,6 +390,49 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
    const readyBackgroundColor = backgroundColor ?? theme.colors.backgroundContent;
    const logoSize = sideMenuCollapsedWidth - theme.styles.space * 2;
 
+   const itemsComponent = (
+      <Div.column
+         width="100%"
+         height="100%"
+         overflowY={!isCollapsed ? "auto" : undefined}
+         paddingInline={!renderItemsHolder ? theme.styles.space : undefined}
+         paddingBottom={
+            !renderItemsHolder ? (!isCollapsable && !readyBottomItems ? theme.styles.space : undefined) : undefined
+         }
+      >
+         <Div.column gap={theme.styles.gap / 2}>
+            {readyItems.map((item) => (
+               <MenuItemComponent
+                  item={item}
+                  backgroundColor={readyBackgroundColor}
+                  onClick={onClickXButton}
+                  key={item.text}
+               />
+            ))}
+         </Div.column>
+      </Div.column>
+   );
+
+   const bottomItemsComponent = (
+      <Div.column
+         borderTop={mediaQuery.size1000 ? `solid ${theme.styles.borderWidth}px ${theme.colors.border}` : undefined}
+         gap={theme.styles.gap / 2}
+         marginTop="auto"
+         paddingTop={mediaQuery.size1000 ? theme.styles.space : undefined}
+         paddingInline={!renderItemsHolder ? theme.styles.space : undefined}
+         paddingBottom={!renderItemsHolder ? (!isCollapsable ? theme.styles.space : undefined) : undefined}
+      >
+         {readyBottomItems?.map((item) => (
+            <MenuItemComponent
+               item={item}
+               backgroundColor={readyBackgroundColor}
+               onClick={onClickXButton}
+               key={item.text}
+            />
+         ))}
+      </Div.column>
+   );
+
    return (
       <SideMenuContextProvider value={contextValue}>
          <Div.column
@@ -391,6 +446,7 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
             borderRight={`solid ${theme.styles.borderWidth}px ${theme.colors.border}`}
             transform={!mediaQuery.size1000 || sideMenuIsOpenMobile ? "translateX(0)" : "translateX(-100%)"}
             paddingTop={paddingTop ?? (logoAssetName || logoUrl ? theme.styles.gap : theme.styles.space)}
+            paddingBottom={paddingBottom}
             transition={
                mediaQuery.size1000
                   ? !isCollapsed
@@ -401,7 +457,7 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
             userSelect="none"
             zIndex={10}
          >
-            <Div.column width="100%" height="100%" gap={theme.styles.space}>
+            <Div.column width="100%" height="100%" gap={gap ?? theme.styles.space}>
                {(logoAssetName || logoUrl || (withCloseButton && mediaQuery.size1000)) && (
                   <Div.row alignItems="center" paddingInline={theme.styles.space}>
                      {(logoAssetName || logoUrl) && (
@@ -443,49 +499,20 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
                   </Div.row>
                )}
 
+               {itemsAdditionalComponent}
+
                {!isLoading ? (
                   <>
-                     <Div.column
-                        width="100%"
-                        height="100%"
-                        overflowY={!isCollapsed ? "auto" : undefined}
-                        paddingInline={theme.styles.space}
-                        paddingBottom={!isCollapsable && !readyBottomItems ? theme.styles.space : undefined}
-                     >
-                        <Div.column gap={theme.styles.gap / 2}>
-                           {readyItems.map((item) => (
-                              <MenuItemComponent
-                                 item={item}
-                                 backgroundColor={readyBackgroundColor}
-                                 onClick={onClickXButton}
-                                 key={item.text}
-                              />
-                           ))}
-                        </Div.column>
-                     </Div.column>
+                     {renderItemsHolder ? renderItemsHolder(itemsComponent) : itemsComponent}
+
+                     {betweenItemsAdditionalComponent}
 
                      {readyBottomItems && (
-                        <Div.column
-                           borderTop={
-                              mediaQuery.size1000
-                                 ? `solid ${theme.styles.borderWidth}px ${theme.colors.border}`
-                                 : undefined
-                           }
-                           gap={theme.styles.gap / 2}
-                           marginTop="auto"
-                           paddingTop={mediaQuery.size1000 ? theme.styles.space : undefined}
-                           paddingInline={theme.styles.space}
-                           paddingBottom={!isCollapsable ? theme.styles.space : undefined}
-                        >
-                           {readyBottomItems.map((item) => (
-                              <MenuItemComponent
-                                 item={item}
-                                 backgroundColor={readyBackgroundColor}
-                                 onClick={onClickXButton}
-                                 key={item.text}
-                              />
-                           ))}
-                        </Div.column>
+                        <>
+                           {renderBottomItemsHolder
+                              ? renderBottomItemsHolder(bottomItemsComponent)
+                              : bottomItemsComponent}
+                        </>
                      )}
                   </>
                ) : (
@@ -494,7 +521,7 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
                   </Div>
                )}
 
-               {additionalComponent}
+               {bottomItemsAdditionalComponent}
 
                {isCollapsable && (
                   <Div
