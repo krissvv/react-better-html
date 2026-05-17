@@ -164,13 +164,13 @@ const MenuItemComponent = memo(function MenuItemComponent({
                        : lightenColor(theme.colors.primary, 0.85)))
                   : readyBackgroundColor
             }
-            backgroundColorHover={hoverItemColor}
+            backgroundColorHover={isActive && activeItemColor ? undefined : hoverItemColor}
             borderRadius={theme.styles.borderRadius}
             paddingBlock={paddingBlock}
             paddingLeft={isCollapsed ? theme.styles.space : paddingLeft}
             paddingRight={theme.styles.space}
             filterHover={
-               !hoverItemColor
+               !hoverItemColor || isActive
                   ? `brightness(${colorTheme === "dark" ? (isActive ? 0.8 : 1.3) : isActive ? 0.8 : 0.95})`
                   : undefined
             }

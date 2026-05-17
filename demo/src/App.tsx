@@ -350,6 +350,8 @@ function App() {
                },
             ]}
             backgroundColor="transparent"
+            activeItemColor="#000000"
+            hoverItemColor="#ff0000"
             gap={theme.styles.gap / 2}
             paddingTop={theme.styles.gap / 2}
             paddingBottom={theme.styles.gap / 2}

@@ -90,7 +90,7 @@ PageHolderComponent.center = forwardRef(function Center(
          position="relative"
          width="100%"
          minHeight="100svh"
-         alignItems="center"
+         alignItems={height !== "100%" ? "center" : undefined}
          justifyContent="center"
          backgroundColor={pageBackgroundColor}
          backgroundImage={pageBackgroundImage}
@@ -111,15 +111,9 @@ PageHolderComponent.center = forwardRef(function Center(
 
          {sideComponentPosition === "left" && withSideComponent && <Div width="50%" />}
 
-         <Div.column
-            position="relative"
-            width={`${withSideComponent ? 50 : 100}%`}
-            height={height}
-            alignItems="center"
-            zIndex={2}
-         >
+         <Div.column position="relative" width={`${withSideComponent ? 50 : 100}%`} alignItems="center" zIndex={2}>
             <ContentTag
-               width={`calc(100% - ${theme.styles.space * 2}px)`}
+               width={`calc(100% - ${((props.margin ?? props.marginInline) !== undefined ? parseFloat((props.margin ?? props.marginInline)?.toString() ?? "") : theme.styles.space) * 2}px)`}
                maxWidth={!noMaxContentWidth ? (contentMaxWidth ?? app.contentMaxWidth / 2) : undefined}
                height={height}
                marginInline={theme.styles.space}
