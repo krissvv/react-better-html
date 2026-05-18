@@ -26,7 +26,9 @@ import { useBetterHtmlContextInternal } from "./BetterHtmlProvider";
 
 const ButtonElement = styled.button.withConfig({
    shouldForwardProp: (prop) =>
-      !["theme", "colorTheme", "style", "hoverStyle", "isSmall", "withText", "isLoading"].includes(prop),
+      !["theme", "colorTheme", "style", "hoverStyle", "isSmall", "withText", "isLoading", "withNoBorder"].includes(
+         prop,
+      ),
 })<{
    theme: Theme;
    colorTheme: ColorTheme;

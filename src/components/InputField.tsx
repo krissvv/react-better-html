@@ -12,8 +12,9 @@ import {
    Theme,
    useTheme,
    useBetterCoreContext,
+   ColorTheme,
 } from "react-better-core";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import { isMobileDevice } from "../constants";
 
@@ -44,15 +45,27 @@ const colorPickerValueWidth = 12 + 74 + colorPickerSpacing;
 
 const InputElement = styled.input.withConfig({
    shouldForwardProp: (prop) =>
-      !["theme", "withLeftIcon", "withRightIcon", "withPrefix", "withSuffix", "style", "hoverStyle"].includes(prop),
+      ![
+         "theme",
+         "colorTheme",
+         "withLeftIcon",
+         "withRightIcon",
+         "withPrefix",
+         "withSuffix",
+         "style",
+         "hoverStyle",
+         "withNoBorder",
+      ].includes(prop),
 })<{
    theme: Theme;
+   colorTheme: ColorTheme;
    withLeftIcon?: boolean;
    withRightIcon?: boolean;
    withPrefix?: boolean;
    withSuffix?: boolean;
    style: ComponentStyle;
    hoverStyle: ComponentStyle;
+   withNoBorder?: boolean;
 }>`
    position: relative;
    width: 100%;
@@ -88,7 +101,14 @@ const InputElement = styled.input.withConfig({
    }
 
    &:focus {
-      border-color: ${(props) => props.theme.colors.primary};
+      ${(props) =>
+         props.withNoBorder
+            ? css`
+                 filter: ${props.colorTheme === "dark" ? "brightness(1.2)" : "brightness(0.9)"};
+              `
+            : css`
+                 border-color: ${props.theme.colors.primary};
+              `}
    }
 
    &:disabled {
@@ -186,13 +206,16 @@ const InputElement = styled.input.withConfig({
 `;
 
 const TextareaElement = styled.textarea.withConfig({
-   shouldForwardProp: (prop) => !["theme", "withLeftIcon", "withRightIcon", "style", "hoverStyle"].includes(prop),
+   shouldForwardProp: (prop) =>
+      !["theme", "colorTheme", "withLeftIcon", "withRightIcon", "style", "hoverStyle", "withNoBorder"].includes(prop),
 })<{
    theme: Theme;
+   colorTheme: ColorTheme;
    withLeftIcon?: boolean;
    withRightIcon?: boolean;
    style: ComponentStyle;
    hoverStyle: ComponentStyle;
+   withNoBorder?: boolean;
 }>`
    width: 100%;
    min-height: 3lh;
@@ -221,9 +244,14 @@ const TextareaElement = styled.textarea.withConfig({
       color: ${(props) => props.theme.colors.textSecondary}80;
    }
 
-   &:focus {
-      border-color: ${(props) => props.theme.colors.primary};
-   }
+   ${(props) =>
+      props.withNoBorder
+         ? css`
+              filter: ${props.colorTheme === "dark" ? "brightness(1.2)" : "brightness(0.9)"};
+           `
+         : css`
+              border-color: ${props.theme.colors.primary};
+           `}
 
    ${(props) => props.style as any}
 
@@ -467,6 +495,7 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
 
                   <InputElement
                      theme={theme}
+                     colorTheme={colorTheme}
                      withLeftIcon={leftIcon !== undefined}
                      withRightIcon={rightIcon !== undefined}
                      withPrefix={prefix !== undefined}
@@ -477,6 +506,7 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
                      onChange={onChangeElement}
                      style={style}
                      hoverStyle={hoverStyle}
+                     withNoBorder={theme.styles.borderWidth === 0}
                      {...restProps}
                      {...dataProps}
                      {...ariaProps}
@@ -572,6 +602,7 @@ InputFieldComponent.multiline = forwardRef(function Multiline(inputFieldProps, r
 
    const theme = useTheme();
    const internalId = useId();
+   const { colorTheme } = useBetterCoreContext();
 
    const { style, hoverStyle, restProps } = useComponentPropsGrouper(props);
    const dataProps = useComponentPropsWithPrefix(restProps, "data");
@@ -617,6 +648,7 @@ InputFieldComponent.multiline = forwardRef(function Multiline(inputFieldProps, r
 
             <TextareaElement
                theme={theme}
+               colorTheme={colorTheme}
                withLeftIcon={leftIcon !== undefined}
                withRightIcon={rightIcon !== undefined}
                required={required}
@@ -625,6 +657,7 @@ InputFieldComponent.multiline = forwardRef(function Multiline(inputFieldProps, r
                id={readyId}
                style={style}
                hoverStyle={hoverStyle}
+               withNoBorder={theme.styles.borderWidth === 0}
                {...restProps}
                {...dataProps}
                {...ariaProps}

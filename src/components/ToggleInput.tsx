@@ -1,6 +1,6 @@
 import { forwardRef, useCallback, useId, useState } from "react";
-import { OmitProps, Theme, useBooleanState, useTheme } from "react-better-core";
-import styled from "styled-components";
+import { ColorTheme, OmitProps, Theme, useBetterCoreContext, useBooleanState, useTheme } from "react-better-core";
+import styled, { css } from "styled-components";
 
 import { ComponentHoverStyle, ComponentPropWithRef, ComponentStyle } from "../types/components";
 
@@ -17,8 +17,15 @@ const switchComponentBallGap = 3;
 const switchComponentMouseDownDifference = 4;
 
 const InputElement = styled.input.withConfig({
-   shouldForwardProp: (prop) => !["theme", "style", "hoverStyle", "size"].includes(prop),
-})<{ theme: Theme; style: ComponentStyle; hoverStyle: ComponentStyle; size?: number }>`
+   shouldForwardProp: (prop) => !["theme", "colorTheme", "style", "hoverStyle", "size", "withNoBorder"].includes(prop),
+})<{
+   theme: Theme;
+   colorTheme?: ColorTheme;
+   style: ComponentStyle;
+   hoverStyle: ComponentStyle;
+   size?: number;
+   withNoBorder?: boolean;
+}>`
    position: relative;
    appearance: none;
    width: ${(props) => props.size ?? componentSize}px;
@@ -47,7 +54,14 @@ const InputElement = styled.input.withConfig({
    ${(props) => props.style as any}
 
    &:hover {
-      border-color: ${(props) => props.theme.colors.primary};
+      ${(props) =>
+         props.withNoBorder
+            ? css`
+                 filter: ${props.colorTheme === "dark" ? "brightness(1.2)" : "brightness(0.9)"};
+              `
+            : css`
+                 border-color: ${props.theme.colors.primary};
+              `}
 
       ${(props) => props.hoverStyle as any}
    }
@@ -190,6 +204,7 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
 ) {
    const theme = useTheme();
    const internalId = useId();
+   const { colorTheme } = useBetterCoreContext();
 
    const { style, hoverStyle, excludeStyle, restProps } = useComponentPropsGrouper(props, true);
    const dataProps = useComponentPropsWithPrefix(restProps, "data");
@@ -238,7 +253,9 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
             <Div.row position="relative" alignItems="center">
                <InputElement
                   theme={theme}
+                  colorTheme={colorTheme}
                   size={size}
+                  withNoBorder={theme.styles.borderWidth === 0}
                   type={props.type ?? "checkbox"}
                   checked={checked}
                   onChange={onChangeElement}
