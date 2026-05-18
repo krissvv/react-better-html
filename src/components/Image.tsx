@@ -4,10 +4,11 @@ import styled from "styled-components";
 
 import { ComponentHoverStyle, ComponentPropWithRef, ComponentStyle } from "../types/components";
 
-import { useComponentPropsGrouper, useComponentPropsWithPrefix } from "../utils/hooks";
+import { useComponentPropsGrouper, useComponentPropsWithPrefix, useComponentsPropsMerger } from "../utils/hooks";
 
 import Div from "./Div";
 import Text from "./Text";
+import { useBetterHtmlContextInternal } from "./BetterHtmlProvider";
 
 const ImageElement = styled.img.withConfig({
    shouldForwardProp: (prop) => !["style", "hoverStyle"].includes(prop),
@@ -46,9 +47,15 @@ type ImageComponent = {
 };
 
 const Image: ImageComponent = forwardRef(function Image(
-   { name, src, ...props }: ImageProps,
+   ImageProps: ImageProps,
    ref: React.ForwardedRef<HTMLImageElement>,
 ) {
+   const betterHtmlContextInternal = useBetterHtmlContextInternal();
+   const { name, src, ...props } = useComponentsPropsMerger(
+      betterHtmlContextInternal.components.image?.style?.default,
+      ImageProps,
+   );
+
    const { assets } = useBetterCoreContext();
 
    const { style, hoverStyle, restProps } = useComponentPropsGrouper(props);
@@ -78,9 +85,12 @@ const Image: ImageComponent = forwardRef(function Image(
 }) as any;
 
 Image.profileImage = forwardRef(function ProfileImage(
-   { size = 40, letters, letterColor, backgroundColor, ...props },
+   { size = 40, letters, letterColor, backgroundColor, ...ImageProps },
    ref,
 ) {
+   const betterHtmlContextInternal = useBetterHtmlContextInternal();
+   const props = useComponentsPropsMerger(betterHtmlContextInternal.components.image?.style?.default, ImageProps);
+
    const theme = useTheme();
 
    return letters ? (

@@ -4,6 +4,7 @@ import { DropdownProps } from "../components/Dropdown";
 import { ToggleInputProps } from "../components/ToggleInput";
 import { HorizontalDividerProps, VerticalDividerProps } from "../components/Divider";
 import { LabelProps } from "../components/Label";
+import { ImageProps } from "../components/Image";
 
 type ComponentStyleConfig<ComponentProps, Subcomponents extends string> = {
    [key in Subcomponents]?: Partial<ComponentProps>;
@@ -55,6 +56,9 @@ export type BetterHtmlConfig = {
             vertical?: VerticalDividerProps;
             horizontal?: HorizontalDividerProps;
          };
+      };
+      image?: {
+         style?: ComponentStyleConfig<ImageProps, "default" | "profileImage">;
       };
       sideMenu?: {
          /** @default 300 */
