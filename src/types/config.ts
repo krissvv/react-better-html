@@ -1,7 +1,12 @@
-import { ComponentHoverStyle, ComponentStyle } from "./components";
+import { ButtonProps } from "../components/Button";
+import { InputFieldProps } from "../components/InputField";
+import { DropdownProps } from "../components/Dropdown";
+import { ToggleInputProps } from "../components/ToggleInput";
+import { HorizontalDividerProps, VerticalDividerProps } from "../components/Divider";
+import { LabelProps } from "../components/Label";
 
-type ComponentStyleConfig<Subcomponents extends string> = {
-   [key in Subcomponents]?: ComponentStyle & ComponentHoverStyle;
+type ComponentStyleConfig<ComponentProps, Subcomponents extends string> = {
+   [key in Subcomponents]?: ComponentProps;
 };
 
 type ComponentTagReplacementConfig<Subcomponents extends string> = {
@@ -18,8 +23,38 @@ export type BetterHtmlConfig = {
    sideMenuIsOpenMobile: boolean;
    components: {
       button?: {
-         style?: ComponentStyleConfig<"default" | "secondary" | "destructive" | "icon" | "upload">;
+         style?: ComponentStyleConfig<ButtonProps, "default" | "secondary" | "destructive" | "icon" | "upload">;
          tagReplacement?: ComponentTagReplacementConfig<"buttonComponent" | "linkComponent">;
+      };
+      inputField?: {
+         style?: ComponentStyleConfig<
+            InputFieldProps,
+            | "default"
+            | "multiline"
+            | "email"
+            | "password"
+            | "search"
+            | "phoneNumber"
+            | "date"
+            | "dateTime"
+            | "time"
+            | "color"
+         >;
+      };
+      dropdown?: {
+         style?: ComponentStyleConfig<DropdownProps, "default" | "countries">;
+      };
+      toggleInput?: {
+         style?: ComponentStyleConfig<ToggleInputProps, "checkbox" | "radiobutton" | "switch">;
+      };
+      label?: {
+         style?: ComponentStyleConfig<LabelProps, "default">;
+      };
+      divider?: {
+         style?: {
+            vertical?: VerticalDividerProps;
+            horizontal?: HorizontalDividerProps;
+         };
       };
       sideMenu?: {
          /** @default 300 */

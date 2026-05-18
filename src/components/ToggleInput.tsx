@@ -4,12 +4,13 @@ import styled from "styled-components";
 
 import { ComponentHoverStyle, ComponentPropWithRef, ComponentStyle } from "../types/components";
 
-import { useComponentPropsGrouper, useComponentPropsWithPrefix } from "../utils/hooks";
+import { useComponentPropsGrouper, useComponentPropsWithPrefix, useComponentsPropsMerger } from "../utils/hooks";
 
 import Text from "./Text";
 import Div from "./Div";
 import Icon from "./Icon";
 import Label from "./Label";
+import { useBetterHtmlContextInternal } from "./BetterHtmlProvider";
 
 const componentSize = 26;
 const switchComponentBallGap = 3;
@@ -131,8 +132,14 @@ export type ToggleInputRef = {};
 
 type InternalToggleInputProps<Value> = {
    label?: string;
-   labelColor?: string;
+   labelFontFamily?: React.CSSProperties["fontFamily"];
+   labelLetterSpacing?: React.CSSProperties["letterSpacing"];
+   labelTextTransform?: React.CSSProperties["textTransform"];
+   labelColor?: React.CSSProperties["color"];
    text?: string;
+   textFontFamily?: React.CSSProperties["fontFamily"];
+   textLetterSpacing?: React.CSSProperties["letterSpacing"];
+   textTextTransform?: React.CSSProperties["textTransform"];
    textAdvanced?: React.ReactNode;
    errorText?: string;
    infoText?: string;
@@ -142,7 +149,7 @@ type InternalToggleInputProps<Value> = {
    ComponentStyle &
    ComponentHoverStyle;
 
-export type ToggleInputProps<Value> = ComponentPropWithRef<
+export type ToggleInputProps<Value = unknown> = ComponentPropWithRef<
    ToggleInputRef,
    OmitProps<InternalToggleInputProps<Value>, "type">
 >;
@@ -151,8 +158,14 @@ type ToggleInputComponentType = <Value>(props: ToggleInputProps<Value>) => React
 const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
    {
       label,
+      labelFontFamily,
+      labelLetterSpacing,
+      labelTextTransform,
       labelColor,
       text,
+      textFontFamily,
+      textLetterSpacing,
+      textTextTransform,
       textAdvanced,
       errorText,
       infoText,
@@ -199,7 +212,16 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
    return (
       <Div.column gap={theme.styles.gap} {...excludeStyle}>
          {label && (
-            <Label text={label} color={labelColor} required={required} isError={!!errorText} htmlFor={readyId} />
+            <Label
+               text={label}
+               fontFamily={labelFontFamily}
+               letterSpacing={labelLetterSpacing}
+               textTransform={labelTextTransform}
+               color={labelColor}
+               required={required}
+               isError={!!errorText}
+               htmlFor={readyId}
+            />
          )}
 
          <Div.row alignItems="center" gap={theme.styles.gap}>
@@ -247,7 +269,15 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
             </Div.row>
 
             {text ? (
-               <Text color={color} userSelect="none" cursor="pointer" onClick={onClickText}>
+               <Text
+                  fontFamily={textFontFamily}
+                  letterSpacing={textLetterSpacing}
+                  textTransform={textTextTransform}
+                  color={color}
+                  userSelect="none"
+                  cursor="pointer"
+                  onClick={onClickText}
+               >
                   {text}
                   {required && !label && (
                      <Text as="span" fontSize={16} color={theme.colors.error}>
@@ -286,20 +316,39 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
 
 export default {
    checkbox: forwardRef(function Checkbox<Value>(
-      props: ToggleInputProps<Value>,
+      checkboxProps: ToggleInputProps<Value>,
       ref: React.ForwardedRef<ToggleInputRef>,
    ) {
+      const betterHtmlContextInternal = useBetterHtmlContextInternal();
+      const props = useComponentsPropsMerger(
+         betterHtmlContextInternal.components.toggleInput?.style?.checkbox as ToggleInputProps<Value>,
+         checkboxProps,
+      );
+
       return <ToggleInputComponent type="checkbox" ref={ref} {...props} />;
    }) as ToggleInputComponentType,
    radiobutton: forwardRef(function RadioButton<Value>(
-      props: ToggleInputProps<Value>,
+      radiobuttonProps: ToggleInputProps<Value>,
       ref: React.ForwardedRef<ToggleInputRef>,
    ) {
+      const betterHtmlContextInternal = useBetterHtmlContextInternal();
+      const props = useComponentsPropsMerger(
+         betterHtmlContextInternal.components.toggleInput?.style?.radiobutton as ToggleInputProps<Value>,
+         radiobuttonProps,
+      );
+
       return <ToggleInputComponent type="radio" ref={ref} {...props} />;
    }) as ToggleInputComponentType,
    switch: forwardRef(function Switch<Value>(
-      {
+      switchProps: InternalToggleInputProps<Value>,
+      ref: React.ForwardedRef<ToggleInputRef>,
+   ) {
+      const betterHtmlContextInternal = useBetterHtmlContextInternal();
+      const {
          label,
+         labelFontFamily,
+         labelLetterSpacing,
+         labelTextTransform,
          labelColor,
          errorText,
          infoText,
@@ -310,9 +359,11 @@ export default {
          required,
          id,
          ...props
-      }: InternalToggleInputProps<Value>,
-      ref: React.ForwardedRef<ToggleInputRef>,
-   ) {
+      } = useComponentsPropsMerger(
+         betterHtmlContextInternal.components.toggleInput?.style?.switch as InternalToggleInputProps<Value>,
+         switchProps,
+      );
+
       const theme = useTheme();
       const internalId = useId();
 
@@ -339,7 +390,16 @@ export default {
       return (
          <Div.column width="fit-content" gap={theme.styles.gap} {...excludeStyle}>
             {label && (
-               <Label text={label} color={labelColor} required={required} isError={!!errorText} htmlFor={readyId} />
+               <Label
+                  text={label}
+                  fontFamily={labelFontFamily}
+                  letterSpacing={labelLetterSpacing}
+                  textTransform={labelTextTransform}
+                  color={labelColor}
+                  required={required}
+                  isError={!!errorText}
+                  htmlFor={readyId}
+               />
             )}
 
             <Div.row

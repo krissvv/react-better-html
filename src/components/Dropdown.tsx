@@ -13,6 +13,8 @@ import {
 
 import { ComponentPropWithRef } from "../types/components";
 
+import { useComponentsPropsMerger } from "../utils/hooks";
+
 import Text from "./Text";
 import Div, { DivProps } from "./Div";
 import InputField from "./InputField";
@@ -21,6 +23,7 @@ import Button from "./Button";
 import Loader from "./Loader";
 import Image from "./Image";
 import Chip from "./Chip";
+import { useBetterHtmlContextInternal } from "./BetterHtmlProvider";
 
 export type DropdownOption<Value, Data = unknown> = {
    value: Value;
@@ -49,9 +52,12 @@ export type DropdownOption<Value, Data = unknown> = {
      }
 );
 
-export type DropdownProps<Value, Data = unknown> = {
+export type DropdownProps<Value = unknown, Data = unknown> = {
    label?: string;
-   labelColor?: string;
+   labelFontFamily?: React.CSSProperties["fontFamily"];
+   labelLetterSpacing?: React.CSSProperties["letterSpacing"];
+   labelTextTransform?: React.CSSProperties["textTransform"];
+   labelColor?: React.CSSProperties["color"];
    errorText?: string;
    infoText?: string;
    /** @default false */
@@ -108,8 +114,15 @@ type DropdownComponentType = {
 };
 
 const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Value, Data>(
-   {
+   dropdownProps: DropdownProps<Value, Data>,
+   ref: React.ForwardedRef<HTMLDivElement>,
+) {
+   const betterHtmlContextInternal = useBetterHtmlContextInternal();
+   const {
       label,
+      labelFontFamily,
+      labelLetterSpacing,
+      labelTextTransform,
       labelColor,
       errorText,
       infoText,
@@ -136,9 +149,11 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
       withMultiselect,
       id,
       ...props
-   }: DropdownProps<Value, Data>,
-   ref: React.ForwardedRef<HTMLDivElement>,
-) {
+   } = useComponentsPropsMerger(
+      betterHtmlContextInternal.components.dropdown?.style?.default as DropdownProps<Value, Data>,
+      dropdownProps,
+   );
+
    const theme = useTheme();
 
    const inputFieldHolderRef = useRef<HTMLDivElement>(null);
@@ -442,6 +457,9 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
       <Div.column width="100%" position="relative" userSelect="none" {...props}>
          <InputField
             label={label}
+            labelFontFamily={labelFontFamily}
+            labelLetterSpacing={labelLetterSpacing}
+            labelTextTransform={labelTextTransform}
             labelColor={labelColor}
             errorText={errorText}
             infoText={infoText}
@@ -630,7 +648,13 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
    );
 }) as any;
 
-DropdownComponent.countries = forwardRef(function Countries({ ...props }, ref) {
+DropdownComponent.countries = forwardRef(function Countries(dropdownProps, ref) {
+   const betterHtmlContextInternal = useBetterHtmlContextInternal();
+   const props = useComponentsPropsMerger(
+      betterHtmlContextInternal.components.dropdown?.style?.countries as DropdownProps<string, Country>,
+      dropdownProps,
+   );
+
    const theme = useTheme();
 
    const renderOption = useCallback(

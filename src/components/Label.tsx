@@ -1,7 +1,10 @@
 import { memo } from "react";
 import { useTheme } from "react-better-core";
 
+import { useComponentsPropsMerger } from "../utils/hooks";
+
 import Text from "./Text";
+import { useBetterHtmlContextInternal } from "./BetterHtmlProvider";
 
 export type LabelProps = {
    text?: string;
@@ -9,11 +12,18 @@ export type LabelProps = {
    required?: boolean;
    /** @default false */
    isError?: boolean;
-   color?: string;
+   fontFamily?: React.CSSProperties["fontFamily"];
+   letterSpacing?: React.CSSProperties["letterSpacing"];
+   textTransform?: React.CSSProperties["textTransform"];
+   color?: React.CSSProperties["color"];
    htmlFor?: string;
 };
 
-function Label({ text, required, isError, color, htmlFor }: LabelProps) {
+function Label(labelProps: LabelProps) {
+   const betterHtmlContextInternal = useBetterHtmlContextInternal();
+   const { text, required, isError, fontFamily, letterSpacing, textTransform, color, htmlFor } =
+      useComponentsPropsMerger(betterHtmlContextInternal.components.label?.style?.default, labelProps);
+
    const theme = useTheme();
 
    return (
@@ -21,8 +31,11 @@ function Label({ text, required, isError, color, htmlFor }: LabelProps) {
          as="label"
          width="fit-content"
          height={16}
+         fontFamily={fontFamily}
          fontSize={14}
-         color={isError ? theme.colors.error : color ?? theme.colors.textSecondary}
+         color={isError ? theme.colors.error : (color ?? theme.colors.textSecondary)}
+         letterSpacing={letterSpacing}
+         textTransform={textTransform}
          htmlFor={htmlFor}
          aria-required={required}
       >

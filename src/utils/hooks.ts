@@ -87,6 +87,25 @@ export function useComponentPropsWithPrefix<Props extends Record<string, any>, P
    }, [props, prefix]);
 }
 
+export function useComponentsPropsMerger<Props extends object = {}>(...props: (Props | undefined)[]): Props {
+   return useMemo<Props>(
+      () =>
+         props
+            .filter((props) => props !== undefined)
+            .reduce(
+               (previousValue, currentValue) => ({
+                  ...previousValue,
+                  ...Object.entries(currentValue).reduce((pv, [key, value]) => {
+                     if (value !== undefined) pv[key as keyof Props] = value;
+                     return pv;
+                  }, {} as Props),
+               }),
+               {} as Props,
+            ),
+      [props],
+   );
+}
+
 export function useComponentInputFieldDateProps(
    props: InputFieldProps,
    holderRef?: React.RefObject<HTMLDivElement | null>,

@@ -19,7 +19,12 @@ import { isMobileDevice } from "../constants";
 
 import { ComponentHoverStyle, ComponentPropWithRef, ComponentStyle } from "../types/components";
 
-import { useComponentInputFieldDateProps, useComponentPropsGrouper, useComponentPropsWithPrefix } from "../utils/hooks";
+import {
+   useComponentInputFieldDateProps,
+   useComponentPropsGrouper,
+   useComponentPropsWithPrefix,
+   useComponentsPropsMerger,
+} from "../utils/hooks";
 import { findClosestNumber, getBrowser } from "../utils/functions";
 
 import Text from "./Text";
@@ -30,6 +35,7 @@ import Label from "./Label";
 import Dropdown, { DropdownOption } from "./Dropdown";
 import Image from "./Image";
 import Calendar from "./Calendar";
+import { useBetterHtmlContextInternal } from "./BetterHtmlProvider";
 
 const buttonWidth = 50;
 const colorPickerSpacing = 4;
@@ -231,7 +237,10 @@ const minutes = Array.from({ length: 60 }, (_, index) => index);
 
 export type InputFieldProps = {
    label?: string;
-   labelColor?: string;
+   labelFontFamily?: React.CSSProperties["fontFamily"];
+   labelLetterSpacing?: React.CSSProperties["letterSpacing"];
+   labelTextTransform?: React.CSSProperties["textTransform"];
+   labelColor?: React.CSSProperties["color"];
    errorText?: string;
    infoText?: string;
    leftIcon?: IconName | AnyOtherString;
@@ -316,8 +325,15 @@ type InputFieldComponentType = {
 };
 
 const InputFieldComponent: InputFieldComponentType = forwardRef(function InputField(
-   {
+   inputFieldProps: InputFieldProps,
+   ref: React.ForwardedRef<HTMLInputElement>,
+) {
+   const betterHtmlContextInternal = useBetterHtmlContextInternal();
+   const {
       label,
+      labelFontFamily,
+      labelLetterSpacing,
+      labelTextTransform,
       labelColor,
       errorText,
       infoText,
@@ -339,9 +355,8 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
       placeholder,
       id,
       ...props
-   }: InputFieldProps,
-   ref: React.ForwardedRef<HTMLInputElement>,
-) {
+   } = useComponentsPropsMerger(betterHtmlContextInternal.components.inputField?.style?.default, inputFieldProps);
+
    const theme = useTheme();
    const internalId = useId();
    const { colorTheme } = useBetterCoreContext();
@@ -390,7 +405,16 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
    return (
       <Div.column width="100%" gap={theme.styles.gap / 2} {...excludeStyle}>
          {label && (
-            <Label text={label} color={labelColor} required={required} isError={!!errorText} htmlFor={readyId} />
+            <Label
+               text={label}
+               fontFamily={labelFontFamily}
+               letterSpacing={labelLetterSpacing}
+               textTransform={labelTextTransform}
+               color={labelColor}
+               required={required}
+               isError={!!errorText}
+               htmlFor={readyId}
+            />
          )}
 
          <Div.row alignItems="stretch" width="100%">
@@ -515,9 +539,14 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
    );
 }) as any;
 
-InputFieldComponent.multiline = forwardRef(function Multiline(
-   {
+InputFieldComponent.multiline = forwardRef(function Multiline(inputFieldProps, ref) {
+   const betterHtmlContextInternal = useBetterHtmlContextInternal();
+   const {
       label,
+      labelFontFamily,
+      labelLetterSpacing,
+      labelTextTransform,
+      labelColor,
       placeholder,
       errorText,
       infoText,
@@ -529,9 +558,11 @@ InputFieldComponent.multiline = forwardRef(function Multiline(
       required,
       id,
       ...props
-   },
-   ref,
-) {
+   } = useComponentsPropsMerger(
+      betterHtmlContextInternal.components.inputField?.style?.multiline as TextareaFieldProps,
+      inputFieldProps,
+   );
+
    const theme = useTheme();
    const internalId = useId();
 
@@ -551,7 +582,18 @@ InputFieldComponent.multiline = forwardRef(function Multiline(
 
    return (
       <Div.column gap={theme.styles.gap / 2}>
-         {label && <Label text={label} required={required} isError={!!errorText} htmlFor={readyId} />}
+         {label && (
+            <Label
+               text={label}
+               fontFamily={labelFontFamily}
+               letterSpacing={labelLetterSpacing}
+               textTransform={labelTextTransform}
+               color={labelColor}
+               required={required}
+               isError={!!errorText}
+               htmlFor={readyId}
+            />
+         )}
 
          <Div position="relative" width="100%">
             {leftIcon && (
@@ -609,7 +651,7 @@ InputFieldComponent.multiline = forwardRef(function Multiline(
                as="span"
                display="block"
                marginTop={theme.styles.gap / 2}
-               color={errorText ? theme.colors.error : (props.labelColor ?? theme.colors.textSecondary)}
+               color={errorText ? theme.colors.error : (labelColor ?? theme.colors.textSecondary)}
                fontSize={14}
             >
                {errorText || infoText}
@@ -619,7 +661,13 @@ InputFieldComponent.multiline = forwardRef(function Multiline(
    );
 }) as InputFieldComponentType["multiline"];
 
-InputFieldComponent.email = forwardRef(function Email({ ...props }, ref) {
+InputFieldComponent.email = forwardRef(function Email(inputFieldProps, ref) {
+   const betterHtmlContextInternal = useBetterHtmlContextInternal();
+   const props = useComponentsPropsMerger(
+      betterHtmlContextInternal.components.inputField?.style?.email,
+      inputFieldProps,
+   );
+
    return (
       <InputFieldComponent
          type="email"
@@ -633,7 +681,13 @@ InputFieldComponent.email = forwardRef(function Email({ ...props }, ref) {
    );
 }) as InputFieldComponentType["email"];
 
-InputFieldComponent.password = forwardRef(function Password({ ...props }, ref) {
+InputFieldComponent.password = forwardRef(function Password(inputFieldProps, ref) {
+   const betterHtmlContextInternal = useBetterHtmlContextInternal();
+   const props = useComponentsPropsMerger(
+      betterHtmlContextInternal.components.inputField?.style?.password,
+      inputFieldProps,
+   );
+
    const [isPassword, setIsPassword] = useBooleanState(true);
 
    return (
@@ -651,7 +705,13 @@ InputFieldComponent.password = forwardRef(function Password({ ...props }, ref) {
    );
 }) as InputFieldComponentType["password"];
 
-InputFieldComponent.search = forwardRef(function Search({ value, onChangeValue, onFocus, onBlur, ...props }, ref) {
+InputFieldComponent.search = forwardRef(function Search(inputFieldProps, ref) {
+   const betterHtmlContextInternal = useBetterHtmlContextInternal();
+   const { value, onChangeValue, onFocus, onBlur, ...props } = useComponentsPropsMerger(
+      betterHtmlContextInternal.components.inputField?.style?.search,
+      inputFieldProps,
+   );
+
    const [inputFieldValue, setInputFieldValue] = useState<string>(value?.toString() ?? "");
    const [inputFieldFocused, setInputFieldFocused] = useBooleanState();
 
@@ -696,10 +756,20 @@ InputFieldComponent.search = forwardRef(function Search({ value, onChangeValue, 
    );
 }) as InputFieldComponentType["search"];
 
-InputFieldComponent.phoneNumber = forwardRef(function PhoneNumber(
-   { label, value, onChangeValue, labelColor, id, ...props },
-   ref,
-) {
+InputFieldComponent.phoneNumber = forwardRef(function PhoneNumber(inputFieldProps, ref) {
+   const betterHtmlContextInternal = useBetterHtmlContextInternal();
+   const {
+      label,
+      labelFontFamily,
+      labelLetterSpacing,
+      labelTextTransform,
+      labelColor,
+      value,
+      onChangeValue,
+      id,
+      ...props
+   } = useComponentsPropsMerger(betterHtmlContextInternal.components.inputField?.style?.phoneNumber, inputFieldProps);
+
    const theme = useTheme();
    const internalId = useId();
 
@@ -774,13 +844,26 @@ InputFieldComponent.phoneNumber = forwardRef(function PhoneNumber(
    }, [value]);
 
    const readyId = id ?? internalId;
+   const readyLabel = betterHtmlContextInternal.components.inputField?.style?.phoneNumber?.label ?? label;
 
    return (
       <Div.column width="100%" gap={theme.styles.gap / 2}>
-         {label && (
+         {readyLabel && (
             <Label
-               text={label}
-               color={labelColor}
+               text={readyLabel}
+               fontFamily={
+                  betterHtmlContextInternal.components.inputField?.style?.phoneNumber?.labelFontFamily ??
+                  labelFontFamily
+               }
+               letterSpacing={
+                  betterHtmlContextInternal.components.inputField?.style?.phoneNumber?.labelLetterSpacing ??
+                  labelLetterSpacing
+               }
+               textTransform={
+                  betterHtmlContextInternal.components.inputField?.style?.phoneNumber?.labelTextTransform ??
+                  labelTextTransform
+               }
+               color={betterHtmlContextInternal.components.inputField?.style?.phoneNumber?.labelColor ?? labelColor}
                required={props.required}
                isError={!!props.errorText}
                htmlFor={readyId}
@@ -804,7 +887,9 @@ InputFieldComponent.phoneNumber = forwardRef(function PhoneNumber(
                withoutRenderingOptionsWhenClosed
             />
             <InputFieldComponent
-               placeholder={label ?? "Phone number"}
+               {...(betterHtmlContextInternal.components.inputField?.style?.phoneNumber as any)}
+               label={undefined}
+               placeholder={readyLabel ?? "Phone number"}
                className="react-better-html-phone-number"
                value={inputFieldValue}
                onChangeValue={onChangeValueElement}
@@ -817,26 +902,37 @@ InputFieldComponent.phoneNumber = forwardRef(function PhoneNumber(
    );
 }) as InputFieldComponentType["phoneNumber"];
 
-InputFieldComponent.date = forwardRef(function Date({ minDate, maxDate, ...props }, ref) {
+InputFieldComponent.date = forwardRef(function Date({ minDate, maxDate, ...inputFieldProps }, ref) {
+   const betterHtmlContextInternal = useBetterHtmlContextInternal();
+   const props = useComponentsPropsMerger(
+      betterHtmlContextInternal.components.inputField?.style?.date,
+      inputFieldProps,
+   );
+
    const theme = useTheme();
 
    const holderRef = useRef<HTMLDivElement>(null);
 
    const isMobileIOS = isMobileDevice && getBrowser() === "safari";
 
-   const { internalValue, setInternalValue, inputFieldProps, insideInputFieldComponentProps } =
-      useComponentInputFieldDateProps(props, holderRef, isMobileIOS);
+   const {
+      internalValue,
+      setInternalValue,
+      inputFieldProps: restInputFieldProps,
+      insideInputFieldComponentProps,
+   } = useComponentInputFieldDateProps(props, holderRef, isMobileIOS);
 
    const onChange = useCallback(
       (date?: string) => {
-         inputFieldProps.onChangeValue?.(date ?? "");
+         restInputFieldProps.onChangeValue?.(date ?? "");
          setInternalValue(date ?? "");
       },
-      [inputFieldProps.onChangeValue],
+      [restInputFieldProps.onChangeValue],
    );
 
    return (
       <InputFieldComponent
+         {...(betterHtmlContextInternal.components.inputField?.style?.date as any)}
          type="date"
          insideInputFieldAfterComponent={
             !isMobileIOS ? (
@@ -859,7 +955,7 @@ InputFieldComponent.date = forwardRef(function Date({ minDate, maxDate, ...props
          holderRef={holderRef}
          ref={ref}
          {...props}
-         {...inputFieldProps}
+         {...restInputFieldProps}
       />
    );
 }) as InputFieldComponentType["date"];
@@ -872,10 +968,16 @@ InputFieldComponent.dateTime = forwardRef(function DateTime(
       maxDate,
       defaultDateAfterTimePick,
       defaultTimeAfterDatePick = "00:00",
-      ...props
+      ...inputFieldProps
    },
    ref,
 ) {
+   const betterHtmlContextInternal = useBetterHtmlContextInternal();
+   const props = useComponentsPropsMerger(
+      betterHtmlContextInternal.components.inputField?.style?.dateTime,
+      inputFieldProps,
+   );
+
    const theme = useTheme();
 
    const holderRef = useRef<HTMLDivElement>(null);
@@ -884,8 +986,13 @@ InputFieldComponent.dateTime = forwardRef(function DateTime(
 
    const isMobileIOS = isMobileDevice && getBrowser() === "safari";
 
-   const { internalValue, setInternalValue, inputFieldProps, insideInputFieldComponentProps, isOpen } =
-      useComponentInputFieldDateProps(props, holderRef, isMobileIOS);
+   const {
+      internalValue,
+      setInternalValue,
+      inputFieldProps: restInputFieldProps,
+      insideInputFieldComponentProps,
+      isOpen,
+   } = useComponentInputFieldDateProps(props, holderRef, isMobileIOS);
 
    const readyHours = useMemo<number[]>(
       () => hoursToRender?.filter((hour) => hour >= 0 && hour <= 23) ?? hours,
@@ -900,10 +1007,10 @@ InputFieldComponent.dateTime = forwardRef(function DateTime(
       (date?: string) => {
          const newValue = date ? `${date}T${internalValue?.toString().split("T")[1] ?? defaultTimeAfterDatePick}` : "";
 
-         inputFieldProps.onChangeValue?.(newValue);
+         restInputFieldProps.onChangeValue?.(newValue);
          setInternalValue(newValue);
       },
-      [internalValue, defaultTimeAfterDatePick, inputFieldProps.onChangeValue],
+      [internalValue, defaultTimeAfterDatePick, restInputFieldProps.onChangeValue],
    );
    const onBlur = useCallback(
       (event: React.FocusEvent<HTMLInputElement>) => {
@@ -926,10 +1033,10 @@ InputFieldComponent.dateTime = forwardRef(function DateTime(
                   .padStart(2, "0")}`;
             const newValue = `${(internalValue.trim() || today)?.toString().split("T")[0]}T${newTime}`;
 
-            inputFieldProps.onChangeValue?.(newValue);
+            restInputFieldProps.onChangeValue?.(newValue);
          }
 
-         inputFieldProps.onBlur?.(event);
+         restInputFieldProps.onBlur?.(event);
       },
       [
          defaultDateAfterTimePick,
@@ -938,8 +1045,8 @@ InputFieldComponent.dateTime = forwardRef(function DateTime(
          minutesToRender,
          readyHours,
          readyMinutes,
-         inputFieldProps.onChangeValue,
-         inputFieldProps.onBlur,
+         restInputFieldProps.onChangeValue,
+         restInputFieldProps.onBlur,
       ],
    );
    const onClickHour = useCallback(
@@ -954,10 +1061,10 @@ InputFieldComponent.dateTime = forwardRef(function DateTime(
                .padStart(2, "0")}`;
 
          const newValue = `${(internalValue.trim() || today)?.toString().split("T")[0]}T${newTime}`;
-         inputFieldProps.onChangeValue?.(newValue);
+         restInputFieldProps.onChangeValue?.(newValue);
          setInternalValue(newValue);
       },
-      [defaultDateAfterTimePick, internalValue, inputFieldProps.onChangeValue],
+      [defaultDateAfterTimePick, internalValue, restInputFieldProps.onChangeValue],
    );
    const onClickMinute = useCallback(
       (minute: number) => {
@@ -974,10 +1081,10 @@ InputFieldComponent.dateTime = forwardRef(function DateTime(
 
          const newValue = `${(internalValue.trim() || today)?.toString().split("T")[0]}T${newTime}`;
 
-         inputFieldProps.onChangeValue?.(newValue);
+         restInputFieldProps.onChangeValue?.(newValue);
          setInternalValue(newValue);
       },
-      [defaultDateAfterTimePick, internalValue, inputFieldProps.onChangeValue],
+      [defaultDateAfterTimePick, internalValue, restInputFieldProps.onChangeValue],
    );
 
    useEffect(() => {
@@ -995,6 +1102,7 @@ InputFieldComponent.dateTime = forwardRef(function DateTime(
 
    return (
       <InputFieldComponent
+         {...(betterHtmlContextInternal.components.inputField?.style?.dateTime as any)}
          type="datetime-local"
          insideInputFieldAfterComponent={
             !isMobileIOS ? (
@@ -1110,16 +1218,22 @@ InputFieldComponent.dateTime = forwardRef(function DateTime(
          holderRef={holderRef}
          ref={ref}
          {...props}
-         {...inputFieldProps}
+         {...restInputFieldProps}
          onBlur={onBlur}
       />
    );
 }) as InputFieldComponentType["dateTime"];
 
 InputFieldComponent.time = forwardRef(function Time(
-   { hoursToRender, minutesToRender, minTime, maxTime, ...props },
+   { hoursToRender, minutesToRender, minTime, maxTime, ...inputFieldProps },
    ref,
 ) {
+   const betterHtmlContextInternal = useBetterHtmlContextInternal();
+   const props = useComponentsPropsMerger(
+      betterHtmlContextInternal.components.inputField?.style?.time,
+      inputFieldProps,
+   );
+
    const theme = useTheme();
 
    const holderRef = useRef<HTMLDivElement>(null);
@@ -1134,8 +1248,13 @@ InputFieldComponent.time = forwardRef(function Time(
    const maxHours = maxTime ? parseInt(maxTime.split(":")[0]) : undefined;
    const maxMinutes = maxTime ? parseInt(maxTime.split(":")[1]) : undefined;
 
-   const { internalValue, setInternalValue, inputFieldProps, insideInputFieldComponentProps, isOpen } =
-      useComponentInputFieldDateProps(props, holderRef, isMobileIOS);
+   const {
+      internalValue,
+      setInternalValue,
+      inputFieldProps: restInputFieldProps,
+      insideInputFieldComponentProps,
+      isOpen,
+   } = useComponentInputFieldDateProps(props, holderRef, isMobileIOS);
 
    const readyHours = useMemo<number[]>(
       () => hoursToRender?.filter((hour) => hour >= 0 && hour <= 23) ?? hours,
@@ -1169,10 +1288,10 @@ InputFieldComponent.time = forwardRef(function Time(
 
             const newValue = `${finalHour.toString().padStart(2, "0")}:${finalMinute.toString().padStart(2, "0")}`;
 
-            inputFieldProps.onChangeValue?.(newValue);
+            restInputFieldProps.onChangeValue?.(newValue);
          }
 
-         inputFieldProps.onBlur?.(event);
+         restInputFieldProps.onBlur?.(event);
       },
       [
          minHours,
@@ -1183,27 +1302,27 @@ InputFieldComponent.time = forwardRef(function Time(
          minutesToRender,
          readyHours,
          readyMinutes,
-         inputFieldProps.onChangeValue,
-         inputFieldProps.onBlur,
+         restInputFieldProps.onChangeValue,
+         restInputFieldProps.onBlur,
       ],
    );
    const onClickHour = useCallback(
       (hour: number) => {
          const value = `${hour.toString().padStart(2, "0")}:${internalValue?.toString().split(":")[1] || "00"}`;
 
-         inputFieldProps.onChangeValue?.(value);
+         restInputFieldProps.onChangeValue?.(value);
          setInternalValue(value);
       },
-      [internalValue, inputFieldProps.onChangeValue],
+      [internalValue, restInputFieldProps.onChangeValue],
    );
    const onClickMinute = useCallback(
       (minute: number) => {
          const value = `${internalValue?.toString().split(":")[0] || "00"}:${minute.toString().padStart(2, "0")}`;
 
-         inputFieldProps.onChangeValue?.(value);
+         restInputFieldProps.onChangeValue?.(value);
          setInternalValue(value);
       },
-      [internalValue, inputFieldProps.onChangeValue],
+      [internalValue, restInputFieldProps.onChangeValue],
    );
 
    useEffect(() => {
@@ -1219,6 +1338,7 @@ InputFieldComponent.time = forwardRef(function Time(
 
    return (
       <InputFieldComponent
+         {...(betterHtmlContextInternal.components.inputField?.style?.time as any)}
          type="time"
          insideInputFieldAfterComponent={
             !isMobileIOS ? (
@@ -1317,14 +1437,20 @@ InputFieldComponent.time = forwardRef(function Time(
          holderRef={holderRef}
          ref={ref}
          {...props}
-         {...inputFieldProps}
+         {...restInputFieldProps}
          minWidth={buttonWidth * 2 + 2}
          onBlur={onBlur}
       />
    );
 }) as InputFieldComponentType["time"];
 
-InputFieldComponent.color = forwardRef(function Color({ value, onChangeValue, ...props }, ref) {
+InputFieldComponent.color = forwardRef(function Color(inputFieldProps, ref) {
+   const betterHtmlContextInternal = useBetterHtmlContextInternal();
+   const { value, onChangeValue, ...props } = useComponentsPropsMerger(
+      betterHtmlContextInternal.components.inputField?.style?.time,
+      inputFieldProps,
+   );
+
    const [inputFieldValue, setInputFieldValue] = useState<typeof value>(value ?? "#000000");
 
    const onChangeValueElement = useCallback(
@@ -1343,6 +1469,7 @@ InputFieldComponent.color = forwardRef(function Color({ value, onChangeValue, ..
 
    return (
       <InputFieldComponent
+         {...(betterHtmlContextInternal.components.inputField?.style?.color as any)}
          type="color"
          insideInputFieldAfterComponent={
             <Div.row

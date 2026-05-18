@@ -16,7 +16,7 @@ import styled, { css } from "styled-components";
 
 import { ComponentHoverStyle, ComponentStyle } from "../types/components";
 
-import { useComponentPropsGrouper, useComponentPropsWithPrefix } from "../utils/hooks";
+import { useComponentPropsGrouper, useComponentPropsWithPrefix, useComponentsPropsMerger } from "../utils/hooks";
 
 import Div from "./Div";
 import Icon from "./Icon";
@@ -96,7 +96,7 @@ const ButtonElement = styled.button.withConfig({
    }
 `;
 
-export type ButtonProps<Value> = {
+export type ButtonProps<Value = unknown> = {
    text?: string;
    value?: Value;
 
@@ -162,46 +162,48 @@ type ButtonComponent = {
    ) => React.ReactElement;
 };
 
-const ButtonComponent: ButtonComponent = function Button<Value>({
-   href,
-   text,
-   value,
-   download,
-   target,
+const ButtonComponent: ButtonComponent = function Button<Value>(buttonProps: ButtonProps<Value>) {
+   const betterHtmlContextInternal = useBetterHtmlContextInternal();
+   const {
+      href,
+      text,
+      value,
+      download,
+      target,
 
-   icon,
-   iconPosition = "left",
-   iconColor,
-   iconSize,
+      icon,
+      iconPosition = "left",
+      iconColor,
+      iconSize,
 
-   image,
-   imagePosition = "left",
-   imageWidth,
-   imageHeight,
+      image,
+      imagePosition = "left",
+      imageWidth,
+      imageHeight,
 
-   loaderName,
-   loaderSize,
-   isLoading,
+      loaderName,
+      loaderSize,
+      isLoading,
 
-   disabled,
-   isSmall,
-   isSubmit,
+      disabled,
+      isSmall,
+      isSubmit,
 
-   onClick,
-   onClickWithValue,
-   ...props
-}: ButtonProps<Value>) {
+      onClick,
+      onClickWithValue,
+      ...props
+   } = useComponentsPropsMerger(
+      betterHtmlContextInternal.components.button?.style?.default as ButtonProps<Value>,
+      buttonProps,
+   );
+
    const theme = useTheme();
    const isLoadingHook = useLoader(loaderName);
-   const { components } = useBetterHtmlContextInternal();
    const { colorTheme } = useBetterCoreContext();
 
    const isLoadingElement = isLoading || isLoadingHook;
 
-   const { style, hoverStyle, restProps } = useComponentPropsGrouper({
-      ...components.button?.style?.default,
-      ...props,
-   });
+   const { style, hoverStyle, restProps } = useComponentPropsGrouper(props);
    const dataProps = useComponentPropsWithPrefix(restProps, "data");
    const ariaProps = useComponentPropsWithPrefix(restProps, "aria");
 
@@ -235,8 +237,8 @@ const ButtonComponent: ButtonComponent = function Button<Value>({
       />
    ) : undefined;
 
-   const linkComponentTag = components.button?.tagReplacement?.linkComponent ?? "a";
-   const buttonComponentTag = components.button?.tagReplacement?.buttonComponent ?? "button";
+   const linkComponentTag = betterHtmlContextInternal.components.button?.tagReplacement?.linkComponent ?? "a";
+   const buttonComponentTag = betterHtmlContextInternal.components.button?.tagReplacement?.buttonComponent ?? "button";
 
    return (
       <ButtonElement
@@ -298,13 +300,17 @@ const ButtonComponent: ButtonComponent = function Button<Value>({
    );
 } as any;
 
-ButtonComponent.secondary = function Secondary({ className, ...props }) {
+ButtonComponent.secondary = function Secondary<Value>(buttonProps: ButtonProps<Value>) {
+   const betterHtmlContextInternal = useBetterHtmlContextInternal();
+   const { className, ...props } = useComponentsPropsMerger(
+      betterHtmlContextInternal.components.button?.style?.secondary as ButtonProps<Value>,
+      buttonProps,
+   );
+
    const theme = useTheme();
-   const betterHtmlContext = useBetterHtmlContextInternal();
 
    return (
       <ButtonComponent
-         {...betterHtmlContext.components.button?.style?.secondary}
          className={`secondary${className ? ` ${className}` : ""}`}
          color={theme.colors.textPrimary}
          {...props}
@@ -312,30 +318,33 @@ ButtonComponent.secondary = function Secondary({ className, ...props }) {
    );
 } as ButtonComponent["secondary"];
 
-ButtonComponent.destructive = function Destructive(props) {
-   const theme = useTheme();
-   const betterHtmlContext = useBetterHtmlContextInternal();
-
-   return (
-      <ButtonComponent
-         {...betterHtmlContext.components.button?.style?.destructive}
-         backgroundColor={theme.colors.error}
-         color={theme.colors.base}
-         {...props}
-      />
+ButtonComponent.destructive = function Destructive<Value>(buttonProps: ButtonProps<Value>) {
+   const betterHtmlContextInternal = useBetterHtmlContextInternal();
+   const props = useComponentsPropsMerger(
+      betterHtmlContextInternal.components.button?.style?.destructive as ButtonProps<Value>,
+      buttonProps,
    );
+
+   const theme = useTheme();
+
+   return <ButtonComponent backgroundColor={theme.colors.error} color={theme.colors.base} {...props} />;
 } as ButtonComponent["destructive"];
 
-ButtonComponent.icon = function Icon({ size = 16, buttonSize, backgroundButtonColor, ...props }) {
+ButtonComponent.icon = function Icon({ size = 16, buttonSize, backgroundButtonColor, ...buttonProps }) {
+   const betterHtmlContextInternal = useBetterHtmlContextInternal();
+   const { ...props } = useComponentsPropsMerger(
+      betterHtmlContextInternal.components.button?.style?.icon as ButtonProps,
+      buttonProps as ButtonProps,
+   );
+
    const theme = useTheme();
-   const betterHtmlContext = useBetterHtmlContextInternal();
 
    const readyButtonSize = buttonSize ?? size + theme.styles.space;
    const backgroundButtonColorReady = backgroundButtonColor ?? theme.colors.textPrimary;
 
    return (
       <ButtonComponent
-         {...betterHtmlContext.components.button?.style?.icon}
+         {...(betterHtmlContextInternal.components.button?.style?.icon as any)}
          width={readyButtonSize}
          height={readyButtonSize}
          color={theme.colors.textPrimary}
@@ -353,8 +362,12 @@ ButtonComponent.icon = function Icon({ size = 16, buttonSize, backgroundButtonCo
    );
 } as ButtonComponent["icon"];
 
-ButtonComponent.upload = function Upload({ accept, multiple, onUpload, ...props }) {
-   const betterHtmlContext = useBetterHtmlContextInternal();
+ButtonComponent.upload = function Upload({ accept, multiple, onUpload, ...buttonProps }) {
+   const betterHtmlContextInternal = useBetterHtmlContextInternal();
+   const { ...props } = useComponentsPropsMerger(
+      betterHtmlContextInternal.components.button?.style?.upload as ButtonProps,
+      buttonProps as ButtonProps,
+   );
 
    const onClickElement = useCallback(() => {
       const input = document.createElement("input");
@@ -371,7 +384,7 @@ ButtonComponent.upload = function Upload({ accept, multiple, onUpload, ...props 
 
    return (
       <ButtonComponent
-         {...betterHtmlContext.components.button?.style?.upload}
+         {...(betterHtmlContextInternal.components.button?.style?.upload as any)}
          text="Upload"
          icon="uploadCloud"
          onClick={onClickElement}
