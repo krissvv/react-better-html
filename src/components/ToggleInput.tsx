@@ -5,6 +5,7 @@ import styled, { css } from "styled-components";
 import { ComponentHoverStyle, ComponentPropWithRef, ComponentStyle } from "../types/components";
 
 import { useComponentPropsGrouper, useComponentPropsWithPrefix, useComponentsPropsMerger } from "../utils/hooks";
+import { filterHover } from "../utils/variableFunctions";
 
 import Text from "./Text";
 import Div from "./Div";
@@ -57,7 +58,7 @@ const InputElement = styled.input.withConfig({
       ${(props) =>
          props.withNoBorder
             ? css`
-                 filter: ${props.colorTheme === "dark" ? "brightness(1.2)" : "brightness(0.9)"};
+                 filter: ${props.hoverStyle.filter ?? filterHover().z1};
               `
             : css`
                  border-color: ${props.theme.colors.primary};
@@ -191,7 +192,7 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
       textAdvanced,
       errorText,
       infoText,
-      size,
+      size = componentSize,
       value,
       onChange,
       checked: controlledChecked,
@@ -274,7 +275,7 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
                      top="50%"
                      left="50%"
                      color={theme.colors.base}
-                     size={14}
+                     size={size / 1.8}
                      transform={`translate(-50%, -50%)${checked ? "" : " scale(0.4)"}`}
                      opacity={checked ? 1 : 0}
                      pointerEvents="none"
@@ -283,8 +284,8 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
                ) : props.type === "radio" ? (
                   <Div
                      position="absolute"
-                     width={10}
-                     height={10}
+                     width={size / 2}
+                     height={size / 2}
                      top="50%"
                      left="50%"
                      backgroundColor={theme.colors.base}

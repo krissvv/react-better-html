@@ -27,6 +27,7 @@ import {
    useComponentsPropsMerger,
 } from "../utils/hooks";
 import { findClosestNumber, getBrowser } from "../utils/functions";
+import { filterHover } from "../utils/variableFunctions";
 
 import Text from "./Text";
 import Div from "./Div";
@@ -104,7 +105,7 @@ const InputElement = styled.input.withConfig({
       ${(props) =>
          props.withNoBorder
             ? css`
-                 filter: ${props.colorTheme === "dark" ? "brightness(1.2)" : "brightness(0.9)"};
+                 filter: ${props.hoverStyle.filter ?? filterHover().z1};
               `
             : css`
                  border-color: ${props.theme.colors.primary};
@@ -247,7 +248,7 @@ const TextareaElement = styled.textarea.withConfig({
    ${(props) =>
       props.withNoBorder
          ? css`
-              filter: ${props.colorTheme === "dark" ? "brightness(1.2)" : "brightness(0.9)"};
+              filter: ${props.hoverStyle.filter ?? filterHover().z1};
            `
          : css`
               border-color: ${props.theme.colors.primary};

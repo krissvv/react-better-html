@@ -17,6 +17,7 @@ import styled, { css } from "styled-components";
 import { ComponentHoverStyle, ComponentStyle } from "../types/components";
 
 import { useComponentPropsGrouper, useComponentPropsWithPrefix, useComponentsPropsMerger } from "../utils/hooks";
+import { filterHover } from "../utils/variableFunctions";
 
 import Div from "./Div";
 import Icon from "./Icon";
@@ -73,13 +74,13 @@ const ButtonElement = styled.button.withConfig({
                 cursor: pointer;
 
                 &:not(.secondary):hover {
-                   filter: ${props.colorTheme === "dark" ? "brightness(1.2)" : "brightness(0.9)"};
+                   filter: ${props.hoverStyle.filter ?? filterHover().z1};
                 }
 
                 &.secondary:hover {
                    ${props.withNoBorder
                       ? css`
-                           filter: ${props.colorTheme === "dark" ? "brightness(1.2)" : "brightness(0.9)"};
+                           filter: ${props.hoverStyle.filter ?? filterHover().z1};
                         `
                       : css`
                            border-color: ${props.theme.colors.primary};
