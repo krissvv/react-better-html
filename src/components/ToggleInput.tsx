@@ -136,6 +136,7 @@ type InternalToggleInputProps<Value> = {
    labelLetterSpacing?: React.CSSProperties["letterSpacing"];
    labelTextTransform?: React.CSSProperties["textTransform"];
    labelColor?: React.CSSProperties["color"];
+   labelGap?: React.CSSProperties["gap"];
    text?: string;
    textFontFamily?: React.CSSProperties["fontFamily"];
    textLetterSpacing?: React.CSSProperties["letterSpacing"];
@@ -162,6 +163,7 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
       labelLetterSpacing,
       labelTextTransform,
       labelColor,
+      labelGap,
       text,
       textFontFamily,
       textLetterSpacing,
@@ -210,7 +212,7 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
    const readyId = id ?? internalId;
 
    return (
-      <Div.column gap={theme.styles.gap} {...excludeStyle}>
+      <Div.column gap={labelGap ?? theme.styles.gap} {...excludeStyle}>
          {label && (
             <Label
                text={label}

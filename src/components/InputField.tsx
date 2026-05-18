@@ -241,6 +241,7 @@ export type InputFieldProps = {
    labelLetterSpacing?: React.CSSProperties["letterSpacing"];
    labelTextTransform?: React.CSSProperties["textTransform"];
    labelColor?: React.CSSProperties["color"];
+   labelGap?: React.CSSProperties["gap"];
    errorText?: string;
    infoText?: string;
    leftIcon?: IconName | AnyOtherString;
@@ -335,6 +336,7 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
       labelLetterSpacing,
       labelTextTransform,
       labelColor,
+      labelGap,
       errorText,
       infoText,
       leftIcon,
@@ -403,7 +405,7 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
    const readyId = id ?? internalId;
 
    return (
-      <Div.column width="100%" gap={theme.styles.gap / 2} {...excludeStyle}>
+      <Div.column width="100%" gap={labelGap ?? theme.styles.gap / 2} {...excludeStyle}>
          {label && (
             <Label
                text={label}
@@ -547,6 +549,7 @@ InputFieldComponent.multiline = forwardRef(function Multiline(inputFieldProps, r
       labelLetterSpacing,
       labelTextTransform,
       labelColor,
+      labelGap,
       placeholder,
       errorText,
       infoText,
@@ -581,7 +584,7 @@ InputFieldComponent.multiline = forwardRef(function Multiline(inputFieldProps, r
    const readyId = id ?? internalId;
 
    return (
-      <Div.column gap={theme.styles.gap / 2}>
+      <Div.column gap={labelGap ?? theme.styles.gap / 2}>
          {label && (
             <Label
                text={label}

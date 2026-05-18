@@ -58,6 +58,7 @@ export type DropdownProps<Value = unknown, Data = unknown> = {
    labelLetterSpacing?: React.CSSProperties["letterSpacing"];
    labelTextTransform?: React.CSSProperties["textTransform"];
    labelColor?: React.CSSProperties["color"];
+   labelGap?: React.CSSProperties["gap"];
    errorText?: string;
    infoText?: string;
    /** @default false */
@@ -124,6 +125,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
       labelLetterSpacing,
       labelTextTransform,
       labelColor,
+      labelGap,
       errorText,
       infoText,
       required,
@@ -461,6 +463,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
             labelLetterSpacing={labelLetterSpacing}
             labelTextTransform={labelTextTransform}
             labelColor={labelColor}
+            labelGap={labelGap}
             errorText={errorText}
             infoText={infoText}
             required={
