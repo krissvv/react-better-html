@@ -6,7 +6,7 @@ import { HorizontalDividerProps, VerticalDividerProps } from "../components/Divi
 import { LabelProps } from "../components/Label";
 
 type ComponentStyleConfig<ComponentProps, Subcomponents extends string> = {
-   [key in Subcomponents]?: ComponentProps;
+   [key in Subcomponents]?: Partial<ComponentProps>;
 };
 
 type ComponentTagReplacementConfig<Subcomponents extends string> = {
