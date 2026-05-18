@@ -55,6 +55,7 @@ export type DropdownOption<Value, Data = unknown> = {
 export type DropdownProps<Value = unknown, Data = unknown> = {
    label?: string;
    labelFontFamily?: React.CSSProperties["fontFamily"];
+   labelFontSize?: React.CSSProperties["fontSize"];
    labelLetterSpacing?: React.CSSProperties["letterSpacing"];
    labelTextTransform?: React.CSSProperties["textTransform"];
    labelColor?: React.CSSProperties["color"];
@@ -122,6 +123,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
    const {
       label,
       labelFontFamily,
+      labelFontSize,
       labelLetterSpacing,
       labelTextTransform,
       labelColor,
@@ -460,6 +462,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
          <InputField
             label={label}
             labelFontFamily={labelFontFamily}
+            labelFontSize={labelFontSize}
             labelLetterSpacing={labelLetterSpacing}
             labelTextTransform={labelTextTransform}
             labelColor={labelColor}

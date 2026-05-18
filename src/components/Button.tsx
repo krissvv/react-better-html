@@ -36,6 +36,7 @@ const ButtonElement = styled.button.withConfig({
    withText?: boolean;
    disabled?: boolean;
    isLoading?: boolean;
+   withNoBorder?: boolean;
 }>`
    display: block;
    position: relative;
@@ -74,7 +75,13 @@ const ButtonElement = styled.button.withConfig({
                 }
 
                 &.secondary:hover {
-                   border-color: ${props.theme.colors.primary};
+                   ${props.withNoBorder
+                      ? css`
+                           filter: ${props.colorTheme === "dark" ? "brightness(1.2)" : "brightness(0.9)"};
+                        `
+                      : css`
+                           border-color: ${props.theme.colors.primary};
+                        `}
                 }
              `
            : ""}
@@ -248,6 +255,7 @@ const ButtonComponent: ButtonComponent = function Button<Value>(buttonProps: But
          isSmall={isSmall}
          withText={text !== undefined}
          isLoading={isLoadingElement}
+         withNoBorder={theme.styles.borderWidth === 0}
          disabled={disabled}
          to={href}
          href={href}

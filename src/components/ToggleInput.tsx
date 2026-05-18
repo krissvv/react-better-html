@@ -17,12 +17,12 @@ const switchComponentBallGap = 3;
 const switchComponentMouseDownDifference = 4;
 
 const InputElement = styled.input.withConfig({
-   shouldForwardProp: (prop) => !["theme", "style", "hoverStyle"].includes(prop),
-})<{ theme: Theme; style: ComponentStyle; hoverStyle: ComponentStyle }>`
+   shouldForwardProp: (prop) => !["theme", "style", "hoverStyle", "size"].includes(prop),
+})<{ theme: Theme; style: ComponentStyle; hoverStyle: ComponentStyle; size?: number }>`
    position: relative;
    appearance: none;
-   width: ${componentSize}px;
-   height: ${componentSize}px;
+   width: ${(props) => props.size ?? componentSize}px;
+   height: ${(props) => props.size ?? componentSize}px;
    background-color: ${(props) => props.theme.colors.backgroundContent};
    border: ${(props) => props.theme.styles.borderWidth}px solid ${(props) => props.theme.colors.border};
    border-radius: ${(props) => props.theme.styles.borderRadius / 2}px;
@@ -133,20 +133,24 @@ export type ToggleInputRef = {};
 type InternalToggleInputProps<Value> = {
    label?: string;
    labelFontFamily?: React.CSSProperties["fontFamily"];
+   labelFontSize?: React.CSSProperties["fontSize"];
    labelLetterSpacing?: React.CSSProperties["letterSpacing"];
    labelTextTransform?: React.CSSProperties["textTransform"];
    labelColor?: React.CSSProperties["color"];
    labelGap?: React.CSSProperties["gap"];
    text?: string;
    textFontFamily?: React.CSSProperties["fontFamily"];
+   textFontSize?: React.CSSProperties["fontSize"];
    textLetterSpacing?: React.CSSProperties["letterSpacing"];
    textTextTransform?: React.CSSProperties["textTransform"];
    textAdvanced?: React.ReactNode;
    errorText?: string;
    infoText?: string;
+   /** @default 26 */
+   size?: number;
    value?: Value;
    onChange?: (checked: boolean, value?: Value) => void;
-} & OmitProps<React.ComponentProps<"input">, "style" | "value" | "ref" | "onChange"> &
+} & OmitProps<React.ComponentProps<"input">, "style" | "value" | "ref" | "onChange" | "size"> &
    ComponentStyle &
    ComponentHoverStyle;
 
@@ -160,17 +164,20 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
    {
       label,
       labelFontFamily,
+      labelFontSize,
       labelLetterSpacing,
       labelTextTransform,
       labelColor,
       labelGap,
       text,
       textFontFamily,
+      textFontSize,
       textLetterSpacing,
       textTextTransform,
       textAdvanced,
       errorText,
       infoText,
+      size,
       value,
       onChange,
       checked: controlledChecked,
@@ -217,6 +224,7 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
             <Label
                text={label}
                fontFamily={labelFontFamily}
+               fontSize={labelFontSize}
                letterSpacing={labelLetterSpacing}
                textTransform={labelTextTransform}
                color={labelColor}
@@ -230,6 +238,7 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
             <Div.row position="relative" alignItems="center">
                <InputElement
                   theme={theme}
+                  size={size}
                   type={props.type ?? "checkbox"}
                   checked={checked}
                   onChange={onChangeElement}
@@ -273,6 +282,7 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
             {text ? (
                <Text
                   fontFamily={textFontFamily}
+                  fontSize={textFontSize}
                   letterSpacing={textLetterSpacing}
                   textTransform={textTextTransform}
                   color={color}
@@ -349,6 +359,7 @@ export default {
       const {
          label,
          labelFontFamily,
+         labelFontSize,
          labelLetterSpacing,
          labelTextTransform,
          labelColor,
@@ -395,6 +406,7 @@ export default {
                <Label
                   text={label}
                   fontFamily={labelFontFamily}
+                  fontSize={labelFontSize}
                   letterSpacing={labelLetterSpacing}
                   textTransform={labelTextTransform}
                   color={labelColor}

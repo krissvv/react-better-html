@@ -238,6 +238,7 @@ const minutes = Array.from({ length: 60 }, (_, index) => index);
 export type InputFieldProps = {
    label?: string;
    labelFontFamily?: React.CSSProperties["fontFamily"];
+   labelFontSize?: React.CSSProperties["fontSize"];
    labelLetterSpacing?: React.CSSProperties["letterSpacing"];
    labelTextTransform?: React.CSSProperties["textTransform"];
    labelColor?: React.CSSProperties["color"];
@@ -333,6 +334,7 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
    const {
       label,
       labelFontFamily,
+      labelFontSize,
       labelLetterSpacing,
       labelTextTransform,
       labelColor,
@@ -410,6 +412,7 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
             <Label
                text={label}
                fontFamily={labelFontFamily}
+               fontSize={labelFontSize}
                letterSpacing={labelLetterSpacing}
                textTransform={labelTextTransform}
                color={labelColor}
@@ -546,6 +549,7 @@ InputFieldComponent.multiline = forwardRef(function Multiline(inputFieldProps, r
    const {
       label,
       labelFontFamily,
+      labelFontSize,
       labelLetterSpacing,
       labelTextTransform,
       labelColor,
@@ -589,6 +593,7 @@ InputFieldComponent.multiline = forwardRef(function Multiline(inputFieldProps, r
             <Label
                text={label}
                fontFamily={labelFontFamily}
+               fontSize={labelFontSize}
                letterSpacing={labelLetterSpacing}
                textTransform={labelTextTransform}
                color={labelColor}
@@ -764,6 +769,7 @@ InputFieldComponent.phoneNumber = forwardRef(function PhoneNumber(inputFieldProp
    const {
       label,
       labelFontFamily,
+      labelFontSize,
       labelLetterSpacing,
       labelTextTransform,
       labelColor,
@@ -857,6 +863,9 @@ InputFieldComponent.phoneNumber = forwardRef(function PhoneNumber(inputFieldProp
                fontFamily={
                   betterHtmlContextInternal.components.inputField?.style?.phoneNumber?.labelFontFamily ??
                   labelFontFamily
+               }
+               fontSize={
+                  betterHtmlContextInternal.components.inputField?.style?.phoneNumber?.labelFontSize ?? labelFontSize
                }
                letterSpacing={
                   betterHtmlContextInternal.components.inputField?.style?.phoneNumber?.labelLetterSpacing ??
