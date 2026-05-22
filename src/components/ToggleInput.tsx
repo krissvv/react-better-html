@@ -310,7 +310,7 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
                >
                   {text}
                   {required && !label && (
-                     <Text as="span" fontSize={16} color={theme.colors.error}>
+                     <Text as="span" fontSize={theme.styles.fontSize} color={theme.colors.error}>
                         {" "}
                         *
                      </Text>
@@ -321,7 +321,7 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
                   {textAdvanced}
 
                   {required && !label && (
-                     <Text as="span" fontSize={16} color={theme.colors.error} marginLeft={4}>
+                     <Text as="span" fontSize={theme.styles.fontSize} color={theme.colors.error} marginLeft={4}>
                         {" "}
                         *
                      </Text>

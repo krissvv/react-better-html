@@ -109,7 +109,7 @@ FormRowComponent.withTitle = forwardRef(function WithTitle(
                   {title}
 
                   {required && (
-                     <Text as="span" fontSize={16} color={theme.colors.error}>
+                     <Text as="span" fontSize={theme.styles.fontSize} color={theme.colors.error}>
                         {" "}
                         *
                      </Text>
@@ -117,7 +117,7 @@ FormRowComponent.withTitle = forwardRef(function WithTitle(
                </Text>
 
                {description && (
-                  <Text fontSize={descriptionFontSize} color={theme.colors.textSecondary}>
+                  <Text fontSize={descriptionFontSize ?? theme.styles.fontSize} color={theme.colors.textSecondary}>
                      {description}
                   </Text>
                )}

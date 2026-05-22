@@ -71,8 +71,8 @@ const InputElement = styled.input.withConfig({
    position: relative;
    width: 100%;
    font-family: ${(props) => props.theme.styles.fontFamily};
-   font-size: 16px;
-   line-height: 20px;
+   font-size: ${(props) => props.theme.styles.fontSize}px;
+   line-height: ${(props) => props.theme.styles.fontSize + 4}px;
    color: ${(props) => props.theme.colors.textPrimary};
    background: ${(props) => props.theme.colors.backgroundContent};
    border: ${(props) => props.theme.styles.borderWidth}px solid ${(props) => props.theme.colors.border};
@@ -222,8 +222,8 @@ const TextareaElement = styled.textarea.withConfig({
    min-height: 3lh;
    max-height: 8lh;
    font-family: ${(props) => props.theme.styles.fontFamily};
-   font-size: 16px;
-   line-height: 20px;
+   font-size: ${(props) => props.theme.styles.fontSize}px;
+   line-height: ${(props) => props.theme.styles.fontSize + 4}px;
    color: ${(props) => props.theme.colors.textPrimary};
    background: ${(props) => props.theme.colors.backgroundContent};
    border: ${(props) => props.theme.styles.borderWidth}px solid ${(props) => props.theme.colors.border};

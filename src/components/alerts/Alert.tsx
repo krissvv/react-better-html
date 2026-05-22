@@ -362,7 +362,11 @@ function Alert({ alert }: AlertProps) {
                         {alertTitle}
                      </Text>
 
-                     {alert.message && <Text color={theme.colors.textSecondary}>{alert.message}</Text>}
+                     {alert.message && (
+                        <Text fontSize={theme.styles.fontSize} color={theme.colors.textSecondary}>
+                           {alert.message}
+                        </Text>
+                     )}
                   </Div.column>
 
                   {pluginConfig.withCloseButton && (

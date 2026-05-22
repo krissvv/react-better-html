@@ -46,8 +46,8 @@ const ButtonElement = styled.button.withConfig({
    width: fit-content;
    min-width: max-content;
    font-family: ${(props) => props.theme.styles.fontFamily};
-   font-size: 16px;
-   line-height: 20px;
+   font-size: ${(props) => props.theme.styles.fontSize}px;
+   line-height: ${(props) => props.theme.styles.fontSize + 4}px;
    text-decoration: none;
    color: ${(props) => props.theme.colors.base};
    background-color: ${(props) => props.theme.colors.primary};
@@ -227,14 +227,14 @@ const ButtonComponent: ButtonComponent = function Button<Value>(buttonProps: But
 
    const iconComponent = icon ? (
       <Div.row
-         height={iconSize ?? parseInt(style.fontSize?.toString() ?? "16")}
+         height={iconSize ?? parseInt(style.fontSize?.toString() ?? theme.styles.fontSize.toString())}
          alignItems="center"
          justifyContent="center"
       >
          <Icon
             name={icon}
             color={iconColor ?? props.color ?? theme.colors.base}
-            size={iconSize ?? parseInt(style.fontSize?.toString() ?? "16")}
+            size={iconSize ?? parseInt(style.fontSize?.toString() ?? theme.styles.fontSize.toString())}
          />
       </Div.row>
    ) : undefined;
@@ -242,7 +242,7 @@ const ButtonComponent: ButtonComponent = function Button<Value>(buttonProps: But
       <Image
          name={image}
          color={iconColor ?? props.color ?? theme.colors.base}
-         width={imageWidth ?? parseInt(style.fontSize?.toString() ?? "16")}
+         width={imageWidth ?? parseInt(style.fontSize?.toString() ?? theme.styles.fontSize.toString())}
          height={imageHeight}
       />
    ) : undefined;

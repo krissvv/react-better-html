@@ -1,5 +1,5 @@
 import { ComponentProps, forwardRef, memo } from "react";
-import { OmitProps, useTheme } from "react-better-core";
+import { OmitProps, Theme, useTheme } from "react-better-core";
 import styled from "styled-components";
 
 import { ComponentHoverStyle, ComponentPropWithRef, ComponentStyle } from "../types/components";
@@ -8,7 +8,9 @@ import { useComponentPropsGrouper, useComponentPropsWithPrefix } from "../utils/
 
 const TextStyledComponent = styled.p.withConfig({
    shouldForwardProp: (prop) => !["style", "hoverStyle"].includes(prop),
-})<{ style: ComponentStyle; hoverStyle: ComponentStyle }>`
+})<{ theme: Theme; style: ComponentStyle; hoverStyle: ComponentStyle }>`
+   font-size: ${(props) => props.theme.styles.fontSize}px;
+
    ${(props) => props.style as any}
 
    &:hover {
@@ -36,6 +38,8 @@ const TextComponent: TextComponentType = forwardRef(function Text<As extends Tex
    { htmlContentTranslate, children, ...props }: TextProps<As>,
    ref: React.ForwardedRef<HTMLParagraphElement>,
 ) {
+   const theme = useTheme();
+
    const { style, hoverStyle, restProps } = useComponentPropsGrouper(props);
    const dataProps = useComponentPropsWithPrefix(restProps, "data");
    const ariaProps = useComponentPropsWithPrefix(restProps, "aria");
@@ -43,6 +47,7 @@ const TextComponent: TextComponentType = forwardRef(function Text<As extends Tex
    return (
       <TextStyledComponent
          as={props.as as any}
+         theme={theme}
          translate={htmlContentTranslate}
          style={style}
          hoverStyle={hoverStyle}
