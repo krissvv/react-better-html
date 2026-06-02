@@ -23,10 +23,12 @@ export type PageHeaderProps = {
    title?: string | React.ReactNode;
    /** @default "h1" */
    titleAs?: TextAs;
+   titleFontSize?: React.CSSProperties["fontSize"];
    /** @default textPrimary */
    titleColor?: React.CSSProperties["color"];
    titleRightElement?: React.ReactNode;
    description?: string | React.ReactNode;
+   descriptionFontSize?: React.CSSProperties["fontSize"];
    /** @default textSecondary */
    descriptionColor?: React.CSSProperties["color"];
    textAlign?: React.CSSProperties["textAlign"];
@@ -48,9 +50,11 @@ const PageHeaderComponent: PageHeaderComponentType = forwardRef(function PageHea
       imageAzProfileImage,
       title,
       titleAs = "h1",
+      titleFontSize,
       titleColor,
       titleRightElement,
       description,
+      descriptionFontSize,
       descriptionColor,
       textAlign,
       rightElement,
@@ -98,6 +102,7 @@ const PageHeaderComponent: PageHeaderComponentType = forwardRef(function PageHea
                {typeof title === "string" ? (
                   <Text
                      as={titleAs}
+                     fontSize={titleFontSize}
                      textAlign={textAlign}
                      color={titleColor ?? (lightMode ? theme.colors.base : theme.colors.textPrimary)}
                   >
@@ -114,6 +119,7 @@ const PageHeaderComponent: PageHeaderComponentType = forwardRef(function PageHea
                (typeof description === "string" ? (
                   <Text
                      maxWidth={!mediaQuery.size600 ? app.contentMaxWidth * 0.6 : undefined}
+                     fontSize={descriptionFontSize}
                      textAlign={textAlign}
                      color={descriptionColor ?? (lightMode ? theme.colors.base : theme.colors.textSecondary)}
                      opacity={lightMode ? 0.7 : undefined}

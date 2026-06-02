@@ -1,15 +1,20 @@
 import { ComponentProps, forwardRef, memo } from "react";
 import { OmitProps, Theme, useTheme } from "react-better-core";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import { ComponentHoverStyle, ComponentPropWithRef, ComponentStyle } from "../types/components";
 
 import { useComponentPropsGrouper, useComponentPropsWithPrefix } from "../utils/hooks";
 
 const TextStyledComponent = styled.p.withConfig({
-   shouldForwardProp: (prop) => !["style", "hoverStyle"].includes(prop),
-})<{ theme: Theme; style: ComponentStyle; hoverStyle: ComponentStyle }>`
-   font-size: ${(props) => props.theme.styles.fontSize}px;
+   shouldForwardProp: (prop) => !["theme", "style", "hoverStyle", "isP"].includes(prop),
+})<{ theme: Theme; style: ComponentStyle; hoverStyle: ComponentStyle; isP?: boolean }>`
+   ${(props) =>
+      props.isP
+         ? css`
+              font-size: ${props.theme.styles.fontSize}px;
+           `
+         : ""}
 
    ${(props) => props.style as any}
 
@@ -35,7 +40,7 @@ type TextComponentType = {
 };
 
 const TextComponent: TextComponentType = forwardRef(function Text<As extends TextAs>(
-   { htmlContentTranslate, children, ...props }: TextProps<As>,
+   { as: asValue, htmlContentTranslate, children, ...props }: TextProps<As>,
    ref: React.ForwardedRef<HTMLParagraphElement>,
 ) {
    const theme = useTheme();
@@ -46,11 +51,12 @@ const TextComponent: TextComponentType = forwardRef(function Text<As extends Tex
 
    return (
       <TextStyledComponent
-         as={props.as as any}
+         as={asValue}
          theme={theme}
          translate={htmlContentTranslate}
          style={style}
          hoverStyle={hoverStyle}
+         isP={asValue === "p"}
          {...restProps}
          {...dataProps}
          {...ariaProps}
