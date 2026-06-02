@@ -245,14 +245,16 @@ const TextareaElement = styled.textarea.withConfig({
       color: ${(props) => props.theme.colors.textSecondary}80;
    }
 
-   ${(props) =>
-      props.withNoBorder
-         ? css`
-              filter: ${props.hoverStyle.filter ?? filterHover().z1};
-           `
-         : css`
-              border-color: ${props.theme.colors.primary};
-           `}
+   &:focus {
+      ${(props) =>
+         props.withNoBorder
+            ? css`
+                 filter: ${props.hoverStyle.filter ?? filterHover().z1};
+              `
+            : css`
+                 border-color: ${props.theme.colors.primary};
+              `}
+   }
 
    ${(props) => props.style as any}
 
