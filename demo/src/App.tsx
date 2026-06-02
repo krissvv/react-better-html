@@ -428,7 +428,11 @@ function App() {
                   // style="box"
                >
                   <Tabs.content tab="SideMenu" tabWithDot>
-                     <SideMenu.burgerButton />
+                     <Div.column gap={theme.styles.space}>
+                        <SideMenu.burgerButton onClick={(isOpened) => console.log(isOpened)} />
+                        <SideMenu.burgerButton position="center" />
+                        <SideMenu.burgerButton position="right" />
+                     </Div.column>
                   </Tabs.content>
 
                   <Tabs.content tab="PageHeader">
