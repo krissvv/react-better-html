@@ -260,8 +260,8 @@ const ButtonComponent: ButtonComponent = function Button<Value>(buttonProps: But
          isLoading={isLoadingElement}
          withNoBorder={theme.styles.borderWidth === 0}
          disabled={disabled}
-         to={href}
-         href={href}
+         to={!disabled && !isLoadingElement ? href : undefined}
+         href={!disabled && !isLoadingElement ? href : undefined}
          download={download}
          target={target}
          type={isSubmit && !isLoadingElement ? "submit" : "button"}
