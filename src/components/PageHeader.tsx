@@ -15,6 +15,9 @@ import { useBetterHtmlContextInternal } from "./BetterHtmlProvider";
 
 export type PageHeaderProps = {
    icon?: IconName | AnyOtherString;
+   iconColor?: React.CSSProperties["color"];
+   /** @default 20 */
+   iconSize?: number;
    image?: AssetName | AnyOtherString;
    imageUrl?: string;
    imageSize?: number;
@@ -44,6 +47,8 @@ type PageHeaderComponentType = {
 const PageHeaderComponent: PageHeaderComponentType = forwardRef(function PageHeader(
    {
       icon,
+      iconColor,
+      iconSize = 20,
       image,
       imageUrl,
       imageSize = 60,
@@ -77,7 +82,7 @@ const PageHeaderComponent: PageHeaderComponentType = forwardRef(function PageHea
          marginBottom={marginBottom ?? theme.styles.space * 2}
          ref={ref}
       >
-         {icon && <Icon name={icon} size={20} flexShrink={0} />}
+         {icon && <Icon name={icon} size={iconSize} color={iconColor} flexShrink={0} />}
          {(image || imageUrl) && (
             <ImageTag
                name={image}
