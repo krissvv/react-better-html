@@ -98,7 +98,7 @@ import Table, {
    type TableRef,
 } from "./components/Table";
 import Tooltip, { type TooltipProps, type TooltipRef } from "./components/Tooltip";
-import Tabs, { type TabGroup, type TabsProps, type TabsRef } from "./components/Tabs";
+import Tabs, { type Tab, type TabGroup, type TabsProps, type TabsRef } from "./components/Tabs";
 import Foldable, { type FoldableProps, type FoldableRef } from "./components/Foldable";
 import SideMenu, { type SideMenuProps, type SideMenuItem, type BurgerButtonProps } from "./components/SideMenu";
 import Pagination from "./components/Pagination";
@@ -200,6 +200,7 @@ export {
    TooltipProps,
    TooltipRef,
    Tabs,
+   Tab,
    TabGroup,
    TabsProps,
    TabsRef,

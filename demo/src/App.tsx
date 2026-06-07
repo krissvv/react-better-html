@@ -404,25 +404,82 @@ function App() {
             <SideMenu.pageHolder>
                <Tabs
                   tabs={[
-                     "SideMenu",
-                     "PageHeader",
-                     "Text",
-                     "Div",
-                     "Loader",
-                     "Alert",
-                     "Icon & Image",
-                     "Divider",
-                     "Pagination",
-                     "Chip",
-                     "InputField",
-                     "Dropdown",
-                     "ToggleInput",
-                     "Form",
-                     "Button",
-                     "Modal",
-                     "Table",
-                     "Foldable",
-                     "Tooltip",
+                     {
+                        id: "sideMenu",
+                        label: "SideMenu",
+                     },
+                     {
+                        id: "pageHeader",
+                        label: "PageHeader",
+                     },
+                     {
+                        id: "text",
+                        label: "Text",
+                     },
+                     {
+                        id: "div",
+                        label: "Div",
+                     },
+                     {
+                        id: "loader",
+                        label: "Loader",
+                     },
+                     {
+                        id: "alert",
+                        label: "Alert",
+                     },
+                     {
+                        id: "icon-image",
+                        label: "Icon & Image",
+                     },
+                     {
+                        id: "divider",
+                        label: "Divider",
+                     },
+                     {
+                        id: "pagination",
+                        label: "Pagination",
+                     },
+                     {
+                        id: "chip",
+                        label: "Chip",
+                     },
+                     {
+                        id: "inputField",
+                        label: "InputField",
+                     },
+                     {
+                        id: "dropdown",
+                        label: "Dropdown",
+                     },
+                     {
+                        id: "toggleInput",
+                        label: "ToggleInput",
+                     },
+                     {
+                        id: "form",
+                        label: "Form",
+                     },
+                     {
+                        id: "button",
+                        label: "Button",
+                     },
+                     {
+                        id: "modal",
+                        label: "Modal",
+                     },
+                     {
+                        id: "table",
+                        label: "Table",
+                     },
+                     {
+                        id: "foldable",
+                        label: "Foldable",
+                     },
+                     {
+                        id: "tooltip",
+                        label: "Tooltip",
+                     },
                   ]}
                   style="borderRadiusTop"
                   // style="box"
