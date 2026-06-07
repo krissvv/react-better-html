@@ -20,14 +20,14 @@ export type Tab = {
 
 export type TabGroup = {
    name: string;
-   selectedTab: string;
+   selectedTab: Tab["id"];
 };
 
 export type TabsComponentState = {
    tabGroups: TabGroup[];
    setTabGroups: React.Dispatch<React.SetStateAction<TabGroup[]>>;
    tabsWithDots: Tab["id"][];
-   setTabsWithDots: React.Dispatch<React.SetStateAction<string[]>>;
+   setTabsWithDots: React.Dispatch<React.SetStateAction<Tab["id"][]>>;
 };
 
 export type TabsProps = {
@@ -40,7 +40,7 @@ export type TabsProps = {
 } & ComponentMarginProps;
 
 export type TabsRef = {
-   selectedTab: string;
+   selectedTab: Tab["id"];
    selectTab: (tab: Tab) => void;
 };
 
@@ -61,7 +61,7 @@ const TabsComponent: TabsComponent = forwardRef(function Tabs(
    const { colorTheme } = useBetterCoreContext();
 
    const firstRenderPassedRef = useRef<boolean>(false);
-   const tabsRef = useRef<Record<string, HTMLDivElement | null>>({});
+   const tabsRef = useRef<Record<Tab["id"], HTMLDivElement | null>>({});
 
    const [selectedTab, setSelectedTab] = useState<Tab["id"]>(() => {
       const selectedTabId = tabs[0]?.id ?? "";
@@ -255,14 +255,14 @@ const TabsComponent: TabsComponent = forwardRef(function Tabs(
 }) as any;
 
 type TabsContentProps = {
-   tab: string;
+   tabId: Tab["id"];
    tabWithDot?: boolean;
    tabsGroupName?: string;
    isInitialTab?: boolean;
    children?: React.ReactNode;
 };
 
-TabsComponent.content = function Content({ tab, tabWithDot, tabsGroupName, isInitialTab, children }) {
+TabsComponent.content = function Content({ tabId, tabWithDot, tabsGroupName, isInitialTab, children }) {
    const { componentsState } = useBetterHtmlContextInternal();
 
    const thisTabGroupData = useMemo<TabGroup | undefined>(
@@ -272,15 +272,17 @@ TabsComponent.content = function Content({ tab, tabWithDot, tabsGroupName, isIni
 
    useEffect(() => {
       if (tabWithDot) {
-         componentsState.tabs.setTabsWithDots?.((oldValue) => (oldValue.includes(tab) ? oldValue : [...oldValue, tab]));
+         componentsState.tabs.setTabsWithDots?.((oldValue) =>
+            oldValue.includes(tabId) ? oldValue : [...oldValue, tabId],
+         );
       } else {
          componentsState.tabs.setTabsWithDots?.((oldValue) =>
-            oldValue.includes(tab) ? oldValue.filter((tab) => tab !== tab) : oldValue,
+            oldValue.includes(tabId) ? oldValue.filter((tab) => tab !== tabId) : oldValue,
          );
       }
    }, [tabWithDot]);
 
-   return (thisTabGroupData ? thisTabGroupData.selectedTab === tab : isInitialTab) ? (
+   return (thisTabGroupData ? thisTabGroupData.selectedTab === tabId : isInitialTab) ? (
       <Div width="100%">{children}</Div>
    ) : undefined;
 } as TabsComponent["content"];
