@@ -356,6 +356,8 @@ export type SideMenuProps = {
    gap?: React.CSSProperties["gap"];
    paddingTop?: React.CSSProperties["paddingTop"];
    paddingBottom?: React.CSSProperties["paddingBottom"];
+   /** @default "left" */
+   mobileFoldToPosition?: "left" | "right";
    renderItemsHolder?: (items: React.ReactNode) => React.ReactNode;
    renderBottomItemsHolder?: (items: React.ReactNode) => React.ReactNode;
 };
@@ -388,6 +390,7 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
    gap,
    paddingTop,
    paddingBottom,
+   mobileFoldToPosition = "left",
    renderItemsHolder,
    renderBottomItemsHolder,
 }: SideMenuProps) {
@@ -481,7 +484,11 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
             left={0}
             backgroundColor={readyBackgroundColor}
             borderRight={`solid ${theme.styles.borderWidth}px ${theme.colors.border}`}
-            transform={!mediaQuery.size1000 || sideMenuIsOpenMobile ? "translateX(0)" : "translateX(-100%)"}
+            transform={
+               !mediaQuery.size1000 || sideMenuIsOpenMobile
+                  ? "translateX(0)"
+                  : `translateX(${mobileFoldToPosition === "left" ? "-" : ""}100%)`
+            }
             paddingTop={paddingTop ?? (logoAssetName || logoUrl ? theme.styles.gap : theme.styles.space)}
             paddingBottom={paddingBottom}
             transition={

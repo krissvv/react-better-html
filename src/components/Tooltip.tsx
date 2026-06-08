@@ -218,6 +218,8 @@ export type TooltipProps = {
    contentWidth?: React.CSSProperties["width"];
    contentMinWidth?: React.CSSProperties["minWidth"];
    contentPointerEvents?: React.CSSProperties["pointerEvents"];
+   contentPaddingBlock?: React.CSSProperties["paddingBlock"];
+   contentPaddingInline?: React.CSSProperties["paddingInline"];
    /** @default "fit-content" */
    childrenWrapperWidth?: React.CSSProperties["width"];
    childrenWrapperHeight?: React.CSSProperties["height"];
@@ -254,6 +256,8 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
       contentWidth,
       contentMinWidth,
       contentPointerEvents = "auto",
+      contentPaddingBlock,
+      contentPaddingInline,
       childrenWrapperWidth = "fit-content",
       childrenWrapperHeight,
       disabled,
@@ -414,8 +418,11 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
                      minWidth={contentMinWidth}
                      backgroundColor={backgroundColor ?? theme.colors.backgroundContent}
                      boxShadow="0px 10px 20px #00000020"
-                     paddingBlock={isSmall ? theme.styles.gap / 2 : theme.styles.gap}
-                     paddingInline={asContextMenu ? 0 : isSmall ? theme.styles.space / 2 : theme.styles.space}
+                     paddingBlock={contentPaddingBlock ?? (isSmall ? theme.styles.gap / 2 : theme.styles.gap)}
+                     paddingInline={
+                        contentPaddingInline ??
+                        (asContextMenu ? 0 : isSmall ? theme.styles.space / 2 : theme.styles.space)
+                     }
                      overflow={asContextMenu ? "hidden" : undefined}
                   >
                      {content}
