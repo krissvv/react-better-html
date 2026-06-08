@@ -505,7 +505,8 @@ export function useForm<
    }, [defaultValues]);
 
    const isDirty = useMemo<boolean>(
-      () => Object.keys(defaultValues).some((key) => defaultValues[key] !== values[key]),
+      () =>
+         Object.keys(defaultValues).some((key) => JSON.stringify(defaultValues[key]) !== JSON.stringify(values[key])),
       [defaultValues, values],
    );
    const isValid = useMemo<boolean>(() => {
