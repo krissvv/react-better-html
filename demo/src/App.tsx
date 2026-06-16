@@ -484,7 +484,7 @@ function App() {
                   style="borderRadiusTop"
                   // style="box"
                >
-                  <Tabs.content tab="SideMenu" tabWithDot>
+                  <Tabs.content tabId="sideMenu" tabWithDot>
                      <Div.column gap={theme.styles.space}>
                         <SideMenu.burgerButton onClick={(isOpened) => console.log(isOpened)} />
                         <SideMenu.burgerButton position="center" />
@@ -492,7 +492,7 @@ function App() {
                      </Div.column>
                   </Tabs.content>
 
-                  <Tabs.content tab="PageHeader">
+                  <Tabs.content tabId="pageHeader">
                      <Div.column gap={theme.styles.space}>
                         <PageHeader
                            title="Hello there"
@@ -526,7 +526,7 @@ function App() {
                      </Div.column>
                   </Tabs.content>
 
-                  <Tabs.content tab="Text">
+                  <Tabs.content tabId="text">
                      <Div.column gap={theme.styles.space}>
                         <Text as="h1">Hello</Text>
                         <Text as="h2">Hello</Text>
@@ -538,7 +538,7 @@ function App() {
                      </Div.column>
                   </Tabs.content>
 
-                  <Tabs.content tab="Div">
+                  <Tabs.content tabId="div">
                      <Div.column gap={theme.styles.space}>
                         <Div.row width="fit-content" gap={theme.styles.gap}>
                            <Text>1</Text>
@@ -606,7 +606,7 @@ function App() {
                      </Div.column>
                   </Tabs.content>
 
-                  <Tabs.content tab="Loader">
+                  <Tabs.content tabId="loader">
                      <Div.column gap={theme.styles.space}>
                         <Loader />
                         <Loader.box />
@@ -626,7 +626,7 @@ function App() {
                      </Div.column>
                   </Tabs.content>
 
-                  <Tabs.content tab="Alert">
+                  <Tabs.content tabId="alert">
                      <Div.column gap={theme.styles.space}>
                         <Div.row gap={theme.styles.gap}>
                            <Button
@@ -751,7 +751,7 @@ function App() {
                      </Div.column>
                   </Tabs.content>
 
-                  <Tabs.content tab="Icon & Image">
+                  <Tabs.content tabId="icon-image">
                      <Div.column gap={theme.styles.space}>
                         <Icon name="XMark" />
                         <Icon name="XMark" color="red" size={30} />
@@ -767,7 +767,7 @@ function App() {
                      </Div.column>
                   </Tabs.content>
 
-                  <Tabs.content tab="Divider">
+                  <Tabs.content tabId="divider">
                      <Div.column gap={theme.styles.space}>
                         <Divider.horizontal />
 
@@ -777,7 +777,7 @@ function App() {
                      </Div.column>
                   </Tabs.content>
 
-                  <Tabs.content tab="Pagination">
+                  <Tabs.content tabId="pagination">
                      <Div.column gap={theme.styles.space}>
                         <Pagination />
                         <Pagination itemsLength={80} itemsPerPage={10} />
@@ -786,7 +786,7 @@ function App() {
                      </Div.column>
                   </Tabs.content>
 
-                  <Tabs.content tab="Chip">
+                  <Tabs.content tabId="chip">
                      <Div.column gap={theme.styles.space}>
                         <Div.row alignItems="center" gap={theme.styles.gap} overflowX="auto">
                            <Chip text="Some text" />
@@ -840,7 +840,7 @@ function App() {
                      </Div.column>
                   </Tabs.content>
 
-                  <Tabs.content tab="InputField">
+                  <Tabs.content tabId="inputField">
                      <Div.column gap={theme.styles.space}>
                         <InputField placeholder="Placeholder" />
                         <InputField placeholder="Placeholder" disabled />
@@ -912,7 +912,7 @@ function App() {
                      </Div.column>
                   </Tabs.content>
 
-                  <Tabs.content tab="Dropdown">
+                  <Tabs.content tabId="dropdown">
                      <Div.column gap={theme.styles.space}>
                         <Dropdown
                            options={[
@@ -1059,7 +1059,7 @@ function App() {
                      </Div.column>
                   </Tabs.content>
 
-                  <Tabs.content tab="ToggleInput">
+                  <Tabs.content tabId="toggleInput">
                      <Div.column gap={theme.styles.space}>
                         <ToggleInput.checkbox />
                         <ToggleInput.checkbox label="Label" />
@@ -1089,7 +1089,7 @@ function App() {
                      </Div.column>
                   </Tabs.content>
 
-                  <Tabs.content tab="Form">
+                  <Tabs.content tabId="form">
                      <Div.column gap={theme.styles.space * 10}>
                         <Form
                            form={form}
@@ -1169,7 +1169,7 @@ function App() {
                      </Div.column>
                   </Tabs.content>
 
-                  <Tabs.content tab="Button">
+                  <Tabs.content tabId="button">
                      <Div.column gap={theme.styles.space}>
                         <Div.row alignItems="center" gap={theme.styles.gap} overflowX="auto">
                            <Button text="Hello there" href="/" />
@@ -1202,7 +1202,7 @@ function App() {
                      </Div.column>
                   </Tabs.content>
 
-                  <Tabs.content tab="Modal">
+                  <Tabs.content tabId="modal">
                      <Div.column gap={theme.styles.space}>
                         <Button text="Open modal" onClick={() => modalRef.current?.open()} />
                         <Button text="Open modal with title" onClick={() => modalWithTitleRef.current?.open()} />
@@ -1264,7 +1264,7 @@ function App() {
                      <Modal.destructive ref={destructiveModalRef} />
                   </Tabs.content>
 
-                  <Tabs.content tab="Table">
+                  <Tabs.content tabId="table">
                      <Div.column gap={theme.styles.space}>
                         <Table
                            columns={[
@@ -1656,7 +1656,7 @@ function App() {
                      </Div.column>
                   </Tabs.content>
 
-                  <Tabs.content tab="Foldable">
+                  <Tabs.content tabId="foldable">
                      <Div.column gap={theme.styles.space}>
                         <Foldable title="Lorem ipsum dolor">
                            <Text>
@@ -1757,7 +1757,7 @@ function App() {
                      </Div.column>
                   </Tabs.content>
 
-                  <Tabs.content tab="Tooltip">
+                  <Tabs.content tabId="tooltip">
                      <Div.column gap={theme.styles.space}>
                         <Div.row gap={theme.styles.gap} flexWrap="wrap">
                            <Tooltip
@@ -1890,7 +1890,7 @@ function App() {
                      </Div.column>
                   </Tabs.content>
 
-                  <Tabs.content tab="-">
+                  <Tabs.content tabId="-">
                      <Div.column gap={theme.styles.space}></Div.column>
                   </Tabs.content>
                </Tabs>
