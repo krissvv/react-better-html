@@ -273,6 +273,7 @@ const ButtonComponent: ButtonComponent = function Button<Value>(buttonProps: But
          {...ariaProps}
       >
          <Div.row
+            height={href ? "100%" : undefined}
             alignItems="center"
             justifyContent="center"
             gap={10}

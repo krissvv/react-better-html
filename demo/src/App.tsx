@@ -1173,6 +1173,10 @@ function App() {
                      <Div.column gap={theme.styles.space}>
                         <Div.row alignItems="center" gap={theme.styles.gap} overflowX="auto">
                            <Button text="Hello there" href="/" />
+                           <Button.secondary text="Hello there" href="/" />
+                           <Button.destructive text="Hello there" href="/" />
+                           <Button.icon icon="XMark" href="/" />
+                           <Button.upload href="/" />
                         </Div.row>
 
                         <Div.row alignItems="center" gap={theme.styles.gap} overflowX="auto">
