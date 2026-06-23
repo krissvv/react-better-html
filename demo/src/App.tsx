@@ -872,6 +872,8 @@ function App() {
                         <InputField.phoneNumber />
                         <InputField.phoneNumber label="Phone number" />
                         <InputField.date label="Date" leftIcon="XMark" />
+                        <InputField.date label="Date Right" dropdownPosition="right" />
+                        <InputField.date label="Date Small" width={200} />
                         <InputField.dateTime label="Date & Time" />
                         <InputField.dateTime
                            label="Date & Time with small hours"

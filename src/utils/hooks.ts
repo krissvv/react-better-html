@@ -116,6 +116,7 @@ export function useComponentInputFieldDateProps(
    inputFieldProps: InputFieldProps;
    insideInputFieldComponentProps: ComponentStyle;
    isOpen: boolean;
+   isFocused: boolean;
 } {
    const theme = useTheme();
 
@@ -203,6 +204,7 @@ export function useComponentInputFieldDateProps(
       inputFieldProps,
       insideInputFieldComponentProps,
       isOpen,
+      isFocused,
    };
 }
 

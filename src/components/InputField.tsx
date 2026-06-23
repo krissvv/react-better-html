@@ -44,6 +44,8 @@ const colorPickerSpacing = 4;
 const colorPickerColorWidth = 12 + 27 + colorPickerSpacing;
 const colorPickerValueWidth = 12 + 74 + colorPickerSpacing;
 
+type DropdownPosition = "left" | "right";
+
 const InputElement = styled.input.withConfig({
    shouldForwardProp: (prop) =>
       ![
@@ -323,6 +325,7 @@ type InputFieldComponentType = {
          InputFieldProps & {
             minDate?: Date;
             maxDate?: Date;
+            dropdownPosition?: DropdownPosition;
          }
       >,
    ) => React.ReactElement;
@@ -338,6 +341,7 @@ type InputFieldComponentType = {
             defaultDateAfterTimePick?: `${number}-${number}-${number}`;
             /** @default "00:00" */
             defaultTimeAfterDatePick?: `${number}:${number}`;
+            dropdownPosition?: DropdownPosition;
          }
       >,
    ) => React.ReactElement;
@@ -352,6 +356,7 @@ type InputFieldComponentType = {
          minTime?: string;
          /** @default 23:59 */
          maxTime?: string;
+         dropdownPosition?: DropdownPosition;
       },
    ) => React.ReactElement;
    color: (props: ComponentPropWithRef<HTMLInputElement, InputFieldProps>) => React.ReactElement;
@@ -950,7 +955,10 @@ InputFieldComponent.phoneNumber = forwardRef(function PhoneNumber(inputFieldProp
    );
 }) as InputFieldComponentType["phoneNumber"];
 
-InputFieldComponent.date = forwardRef(function Date({ minDate, maxDate, ...inputFieldProps }, ref) {
+InputFieldComponent.date = forwardRef(function Date(
+   { minDate, maxDate, dropdownPosition = "left", ...inputFieldProps },
+   ref,
+) {
    const betterHtmlContextInternal = useBetterHtmlContextInternal();
    const props = useComponentsPropsMerger(
       betterHtmlContextInternal.components.inputField?.style?.date,
@@ -968,6 +976,7 @@ InputFieldComponent.date = forwardRef(function Date({ minDate, maxDate, ...input
       setInternalValue,
       inputFieldProps: restInputFieldProps,
       insideInputFieldComponentProps,
+      isFocused,
    } = useComponentInputFieldDateProps(props, holderRef, isMobileIOS);
 
    const onChange = useCallback(
@@ -987,7 +996,8 @@ InputFieldComponent.date = forwardRef(function Date({ minDate, maxDate, ...input
                <Div
                   position="absolute"
                   top="100%"
-                  left={0}
+                  left={dropdownPosition === "left" ? 0 : undefined}
+                  right={dropdownPosition === "right" ? 0 : undefined}
                   width="fit-content"
                   backgroundColor={theme.colors.backgroundContent}
                   borderBottomLeftRadius={theme.styles.borderRadius}
@@ -996,6 +1006,17 @@ InputFieldComponent.date = forwardRef(function Date({ minDate, maxDate, ...input
                   userSelect="none"
                   {...insideInputFieldComponentProps}
                >
+                  <Div
+                     position="absolute"
+                     top={0}
+                     left={-theme.styles.borderWidth}
+                     width={`calc(100% + ${theme.styles.borderWidth * 2}px)`}
+                     height={theme.styles.borderWidth}
+                     backgroundColor={isFocused ? theme.colors.primary : theme.colors.border}
+                     transform={`translateY(-${theme.styles.borderWidth}px)`}
+                     transition={theme.styles.transition}
+                  />
+
                   <Calendar value={internalValue} minDate={minDate} maxDate={maxDate} onChange={onChange} />
                </Div>
             ) : undefined
@@ -1016,6 +1037,7 @@ InputFieldComponent.dateTime = forwardRef(function DateTime(
       maxDate,
       defaultDateAfterTimePick,
       defaultTimeAfterDatePick = "00:00",
+      dropdownPosition = "left",
       ...inputFieldProps
    },
    ref,
@@ -1040,6 +1062,7 @@ InputFieldComponent.dateTime = forwardRef(function DateTime(
       inputFieldProps: restInputFieldProps,
       insideInputFieldComponentProps,
       isOpen,
+      isFocused,
    } = useComponentInputFieldDateProps(props, holderRef, isMobileIOS);
 
    const readyHours = useMemo<number[]>(
@@ -1157,7 +1180,8 @@ InputFieldComponent.dateTime = forwardRef(function DateTime(
                <Div
                   position="absolute"
                   top="100%"
-                  left={0}
+                  left={dropdownPosition === "left" ? 0 : undefined}
+                  right={dropdownPosition === "right" ? 0 : undefined}
                   width="fit-content"
                   backgroundColor={theme.colors.backgroundContent}
                   borderBottomLeftRadius={theme.styles.borderRadius}
@@ -1167,6 +1191,17 @@ InputFieldComponent.dateTime = forwardRef(function DateTime(
                   userSelect="none"
                   {...insideInputFieldComponentProps}
                >
+                  <Div
+                     position="absolute"
+                     top={0}
+                     left={-theme.styles.borderWidth}
+                     width={`calc(100% + ${theme.styles.borderWidth * 2}px)`}
+                     height={theme.styles.borderWidth}
+                     backgroundColor={isFocused ? theme.colors.primary : theme.colors.border}
+                     transform={`translateY(-${theme.styles.borderWidth}px)`}
+                     transition={theme.styles.transition}
+                  />
+
                   <Div.row gap={theme.styles.space}>
                      <Calendar value={internalValue} minDate={minDate} maxDate={maxDate} onChange={onChange} />
 
@@ -1273,7 +1308,7 @@ InputFieldComponent.dateTime = forwardRef(function DateTime(
 }) as InputFieldComponentType["dateTime"];
 
 InputFieldComponent.time = forwardRef(function Time(
-   { hoursToRender, minutesToRender, minTime, maxTime, ...inputFieldProps },
+   { hoursToRender, minutesToRender, minTime, maxTime, dropdownPosition = "left", ...inputFieldProps },
    ref,
 ) {
    const betterHtmlContextInternal = useBetterHtmlContextInternal();
@@ -1302,6 +1337,7 @@ InputFieldComponent.time = forwardRef(function Time(
       inputFieldProps: restInputFieldProps,
       insideInputFieldComponentProps,
       isOpen,
+      isFocused,
    } = useComponentInputFieldDateProps(props, holderRef, isMobileIOS);
 
    const readyHours = useMemo<number[]>(
@@ -1393,7 +1429,8 @@ InputFieldComponent.time = forwardRef(function Time(
                <Div
                   position="absolute"
                   top="100%"
-                  left={0}
+                  left={dropdownPosition === "left" ? 0 : undefined}
+                  right={dropdownPosition === "right" ? 0 : undefined}
                   width={buttonWidth * 2 + 2}
                   height={300}
                   backgroundColor={theme.colors.backgroundContent}
@@ -1404,6 +1441,17 @@ InputFieldComponent.time = forwardRef(function Time(
                   userSelect="none"
                   {...insideInputFieldComponentProps}
                >
+                  <Div
+                     position="absolute"
+                     top={0}
+                     left={-theme.styles.borderWidth}
+                     width={`calc(100% + ${theme.styles.borderWidth * 2}px)`}
+                     height={theme.styles.borderWidth}
+                     backgroundColor={isFocused ? theme.colors.primary : theme.colors.border}
+                     transform={`translateY(-${theme.styles.borderWidth}px)`}
+                     transition={theme.styles.transition}
+                  />
+
                   <Div.row height="100%">
                      <Div
                         className="react-better-html-no-scrollbar"
@@ -1492,7 +1540,7 @@ InputFieldComponent.time = forwardRef(function Time(
    );
 }) as InputFieldComponentType["time"];
 
-InputFieldComponent.color = forwardRef(function Color(inputFieldProps, ref) {
+InputFieldComponent.color = forwardRef(function Color({ ...inputFieldProps }, ref) {
    const betterHtmlContextInternal = useBetterHtmlContextInternal();
    const { value, onChangeValue, ...props } = useComponentsPropsMerger(
       betterHtmlContextInternal.components.inputField?.style?.time,
