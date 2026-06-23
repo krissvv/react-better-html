@@ -63,15 +63,16 @@ const TabsComponent: TabsComponent = forwardRef(function Tabs(
    const firstRenderPassedRef = useRef<boolean>(false);
    const tabsRef = useRef<Record<Tab["id"], HTMLDivElement | null>>({});
 
-   const [selectedTab, setSelectedTab] = useState<Tab["id"]>(() => {
-      const selectedTabId = tabs[0]?.id ?? "";
+   const [selectedTab, setSelectedTab] = useState<Tab>(() => {
+      const selectedTabId = tabs[0];
 
       if (urlQuery) {
          const tabQueryValue = urlQuery.getQuery(name ?? defaultTabName);
 
          if (!tabQueryValue) return selectedTabId;
 
-         if (tabs.some((tab) => tab.id === tabQueryValue)) return tabQueryValue;
+         const queryTab = tabs.find((tab) => tab.id === tabQueryValue);
+         if (queryTab) return queryTab;
       }
 
       return selectedTabId;
@@ -82,7 +83,7 @@ const TabsComponent: TabsComponent = forwardRef(function Tabs(
 
    const onClickTab = useCallback(
       (tab: Tab) => {
-         setSelectedTab(tab.id);
+         setSelectedTab(tab);
          onChange?.(tab);
 
          if (urlQuery) {
@@ -95,11 +96,11 @@ const TabsComponent: TabsComponent = forwardRef(function Tabs(
    );
 
    const width = useMemo<number>(
-      () => tabsRef.current[selectedTab]?.getBoundingClientRect().width ?? 0,
+      () => tabsRef.current[selectedTab.id]?.getBoundingClientRect().width ?? 0,
       [rerenderState, selectedTab],
    );
    const leftSpacing = useMemo<number>(() => {
-      const selectedTabIndex = tabs.findIndex((tab) => tab.id === selectedTab);
+      const selectedTabIndex = tabs.findIndex((tab) => tab.id === selectedTab.id);
 
       let spacing = 0;
       Object.values(tabsRef.current).forEach((tab, index) => {
@@ -128,7 +129,7 @@ const TabsComponent: TabsComponent = forwardRef(function Tabs(
                item.name === (name ?? defaultTabName)
                   ? {
                        ...item,
-                       selectedTab,
+                       selectedTab: selectedTab.id,
                     }
                   : item,
             );
@@ -137,14 +138,14 @@ const TabsComponent: TabsComponent = forwardRef(function Tabs(
                ...oldValue,
                {
                   name: name ?? defaultTabName,
-                  selectedTab,
+                  selectedTab: selectedTab.id,
                },
             ];
          }
       });
    }, [selectedTab, name]);
    useEffect(() => {
-      tabsRef.current[selectedTab]?.scrollIntoView({
+      tabsRef.current[selectedTab.id]?.scrollIntoView({
          behavior: firstRenderPassedRef.current ? "smooth" : undefined,
          block: "nearest",
       });
@@ -156,10 +157,13 @@ const TabsComponent: TabsComponent = forwardRef(function Tabs(
          );
       };
    }, []);
+   useEffect(() => {
+      onChange?.(selectedTab);
+   }, []);
 
    useImperativeHandle(ref, (): TabsRef => {
       return {
-         selectedTab,
+         selectedTab: selectedTab.id,
          selectTab: onClickTab,
       };
    }, [selectedTab, onClickTab]);
@@ -169,7 +173,7 @@ const TabsComponent: TabsComponent = forwardRef(function Tabs(
          <Div position="relative" className="react-better-html-no-scrollbar" overflowY="auto">
             <Div.row position="relative" width="fit-content" gap={tabsGap} userSelect="none">
                {tabs.map((tab) => {
-                  const selected = tab.id === selectedTab;
+                  const selected = tab.id === selectedTab.id;
 
                   return (
                      <Div
