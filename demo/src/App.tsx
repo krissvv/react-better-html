@@ -1,4 +1,5 @@
 import { memo, useEffect, useRef } from "react";
+import { useLocation } from "react-router-dom";
 
 import {
    Div,
@@ -200,6 +201,7 @@ eventEmitter.emit("testEvent", {
 
 function App() {
    const theme = useTheme();
+   const location = useLocation();
    const alertControls = useAlertControls();
    const { devMode } = useBetterHtmlContext();
 
@@ -295,6 +297,7 @@ function App() {
                   href: "/main-2",
                },
             ]}
+            location={location}
             // topSpace={60}
             logoAssetName="logo"
             logoText="ReactBetterHtml"

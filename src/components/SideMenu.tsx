@@ -1,4 +1,5 @@
 import { createContext, memo, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { Location } from "react-router-dom";
 import {
    AnyOtherString,
    AssetName,
@@ -15,8 +16,6 @@ import { defaultSideMenuWidth } from "../constants/app";
 import { useMediaQuery } from "../utils/hooks";
 import { filterHover } from "../utils/variableFunctions";
 
-import { ReactRouterDomPluginOptions } from "../plugins";
-
 import Div from "./Div";
 import Icon from "./Icon";
 import Button from "./Button";
@@ -25,7 +24,7 @@ import Image from "./Image";
 import PageHolder, { PageHolderProps } from "./PageHolder";
 import Loader from "./Loader";
 import Tooltip from "./Tooltip";
-import { useBetterHtmlContextInternal, usePlugin } from "./BetterHtmlProvider";
+import { useBetterHtmlContextInternal } from "./BetterHtmlProvider";
 
 const tabDotSize = 6;
 
@@ -70,6 +69,7 @@ type MenuItemComponentProps = {
    backgroundColor?: React.CSSProperties["backgroundColor"];
    activeItemColor?: string;
    hoverItemColor?: string;
+   location: Location;
    onClick?: () => void;
 };
 
@@ -78,21 +78,11 @@ const MenuItemComponent = memo(function MenuItemComponent({
    backgroundColor,
    activeItemColor,
    hoverItemColor,
+   location,
    onClick,
 }: MenuItemComponentProps) {
-   const reactRouterDomPlugin = usePlugin<ReactRouterDomPluginOptions>("react-router-dom");
-
-   if (!reactRouterDomPlugin) {
-      throw new Error(
-         "`SideMenu` component requires the `react-router-dom` plugin to be added to the `plugins` prop in `<BetterHtmlProvider>`.",
-      );
-   }
-
-   const reactRouterDomPluginConfig = reactRouterDomPlugin.getConfig();
-
    const theme = useTheme();
    const mediaQuery = useMediaQuery();
-   const location = reactRouterDomPluginConfig.useLocation();
    const { components, sideMenuIsCollapsed, setSideMenuIsCollapsed } = useBetterHtmlContextInternal();
    const { colorTheme } = useBetterCoreContext();
 
@@ -293,6 +283,7 @@ const MenuItemComponent = memo(function MenuItemComponent({
                   <MenuItemComponent
                      item={child}
                      backgroundColor={readyBackgroundColor}
+                     location={location}
                      onClick={onClick}
                      key={child.text}
                   />
@@ -335,6 +326,7 @@ const MenuItemComponent = memo(function MenuItemComponent({
 export type SideMenuProps = {
    items: SideMenuItem[];
    bottomItems?: SideMenuItem[];
+   location: Location;
    topSpace?: number;
    logoAssetName?: AssetName | AnyOtherString;
    logoUrl?: string;
@@ -371,6 +363,7 @@ type SideMenuComponentType = {
 const SideMenuComponent: SideMenuComponentType = function SideMenu({
    items,
    bottomItems,
+   location,
    topSpace = 0,
    logoAssetName,
    logoUrl,
@@ -443,6 +436,7 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
                   backgroundColor={readyBackgroundColor}
                   activeItemColor={activeItemColor}
                   hoverItemColor={hoverItemColor}
+                  location={location}
                   onClick={onClickXButton}
                   key={item.text}
                />
@@ -466,6 +460,7 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
                backgroundColor={readyBackgroundColor}
                activeItemColor={activeItemColor}
                hoverItemColor={hoverItemColor}
+               location={location}
                onClick={onClickXButton}
                key={item.text}
             />
