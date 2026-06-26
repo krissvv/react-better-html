@@ -160,6 +160,12 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
 
    const dialogRef = useRef<HTMLDialogElement>(null);
 
+   const onOpenRef = useRef(onOpen);
+   onOpenRef.current = onOpen;
+
+   const onCloseRef = useRef(onClose);
+   onCloseRef.current = onClose;
+
    const [isOpened, setIsOpened] = useBooleanState(false);
    const [isOpenedLate, setIsOpenedLate] = useBooleanState(false);
 
@@ -178,14 +184,14 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
          );
       }
 
-      onOpen?.();
-   }, [onOpen, urlQuery, name]);
+      onOpenRef.current?.();
+   }, [urlQuery, name]);
    const onClickClose = useCallback(
       (event?: React.SyntheticEvent) => {
          event?.stopPropagation();
 
          setIsOpened.setFalse();
-         onClose?.();
+         onCloseRef.current?.();
 
          if (urlQuery && name) urlQuery.removeQuery(`${name}-modal`, false);
 
@@ -194,7 +200,7 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
             setIsOpenedLate.setFalse();
          }, 0.2 * 1000);
       },
-      [onClose, urlQuery, name],
+      [urlQuery, name],
    );
    const onKeyDown = useCallback(
       (event: React.KeyboardEvent<HTMLDialogElement>) => {
