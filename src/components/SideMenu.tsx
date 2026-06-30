@@ -633,10 +633,15 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
 };
 
 type SideMenuPageHolderProps = PageHolderProps & {
-   outsideComponent?: React.ReactNode;
+   additionalTopComponent?: React.ReactNode;
+   additionalBottomComponent?: React.ReactNode;
 };
 
-SideMenuComponent.pageHolder = function SideMenuPageHolder({ outsideComponent, ...props }) {
+SideMenuComponent.pageHolder = function SideMenuPageHolder({
+   additionalTopComponent,
+   additionalBottomComponent,
+   ...props
+}) {
    const theme = useTheme();
    const mediaQuery = useMediaQuery();
    const { components, sideMenuIsCollapsed } = useBetterHtmlContextInternal();
@@ -653,9 +658,11 @@ SideMenuComponent.pageHolder = function SideMenuPageHolder({ outsideComponent, .
          }
          transition={theme.styles.transition}
       >
-         {outsideComponent}
+         {additionalTopComponent}
 
          <PageHolder {...props} />
+
+         {additionalBottomComponent}
       </Div>
    );
 } as SideMenuComponentType["pageHolder"];
