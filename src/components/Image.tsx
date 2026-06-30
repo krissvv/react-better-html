@@ -100,6 +100,7 @@ Image.profileImage = forwardRef(function ProfileImage(
          borderRadius={999}
          alignItems="center"
          justifyContent="center"
+         userSelect="none"
          ref={ref}
          {...props}
          width={size}
