@@ -36,6 +36,7 @@ export type TabsProps = {
    accentColor?: Color;
    style?: "default" | "borderRadiusTop" | "box";
    gap?: number;
+   noBottomLine?: boolean;
    onChange?: (tab: Tab) => void;
    children?: React.ReactNode;
 } & ComponentMarginProps;
@@ -51,7 +52,7 @@ type TabsComponent = {
 };
 
 const TabsComponent: TabsComponent = forwardRef(function Tabs(
-   { tabs, name, accentColor, style = "default", gap, onChange, children, ...props }: TabsProps,
+   { tabs, name, accentColor, style = "default", gap, noBottomLine, onChange, children, ...props }: TabsProps,
    ref: React.ForwardedRef<TabsRef>,
 ) {
    const reactRouterDomPlugin = usePlugin("react-router-dom");
@@ -178,7 +179,7 @@ const TabsComponent: TabsComponent = forwardRef(function Tabs(
 
                   return (
                      <Div
-                        className="react-better-html-tabs-tab"
+                        className={`react-better-html-tabs-tab${selected ? " react-better-html-tabs-tab-selected" : ""}`}
                         position="relative"
                         width="fit-content"
                         backgroundColor={
@@ -242,7 +243,7 @@ const TabsComponent: TabsComponent = forwardRef(function Tabs(
                })}
             </Div.row>
 
-            {style !== "box" && (
+            {style !== "box" && !noBottomLine && (
                <Div
                   position="absolute"
                   width={width}
