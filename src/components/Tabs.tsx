@@ -35,6 +35,7 @@ export type TabsProps = {
    name?: string;
    accentColor?: Color;
    style?: "default" | "borderRadiusTop" | "box";
+   gap?: number;
    onChange?: (tab: Tab) => void;
    children?: React.ReactNode;
 } & ComponentMarginProps;
@@ -50,7 +51,7 @@ type TabsComponent = {
 };
 
 const TabsComponent: TabsComponent = forwardRef(function Tabs(
-   { tabs, name, accentColor, style = "default", onChange, children, ...props }: TabsProps,
+   { tabs, name, accentColor, style = "default", gap, onChange, children, ...props }: TabsProps,
    ref: React.ForwardedRef<TabsRef>,
 ) {
    const reactRouterDomPlugin = usePlugin("react-router-dom");
@@ -62,6 +63,8 @@ const TabsComponent: TabsComponent = forwardRef(function Tabs(
 
    const firstRenderPassedRef = useRef<boolean>(false);
    const tabsRef = useRef<Record<Tab["id"], HTMLDivElement | null>>({});
+
+   const tabsGap = gap ?? (style === "box" ? theme.styles.gap / 2 : 0);
 
    const [selectedTab, setSelectedTab] = useState<Tab>(() => {
       const selectedTabId = tabs[0];
@@ -78,8 +81,6 @@ const TabsComponent: TabsComponent = forwardRef(function Tabs(
       return selectedTabId;
    });
    const [rerenderState, setRerenderState] = useState<number>(0);
-
-   const tabsGap = style === "box" ? theme.styles.gap / 2 : 0;
 
    const onClickTab = useCallback(
       (tab: Tab) => {
@@ -177,6 +178,7 @@ const TabsComponent: TabsComponent = forwardRef(function Tabs(
 
                   return (
                      <Div
+                        className="react-better-html-tabs-tab"
                         position="relative"
                         width="fit-content"
                         backgroundColor={
