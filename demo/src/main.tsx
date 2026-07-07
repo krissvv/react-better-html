@@ -7,6 +7,7 @@ import { alertsPlugin, BetterHtmlPlugin, reactRouterDomPlugin } from "../../src/
 import vite from "./assets/vite.svg";
 
 import App from "./App.tsx";
+import Home from "./pages/Home.tsx";
 
 import "./main.css";
 
@@ -31,7 +32,12 @@ createRoot(document.getElementById("root")!).render(
          plugins={plugins}
       >
          <Routes>
-            <Route path="/" element={<App />} />
+            <Route path="/" element={<App />}>
+               <Route index element={<Home />} />
+               <Route path="/submenu-item-1" element={<>submenu-item-1</>} />
+               <Route path="/submenu-item-2" element={<>submenu-item-2</>} />
+               <Route path="/main-2" element={<>main-2</>} />
+            </Route>
          </Routes>
       </BetterHtmlProvider>
    </BrowserRouter>,
