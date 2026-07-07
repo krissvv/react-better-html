@@ -34,6 +34,7 @@ export type FormProps = {
    renderActionButtons?: React.ReactNode;
    onClickCancel?: () => void;
    onSubmit?: (event: React.FormEvent<HTMLFormElement>) => void;
+   id?: React.ComponentProps<"form">["id"];
    children?: React.ReactNode;
 } & ComponentMarginProps;
 
@@ -62,6 +63,7 @@ const FormComponent: FormComponentType = forwardRef(function Form(
       renderActionButtons,
       onClickCancel,
       onSubmit,
+      id,
       children,
       ...props
    }: FormProps,
@@ -84,7 +86,7 @@ const FormComponent: FormComponentType = forwardRef(function Form(
 
    return (
       <Div width="100%" {...props}>
-         <form name={name} onSubmit={onSubmit ?? form?.onSubmit} ref={ref}>
+         <form name={name} onSubmit={onSubmit ?? form?.onSubmit} id={id} ref={ref}>
             {gap !== undefined || withDividers ? (
                <Div.column gap={gap ?? (withDividers ? theme.styles.space : theme.styles.gap)}>
                   {withDividers
