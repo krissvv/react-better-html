@@ -228,14 +228,12 @@ const MenuItemComponent = memo(function MenuItemComponent({
       if (!isActive) return;
 
       setActiveItem((oldValue) =>
-         item.href
-            ? oldValue && oldValue.length > item.href.length
-               ? oldValue
-               : {
-                    href: item.href,
-                    length: item.href.length,
-                 }
-            : undefined,
+         item.href && item.href !== oldValue?.href
+            ? {
+                 href: item.href,
+                 length: item.href.length,
+              }
+            : oldValue,
       );
    }, [location.pathname]);
    useEffect(() => {
