@@ -25,6 +25,10 @@ import Loader from "./Loader";
 import Image from "./Image";
 import { useBetterHtmlContextInternal } from "./BetterHtmlProvider";
 
+const fromSubcomponentProps: any = {
+   fromSubcomponent: true,
+};
+
 const ButtonElement = styled.button.withConfig({
    shouldForwardProp: (prop) =>
       !["theme", "colorTheme", "style", "hoverStyle", "isSmall", "withText", "isLoading", "withNoBorder"].includes(
@@ -106,7 +110,7 @@ const ButtonElement = styled.button.withConfig({
    }
 `;
 
-export type ButtonProps<Value = unknown> = {
+type InternalButtonProps<Value = unknown> = {
    text?: string;
    value?: Value;
 
@@ -143,10 +147,14 @@ export type ButtonProps<Value = unknown> = {
    /** @default false */
    isSubmit?: boolean;
 
+   fromSubcomponent?: boolean;
+
    onClickWithValue?: (value: Value) => void;
 } & OmitProps<React.ComponentProps<"button">, "style" | "defaultValue" | "translate" | "value"> &
    ComponentStyle &
    ComponentHoverStyle;
+
+export type ButtonProps<Value = unknown> = OmitProps<InternalButtonProps<Value>, "fromSubcomponent">;
 
 type ButtonComponent = {
    <Value>(props: ButtonProps<Value>): React.ReactElement;
@@ -172,7 +180,7 @@ type ButtonComponent = {
    ) => React.ReactElement;
 };
 
-const ButtonComponent: ButtonComponent = function Button<Value>(buttonProps: ButtonProps<Value>) {
+const ButtonComponent: ButtonComponent = function Button<Value>(buttonProps: InternalButtonProps<Value>) {
    const betterHtmlContextInternal = useBetterHtmlContextInternal();
    const {
       href,
@@ -203,7 +211,9 @@ const ButtonComponent: ButtonComponent = function Button<Value>(buttonProps: But
       onClickWithValue,
       ...props
    } = useComponentsPropsMerger(
-      betterHtmlContextInternal.components.button?.style?.default as ButtonProps<Value>,
+      (!buttonProps.fromSubcomponent
+         ? betterHtmlContextInternal.components.button?.style?.default
+         : {}) as ButtonProps<Value>,
       buttonProps,
    );
 
@@ -325,6 +335,7 @@ ButtonComponent.secondary = function Secondary<Value>(buttonProps: ButtonProps<V
       <ButtonComponent
          className={`secondary${className ? ` ${className}` : ""}`}
          color={theme.colors.textPrimary}
+         {...fromSubcomponentProps}
          {...props}
       />
    );
@@ -339,7 +350,14 @@ ButtonComponent.destructive = function Destructive<Value>(buttonProps: ButtonPro
 
    const theme = useTheme();
 
-   return <ButtonComponent backgroundColor={theme.colors.error} color={theme.colors.base} {...props} />;
+   return (
+      <ButtonComponent
+         backgroundColor={theme.colors.error}
+         color={theme.colors.base}
+         {...fromSubcomponentProps}
+         {...props}
+      />
+   );
 } as ButtonComponent["destructive"];
 
 ButtonComponent.icon = function Icon({ size = 16, buttonSize, backgroundButtonColor, ...buttonProps }) {
@@ -356,7 +374,6 @@ ButtonComponent.icon = function Icon({ size = 16, buttonSize, backgroundButtonCo
 
    return (
       <ButtonComponent
-         {...(betterHtmlContextInternal.components.button?.style?.icon as any)}
          width={readyButtonSize}
          height={readyButtonSize}
          color={theme.colors.textPrimary}
@@ -369,6 +386,7 @@ ButtonComponent.icon = function Icon({ size = 16, buttonSize, backgroundButtonCo
          border="none"
          padding={0}
          filterHover="none !important"
+         {...fromSubcomponentProps}
          {...props}
       />
    );
@@ -396,10 +414,10 @@ ButtonComponent.upload = function Upload({ accept, multiple, onUpload, ...button
 
    return (
       <ButtonComponent
-         {...(betterHtmlContextInternal.components.button?.style?.upload as any)}
          text="Upload"
          icon="uploadCloud"
          onClick={onClickElement}
+         {...fromSubcomponentProps}
          {...props}
       />
    );
