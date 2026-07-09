@@ -25,6 +25,7 @@ export {
    type Theme,
    type ThemeConfig,
    type API,
+   type APIEndpointConfig,
    type APIConfigItem,
    type UrlQuery,
    type APIResponse,
