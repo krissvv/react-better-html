@@ -176,8 +176,6 @@ const FoldableComponent: FoldableComponentType = forwardRef<FoldableRef, Foldabl
                   />
                </Div>
 
-               {rightElement}
-
                {arrowPosition === "right" && arrow}
             </Div.row>
          )}
