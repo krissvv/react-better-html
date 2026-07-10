@@ -1,13 +1,12 @@
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
-import { AnyOtherString, AssetName, IconName, OmitProps, useBooleanState, useTheme } from "react-better-core";
+import { OmitProps, useBooleanState, useTheme } from "react-better-core";
 
 import { ComponentPropWithRef } from "../types/components";
 
 import Div, { DivProps } from "./Div";
 import Icon from "./Icon";
-import Text, { TextAs } from "./Text";
-import Image from "./Image";
 import Divider from "./Divider";
+import PageHeader, { PageHeaderProps } from "./PageHeader";
 
 const animationDurationClose = 0.15;
 const animationDurationOpen = animationDurationClose * 2;
@@ -15,24 +14,15 @@ const animationDurationOpen = animationDurationClose * 2;
 export type FoldableProps = {
    isOpen?: boolean;
    defaultOpen?: boolean;
-   title?: string;
-   /** @default "h3" */
-   titleAs?: TextAs;
-   /** @default textPrimary */
-   titleColor?: React.CSSProperties["color"];
-   titleRightElement?: React.ReactNode;
-   description?: string;
-   /** @default textSecondary */
-   descriptionColor?: React.CSSProperties["color"];
-   rightElement?: React.ReactNode;
-   icon?: IconName | AnyOtherString;
-   image?: AssetName | AnyOtherString;
    headerPaddingBlock?: React.CSSProperties["paddingBlock"];
    headerPaddingInline?: React.CSSProperties["paddingInline"];
+   /** @default "right" */
+   arrowPosition?: "left" | "right";
    renderHeader?: (isOpen: boolean, toggleOpen: () => void) => React.ReactNode;
    onOpenChange?: (isOpen: boolean) => void;
    children?: React.ReactNode;
-} & OmitProps<DivProps, "ref">;
+} & OmitProps<PageHeaderProps, "marginBottom"> &
+   OmitProps<DivProps, "ref">;
 
 export type FoldableRef = {
    isOpen: boolean;
@@ -50,17 +40,27 @@ const FoldableComponent: FoldableComponentType = forwardRef<FoldableRef, Foldabl
    {
       isOpen: controlledIsOpen,
       defaultOpen = false,
+      icon,
+      iconColor,
+      iconSize,
+      image,
+      imageUrl,
+      imageSize,
+      imageAzProfileImage,
       title,
       titleAs = "h3",
+      titleFontSize,
       titleColor,
       titleRightElement,
       description,
+      descriptionFontSize,
       descriptionColor,
+      textAlign,
       rightElement,
-      icon,
-      image,
+      lightMode,
       headerPaddingBlock,
       headerPaddingInline,
+      arrowPosition = "right",
       renderHeader,
       onOpenChange,
       children,
@@ -131,6 +131,10 @@ const FoldableComponent: FoldableComponentType = forwardRef<FoldableRef, Foldabl
       };
    }, [open, close, toggleOpen, isOpen]);
 
+   const arrow = (
+      <Icon name="chevronDown" transform={`rotate(${isOpen ? 180 : 0}deg)`} transition={theme.styles.transition} />
+   );
+
    return (
       <Div.column width="100%" {...props}>
          {renderHeader ? (
@@ -146,37 +150,35 @@ const FoldableComponent: FoldableComponentType = forwardRef<FoldableRef, Foldabl
                onClick={toggleOpen}
                userSelect="none"
             >
-               <Div.row flex={1} alignItems="center" gap={theme.styles.space}>
-                  {icon && <Icon name={icon} size={20} flexShrink={0} />}
-                  {image && <Image.profileImage name={image} size={24} flexShrink={0} />}
+               {arrowPosition === "left" && arrow}
 
-                  <Div.column gap={theme.styles.gap / 2}>
-                     {title && (
-                        <Div.row alignItems="center" gap={theme.styles.space}>
-                           <Text
-                              as={titleAs}
-                              fontWeight={700}
-                              lineHeight="20px"
-                              color={titleColor ?? theme.colors.textPrimary}
-                           >
-                              {title}
-                           </Text>
-
-                           {titleRightElement}
-                        </Div.row>
-                     )}
-
-                     {description && <Text color={descriptionColor ?? theme.colors.textSecondary}>{description}</Text>}
-                  </Div.column>
-               </Div.row>
+               <Div flex={1}>
+                  <PageHeader
+                     icon={icon}
+                     iconColor={iconColor}
+                     iconSize={iconSize}
+                     image={image}
+                     imageUrl={imageUrl}
+                     imageSize={imageSize}
+                     imageAzProfileImage={imageAzProfileImage}
+                     title={title}
+                     titleAs={titleAs}
+                     titleFontSize={titleFontSize}
+                     titleColor={titleColor}
+                     titleRightElement={titleRightElement}
+                     description={description}
+                     descriptionFontSize={descriptionFontSize}
+                     descriptionColor={descriptionColor}
+                     textAlign={textAlign}
+                     rightElement={rightElement}
+                     lightMode={lightMode}
+                     marginBottom={0}
+                  />
+               </Div>
 
                {rightElement}
 
-               <Icon
-                  name="chevronDown"
-                  transform={`rotate(${isOpen ? 180 : 0}deg)`}
-                  transition={theme.styles.transition}
-               />
+               {arrowPosition === "right" && arrow}
             </Div.row>
          )}
 
