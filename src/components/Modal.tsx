@@ -25,6 +25,10 @@ import Divider from "./Divider";
 import Icon from "./Icon";
 import { useBetterHtmlContextInternal, usePlugin } from "./BetterHtmlProvider";
 
+export const isAlertModalProps: any = {
+   isAlert: true,
+};
+
 const DialogStylesElement = styled.dialog.withConfig({
    shouldForwardProp: (prop) => !["theme", "colorTheme", "opacity"].includes(prop),
 })<{ theme: Theme; colorTheme: ColorTheme; opacity?: number }>`
@@ -66,7 +70,7 @@ const DialogStylesElement = styled.dialog.withConfig({
    }
 `;
 
-export type ModalProps = {
+type InternalModalProps = {
    /**
     * If you want to have a small modal, you can use 660px as it looks good on most screens.
     *
@@ -89,8 +93,11 @@ export type ModalProps = {
    defaultIsOpened?: boolean;
    onOpen?: () => void;
    onClose?: () => void;
+   isAlert?: boolean;
    children?: React.ReactNode;
 };
+
+export type ModalProps = OmitProps<InternalModalProps, "isAlert">;
 
 export type ModalRef = {
    isOpened: boolean;
@@ -130,7 +137,7 @@ type ModalComponent = {
    ) => React.ReactElement;
 };
 
-const ModalComponent: ModalComponent = forwardRef(function Modal(
+export const ModalComponent: ModalComponent = forwardRef(function Modal(
    {
       maxWidth,
       icon,
@@ -147,12 +154,13 @@ const ModalComponent: ModalComponent = forwardRef(function Modal(
       defaultIsOpened = false,
       onOpen,
       onClose,
+      isAlert,
       children,
-   }: ModalProps,
+   }: InternalModalProps,
    ref: React.ForwardedRef<ModalRef>,
 ) {
    const reactRouterDomPlugin = usePlugin("react-router-dom");
-   const urlQuery = reactRouterDomPlugin ? useUrlQuery() : undefined;
+   const urlQuery = reactRouterDomPlugin && !isAlert ? useUrlQuery() : undefined;
 
    const theme = useTheme();
    const { app } = useBetterHtmlContextInternal();

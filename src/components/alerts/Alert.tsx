@@ -12,7 +12,7 @@ import Div from "../Div";
 import Icon from "../Icon";
 import Text from "../Text";
 import Button from "../Button";
-import Modal, { ModalRef } from "../Modal";
+import { isAlertModalProps, ModalComponent, ModalRef } from "../Modal";
 import { useAlertControls, usePlugin } from "../BetterHtmlProvider";
 
 const StyledDiv = styled.div.withConfig({
@@ -307,7 +307,7 @@ function Alert({ alert }: AlertProps) {
    const alertTitle = alert.title ?? alertData[alert.type].title;
 
    return defaultAlertDisplay === "prominent" ? (
-      <Modal
+      <ModalComponent
          defaultIsOpened
          icon={alertData[alert.type].icon}
          title={alertTitle}
@@ -318,6 +318,7 @@ function Alert({ alert }: AlertProps) {
          headerBackgroundColor={alertData[alert.type].backgroundColor}
          withoutCloseButton
          ref={modalRef}
+         {...isAlertModalProps}
       >
          <Div.row width="100%" alignItems="center" justifyContent="center">
             <Button
@@ -326,7 +327,7 @@ function Alert({ alert }: AlertProps) {
                onClick={onClickAlertModalDone}
             />
          </Div.row>
-      </Modal>
+      </ModalComponent>
    ) : (
       <StyledDiv theme={theme}>
          <Div.box
