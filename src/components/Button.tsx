@@ -180,7 +180,10 @@ type ButtonComponent = {
    ) => React.ReactElement;
 };
 
-const ButtonComponent: ButtonComponent = function Button<Value>(buttonProps: InternalButtonProps<Value>) {
+const ButtonComponent: ButtonComponent = function Button<Value>({
+   fromSubcomponent,
+   ...buttonProps
+}: InternalButtonProps<Value>) {
    const betterHtmlContextInternal = useBetterHtmlContextInternal();
    const {
       href,
@@ -211,9 +214,7 @@ const ButtonComponent: ButtonComponent = function Button<Value>(buttonProps: Int
       onClickWithValue,
       ...props
    } = useComponentsPropsMerger(
-      (!buttonProps.fromSubcomponent
-         ? betterHtmlContextInternal.components.button?.style?.default
-         : {}) as ButtonProps<Value>,
+      (!fromSubcomponent ? betterHtmlContextInternal.components.button?.style?.default : {}) as ButtonProps<Value>,
       buttonProps,
    );
 
