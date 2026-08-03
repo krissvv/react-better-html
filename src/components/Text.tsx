@@ -23,7 +23,7 @@ const TextStyledComponent = styled.p.withConfig({
    }
 `;
 
-export type TextAs = "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "p" | "span" | "label";
+export type TextAs = "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "p" | "span" | "label" | "li";
 
 export type TextProps<As extends TextAs = "p"> = {
    /** @default "p" */
