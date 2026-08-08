@@ -22,22 +22,26 @@ function App() {
          <SideMenu
             items={[
                {
+                  type: "item",
                   text: "Main",
                   iconName: "filter",
                   withDot: true,
                   href: "/",
                },
                {
+                  type: "item",
                   text: "With submenu",
                   iconName: "filter",
                   children: [
                      {
+                        type: "item",
                         text: "Submenu item 1",
                         iconName: "filter",
                         withDot: true,
                         href: "/submenu-item-1",
                      },
                      {
+                        type: "item",
                         text: "Submenu item 2",
                         iconName: "filter",
                         href: "/submenu-item-2",
@@ -45,6 +49,11 @@ function App() {
                   ],
                },
                {
+                  type: "divider",
+                  text: "My divider",
+               },
+               {
+                  type: "item",
                   text: "With onClick",
                   iconName: "filter",
                   // onClickCloseSideMenu: false,
@@ -55,6 +64,7 @@ function App() {
             ]}
             bottomItems={[
                {
+                  type: "item",
                   text: "Main 2",
                   iconName: "filter",
                   href: "/main-2",
@@ -77,22 +87,26 @@ function App() {
          {/* <SideMenu
             items={[
                {
+                  type: "item",
                   text: "Main",
                   iconName: "filter",
                   withDot: true,
                   href: "/",
                },
                {
+                  type: "item",
                   text: "With submenu",
                   iconName: "filter",
                   children: [
                      {
+                        type: "item",
                         text: "Submenu item 1",
                         iconName: "filter",
                         withDot: true,
                         href: "/submenu-item-1",
                      },
                      {
+                        type: "item",
                         text: "Submenu item 2",
                         iconName: "filter",
                         href: "/submenu-item-2",
@@ -100,6 +114,7 @@ function App() {
                   ],
                },
                {
+                  type: "item",
                   text: "With onClick",
                   iconName: "filter",
                   // onClickCloseSideMenu: false,
@@ -110,6 +125,7 @@ function App() {
             ]}
             bottomItems={[
                {
+                  type: "item",
                   text: "Main 2",
                   iconName: "filter",
                   href: "/main-2",

@@ -53,19 +53,26 @@ const useSideMenuContext = () => {
 
 export type SideMenuItem = {
    text: string;
-   iconName: IconName | AnyOtherString;
-   href?: string;
-   disabled?: boolean;
    hidden?: boolean;
-   withDot?: boolean;
-   children?: SideMenuItem[];
-   /** @default true */
-   onClickCloseSideMenu?: boolean;
-   onClick?: (item: SideMenuItem) => void;
-};
+} & (
+   | {
+        type: "item";
+        iconName: IconName | AnyOtherString;
+        href?: string;
+        disabled?: boolean;
+        withDot?: boolean;
+        children?: SideMenuItem[];
+        /** @default true */
+        onClickCloseSideMenu?: boolean;
+        onClick?: (item: SideMenuItem) => void;
+     }
+   | {
+        type: "divider";
+     }
+);
 
-type MenuItemComponentProps = {
-   item: SideMenuItem;
+type MenuItemTypeItemProps = {
+   item: Extract<SideMenuItem, { type: "item" }>;
    backgroundColor?: React.CSSProperties["backgroundColor"];
    activeItemColor?: string;
    hoverItemColor?: string;
@@ -73,14 +80,14 @@ type MenuItemComponentProps = {
    onClick?: () => void;
 };
 
-const MenuItemComponent = memo(function MenuItemComponent({
+const MenuItemTypeItem = memo(function MenuItemTypeItem({
    item,
    backgroundColor,
    activeItemColor,
    hoverItemColor,
    location,
    onClick,
-}: MenuItemComponentProps) {
+}: MenuItemTypeItemProps) {
    const theme = useTheme();
    const mediaQuery = useMediaQuery();
    const { components, sideMenuIsCollapsed, setSideMenuIsCollapsed } = useBetterHtmlContextInternal();
@@ -108,8 +115,8 @@ const MenuItemComponent = memo(function MenuItemComponent({
    }, [onClick, item, isCollapsed]);
 
    const childrenHaveDot = useMemo<boolean>(
-      () => item.children?.some((child) => child.withDot) ?? false,
-      [item.children],
+      () => item.children?.some((child) => child.type === "item" && child.withDot) ?? false,
+      [item],
    );
 
    const isActive = activeItem && item.href && activeItem.href === item.href;
@@ -240,10 +247,12 @@ const MenuItemComponent = memo(function MenuItemComponent({
       if (!item.children) return;
 
       const toBeOpened = item.children.some((child) =>
-         child.href
-            ? location.pathname === "/"
-               ? location.pathname === child.href
-               : location.pathname.startsWith(child.href) && child.href !== "/"
+         child.type === "item"
+            ? child.href
+               ? location.pathname === "/"
+                  ? location.pathname === child.href
+                  : location.pathname.startsWith(child.href) && child.href !== "/"
+               : false
             : false,
       );
 
@@ -258,7 +267,7 @@ const MenuItemComponent = memo(function MenuItemComponent({
    const LinkComponentTag = components.button?.tagReplacement?.linkComponent ?? "a";
 
    return (
-      <Div width="100%">
+      <>
          {item.href ? (
             <LinkComponentTag to={item.href} href={item.href} onClick={onClickElement}>
                {content}
@@ -317,6 +326,43 @@ const MenuItemComponent = memo(function MenuItemComponent({
                </Div>
             </Div.column>
          )}
+      </>
+   );
+});
+
+type MenuItemTypeDividerProps = {
+   item: Extract<SideMenuItem, { type: "divider" }>;
+};
+
+const MenuItemTypeDivider = memo(function MenuItemTypeDivider({ item }: MenuItemTypeDividerProps) {
+   const theme = useTheme();
+
+   return (
+      <Div.row paddingTop={theme.styles.space} paddingInline={theme.styles.gap}>
+         <Text fontSize={12} fontWeight={700} textTransform="uppercase" color={theme.colors.textSecondary}>
+            {item.text}
+         </Text>
+      </Div.row>
+   );
+});
+
+type MenuItemComponentProps = {
+   item: SideMenuItem;
+   backgroundColor?: React.CSSProperties["backgroundColor"];
+   activeItemColor?: string;
+   hoverItemColor?: string;
+   location: Location;
+   onClick?: () => void;
+};
+
+const MenuItemComponent = memo(function MenuItemComponent({ item, ...props }: MenuItemComponentProps) {
+   return (
+      <Div width="100%">
+         {item.type === "item" ? (
+            <MenuItemTypeItem item={item} {...props} />
+         ) : item.type === "divider" ? (
+            <MenuItemTypeDivider item={item} />
+         ) : undefined}
       </Div>
    );
 });
