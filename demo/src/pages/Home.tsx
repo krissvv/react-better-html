@@ -331,6 +331,7 @@ function Home() {
             ]}
             style="borderRadiusTop"
             // style="box"
+            // accentColor="red"
          >
             <Tabs.content tabId="sideMenu" tabWithDot>
                <Div.column gap={theme.styles.space}>

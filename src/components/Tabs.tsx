@@ -8,6 +8,7 @@ import { useUrlQuery } from "../utils/hooks";
 import Div from "./Div";
 import Text from "./Text";
 import { useBetterHtmlContextInternal, usePlugin } from "./BetterHtmlProvider";
+import { filterHover } from "../utils/variableFunctions";
 
 const tabBottomLineWidth = 2;
 const tabDotSize = 6;
@@ -185,7 +186,7 @@ const TabsComponent: TabsComponent = forwardRef(function Tabs(
                         backgroundColor={
                            style === "box"
                               ? selected
-                                 ? theme.colors.primary
+                                 ? (accentColor ?? theme.colors.primary)
                                  : theme.colors.backgroundContent
                               : theme.colors.backgroundBase
                         }
@@ -197,13 +198,8 @@ const TabsComponent: TabsComponent = forwardRef(function Tabs(
                               ? `${theme.styles.borderWidth}px solid ${selected ? "transparent" : theme.colors.border}`
                               : undefined
                         }
-                        filterHover={
-                           colorTheme === "dark"
-                              ? style === "box"
-                                 ? "brightness(1.2)"
-                                 : "brightness(2)"
-                              : "brightness(0.9)"
-                        }
+                        borderColorHover={style === "box" ? (accentColor ?? theme.colors.primary) : undefined}
+                        filterHover={style !== "box" ? filterHover().z1 : undefined}
                         paddingInline={theme.styles.space}
                         paddingBlock={theme.styles.gap}
                         value={tab.id}
