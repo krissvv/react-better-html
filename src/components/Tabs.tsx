@@ -1,14 +1,14 @@
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
-import { Color, useBetterCoreContext, useTheme } from "react-better-core";
+import { Color, useTheme } from "react-better-core";
 
 import { ComponentMarginProps, ComponentPropWithRef } from "../types/components";
 
 import { useUrlQuery } from "../utils/hooks";
+import { filterHover } from "../utils/variableFunctions";
 
 import Div from "./Div";
 import Text from "./Text";
 import { useBetterHtmlContextInternal, usePlugin } from "./BetterHtmlProvider";
-import { filterHover } from "../utils/variableFunctions";
 
 const tabBottomLineWidth = 2;
 const tabDotSize = 6;
@@ -38,6 +38,8 @@ export type TabsProps = {
    style?: "default" | "borderRadiusTop" | "box";
    gap?: number;
    noBottomLine?: boolean;
+   /** @default true */
+   keepUrlHistory?: boolean;
    onChange?: (tab: Tab["id"]) => void;
    children?: React.ReactNode;
 } & ComponentMarginProps;
@@ -53,7 +55,18 @@ type TabsComponent = {
 };
 
 const TabsComponent: TabsComponent = forwardRef(function Tabs(
-   { tabs, name, accentColor, style = "default", gap, noBottomLine, onChange, children, ...props }: TabsProps,
+   {
+      tabs,
+      name,
+      accentColor,
+      style = "default",
+      gap,
+      noBottomLine,
+      keepUrlHistory = true,
+      onChange,
+      children,
+      ...props
+   }: TabsProps,
    ref: React.ForwardedRef<TabsRef>,
 ) {
    const reactRouterDomPlugin = usePlugin("react-router-dom");
@@ -61,7 +74,6 @@ const TabsComponent: TabsComponent = forwardRef(function Tabs(
    const theme = useTheme();
    const urlQuery = reactRouterDomPlugin ? useUrlQuery() : undefined;
    const { componentsState } = useBetterHtmlContextInternal();
-   const { colorTheme } = useBetterCoreContext();
 
    const firstRenderPassedRef = useRef<boolean>(false);
    const tabsRef = useRef<Record<Tab["id"], HTMLDivElement | null>>({});
@@ -92,12 +104,15 @@ const TabsComponent: TabsComponent = forwardRef(function Tabs(
          onChange?.(tabId);
 
          if (urlQuery) {
-            urlQuery.setQuery({
-               [name ?? defaultTabName]: tabId,
-            });
+            urlQuery.setQuery(
+               {
+                  [name ?? defaultTabName]: tabId,
+               },
+               keepUrlHistory,
+            );
          }
       },
-      [onChange, name, urlQuery],
+      [onChange, name, urlQuery, keepUrlHistory],
    );
 
    const width = useMemo<number>(
