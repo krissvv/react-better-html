@@ -71,6 +71,8 @@ const TabsComponent: TabsComponent = forwardRef(function Tabs(
    const [selectedTabId, setSelectedTabId] = useState<Tab["id"]>(() => {
       const selectedTabId = tabs[0];
 
+      if (!selectedTabId) return "";
+
       if (urlQuery) {
          const tabQueryValue = urlQuery.getQuery(name ?? defaultTabName);
 
