@@ -49,7 +49,11 @@ const Icon: IconComponent = forwardRef(function Icon(
    const theme = useTheme();
    const { icons } = useBetterCoreContext();
 
-   const { style, hoverStyle, restProps } = useComponentPropsGrouper(props);
+   const {
+      style: { fill, stroke, strokeColor, ...restStyle },
+      hoverStyle,
+      restProps,
+   } = useComponentPropsGrouper(props);
    const dataProps = useComponentPropsWithPrefix(restProps, "data");
    const ariaProps = useComponentPropsWithPrefix(restProps, "aria");
 
@@ -72,7 +76,7 @@ const Icon: IconComponent = forwardRef(function Icon(
          xmlns="http://www.w3.org/2000/svg"
          theme={theme}
          hoverColor={svgHoverColorColor}
-         style={style}
+         style={restStyle}
          hoverStyle={hoverStyle}
          {...restProps}
          {...dataProps}
@@ -87,8 +91,8 @@ const Icon: IconComponent = forwardRef(function Icon(
                      ? "react-better-html-icon-path-with-fill"
                      : "react-better-html-icon-path-with-stroke"
                }
-               fill={path.type === "fill" ? svgColor : undefined}
-               stroke={path.type === "stroke" ? svgColor : undefined}
+               fill={path.type === "fill" ? (fill ?? svgColor) : undefined}
+               stroke={path.type === "stroke" ? (strokeColor ?? stroke ?? svgColor) : undefined}
                key={path.d}
             />
          ))}
