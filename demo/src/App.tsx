@@ -51,6 +51,7 @@ function App() {
                {
                   type: "divider",
                   text: "My divider",
+                  // shortText: "My",
                },
                {
                   type: "item",

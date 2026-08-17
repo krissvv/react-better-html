@@ -68,6 +68,7 @@ export type SideMenuItem = {
      }
    | {
         type: "divider";
+        shortText?: string;
      }
 );
 
@@ -336,11 +337,28 @@ type MenuItemTypeDividerProps = {
 
 const MenuItemTypeDivider = memo(function MenuItemTypeDivider({ item }: MenuItemTypeDividerProps) {
    const theme = useTheme();
+   const { sideMenuIsCollapsed } = useBetterHtmlContextInternal();
+
+   const isCollapsed = sideMenuIsCollapsed && !item.shortText;
 
    return (
-      <Div.row paddingTop={theme.styles.space} paddingInline={theme.styles.gap}>
-         <Text fontSize={12} fontWeight={700} textTransform="uppercase" color={theme.colors.textSecondary}>
-            {item.text}
+      <Div.row
+         maxHeight={!isCollapsed ? 30 : 0}
+         paddingTop={!isCollapsed ? theme.styles.space : theme.styles.gap / 2}
+         paddingInline={theme.styles.gap}
+         overflow="hidden"
+         transition={`max-height ${theme.styles.transition}, padding-top ${theme.styles.transition}`}
+      >
+         <Text
+            width="100%"
+            fontSize={12}
+            fontWeight={700}
+            textTransform="uppercase"
+            textAlign={sideMenuIsCollapsed ? "center" : undefined}
+            color={theme.colors.textSecondary}
+            whiteSpace="nowrap"
+         >
+            {sideMenuIsCollapsed ? item.shortText : item.text}
          </Text>
       </Div.row>
    );
