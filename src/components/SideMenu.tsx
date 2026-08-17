@@ -25,6 +25,7 @@ import PageHolder, { PageHolderProps } from "./PageHolder";
 import Loader from "./Loader";
 import Tooltip from "./Tooltip";
 import { useBetterHtmlContextInternal } from "./BetterHtmlProvider";
+import Divider from "./Divider";
 
 const tabDotSize = 6;
 
@@ -344,22 +345,26 @@ const MenuItemTypeDivider = memo(function MenuItemTypeDivider({ item }: MenuItem
    return (
       <Div.row
          maxHeight={!isCollapsed ? 30 : 0}
-         paddingTop={!isCollapsed ? theme.styles.space : theme.styles.gap / 2}
+         paddingTop={!isCollapsed ? theme.styles.space : theme.styles.gap}
          paddingInline={theme.styles.gap}
          overflow="hidden"
          transition={`max-height ${theme.styles.transition}, padding-top ${theme.styles.transition}`}
       >
-         <Text
-            width="100%"
-            fontSize={12}
-            fontWeight={700}
-            textTransform="uppercase"
-            textAlign={sideMenuIsCollapsed ? "center" : undefined}
-            color={theme.colors.textSecondary}
-            whiteSpace="nowrap"
-         >
-            {sideMenuIsCollapsed ? item.shortText : item.text}
-         </Text>
+         {(sideMenuIsCollapsed && item.shortText) || !sideMenuIsCollapsed ? (
+            <Text
+               width="100%"
+               fontSize={12}
+               fontWeight={700}
+               textTransform="uppercase"
+               textAlign={sideMenuIsCollapsed ? "center" : undefined}
+               color={theme.colors.textSecondary}
+               whiteSpace="nowrap"
+            >
+               {sideMenuIsCollapsed ? item.shortText : item.text}
+            </Text>
+         ) : (
+            <Divider.horizontal />
+         )}
       </Div.row>
    );
 });
