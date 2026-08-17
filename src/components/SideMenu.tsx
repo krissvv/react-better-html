@@ -24,8 +24,8 @@ import Image from "./Image";
 import PageHolder, { PageHolderProps } from "./PageHolder";
 import Loader from "./Loader";
 import Tooltip from "./Tooltip";
-import { useBetterHtmlContextInternal } from "./BetterHtmlProvider";
 import Divider from "./Divider";
+import { useBetterHtmlContextInternal } from "./BetterHtmlProvider";
 
 const tabDotSize = 6;
 
@@ -37,6 +37,8 @@ type SideMenuActiveItem = {
 type SideMenuContext = {
    activeItem: SideMenuActiveItem | undefined;
    setActiveItem: React.Dispatch<React.SetStateAction<SideMenuActiveItem | undefined>>;
+   items: SideMenuItem[];
+   bottomItems: SideMenuItem[] | undefined;
 };
 
 const sideMenuContext = createContext<SideMenuContext | undefined>(undefined);
@@ -339,12 +341,14 @@ type MenuItemTypeDividerProps = {
 const MenuItemTypeDivider = memo(function MenuItemTypeDivider({ item }: MenuItemTypeDividerProps) {
    const theme = useTheme();
    const { sideMenuIsCollapsed } = useBetterHtmlContextInternal();
+   const { items } = useSideMenuContext();
 
    const isCollapsed = sideMenuIsCollapsed && !item.shortText;
+   const isFirst = items[0]?.type === item.type && items[0]?.text === item.text;
 
    return (
       <Div.row
-         maxHeight={!isCollapsed ? 30 : 0}
+         maxHeight={!isCollapsed ? 30 : theme.styles.gap + 1}
          paddingTop={!isCollapsed ? theme.styles.space : theme.styles.gap}
          paddingInline={theme.styles.gap}
          overflow="hidden"
@@ -362,9 +366,9 @@ const MenuItemTypeDivider = memo(function MenuItemTypeDivider({ item }: MenuItem
             >
                {sideMenuIsCollapsed ? item.shortText : item.text}
             </Text>
-         ) : (
+         ) : !isFirst ? (
             <Divider.horizontal />
-         )}
+         ) : undefined}
       </Div.row>
    );
 });
@@ -460,6 +464,8 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
       useBetterHtmlContextInternal();
 
    const [activeItem, setActiveItem] = useState<SideMenuActiveItem>();
+   const [itemsState, setItemsState] = useState<SideMenuItem[]>(items);
+   const [bottomItemsState, setBottomItemsState] = useState<SideMenuItem[] | undefined>(bottomItems);
 
    const onClickXButton = useCallback(() => {
       setSideMenuIsOpenMobile.setFalse();
@@ -472,8 +478,10 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
       () => ({
          activeItem,
          setActiveItem,
+         items: itemsState,
+         bottomItems: bottomItemsState,
       }),
-      [activeItem],
+      [activeItem, itemsState, bottomItemsState],
    );
 
    const isCollapsable = collapsable && !mediaQuery.size1000;
@@ -485,6 +493,13 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
 
    const readyBackgroundColor = backgroundColor ?? theme.colors.backgroundContent;
    const logoSize = sideMenuCollapsedWidth - theme.styles.space * 2;
+
+   useEffect(() => {
+      setItemsState(items);
+   }, [items]);
+   useEffect(() => {
+      setBottomItemsState(bottomItems);
+   }, [bottomItems]);
 
    const itemsComponent = (
       <Div.column

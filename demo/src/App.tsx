@@ -22,6 +22,10 @@ function App() {
          <SideMenu
             items={[
                {
+                  type: "divider",
+                  text: "Main",
+               },
+               {
                   type: "item",
                   text: "Main",
                   iconName: "filter",
