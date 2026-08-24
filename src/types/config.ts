@@ -1,3 +1,5 @@
+import { Language } from "./i18n";
+
 import { ButtonProps } from "../components/Button";
 import { InputFieldProps } from "../components/InputField";
 import { DropdownProps } from "../components/Dropdown";
@@ -22,6 +24,7 @@ export type BetterHtmlConfig = {
    app: AppConfig;
    sideMenuIsCollapsed: boolean;
    sideMenuIsOpenMobile: boolean;
+   language: Language | undefined;
    components: {
       button?: {
          style?: ComponentStyleConfig<ButtonProps, "default" | "secondary" | "destructive" | "icon" | "upload">;

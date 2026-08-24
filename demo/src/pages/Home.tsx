@@ -35,6 +35,7 @@ import {
    TableListFilterListItem,
    generateApi,
    generateEventEmitter,
+   generateI18n,
 } from "../../../src";
 
 const data: {
@@ -197,9 +198,52 @@ eventEmitter.emit("testEvent", {
    message: "Hello",
 });
 
+const i18n = generateI18n({
+   defaultLanguage: "en",
+   languages: {
+      en: {
+         code: "en",
+         words: {
+            templates: {
+               termsAndConditions: "Terms & Conditions",
+            },
+            common: {
+               hello: "Hello",
+            },
+            withTemplateText: "Read the {termsAndConditions}",
+            withTemplateEggs: "There are {amount} eggs",
+            sideMenu: {
+               sideMenu: "SideMenu",
+               pageHeader: "PageHeader",
+               text: "Text",
+            },
+         },
+      },
+      bg: {
+         code: "bg",
+         words: {
+            templates: {
+               termsAndConditions: "Условията за ползване",
+            },
+            common: {
+               hello: "Здравей",
+            },
+            withTemplateText: "Прочетете {termsAndConditions}",
+            withTemplateEggs: "Има {amount} яйца",
+            sideMenu: {
+               sideMenu: "СтраничноМеню",
+               pageHeader: "ДържачНаСтраница",
+               text: "Текст",
+            },
+         },
+      },
+   },
+});
+
 function Home() {
    const theme = useTheme();
    const alertControls = useAlertControls();
+   const { t, language, setLanguage } = i18n.useI18n();
 
    const testLoaderIsLoading = useLoader("testLoader");
 
@@ -254,15 +298,15 @@ function Home() {
             tabs={[
                {
                   id: "sideMenu",
-                  label: "SideMenu",
+                  label: t((l) => l.sideMenu.sideMenu),
                },
                {
                   id: "pageHeader",
-                  label: "PageHeader",
+                  label: t((l) => l.sideMenu.pageHeader),
                },
                {
                   id: "text",
-                  label: "Text",
+                  label: t((l) => l.sideMenu.text),
                },
                {
                   id: "div",
@@ -275,6 +319,10 @@ function Home() {
                {
                   id: "alert",
                   label: "Alert",
+               },
+               {
+                  id: "i18n",
+                  label: "i18n",
                },
                {
                   id: "icon-image",
@@ -332,6 +380,7 @@ function Home() {
             style="borderRadiusTop"
             // style="box"
             // accentColor="red"
+            key={language}
          >
             <Tabs.content tabId="sideMenu" tabWithDot>
                <Div.column gap={theme.styles.space}>
@@ -597,6 +646,55 @@ function Home() {
                         }}
                      />
                   </Div.row>
+               </Div.column>
+            </Tabs.content>
+
+            <Tabs.content tabId="i18n">
+               <Div.column gap={theme.styles.space * 3}>
+                  <Div.column gap={theme.styles.space}>
+                     <Text>{language}</Text>
+                     <Text>{t((l) => l.common.hello)}</Text>
+                     <Text>{t((l) => (l.common as any)["helloAgain"])}</Text>
+                     <Text>
+                        {t((l) => l.withTemplateText, {
+                           termsAndConditions: (text) => (
+                              <Text as="span" fontWeight={800} color={theme.colors.textLink}>
+                                 {text}
+                              </Text>
+                           ),
+                        })}
+                     </Text>
+                     <Text>
+                        {t((l) => l.withTemplateEggs, {
+                           amount: () => 2,
+                        })}
+                     </Text>
+                  </Div.column>
+
+                  <Div.column gap={theme.styles.space}>
+                     <Text>{i18n.language}</Text>
+                     <Text>{i18n.t((l) => l.common.hello)}</Text>
+                     <Text>{i18n.t((l) => (l.common as any)["helloAgain"])}</Text>
+                     <Text>
+                        {i18n.t((l) => l.withTemplateText, {
+                           termsAndConditions: (text) => (
+                              <Text as="span" fontWeight={800} color={theme.colors.textLink}>
+                                 {text}
+                              </Text>
+                           ),
+                        })}
+                     </Text>
+                     <Text>
+                        {i18n.t((l) => l.withTemplateEggs, {
+                           amount: () => 2,
+                        })}
+                     </Text>
+                  </Div.column>
+
+                  <Div.column gap={theme.styles.space}>
+                     <Button text="Set language to EN" value="en" onClickWithValue={setLanguage} />
+                     <Button text="Set language to BG" value="bg" onClickWithValue={setLanguage} />
+                  </Div.column>
                </Div.column>
             </Tabs.content>
 

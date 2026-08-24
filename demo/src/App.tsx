@@ -1,17 +1,7 @@
 import { memo } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 
-import { Div, useTheme, SideMenu, generateEventEmitter } from "../../src";
-
-const eventEmitter = generateEventEmitter<{
-   testEvent: {
-      message: string;
-   };
-}>();
-
-eventEmitter.emit("testEvent", {
-   message: "Hello",
-});
+import { Div, useTheme, SideMenu } from "../../src";
 
 function App() {
    const theme = useTheme();

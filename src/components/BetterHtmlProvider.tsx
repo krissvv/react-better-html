@@ -20,6 +20,7 @@ import { assets } from "../constants/assets";
 
 import { BetterHtmlConfig } from "../types/config";
 import { Alert } from "../types/alert";
+import { Language } from "../types/i18n";
 import { BetterHtmlPlugin, PluginName } from "../types/plugin";
 
 import { TabGroup, TabsComponentState } from "./Tabs";
@@ -56,6 +57,7 @@ const GlobalStyle = createGlobalStyle<{ fontFamily: string; color: Color; backgr
 export type BetterHtmlInternalConfig = BetterHtmlConfig & {
    alerts: Alert[];
    setAlerts: React.Dispatch<React.SetStateAction<Alert[]>>;
+   setLanguage: React.Dispatch<React.SetStateAction<Language>>;
    setSideMenuIsCollapsed: ReturnType<typeof useBooleanState>[1];
    setSideMenuIsOpenMobile: ReturnType<typeof useBooleanState>[1];
    plugins: BetterHtmlPlugin[];
@@ -177,8 +179,12 @@ function BetterHtmlProviderInternal({ config, plugins, children }: BetterHtmlPro
    const betterCoreContext = useBetterCoreContext();
 
    const [alerts, setAlerts] = useState<Alert[]>([]);
+
+   const [language, setLanguage] = useState<Language>(localStorage.getItem("language") ?? "");
+
    const [sideMenuIsCollapsed, setSideMenuIsCollapsed] = useBooleanState();
    const [sideMenuIsOpenMobile, setSideMenuIsOpenMobile] = useBooleanState();
+
    const [tabGroups, setTabGroups] = useState<TabGroup[]>([]);
    const [tabsWithDots, setTabsWithDots] = useState<string[]>([]);
 
@@ -190,6 +196,8 @@ function BetterHtmlProviderInternal({ config, plugins, children }: BetterHtmlPro
          },
          alerts,
          setAlerts,
+         language,
+         setLanguage,
          sideMenuIsCollapsed,
          setSideMenuIsCollapsed,
          sideMenuIsOpenMobile,
@@ -207,7 +215,7 @@ function BetterHtmlProviderInternal({ config, plugins, children }: BetterHtmlPro
             },
          },
       }),
-      [config, alerts, sideMenuIsCollapsed, sideMenuIsOpenMobile, plugins, tabGroups, tabsWithDots],
+      [config, alerts, language, sideMenuIsCollapsed, sideMenuIsOpenMobile, plugins, tabGroups, tabsWithDots],
    );
 
    useEffect(() => {
