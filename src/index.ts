@@ -66,6 +66,7 @@ import { type AppConfig, type BetterHtmlConfig } from "./types/config";
 import { type ComponentMarginProps, type ComponentPaddingProps, type ComponentHoverStyle } from "./types/components";
 import { type AlertType, type AlertDuration, type AlertDisplay, type Alert } from "./types/alert";
 import { type PluginName, type BetterHtmlPlugin } from "./types/plugin";
+import { type Language, type LanguageData } from "./types/i18n";
 import { type BrowserName } from "./types/other";
 
 import { usePageResize, usePageScroll, useMediaQuery, useForm, useUrlQuery } from "./utils/hooks";
@@ -128,6 +129,8 @@ export {
    Alert,
    PluginName,
    BetterHtmlPlugin,
+   Language,
+   LanguageData,
    BrowserName,
 
    // Hooks
