@@ -520,7 +520,7 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
                   hoverItemColor={hoverItemColor}
                   location={location}
                   onClick={onClickXButton}
-                  key={item.text}
+                  key={item.type + item.text}
                />
             ))}
          </Div.column>
@@ -544,7 +544,7 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
                hoverItemColor={hoverItemColor}
                location={location}
                onClick={onClickXButton}
-               key={item.text}
+               key={item.type + item.text}
             />
          ))}
       </Div.column>
