@@ -12,6 +12,7 @@ import {
 } from "react-better-core";
 
 import { ComponentPropWithRef } from "../types/components";
+import { Language, LanguageData } from "../types/i18n";
 
 import { useComponentsPropsMerger } from "../utils/hooks";
 
@@ -81,6 +82,8 @@ export type DropdownProps<Value = unknown, Data = unknown> = {
    debounceIsLoading?: boolean;
    debounceMinimumSymbolsRequired?: number;
    /** @default false */
+   withoutArrow?: boolean;
+   /** @default false */
    withoutClearButton?: boolean;
    /** @default false */
    withoutRenderingOptionsWhenClosed?: boolean;
@@ -111,7 +114,18 @@ export type DropdownProps<Value = unknown, Data = unknown> = {
 type DropdownComponentType = {
    <Value, Data>(props: ComponentPropWithRef<HTMLDivElement, DropdownProps<Value, Data>>): React.ReactElement;
    countries: (
-      props: ComponentPropWithRef<HTMLDivElement, OmitProps<DropdownProps<string, Country>, "options">>,
+      props: ComponentPropWithRef<HTMLDivElement, OmitProps<DropdownProps<Country["code"], Country>, "options">>,
+   ) => React.ReactElement;
+   language: (
+      props: ComponentPropWithRef<
+         HTMLDivElement,
+         OmitProps<
+            DropdownProps<Language, LanguageData<object>> & {
+               isSmall?: boolean;
+            },
+            "options"
+         >
+      >,
    ) => React.ReactElement;
 };
 
@@ -144,6 +158,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
       debounceDelay = 0.5,
       debounceIsLoading,
       debounceMinimumSymbolsRequired,
+      withoutArrow,
       withoutClearButton,
       withoutRenderingOptionsWhenClosed,
       onChange,
@@ -152,6 +167,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
       renderOptionDivider,
       withMultiselect,
       id,
+      textAlign,
       ...props
    } = useComponentsPropsMerger(
       betterHtmlContextInternal.components.dropdown?.style?.default as DropdownProps<Value, Data>,
@@ -476,6 +492,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
                      : required
                   : required
             }
+            textAlign={textAlign}
             name={name}
             disabled={disabled}
             readOnly={!withSearch}
@@ -491,7 +508,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
             }
             leftIcon={leftIcon}
             autoComplete="off"
-            className={`react-better-html-dropdown${
+            className={`react-better-html-dropdown${withoutArrow ? " react-better-html-dropdown-without-arrow" : ""}${
                Array.isArray(selectedOption) && selectedOption.length > 0
                   ? " react-better-html-dropdown-multiselect"
                   : ""
@@ -628,16 +645,18 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
                         />
                      )}
 
-                     <Icon
-                        name="chevronDown"
-                        position="relative"
-                        size={16}
-                        color={theme.colors.textSecondary}
-                        transform={`rotate(${isOpen ? 180 : 0}deg)`}
-                        transition={theme.styles.transition}
-                        pointerEvents="none"
-                        aria-hidden
-                     />
+                     {!withoutArrow && (
+                        <Icon
+                           name="chevronDown"
+                           position="relative"
+                           size={16}
+                           color={theme.colors.textSecondary}
+                           transform={`rotate(${isOpen ? 180 : 0}deg)`}
+                           transition={theme.styles.transition}
+                           pointerEvents="none"
+                           aria-hidden
+                        />
+                     )}
                   </Div.row>
                </>
             }
@@ -657,14 +676,14 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
 DropdownComponent.countries = forwardRef(function Countries(dropdownProps, ref) {
    const betterHtmlContextInternal = useBetterHtmlContextInternal();
    const props = useComponentsPropsMerger(
-      betterHtmlContextInternal.components.dropdown?.style?.countries as DropdownProps<string, Country>,
+      betterHtmlContextInternal.components.dropdown?.style?.countries as DropdownProps<Country["code"], Country>,
       dropdownProps,
    );
 
    const theme = useTheme();
 
    const renderOption = useCallback(
-      (option: DropdownOption<string, Country>, index: number, isSelected: boolean): React.ReactNode => (
+      (option: DropdownOption<Country["code"], Country>, index: number, isSelected: boolean): React.ReactNode => (
          <Div.row alignItems="center" gap={theme.styles.gap}>
             <Image src={`https://flagcdn.com/w80/${option.data?.code.toString().toLowerCase()}.webp`} width={20} />
             <Text>{option.label}</Text>
@@ -676,7 +695,7 @@ DropdownComponent.countries = forwardRef(function Countries(dropdownProps, ref) 
    const options = useMemo(
       () =>
          countries.map(
-            (country): DropdownOption<string, Country> => ({
+            (country): DropdownOption<Country["code"], Country> => ({
                value: country.code,
                label: country.name,
                data: country,
@@ -698,10 +717,67 @@ DropdownComponent.countries = forwardRef(function Countries(dropdownProps, ref) 
    );
 }) as DropdownComponentType["countries"];
 
+DropdownComponent.language = forwardRef(function Countries({ isSmall, ...dropdownProps }, ref) {
+   const betterHtmlContextInternal = useBetterHtmlContextInternal();
+   const { inputFieldClassName, ...props } = useComponentsPropsMerger(
+      betterHtmlContextInternal.components.dropdown?.style?.language as DropdownProps<Language, LanguageData<object>>,
+      dropdownProps,
+   );
+
+   const theme = useTheme();
+
+   const renderOption = useCallback(
+      (option: DropdownOption<Language, LanguageData<object>>, index: number, isSelected: boolean): React.ReactNode => (
+         <Div.row alignItems="center" justifyContent={isSmall ? "center" : undefined} gap={theme.styles.gap}>
+            <Image src={`https://flagcdn.com/w80/${option.data?.flagCode.toString().toLowerCase()}.webp`} width={20} />
+
+            {!isSmall && <Text>{option.label}</Text>}
+         </Div.row>
+      ),
+      [isSmall],
+   );
+   const onChange = useCallback((value: Language) => {
+      betterHtmlContextInternal.setLanguage(value);
+      localStorage.setItem("language", value);
+   }, []);
+
+   const options = useMemo(
+      () =>
+         Object.values(betterHtmlContextInternal.languages).map(
+            (data): DropdownOption<Language, LanguageData<object>> => ({
+               value: data.code,
+               label: isSmall ? data.code.toUpperCase() : data.name,
+               data: data,
+               searchValues: [data.code],
+            }),
+         ),
+      [],
+   );
+
+   return (
+      <DropdownComponent
+         placeholder={isSmall ? "lang" : "Select a language"}
+         withoutClearButton
+         withoutArrow={isSmall}
+         width={isSmall ? 60 : undefined}
+         textAlign={isSmall ? "center" : undefined}
+         inputFieldClassName={`${inputFieldClassName}${isSmall ? " react-better-html-dropdown-no-horizontal-padding" : ""}`}
+         options={options}
+         renderOption={renderOption}
+         value={betterHtmlContextInternal.language}
+         onChange={onChange}
+         ref={ref}
+         {...(props as any)}
+      />
+   );
+}) as DropdownComponentType["language"];
+
 const Dropdown = memo(DropdownComponent) as any as typeof DropdownComponent & {
    countries: typeof DropdownComponent.countries;
+   language: typeof DropdownComponent.language;
 };
 
 Dropdown.countries = DropdownComponent.countries;
+Dropdown.language = DropdownComponent.language;
 
 export default Dropdown;

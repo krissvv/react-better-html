@@ -20,7 +20,7 @@ import { assets } from "../constants/assets";
 
 import { BetterHtmlConfig } from "../types/config";
 import { Alert } from "../types/alert";
-import { Language } from "../types/i18n";
+import { Language, LanguageData } from "../types/i18n";
 import { BetterHtmlPlugin, PluginName } from "../types/plugin";
 
 import { TabGroup, TabsComponentState } from "./Tabs";
@@ -58,6 +58,8 @@ export type BetterHtmlInternalConfig = BetterHtmlConfig & {
    alerts: Alert[];
    setAlerts: React.Dispatch<React.SetStateAction<Alert[]>>;
    setLanguage: React.Dispatch<React.SetStateAction<Language>>;
+   languages: Record<Language, LanguageData<object>>;
+   setLanguages: React.Dispatch<React.SetStateAction<Record<Language, LanguageData<object>>>>;
    setSideMenuIsCollapsed: ReturnType<typeof useBooleanState>[1];
    setSideMenuIsOpenMobile: ReturnType<typeof useBooleanState>[1];
    plugins: BetterHtmlPlugin[];
@@ -79,8 +81,18 @@ export const useBetterHtmlContext = (): BetterHtmlConfig & BetterCoreConfig => {
          "`useBetterHtmlContext()` must be used within a `<BetterHtmlProvider>`. Make sure to add one at the root of your component tree.",
       );
 
-   const { alerts, setAlerts, setSideMenuIsCollapsed, setSideMenuIsOpenMobile, plugins, componentsState, ...rest } =
-      context;
+   const {
+      alerts,
+      setAlerts,
+      setLanguage,
+      languages,
+      setLanguages,
+      setSideMenuIsCollapsed,
+      setSideMenuIsOpenMobile,
+      plugins,
+      componentsState,
+      ...rest
+   } = context;
 
    return {
       ...coreContext,
@@ -181,6 +193,7 @@ function BetterHtmlProviderInternal({ config, plugins, children }: BetterHtmlPro
    const [alerts, setAlerts] = useState<Alert[]>([]);
 
    const [language, setLanguage] = useState<Language>(localStorage.getItem("language") ?? "");
+   const [languages, setLanguages] = useState<Record<Language, LanguageData<object>>>({});
 
    const [sideMenuIsCollapsed, setSideMenuIsCollapsed] = useBooleanState();
    const [sideMenuIsOpenMobile, setSideMenuIsOpenMobile] = useBooleanState();
@@ -198,6 +211,8 @@ function BetterHtmlProviderInternal({ config, plugins, children }: BetterHtmlPro
          setAlerts,
          language,
          setLanguage,
+         languages,
+         setLanguages,
          sideMenuIsCollapsed,
          setSideMenuIsCollapsed,
          sideMenuIsOpenMobile,
@@ -215,7 +230,17 @@ function BetterHtmlProviderInternal({ config, plugins, children }: BetterHtmlPro
             },
          },
       }),
-      [config, alerts, language, sideMenuIsCollapsed, sideMenuIsOpenMobile, plugins, tabGroups, tabsWithDots],
+      [
+         config,
+         alerts,
+         language,
+         languages,
+         sideMenuIsCollapsed,
+         sideMenuIsOpenMobile,
+         plugins,
+         tabGroups,
+         tabsWithDots,
+      ],
    );
 
    useEffect(() => {

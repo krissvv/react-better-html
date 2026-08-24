@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 
-import { Language } from "../types/i18n";
+import { Language, LanguageData } from "../types/i18n";
 
 import { externalBetterHtmlContextValue, useBetterHtmlContext } from "../components/BetterHtmlProvider";
 
@@ -8,15 +8,11 @@ export const missingTranslation = "MISSING_TRANSLATION";
 
 export function generateI18n<Words extends object & { templates: Record<string, string> }>(config: {
    defaultLanguage: Language;
-   languages: Record<
-      Language,
-      {
-         code: Language;
-         words: Words;
-      }
-   >;
+   languages: Record<Language, LanguageData<Words>>;
 }) {
    setTimeout(() => {
+      externalBetterHtmlContextValue?.setLanguages(config.languages);
+
       const cachedLanguage = localStorage.getItem("language");
       const language =
          !cachedLanguage || !Object.keys(config.languages).includes(cachedLanguage)
@@ -43,7 +39,7 @@ export function generateI18n<Words extends object & { templates: Record<string, 
          getString?: (path: (typeof config.languages)[Language]["words"]) => string,
          template?: T,
       ): string | React.ReactNode {
-         const words = config.languages?.[language]?.words;
+         const words = config.languages[language]?.words;
 
          try {
             const readyString = words ? (getString?.(words) ?? missingTranslation) : missingTranslation;

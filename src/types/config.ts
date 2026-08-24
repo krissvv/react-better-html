@@ -46,7 +46,7 @@ export type BetterHtmlConfig = {
          >;
       };
       dropdown?: {
-         style?: ComponentStyleConfig<DropdownProps, "default" | "countries">;
+         style?: ComponentStyleConfig<DropdownProps, "default" | "countries" | "language">;
       };
       toggleInput?: {
          style?: ComponentStyleConfig<ToggleInputProps, "checkbox" | "radiobutton" | "switch">;

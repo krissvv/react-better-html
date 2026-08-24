@@ -202,7 +202,9 @@ const i18n = generateI18n({
    defaultLanguage: "en",
    languages: {
       en: {
+         name: "English",
          code: "en",
+         flagCode: "gb",
          words: {
             templates: {
                termsAndConditions: "Terms & Conditions",
@@ -220,7 +222,9 @@ const i18n = generateI18n({
          },
       },
       bg: {
+         name: "Български",
          code: "bg",
+         flagCode: "bg",
          words: {
             templates: {
                termsAndConditions: "Условията за ползване",
@@ -380,7 +384,6 @@ function Home() {
             style="borderRadiusTop"
             // style="box"
             // accentColor="red"
-            key={language}
          >
             <Tabs.content tabId="sideMenu" tabWithDot>
                <Div.column gap={theme.styles.space}>
@@ -876,6 +879,8 @@ function Home() {
                   />
                   <Dropdown.countries />
                   <Dropdown.countries withSearch />
+                  <Dropdown.language />
+                  <Dropdown.language isSmall />
                   <Dropdown
                      options={[
                         { label: "Option 1 hello", value: "1" },

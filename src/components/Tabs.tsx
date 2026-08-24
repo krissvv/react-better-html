@@ -73,7 +73,7 @@ const TabsComponent: TabsComponent = forwardRef(function Tabs(
 
    const theme = useTheme();
    const urlQuery = reactRouterDomPlugin ? useUrlQuery() : undefined;
-   const { componentsState } = useBetterHtmlContextInternal();
+   const { language, componentsState } = useBetterHtmlContextInternal();
 
    const firstRenderPassedRef = useRef<boolean>(false);
    const tabsRef = useRef<Record<Tab["id"], HTMLDivElement | null>>({});
@@ -128,7 +128,7 @@ const TabsComponent: TabsComponent = forwardRef(function Tabs(
       });
 
       return spacing;
-   }, [selectedTabId, tabs, tabsGap]);
+   }, [rerenderState, selectedTabId, tabs, tabsGap]);
 
    useEffect(() => {
       const timeout = setTimeout(() => {
@@ -139,7 +139,7 @@ const TabsComponent: TabsComponent = forwardRef(function Tabs(
       return () => {
          clearTimeout(timeout);
       };
-   }, []);
+   }, [language]);
    useEffect(() => {
       componentsState.tabs.setTabGroups((oldValue) => {
          const thisTabGroup = oldValue.find((item) => item.name === (name ?? defaultTabName));

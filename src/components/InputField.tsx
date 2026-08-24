@@ -176,6 +176,15 @@ const InputElement = styled.input.withConfig({
       padding-right: ${(props) =>
          props.theme.styles.space + 16 + props.theme.styles.space - props.theme.styles.borderWidth}px;
 
+      &.react-better-html-dropdown-without-arrow {
+         padding-right: ${(props) => props.theme.styles.space}px;
+      }
+
+      &.react-better-html-dropdown-no-horizontal-padding {
+         padding-left: 0px;
+         padding-right: 0px;
+      }
+
       &.react-better-html-dropdown-multiselect {
          border-top: none;
          border-top-left-radius: 0px;
