@@ -10,6 +10,7 @@ function App() {
    return (
       <>
          <SideMenu
+            // position="right"
             items={[
                {
                   type: "divider",
@@ -78,8 +79,20 @@ function App() {
                   <Div.box>Hello there</Div.box>
                </Div>
             }
-         />
-         {/* <SideMenu
+            // sideBar={
+            //    <Div padding={theme.styles.space}>
+            //       <Div.box width="100%" aspectRatio={1} isActive>
+            //          <Div.row width="100%" height="100%" alignItems="center" justifyContent="center">
+            //             <Text fontWeight={700} textAlign="center">
+            //                R
+            //             </Text>
+            //          </Div.row>
+            //       </Div.box>
+            //    </Div>
+            // }
+            // border="none"
+         >
+            {/* <SideMenu
             items={[
                {
                   type: "item",
@@ -126,6 +139,7 @@ function App() {
                   href: "/main-2",
                },
             ]}
+            location={location}
             backgroundColor="transparent"
             activeItemColor="#000000"
             hoverItemColor="#ff0000"
@@ -173,51 +187,55 @@ function App() {
                   awd
                </Div>
             }
-         /> */}
-
-         <Div>
+         > */}
             <SideMenu.pageHolder>
                <Outlet />
             </SideMenu.pageHolder>
-         </Div>
 
-         {/* <PageHolder.center
-            sideComponent={
-               <Image
-                  width="100%"
-                  height="100%"
-                  src="https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png"
-                  objectFit="cover"
-               />
-            }
-            contentInsideBox={false}
-         >
-            <Div height={300}>Hello there</Div>
-         </PageHolder.center> */}
+            {/* <PageHolder.center
+               sideComponent={
+                  <Image
+                     width="100%"
+                     height="100%"
+                     src="https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png"
+                     objectFit="cover"
+                  />
+               }
+               contentInsideBox={false}
+            >
+               <Div height={300}>Hello there</Div>
+            </PageHolder.center> */}
 
-         {/* <PageHolder.center
-            sideComponent={
-               <Div.column
-                  width="100%"
-                  height="100%"
-                  backgroundColor={theme.colors.primary}
-                  alignItems="center"
-                  justifyContent="center"
-               >
-                  <Text color={theme.colors.base}>Hello there</Text>
-               </Div.column>
-            }
-            sideComponentPosition="left"
-            behindComponent={
-               <Div.column width="100%" height="100%" alignItems="center" justifyContent="center" textAlign="justify">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel, autem ut veniam harum nobis aperiam?
-                  Eveniet ipsam recusandae quasi voluptatum ipsa aliquam, quod perferendis ad error sed, asperiores
-                  officiis quis!
-               </Div.column>
-            }
-         >
-            <Div height={300}>Hello there</Div>
-         </PageHolder.center> */}
+            {/* <PageHolder.center
+               sideComponent={
+                  <Div.column
+                     width="100%"
+                     height="100%"
+                     backgroundColor={theme.colors.primary}
+                     alignItems="center"
+                     justifyContent="center"
+                  >
+                     <Text color={theme.colors.base}>Hello there</Text>
+                  </Div.column>
+               }
+               sideComponentPosition="left"
+               behindComponent={
+                  <Div.column
+                     width="100%"
+                     height="100%"
+                     alignItems="center"
+                     justifyContent="center"
+                     textAlign="justify"
+                  >
+                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel, autem ut veniam harum nobis aperiam?
+                     Eveniet ipsam recusandae quasi voluptatum ipsa aliquam, quod perferendis ad error sed, asperiores
+                     officiis quis!
+                  </Div.column>
+               }
+            >
+               <Div height={300}>Hello there</Div>
+            </PageHolder.center> */}
+         </SideMenu>
       </>
    );
 }

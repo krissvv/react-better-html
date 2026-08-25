@@ -66,6 +66,8 @@ export type BetterHtmlConfig = {
       sideMenu?: {
          /** @default 300 */
          width?: number;
+         /** @default 80 */
+         sidebarWidth?: number;
       };
    };
 };

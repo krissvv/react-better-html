@@ -11,7 +11,7 @@ import {
    useTheme,
 } from "react-better-core";
 
-import { defaultSideMenuWidth } from "../constants/app";
+import { defaultSideBarWidth, defaultSideMenuWidth } from "../constants/app";
 
 import { useMediaQuery } from "../utils/hooks";
 import { filterHover } from "../utils/variableFunctions";
@@ -39,6 +39,7 @@ type SideMenuContext = {
    setActiveItem: React.Dispatch<React.SetStateAction<SideMenuActiveItem | undefined>>;
    items: SideMenuItem[];
    bottomItems: SideMenuItem[] | undefined;
+   position: SideMenuPosition;
 };
 
 const sideMenuContext = createContext<SideMenuContext | undefined>(undefined);
@@ -74,6 +75,8 @@ export type SideMenuItem = {
         shortText?: string;
      }
 );
+
+export type SideMenuPosition = "left" | "right";
 
 type MenuItemTypeItemProps = {
    item: Extract<SideMenuItem, { type: "item" }>;
@@ -398,6 +401,8 @@ export type SideMenuProps = {
    items: SideMenuItem[];
    bottomItems?: SideMenuItem[];
    location: Location;
+   /** @default "left" */
+   position?: SideMenuPosition;
    topSpace?: number;
    logoAssetName?: AssetName | AnyOtherString;
    logoUrl?: string;
@@ -410,6 +415,7 @@ export type SideMenuProps = {
    itemsAdditionalComponent?: React.ReactNode;
    betweenItemsAdditionalComponent?: React.ReactNode;
    bottomItemsAdditionalComponent?: React.ReactNode;
+   border?: React.CSSProperties["border"];
    isLoading?: boolean;
    /** @default backgroundContent */
    backgroundColor?: React.CSSProperties["backgroundColor"];
@@ -421,8 +427,10 @@ export type SideMenuProps = {
    paddingBottom?: React.CSSProperties["paddingBottom"];
    /** @default "left" */
    mobileFoldToPosition?: "left" | "right";
+   sideBar?: React.ReactNode;
    renderItemsHolder?: (items: React.ReactNode) => React.ReactNode;
    renderBottomItemsHolder?: (items: React.ReactNode) => React.ReactNode;
+   children?: React.ReactNode;
 };
 
 type SideMenuComponentType = {
@@ -435,6 +443,7 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
    items,
    bottomItems,
    location,
+   position = "left",
    topSpace = 0,
    logoAssetName,
    logoUrl,
@@ -447,6 +456,7 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
    itemsAdditionalComponent,
    betweenItemsAdditionalComponent,
    bottomItemsAdditionalComponent,
+   border,
    isLoading,
    backgroundColor,
    activeItemColor,
@@ -455,8 +465,10 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
    paddingTop,
    paddingBottom,
    mobileFoldToPosition = "left",
+   sideBar,
    renderItemsHolder,
    renderBottomItemsHolder,
+   children,
 }: SideMenuProps) {
    const theme = useTheme();
    const mediaQuery = useMediaQuery();
@@ -480,8 +492,9 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
          setActiveItem,
          items: itemsState,
          bottomItems: bottomItemsState,
+         position,
       }),
-      [activeItem, itemsState, bottomItemsState],
+      [activeItem, itemsState, bottomItemsState, position],
    );
 
    const isCollapsable = collapsable && !mediaQuery.size1000;
@@ -491,8 +504,17 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
    const sideMenuWidth = components.sideMenu?.width ?? defaultSideMenuWidth;
    const sideMenuCollapsedWidth = theme.styles.space + theme.styles.space * 2 + 16 + theme.styles.space;
 
+   const sideBarWidth = components.sideMenu?.width ?? defaultSideBarWidth;
+
    const readyBackgroundColor = backgroundColor ?? theme.colors.backgroundContent;
    const logoSize = sideMenuCollapsedWidth - theme.styles.space * 2;
+
+   const readyBorder = border ?? `solid ${theme.styles.borderWidth}px ${theme.colors.border}`;
+   const readyTransition = mediaQuery.size1000
+      ? !isCollapsed
+         ? `transform ${theme.styles.transition}`
+         : "none"
+      : theme.styles.transition;
 
    useEffect(() => {
       setItemsState(items);
@@ -526,7 +548,6 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
          </Div.column>
       </Div.column>
    );
-
    const bottomItemsComponent = (
       <Div.column
          borderTop={mediaQuery.size1000 ? `solid ${theme.styles.borderWidth}px ${theme.colors.border}` : undefined}
@@ -549,167 +570,199 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
          ))}
       </Div.column>
    );
+   const sideBarComponent = sideBar ? (
+      <Div
+         width={sideBarWidth}
+         height="100%"
+         flexShrink={0}
+         borderRight={position === "left" ? readyBorder : undefined}
+         borderLeft={
+            position === "right" ? (border ?? `solid ${theme.styles.borderWidth}px ${theme.colors.border}`) : undefined
+         }
+      >
+         {sideBar}
+      </Div>
+   ) : (
+      sideBar
+   );
 
    return (
       <SideMenuContextProvider value={contextValue}>
-         <Div.column
+         <Div.row
             as="aside"
             position="fixed"
-            width={mediaQuery.size1000 ? "100%" : isCollapsed ? sideMenuCollapsedWidth : sideMenuWidth}
+            width={
+               mediaQuery.size1000
+                  ? "100%"
+                  : (isCollapsed ? sideMenuCollapsedWidth : sideMenuWidth) + (sideBar ? sideBarWidth : 0)
+            }
             height={`calc(100svh - ${topSpace}px)`}
             top={topSpace}
-            left={0}
+            left={position === "left" ? 0 : undefined}
+            right={position === "right" ? 0 : undefined}
             backgroundColor={readyBackgroundColor}
-            borderRight={`solid ${theme.styles.borderWidth}px ${theme.colors.border}`}
             transform={
                !mediaQuery.size1000 || sideMenuIsOpenMobile
                   ? "translateX(0)"
                   : `translateX(${mobileFoldToPosition === "left" ? "-" : ""}100%)`
             }
-            paddingTop={paddingTop ?? (logoAssetName || logoUrl ? theme.styles.gap : theme.styles.space)}
-            paddingBottom={paddingBottom}
-            transition={
-               mediaQuery.size1000
-                  ? !isCollapsed
-                     ? `transform ${theme.styles.transition}`
-                     : "none"
-                  : theme.styles.transition
-            }
+            transition={readyTransition}
             userSelect="none"
             zIndex={10}
          >
-            <Div.column width="100%" height="100%" gap={gap ?? theme.styles.space}>
-               {(logoAssetName || logoUrl || (withCloseButton && mediaQuery.size1000)) && (
-                  <Div.row alignItems="center" paddingInline={theme.styles.space}>
-                     {(logoAssetName || logoUrl) && (
-                        <LinkComponentTag to="/" href="/" onClick={onClickXButton}>
-                           <Div.row
-                              alignItems="center"
-                              width={sideMenuCollapsedWidth ? logoSize : undefined}
-                              height={logoSize}
-                              whiteSpace="nowrap"
-                              gap={theme.styles.gap}
-                           >
-                              <Image
-                                 name={logoAssetName}
-                                 src={logoUrl}
-                                 width={logoSize}
+            {position === "left" && sideBarComponent}
+
+            <Div.column
+               width={mediaQuery.size1000 ? "100%" : isCollapsed ? sideMenuCollapsedWidth : sideMenuWidth}
+               height="100%"
+               borderRight={position === "left" ? readyBorder : undefined}
+               borderLeft={
+                  position === "right"
+                     ? (border ?? `solid ${theme.styles.borderWidth}px ${theme.colors.border}`)
+                     : undefined
+               }
+               flexShrink={0}
+               paddingTop={paddingTop ?? (logoAssetName || logoUrl ? theme.styles.gap : theme.styles.space)}
+               paddingBottom={paddingBottom}
+               transition={readyTransition}
+            >
+               <Div.column width="100%" height="100%" gap={gap ?? theme.styles.space}>
+                  {(logoAssetName || logoUrl || (withCloseButton && mediaQuery.size1000)) && (
+                     <Div.row alignItems="center" paddingInline={theme.styles.space}>
+                        {(logoAssetName || logoUrl) && (
+                           <LinkComponentTag to="/" href="/" onClick={onClickXButton}>
+                              <Div.row
+                                 alignItems="center"
+                                 width={sideMenuCollapsedWidth ? logoSize : undefined}
                                  height={logoSize}
-                                 objectFit="contain"
-                              />
+                                 whiteSpace="nowrap"
+                                 gap={theme.styles.gap}
+                              >
+                                 <Image
+                                    name={logoAssetName}
+                                    src={logoUrl}
+                                    width={logoSize}
+                                    height={logoSize}
+                                    objectFit="contain"
+                                 />
 
-                              {logoText && (
-                                 <Text
-                                    fontFamily={logoFontFamily}
-                                    fontSize={22}
-                                    fontWeight={800}
-                                    opacity={!isCollapsed ? 1 : 0}
-                                    transition={theme.styles.transition}
-                                    userSelect="none"
-                                 >
-                                    {logoText}
-                                 </Text>
-                              )}
-                           </Div.row>
-                        </LinkComponentTag>
-                     )}
+                                 {logoText && (
+                                    <Text
+                                       fontFamily={logoFontFamily}
+                                       fontSize={22}
+                                       fontWeight={800}
+                                       opacity={!isCollapsed ? 1 : 0}
+                                       transition={theme.styles.transition}
+                                       userSelect="none"
+                                    >
+                                       {logoText}
+                                    </Text>
+                                 )}
+                              </Div.row>
+                           </LinkComponentTag>
+                        )}
 
-                     {withCloseButton && mediaQuery.size1000 && (
-                        <Button.icon icon="XMark" marginLeft="auto" onClick={onClickXButton} />
-                     )}
+                        {withCloseButton && mediaQuery.size1000 && (
+                           <Button.icon icon="XMark" marginLeft="auto" onClick={onClickXButton} />
+                        )}
+                     </Div.row>
+                  )}
+
+                  {itemsAdditionalComponent}
+
+                  {!isLoading ? (
+                     <>
+                        {renderItemsHolder ? renderItemsHolder(itemsComponent) : itemsComponent}
+
+                        {betweenItemsAdditionalComponent}
+
+                        {readyBottomItems && (
+                           <>
+                              {renderBottomItemsHolder
+                                 ? renderBottomItemsHolder(bottomItemsComponent)
+                                 : bottomItemsComponent}
+                           </>
+                        )}
+                     </>
+                  ) : (
+                     <Div flex={1}>
+                        <Loader.box text={isCollapsed ? "" : undefined} />
+                     </Div>
+                  )}
+
+                  {bottomItemsAdditionalComponent}
+
+                  {isCollapsable && (
+                     <Div
+                        borderTop={`solid ${theme.styles.borderWidth}px ${theme.colors.border}`}
+                        marginTop={!readyBottomItems ? "auto" : undefined}
+                        paddingInline={theme.styles.space}
+                        paddingBlock={theme.styles.space}
+                     >
+                        <Div.row
+                           alignItems="center"
+                           justifyContent="center"
+                           backgroundColor={readyBackgroundColor}
+                           borderRadius={theme.styles.borderRadius}
+                           cursor="pointer"
+                           filterHover={filterHover().z1}
+                           isTabAccessed
+                           paddingBlock={theme.styles.gap}
+                           onClick={setSideMenuIsCollapsed.toggle}
+                        >
+                           <Icon
+                              name={position === "left" ? "chevronRight" : "chevronLeft"}
+                              size={20}
+                              color={theme.colors.textSecondary}
+                              transform={`rotate(${isCollapsed ? 0 : 180}deg)`}
+                              transition={theme.styles.transition}
+                           />
+                        </Div.row>
+                     </Div>
+                  )}
+               </Div.column>
+
+               {widthMobileHandle && (
+                  <Div.row
+                     position="absolute"
+                     top={theme.styles.space}
+                     left="100%"
+                     backgroundColor={readyBackgroundColor}
+                     border={`solid ${theme.styles.borderWidth}px ${theme.colors.border}`}
+                     borderLeft="none"
+                     borderTopRightRadius={theme.styles.borderRadius}
+                     borderBottomRightRadius={theme.styles.borderRadius}
+                     alignItems="center"
+                     cursor="pointer"
+                     opacity={!mediaQuery.size1000 ? 0 : undefined}
+                     pointerEvents={!mediaQuery.size1000 ? "none" : undefined}
+                     padding={theme.styles.gap}
+                     paddingRight={(theme.styles.space + theme.styles.gap) / 2}
+                     transform={!mediaQuery.size1000 ? "translateX(-100%)" : undefined}
+                     transition={theme.styles.transition}
+                     onClick={setSideMenuIsOpenMobile.toggle}
+                  >
+                     <Icon
+                        name="chevronRight"
+                        size={20}
+                        color={theme.colors.textSecondary}
+                        transform={sideMenuIsOpenMobile ? "rotate(180deg)" : undefined}
+                        transition={theme.styles.transition}
+                     />
                   </Div.row>
                )}
 
-               {itemsAdditionalComponent}
-
-               {!isLoading ? (
-                  <>
-                     {renderItemsHolder ? renderItemsHolder(itemsComponent) : itemsComponent}
-
-                     {betweenItemsAdditionalComponent}
-
-                     {readyBottomItems && (
-                        <>
-                           {renderBottomItemsHolder
-                              ? renderBottomItemsHolder(bottomItemsComponent)
-                              : bottomItemsComponent}
-                        </>
-                     )}
-                  </>
-               ) : (
-                  <Div flex={1}>
-                     <Loader.box text={isCollapsed ? "" : undefined} />
-                  </Div>
-               )}
-
-               {bottomItemsAdditionalComponent}
-
-               {isCollapsable && (
-                  <Div
-                     borderTop={`solid ${theme.styles.borderWidth}px ${theme.colors.border}`}
-                     marginTop={!readyBottomItems ? "auto" : undefined}
-                     paddingInline={theme.styles.space}
-                     paddingBlock={theme.styles.space}
-                  >
-                     <Div.row
-                        alignItems="center"
-                        justifyContent="center"
-                        backgroundColor={readyBackgroundColor}
-                        borderRadius={theme.styles.borderRadius}
-                        cursor="pointer"
-                        filterHover={filterHover().z1}
-                        isTabAccessed
-                        paddingBlock={theme.styles.gap}
-                        onClick={setSideMenuIsCollapsed.toggle}
-                     >
-                        <Icon
-                           name="chevronRight"
-                           size={20}
-                           color={theme.colors.textSecondary}
-                           transform={`rotate(${isCollapsed ? 0 : 180}deg)`}
-                           transition={theme.styles.transition}
-                        />
-                     </Div.row>
+               {absoluteComponent && (
+                  <Div position="absolute" top={0} left={0} pointerEvents="none" zIndex={2}>
+                     <Div pointerEvents="all">{absoluteComponent}</Div>
                   </Div>
                )}
             </Div.column>
 
-            {widthMobileHandle && (
-               <Div.row
-                  position="absolute"
-                  top={theme.styles.space}
-                  left="100%"
-                  backgroundColor={readyBackgroundColor}
-                  border={`solid ${theme.styles.borderWidth}px ${theme.colors.border}`}
-                  borderLeft="none"
-                  borderTopRightRadius={theme.styles.borderRadius}
-                  borderBottomRightRadius={theme.styles.borderRadius}
-                  alignItems="center"
-                  cursor="pointer"
-                  opacity={!mediaQuery.size1000 ? 0 : undefined}
-                  pointerEvents={!mediaQuery.size1000 ? "none" : undefined}
-                  padding={theme.styles.gap}
-                  paddingRight={(theme.styles.space + theme.styles.gap) / 2}
-                  transform={!mediaQuery.size1000 ? "translateX(-100%)" : undefined}
-                  transition={theme.styles.transition}
-                  onClick={setSideMenuIsOpenMobile.toggle}
-               >
-                  <Icon
-                     name="chevronRight"
-                     size={20}
-                     color={theme.colors.textSecondary}
-                     transform={sideMenuIsOpenMobile ? "rotate(180deg)" : undefined}
-                     transition={theme.styles.transition}
-                  />
-               </Div.row>
-            )}
+            {position === "right" && sideBarComponent}
+         </Div.row>
 
-            {absoluteComponent && (
-               <Div position="absolute" top={0} left={0} pointerEvents="none" zIndex={2}>
-                  <Div pointerEvents="all">{absoluteComponent}</Div>
-               </Div>
-            )}
-         </Div.column>
+         {children}
       </SideMenuContextProvider>
    );
 };
@@ -727,17 +780,19 @@ SideMenuComponent.pageHolder = function SideMenuPageHolder({
    const theme = useTheme();
    const mediaQuery = useMediaQuery();
    const { components, sideMenuIsCollapsed } = useBetterHtmlContextInternal();
+   const { position } = useSideMenuContext();
 
    const sideMenuWidth = components.sideMenu?.width ?? defaultSideMenuWidth;
    const sideMenuCollapsedWidth = theme.styles.space + theme.styles.space * 2 + 16 + theme.styles.space;
+
+   const sideSpace = !mediaQuery.size1000 ? (!sideMenuIsCollapsed ? sideMenuWidth : sideMenuCollapsedWidth) : undefined;
 
    return (
       <Div
          position="relative"
          width="100%"
-         paddingLeft={
-            !mediaQuery.size1000 ? (!sideMenuIsCollapsed ? sideMenuWidth : sideMenuCollapsedWidth) : undefined
-         }
+         paddingLeft={position === "left" ? sideSpace : undefined}
+         paddingRight={position === "right" ? sideSpace : undefined}
          transition={theme.styles.transition}
       >
          {additionalTopComponent}
