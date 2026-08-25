@@ -35,8 +35,9 @@ export type TabsProps = {
    tabs: Tab[];
    name?: string;
    accentColor?: Color;
-   style?: "default" | "borderRadiusTop" | "box";
+   style?: "default" | "borderRadiusTop" | "box" | "bubble";
    gap?: number;
+   borderRadius?: React.CSSProperties["borderRadius"];
    noBottomLine?: boolean;
    /** @default true */
    keepUrlHistory?: boolean;
@@ -61,6 +62,7 @@ const TabsComponent: TabsComponent = forwardRef(function Tabs(
       accentColor,
       style = "default",
       gap,
+      borderRadius,
       noBottomLine,
       keepUrlHistory = true,
       onChange,
@@ -78,7 +80,7 @@ const TabsComponent: TabsComponent = forwardRef(function Tabs(
    const firstRenderPassedRef = useRef<boolean>(false);
    const tabsRef = useRef<Record<Tab["id"], HTMLDivElement | null>>({});
 
-   const tabsGap = gap ?? (style === "box" ? theme.styles.gap / 2 : 0);
+   const tabsGap = gap ?? (style === "box" || style === "bubble" ? theme.styles.gap / 2 : 0);
 
    const [selectedTabId, setSelectedTabId] = useState<Tab["id"]>(() => {
       const selectedTabId = tabs[0];
@@ -188,10 +190,12 @@ const TabsComponent: TabsComponent = forwardRef(function Tabs(
       };
    }, [selectedTabId, onClickTab]);
 
+   const readyBorderRadius = borderRadius ?? (style === "bubble" ? theme.styles.borderRadius : undefined);
+
    return (
       <Div.column width="100%" gap={theme.styles.space} {...props}>
          <Div position="relative" className="react-better-html-no-scrollbar" overflowY="auto">
-            <Div.row position="relative" width="fit-content" gap={tabsGap} userSelect="none">
+            <Div.row position="relative" width="fit-content" gap={tabsGap} userSelect="none" zIndex={2}>
                {tabs.map((tab) => {
                   const selected = tab.id === selectedTabId;
 
@@ -201,13 +205,16 @@ const TabsComponent: TabsComponent = forwardRef(function Tabs(
                         position="relative"
                         width="fit-content"
                         backgroundColor={
-                           style === "box"
-                              ? selected
-                                 ? (accentColor ?? theme.colors.primary)
-                                 : theme.colors.backgroundContent
-                              : theme.colors.backgroundBase
+                           style === "bubble"
+                              ? theme.colors.textPrimary + "00"
+                              : style === "box"
+                                ? selected
+                                   ? (accentColor ?? theme.colors.primary)
+                                   : theme.colors.backgroundContent
+                                : theme.colors.backgroundBase
                         }
-                        borderRadius={style === "box" ? theme.styles.borderRadius : undefined}
+                        backgroundColorHover={style === "bubble" ? theme.colors.textPrimary + "20" : undefined}
+                        borderRadius={readyBorderRadius ?? (style === "box" ? theme.styles.borderRadius : undefined)}
                         borderTopLeftRadius={style === "borderRadiusTop" ? theme.styles.borderRadius : undefined}
                         borderTopRightRadius={style === "borderRadiusTop" ? theme.styles.borderRadius : undefined}
                         border={
@@ -244,7 +251,11 @@ const TabsComponent: TabsComponent = forwardRef(function Tabs(
                         <Text
                            fontWeight={700}
                            color={
-                              !selected ? theme.colors.textSecondary : style === "box" ? theme.colors.base : undefined
+                              !selected
+                                 ? theme.colors.textSecondary
+                                 : style === "box" || style === "bubble"
+                                   ? theme.colors.base
+                                   : undefined
                            }
                            transition={theme.styles.transition}
                            whiteSpace="nowrap"
@@ -256,17 +267,32 @@ const TabsComponent: TabsComponent = forwardRef(function Tabs(
                })}
             </Div.row>
 
-            {style !== "box" && !noBottomLine && (
-               <Div
-                  position="absolute"
-                  width={width}
-                  height={tabBottomLineWidth}
-                  bottom={0}
-                  left={leftSpacing}
-                  backgroundColor={accentColor ?? theme.colors.primary}
-                  transition={firstRenderPassedRef.current ? theme.styles.transition : "none"}
-               />
-            )}
+            {style !== "box" &&
+               !noBottomLine &&
+               (style === "bubble" ? (
+                  <Div
+                     position="absolute"
+                     width={width}
+                     height="100%"
+                     bottom={0}
+                     left={leftSpacing}
+                     backgroundColor={accentColor ?? theme.colors.primary}
+                     borderRadius={readyBorderRadius}
+                     transition={firstRenderPassedRef.current ? theme.styles.transition : "none"}
+                     zIndex={1}
+                  />
+               ) : (
+                  <Div
+                     position="absolute"
+                     width={width}
+                     height={tabBottomLineWidth}
+                     bottom={0}
+                     left={leftSpacing}
+                     backgroundColor={accentColor ?? theme.colors.primary}
+                     transition={firstRenderPassedRef.current ? theme.styles.transition : "none"}
+                     zIndex={2}
+                  />
+               ))}
          </Div>
 
          {children && <Div width="100%">{children}</Div>}

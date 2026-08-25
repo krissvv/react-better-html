@@ -36,6 +36,7 @@ import {
    generateApi,
    generateEventEmitter,
    generateI18n,
+   Tab,
 } from "../../../src";
 
 const data: {
@@ -149,6 +150,21 @@ const data2 = [
       email: "alice@alice.com",
       image: "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg",
       checked: true,
+   },
+];
+
+const testTabs: Tab[] = [
+   {
+      id: "1",
+      label: "Tab 1",
+   },
+   {
+      id: "2",
+      label: "Tab 2",
+   },
+   {
+      id: "3",
+      label: "Tab 3",
    },
 ];
 
@@ -343,6 +359,10 @@ function Home() {
                {
                   id: "chip",
                   label: "Chip",
+               },
+               {
+                  id: "tabs",
+                  label: "Tabs",
                },
                {
                   id: "inputField",
@@ -777,6 +797,22 @@ function Home() {
                      <Chip.colored text="Some text" color="#395fec" isCircle />
                      <Chip.colored text="Some text" color="#f5bc1e" isCircle />
                   </Div.row>
+               </Div.column>
+            </Tabs.content>
+
+            <Tabs.content tabId="tabs">
+               <Div.column gap={theme.styles.space}>
+                  <Tabs tabs={testTabs} name="test" />
+
+                  <Tabs tabs={testTabs} name="test" style="box" />
+
+                  <Tabs tabs={testTabs} name="test" style="borderRadiusTop" />
+
+                  <Tabs tabs={testTabs} name="test" style="bubble" />
+
+                  <Div.box width="fit-content" borderRadius={999} padding={theme.styles.gap / 2}>
+                     <Tabs tabs={testTabs} name="test" style="bubble" borderRadius={999} />
+                  </Div.box>
                </Div.column>
             </Tabs.content>
 
