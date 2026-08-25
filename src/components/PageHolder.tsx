@@ -26,6 +26,9 @@ type PageHolderComponentType = {
             pageBackgroundColor?: React.CSSProperties["backgroundColor"];
             pageBackgroundImage?: React.CSSProperties["backgroundImage"];
             contentMaxWidth?: React.CSSProperties["maxWidth"];
+            border?: React.CSSProperties["border"];
+            borderRadius?: React.CSSProperties["borderRadius"];
+            boxShadow?: React.CSSProperties["boxShadow"];
             /** @default true */
             contentInsideBox?: boolean;
             behindComponent?: React.ReactNode;
