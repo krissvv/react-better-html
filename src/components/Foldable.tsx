@@ -14,6 +14,7 @@ const animationDurationOpen = animationDurationClose * 2;
 export type FoldableProps = {
    isOpen?: boolean;
    defaultOpen?: boolean;
+   withoutLine?: boolean;
    headerPaddingBlock?: React.CSSProperties["paddingBlock"];
    headerPaddingInline?: React.CSSProperties["paddingInline"];
    /** @default "right" */
@@ -40,6 +41,7 @@ const FoldableComponent: FoldableComponentType = forwardRef<FoldableRef, Foldabl
    {
       isOpen: controlledIsOpen,
       defaultOpen = false,
+      withoutLine,
       icon,
       iconColor,
       iconSize,
@@ -180,9 +182,11 @@ const FoldableComponent: FoldableComponentType = forwardRef<FoldableRef, Foldabl
             </Div.row>
          )}
 
-         <Div height={isOpen ? 1 : 0} opacity={isOpen ? 1 : 0} transition={theme.styles.transition}>
-            <Divider.horizontal width={theme.styles.borderWidth === 0 ? 1 : theme.styles.borderWidth} />
-         </Div>
+         {!withoutLine && (
+            <Div height={isOpen ? 1 : 0} opacity={isOpen ? 1 : 0} transition={theme.styles.transition}>
+               <Divider.horizontal width={theme.styles.borderWidth === 0 ? 1 : theme.styles.borderWidth} />
+            </Div>
+         )}
 
          <Div
             maxHeight={isOpen ? bodyVirtualHeight : 0}
