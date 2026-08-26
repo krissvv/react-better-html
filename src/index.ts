@@ -73,7 +73,7 @@ import { usePageResize, usePageScroll, useMediaQuery, useForm, useUrlQuery } fro
 import { getBrowser, getFormErrorObject } from "./utils/functions";
 import { alertControls, sideMenuControls, filterHover } from "./utils/variableFunctions";
 import { generateLocalStorage } from "./utils/localStorage";
-import { generateI18n } from "./utils/i18n";
+import { generateI18n, missingTranslation } from "./utils/i18n";
 
 import Div, { type DivProps } from "./components/Div";
 import Text, { type TextProps, type TextAs } from "./components/Text";
@@ -154,6 +154,7 @@ export {
 
    // i18n
    generateI18n,
+   missingTranslation,
 
    // Components
    Div,
