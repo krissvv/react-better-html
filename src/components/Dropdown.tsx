@@ -717,7 +717,7 @@ DropdownComponent.countries = forwardRef(function Countries(dropdownProps, ref) 
    );
 }) as DropdownComponentType["countries"];
 
-DropdownComponent.language = forwardRef(function Countries({ isSmall, ...dropdownProps }, ref) {
+DropdownComponent.language = forwardRef(function Language({ isSmall, ...dropdownProps }, ref) {
    const betterHtmlContextInternal = useBetterHtmlContextInternal();
    const { inputFieldClassName, ...props } = useComponentsPropsMerger(
       betterHtmlContextInternal.components.dropdown?.style?.language as DropdownProps<Language, LanguageData<object>>,
@@ -751,7 +751,7 @@ DropdownComponent.language = forwardRef(function Countries({ isSmall, ...dropdow
                searchValues: [data.code],
             }),
          ),
-      [],
+      [betterHtmlContextInternal.languages, isSmall],
    );
 
    return (
