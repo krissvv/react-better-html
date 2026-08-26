@@ -4,13 +4,15 @@ import { darkenColor, lightenColor, OmitProps, useBetterCoreContext, useTheme } 
 import { ComponentPaddingProps, ComponentPropWithRef } from "../types/components";
 
 import { filterHover } from "../utils/variableFunctions";
+import { useComponentsPropsMerger } from "../utils/hooks";
 
 import Div, { DivProps } from "./Div";
 import Text, { TextProps } from "./Text";
+import { useBetterHtmlContextInternal } from "./BetterHtmlProvider";
 
 const borderRadiusOffset = 1.3;
 
-export type ChipProps<Value = unknown> = {
+type InternalChipProps<Value = unknown> = {
    text: string | React.ReactNode;
    beforeText?: React.ReactNode;
    afterText?: React.ReactNode;
@@ -25,11 +27,15 @@ export type ChipProps<Value = unknown> = {
    value?: Value;
    onClick?: (event: React.MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => void;
    onClickWithValue?: (value: Value) => void;
+
+   fromSubcomponent?: boolean;
 } & Pick<
    DivProps,
    "border" | "borderColor" | "borderWidth" | "borderStyle" | keyof ComponentPaddingProps | "transition" | "height"
 > &
    Pick<TextProps, "fontFamily" | "fontSize" | "fontWeight" | "fontStyle">;
+
+export type ChipProps<Value = unknown> = OmitProps<InternalChipProps<Value>, "fromSubcomponent">;
 
 type ChipComponentType = {
    <Value>(props: ComponentPropWithRef<HTMLDivElement, ChipProps<Value>>): React.ReactElement;
@@ -46,7 +52,11 @@ type ChipComponentType = {
 };
 
 const ChipComponent: ChipComponentType = forwardRef(function Chip<Value>(
-   {
+   { fromSubcomponent, ...chipProps }: InternalChipProps<Value>,
+   ref: React.ForwardedRef<HTMLDivElement>,
+) {
+   const betterHtmlContextInternal = useBetterHtmlContextInternal();
+   const {
       text,
       beforeText,
       afterText,
@@ -58,9 +68,11 @@ const ChipComponent: ChipComponentType = forwardRef(function Chip<Value>(
       onClick,
       onClickWithValue,
       ...props
-   }: ChipProps<Value>,
-   ref: React.ForwardedRef<HTMLDivElement>,
-) {
+   } = useComponentsPropsMerger(
+      (!fromSubcomponent ? betterHtmlContextInternal.components.chip?.style?.default : {}) as ChipProps<Value>,
+      chipProps,
+   );
+
    const theme = useTheme();
 
    const onClickElement = useCallback(
@@ -93,7 +105,13 @@ const ChipComponent: ChipComponentType = forwardRef(function Chip<Value>(
    );
 }) as any;
 
-ChipComponent.colored = forwardRef(function Colored({ color, withWhiteBackground, ...props }, ref) {
+ChipComponent.colored = forwardRef(function Colored({ color, withWhiteBackground, ...chipProps }, ref) {
+   const betterHtmlContextInternal = useBetterHtmlContextInternal();
+   const { ...props } = useComponentsPropsMerger(
+      betterHtmlContextInternal.components.chip?.style?.colored as ChipProps,
+      chipProps as ChipProps,
+   );
+
    const theme = useTheme();
    const { colorTheme } = useBetterCoreContext();
 

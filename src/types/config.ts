@@ -7,6 +7,7 @@ import { ToggleInputProps } from "../components/ToggleInput";
 import { HorizontalDividerProps, VerticalDividerProps } from "../components/Divider";
 import { LabelProps } from "../components/Label";
 import { ImageProps } from "../components/Image";
+import { ChipProps } from "../components/Chip";
 
 type ComponentStyleConfig<ComponentProps, Subcomponents extends string> = {
    [key in Subcomponents]?: Partial<ComponentProps>;
@@ -68,6 +69,9 @@ export type BetterHtmlConfig = {
          width?: number;
          /** @default 80 */
          sidebarWidth?: number;
+      };
+      chip: {
+         style?: ComponentStyleConfig<ChipProps, "default" | "colored">;
       };
    };
 };
