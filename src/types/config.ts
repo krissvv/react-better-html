@@ -70,7 +70,7 @@ export type BetterHtmlConfig = {
          /** @default 80 */
          sidebarWidth?: number;
       };
-      chip: {
+      chip?: {
          style?: ComponentStyleConfig<ChipProps, "default" | "colored">;
       };
    };
