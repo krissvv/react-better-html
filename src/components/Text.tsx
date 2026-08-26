@@ -1,6 +1,8 @@
-import { ComponentProps, forwardRef, memo } from "react";
+import { ComponentProps, forwardRef, memo, useCallback } from "react";
 import { OmitProps, Theme, useTheme } from "react-better-core";
 import styled, { css } from "styled-components";
+
+import { isMobileDevice } from "../constants";
 
 import { ComponentHoverStyle, ComponentPropWithRef, ComponentStyle } from "../types/components";
 
@@ -28,6 +30,8 @@ export type TextAs = "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "p" | "span" | "l
 export type TextProps<As extends TextAs = "p"> = {
    /** @default "p" */
    as?: As;
+   /** @default false */
+   isTabAccessed?: boolean;
    htmlContentTranslate?: React.ComponentProps<"div">["translate"];
 } & OmitProps<React.ComponentProps<As>, "style"> &
    ComponentStyle &
@@ -40,7 +44,7 @@ type TextComponentType = {
 };
 
 const TextComponent: TextComponentType = forwardRef(function Text<As extends TextAs>(
-   { as: asValue, htmlContentTranslate, children, ...props }: TextProps<As>,
+   { as: asValue, isTabAccessed, htmlContentTranslate, onKeyDown, children, ...props }: TextProps<As>,
    ref: React.ForwardedRef<HTMLParagraphElement>,
 ) {
    const theme = useTheme();
@@ -49,11 +53,27 @@ const TextComponent: TextComponentType = forwardRef(function Text<As extends Tex
    const dataProps = useComponentPropsWithPrefix(restProps, "data");
    const ariaProps = useComponentPropsWithPrefix(restProps, "aria");
 
+   const onKeyDownElement = useCallback(
+      (event: any) => {
+         onKeyDown?.(event);
+
+         if (!isTabAccessed) return;
+
+         if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            event.currentTarget.click();
+         }
+      },
+      [onKeyDown, isTabAccessed],
+   );
+
    return (
       <TextStyledComponent
          as={asValue}
+         tabIndex={isTabAccessed && !isMobileDevice ? 0 : undefined}
          theme={theme}
          translate={htmlContentTranslate}
+         onKeyDown={onKeyDownElement}
          style={style}
          hoverStyle={hoverStyle}
          isP={asValue === "p"}
