@@ -1,0 +1,8 @@
+.myBoxFromCSS {
+   width: calc(300px + var(--space));
+   height: calc(300px + var(--space));
+   color: var(--base);
+   background-color: var(--primary);
+   border-radius: var(--borderRadius);
+   padding: var(--gap);
+}

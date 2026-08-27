@@ -524,6 +524,8 @@ function Home() {
                   >
                      hover
                   </Div>
+
+                  <div className="myBoxFromCSS">This is a box styled from CSS and uses CSS variables from theme</div>
                </Div.column>
             </Tabs.content>
 

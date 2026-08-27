@@ -10,6 +10,7 @@ import {
    BetterCoreProviderConfig,
    BetterCoreConfig,
    useBetterCoreContext,
+   Theme,
 } from "react-better-core";
 import { createGlobalStyle } from "styled-components";
 
@@ -26,7 +27,7 @@ import { BetterHtmlPlugin, PluginName } from "../types/plugin";
 import { TabGroup, TabsComponentState } from "./Tabs";
 import AlertsHolder from "./alerts/AlertsHolder";
 
-const GlobalStyle = createGlobalStyle<{ fontFamily: string; color: Color; backgroundColor: Color }>`
+const GlobalStyle = createGlobalStyle<{ theme: Theme; fontFamily: string; color: Color; backgroundColor: Color }>`
    html {
       background-color: ${(props) => props.backgroundColor};
    }
@@ -42,6 +43,11 @@ const GlobalStyle = createGlobalStyle<{ fontFamily: string; color: Color; backgr
       margin: 0;
       padding: 0;
       -webkit-tap-highlight-color: transparent;
+   }
+
+   :root {
+      ${(props) => Object.entries(props.theme.styles).map(([key, value]) => `--${key}: ${value}${typeof value === "number" ? "px" : ""};`)}
+      ${(props) => Object.entries(props.theme.colors).map(([key, value]) => `--${key}: ${value};`)}
    }
 
    a {
@@ -164,6 +170,7 @@ function BetterHtmlProviderInternalContent({ children }: BetterHtmlProviderInter
    return (
       <>
          <GlobalStyle
+            theme={theme}
             fontFamily={theme.styles.fontFamily}
             color={theme.colors.textPrimary}
             backgroundColor={theme.colors.backgroundBase}
