@@ -11,7 +11,7 @@ import Image from "./Image";
 import Icon from "./Icon";
 import { useBetterHtmlContextInternal } from "./BetterHtmlProvider";
 
-//* Used in DIV.box
+//* Used in Div.box and Foldable
 
 export type PageHeaderProps = {
    icon?: IconName | AnyOtherString;
@@ -34,6 +34,10 @@ export type PageHeaderProps = {
    descriptionFontSize?: React.CSSProperties["fontSize"];
    /** @default textSecondary */
    descriptionColor?: React.CSSProperties["color"];
+   /** @default theme.styles.space */
+   imageGap?: React.CSSProperties["gap"];
+   /** @default theme.styles.gap / 2 */
+   titleGap?: React.CSSProperties["gap"];
    textAlign?: React.CSSProperties["textAlign"];
    rightElement?: React.ReactNode;
    /** @default false */
@@ -61,6 +65,8 @@ const PageHeaderComponent: PageHeaderComponentType = forwardRef(function PageHea
       description,
       descriptionFontSize,
       descriptionColor,
+      imageGap,
+      titleGap,
       textAlign,
       rightElement,
       lightMode,
@@ -78,7 +84,7 @@ const PageHeaderComponent: PageHeaderComponentType = forwardRef(function PageHea
    return (
       <Div.row
          alignItems="center"
-         gap={theme.styles.space}
+         gap={imageGap ?? theme.styles.space}
          marginBottom={marginBottom ?? theme.styles.space * 2}
          ref={ref}
       >
@@ -97,7 +103,7 @@ const PageHeaderComponent: PageHeaderComponentType = forwardRef(function PageHea
          <Div.column
             alignItems={textAlign === "center" ? "center" : textAlign === "right" ? "flex-end" : undefined}
             flex={1}
-            gap={theme.styles.gap / 2}
+            gap={titleGap ?? theme.styles.gap / 2}
          >
             <Div.row
                alignItems="center"

@@ -173,6 +173,7 @@ DivComponent.box = forwardRef(function Box(
       titleRightElement,
       description,
       descriptionColor,
+      titleGap,
       textAlign,
       rightElement,
       lightMode,
@@ -235,6 +236,7 @@ DivComponent.box = forwardRef(function Box(
                   titleRightElement={titleRightElement}
                   description={description}
                   descriptionColor={descriptionColor}
+                  titleGap={titleGap}
                   textAlign={textAlign}
                   rightElement={rightElement}
                   lightMode={lightMode}

@@ -57,6 +57,7 @@ const FoldableComponent: FoldableComponentType = forwardRef<FoldableRef, Foldabl
       description,
       descriptionFontSize,
       descriptionColor,
+      titleGap,
       textAlign,
       rightElement,
       lightMode,
@@ -171,6 +172,7 @@ const FoldableComponent: FoldableComponentType = forwardRef<FoldableRef, Foldabl
                      description={description}
                      descriptionFontSize={descriptionFontSize}
                      descriptionColor={descriptionColor}
+                     titleGap={titleGap}
                      textAlign={textAlign}
                      rightElement={rightElement}
                      lightMode={lightMode}

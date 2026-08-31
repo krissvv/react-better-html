@@ -827,10 +827,12 @@ SideMenuComponent.pageHolder = function SideMenuPageHolder({
 export type BurgerButtonProps = {
    /** @default "left" */
    position?: "left" | "center" | "right";
+   /** @default theme.colors.border */
+   color?: React.CSSProperties["color"];
    onClick?: (isOpened: boolean) => void;
 };
 
-SideMenuComponent.burgerButton = function BurgerButton({ position = "left", onClick }) {
+SideMenuComponent.burgerButton = function BurgerButton({ position = "left", color, onClick }) {
    const theme = useTheme();
    const { sideMenuIsOpenMobile, setSideMenuIsOpenMobile } = useBetterHtmlContextInternal();
 
@@ -843,6 +845,7 @@ SideMenuComponent.burgerButton = function BurgerButton({ position = "left", onCl
    }, [onClick, sideMenuIsOpenMobile]);
 
    const width = 2;
+   const backgroundColor = color ?? theme.colors.border;
 
    return (
       <Div
@@ -862,7 +865,7 @@ SideMenuComponent.burgerButton = function BurgerButton({ position = "left", onCl
             top={sideMenuIsOpenMobile ? `calc(50% - ${width / 2}px)` : 0}
             left={position === "left" ? 0 : position === "center" ? (sideMenuIsOpenMobile ? 0 : "50%") : "auto"}
             right={position === "right" ? 0 : undefined}
-            backgroundColor={theme.colors.border}
+            backgroundColor={backgroundColor}
             borderRadius={999}
             transform={sideMenuIsOpenMobile ? "rotate(45deg)" : position === "center" ? "translateX(-50%)" : undefined}
             transition={theme.styles.transition}
@@ -874,7 +877,7 @@ SideMenuComponent.burgerButton = function BurgerButton({ position = "left", onCl
             top="50%"
             left={position === "left" ? 0 : position === "center" ? "50%" : "auto"}
             right={position === "right" ? 0 : undefined}
-            backgroundColor={theme.colors.border}
+            backgroundColor={backgroundColor}
             borderRadius={999}
             transform={`translateY(-50%)${position === "center" ? " translateX(-50%)" : ""}`}
             opacity={sideMenuIsOpenMobile ? 0 : undefined}
@@ -887,7 +890,7 @@ SideMenuComponent.burgerButton = function BurgerButton({ position = "left", onCl
             bottom={sideMenuIsOpenMobile ? `calc(50% - ${width / 2}px)` : 0}
             left={position === "left" ? 0 : position === "center" ? (sideMenuIsOpenMobile ? 0 : "50%") : "auto"}
             right={position === "right" ? 0 : undefined}
-            backgroundColor={theme.colors.border}
+            backgroundColor={backgroundColor}
             borderRadius={999}
             transform={sideMenuIsOpenMobile ? "rotate(-45deg)" : position === "center" ? "translateX(-50%)" : undefined}
             transition={theme.styles.transition}
