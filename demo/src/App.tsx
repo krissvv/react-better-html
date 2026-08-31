@@ -1,10 +1,11 @@
 import { memo } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 
-import { Div, useTheme, SideMenu } from "../../src";
+import { Div, useTheme, SideMenu, useMediaQuery } from "../../src";
 
 function App() {
    const theme = useTheme();
+   const mediaQuery = useMediaQuery();
    const location = useLocation();
 
    return (
@@ -75,7 +76,10 @@ function App() {
             widthMobileHandle
             // isLoading
             bottomItemsAdditionalComponent={
-               <Div marginInline={theme.styles.space}>
+               <Div
+                  marginInline={theme.styles.space}
+                  marginBottom={mediaQuery.size1000 ? theme.styles.space : undefined}
+               >
                   <Div.box>Hello there</Div.box>
                </Div>
             }

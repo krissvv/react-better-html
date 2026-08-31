@@ -40,6 +40,7 @@ type SideMenuContext = {
    items: SideMenuItem[];
    bottomItems: SideMenuItem[] | undefined;
    position: SideMenuPosition;
+   withSideBar: boolean;
 };
 
 const sideMenuContext = createContext<SideMenuContext | undefined>(undefined);
@@ -493,8 +494,9 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
          items: itemsState,
          bottomItems: bottomItemsState,
          position,
+         withSideBar: sideBar !== undefined,
       }),
-      [activeItem, itemsState, bottomItemsState, position],
+      [activeItem, itemsState, bottomItemsState, position, sideBar],
    );
 
    const isCollapsable = collapsable && !mediaQuery.size1000;
@@ -554,8 +556,16 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
          gap={theme.styles.gap / 2}
          marginTop="auto"
          paddingTop={mediaQuery.size1000 ? theme.styles.space : undefined}
-         paddingInline={!renderItemsHolder ? theme.styles.space : undefined}
-         paddingBottom={!renderItemsHolder ? (!isCollapsable ? theme.styles.space : undefined) : undefined}
+         paddingInline={!renderBottomItemsHolder ? theme.styles.space : undefined}
+         paddingBottom={
+            !renderBottomItemsHolder
+               ? !isCollapsable
+                  ? mediaQuery.size1000 && bottomItemsAdditionalComponent
+                     ? 0
+                     : theme.styles.space
+                  : undefined
+               : undefined
+         }
       >
          {readyBottomItems?.map((item) => (
             <MenuItemComponent
@@ -613,7 +623,13 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
             {position === "left" && sideBarComponent}
 
             <Div.column
-               width={mediaQuery.size1000 ? "100%" : isCollapsed ? sideMenuCollapsedWidth : sideMenuWidth}
+               width={
+                  mediaQuery.size1000
+                     ? `calc(100% - ${sideBar ? sideBarWidth : 0}px)`
+                     : isCollapsed
+                       ? sideMenuCollapsedWidth
+                       : sideMenuWidth
+               }
                height="100%"
                borderRight={position === "left" ? readyBorder : undefined}
                borderLeft={
@@ -780,12 +796,16 @@ SideMenuComponent.pageHolder = function SideMenuPageHolder({
    const theme = useTheme();
    const mediaQuery = useMediaQuery();
    const { components, sideMenuIsCollapsed } = useBetterHtmlContextInternal();
-   const { position } = useSideMenuContext();
+   const { position, withSideBar } = useSideMenuContext();
 
    const sideMenuWidth = components.sideMenu?.width ?? defaultSideMenuWidth;
    const sideMenuCollapsedWidth = theme.styles.space + theme.styles.space * 2 + 16 + theme.styles.space;
 
-   const sideSpace = !mediaQuery.size1000 ? (!sideMenuIsCollapsed ? sideMenuWidth : sideMenuCollapsedWidth) : undefined;
+   const sideBarWidth = components.sideMenu?.width ?? defaultSideBarWidth;
+
+   const sideSpace = !mediaQuery.size1000
+      ? (!sideMenuIsCollapsed ? sideMenuWidth : sideMenuCollapsedWidth) + (withSideBar ? sideBarWidth : 0)
+      : undefined;
 
    return (
       <Div
