@@ -1,4 +1,14 @@
-import { memo, useCallback, useRef, useState, useEffect, forwardRef, useImperativeHandle, useMemo } from "react";
+import {
+   memo,
+   useCallback,
+   useRef,
+   useState,
+   useEffect,
+   useLayoutEffect,
+   forwardRef,
+   useImperativeHandle,
+   useMemo,
+} from "react";
 import { AnyOtherString, IconName, OmitProps, Theme, useTheme } from "react-better-core";
 import styled, { css, RuleSet } from "styled-components";
 
@@ -274,9 +284,9 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
 ) {
    const theme = useTheme();
 
+   const wrapperRef = useRef<HTMLDivElement>(null);
    const triggerHolderRef = useRef<HTMLDivElement>(null);
    const contentRef = useRef<HTMLDivElement>(null);
-   const tooltipContainerRef = useRef<HTMLDivElement>(null);
 
    const closeTimerRef = useRef<number>(undefined);
 
@@ -296,31 +306,8 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
       setIsOpen(true);
       setIsOpenLate(true);
 
-      setTimeout(() => {
-         if (!tooltipContainerRef.current) return;
-         if (!contentRef.current) return;
-
-         const clientRects = tooltipContainerRef.current.getBoundingClientRect();
-
-         if (clientRects) {
-            const { width, height, x, y } = clientRects;
-
-            const topOutside = y < 0;
-            const bottomOutside = y + height > window.innerHeight;
-            const leftOutside = x < 0;
-            const rightOutside = x + width > window.innerWidth;
-
-            if (topOutside) contentRef.current.style.transform = `translateY(${y * -1 + outsideScreenGap}px)`;
-            if (bottomOutside)
-               contentRef.current.style.transform = `translateY(${window.innerHeight - (y + height) - totalGap}px)`;
-            if (leftOutside) contentRef.current.style.transform = `translateX(${x * -1 + outsideScreenGap}px)`;
-            if (rightOutside)
-               contentRef.current.style.transform = `translateX(${window.innerWidth - (x + width) - totalGap}px)`;
-         }
-      }, 1);
-
       onOpen?.();
-   }, [disabled, onOpen, outsideScreenGap, totalGap]);
+   }, [disabled, onOpen]);
    const closeTooltip = useCallback(() => {
       setIsOpen(false);
       closeTimerRef.current = setTimeout(() => setIsOpenLate(false), 300);
@@ -356,6 +343,45 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
       },
       [trigger, isOpen, closeTooltip],
    );
+   const clampContentInsideViewport = useCallback(() => {
+      if (!wrapperRef.current || !contentRef.current) return;
+
+      const wrapperRect = wrapperRef.current.getBoundingClientRect();
+      const contentWidth = contentRef.current.offsetWidth;
+      const contentHeight = contentRef.current.offsetHeight;
+
+      let expectedLeft: number;
+      let expectedTop: number;
+
+      if (position === "top" || position === "bottom") {
+         expectedTop = position === "top" ? wrapperRect.top - totalGap - contentHeight : wrapperRect.bottom + totalGap;
+         expectedLeft =
+            align === "left"
+               ? wrapperRect.left
+               : align === "right"
+                 ? wrapperRect.right - contentWidth
+                 : wrapperRect.left + wrapperRect.width / 2 - contentWidth / 2;
+      } else {
+         expectedLeft = position === "left" ? wrapperRect.left - totalGap - contentWidth : wrapperRect.right + totalGap;
+         expectedTop =
+            align === "top"
+               ? wrapperRect.top
+               : align === "bottom"
+                 ? wrapperRect.bottom - contentHeight
+                 : wrapperRect.top + wrapperRect.height / 2 - contentHeight / 2;
+      }
+
+      const getShift = (start: number, size: number, viewportSize: number) => {
+         if (start < outsideScreenGap) return outsideScreenGap - start;
+         if (start + size > viewportSize - outsideScreenGap) return viewportSize - outsideScreenGap - (start + size);
+         return 0;
+      };
+
+      const shiftX = getShift(expectedLeft, contentWidth, window.innerWidth);
+      const shiftY = getShift(expectedTop, contentHeight, window.innerHeight);
+
+      contentRef.current.style.transform = shiftX || shiftY ? `translate(${shiftX}px, ${shiftY}px)` : "";
+   }, [position, align, totalGap, outsideScreenGap]);
 
    useEffect(() => {
       if (trigger === "click") {
@@ -371,6 +397,9 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
 
       closeTooltip();
    }, [disabled]);
+   useLayoutEffect(() => {
+      if (isOpen) clampContentInsideViewport();
+   }, [isOpen, clampContentInsideViewport]);
 
    useImperativeHandle(ref, (): TooltipRef => {
       return {
@@ -388,6 +417,7 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
          onClick={onClickHolder}
          onMouseEnter={onMouseEnter}
          onMouseLeave={onMouseLeave}
+         ref={wrapperRef}
       >
          <Div
             width={childrenWrapperWidth}
@@ -408,7 +438,6 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
             gap={gap}
             isOpen={isOpen}
             role="tooltip"
-            ref={tooltipContainerRef}
          >
             {(isOpen || isOpenLate) && (
                <Div position="relative" ref={contentRef}>
