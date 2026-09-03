@@ -1869,6 +1869,131 @@ function Home() {
                         <Image.profileImage letters="KV" cursor="pointer" />
                      </Tooltip>
                   </Div.row>
+
+                  <Text fontWeight="bold">Alignment without arrow (tooltip edge aligned to trigger edge)</Text>
+                  <Div.row gap={theme.styles.gap} flexWrap="wrap">
+                     <Tooltip content={<Text>Aligned to the left edge of the trigger</Text>} align="left">
+                        <Button text="Bottom / left" />
+                     </Tooltip>
+
+                     <Tooltip content={<Text>Aligned to the center of the trigger</Text>} align="center">
+                        <Button text="Bottom / center" />
+                     </Tooltip>
+
+                     <Tooltip content={<Text>Aligned to the right edge of the trigger</Text>} align="right">
+                        <Button text="Bottom / right" />
+                     </Tooltip>
+
+                     <Tooltip
+                        content={<Text>Aligned to the top edge of the trigger</Text>}
+                        position="right"
+                        align="top"
+                     >
+                        <Button text="Right / top" />
+                     </Tooltip>
+
+                     <Tooltip
+                        content={<Text>Aligned to the bottom edge of the trigger</Text>}
+                        position="right"
+                        align="bottom"
+                     >
+                        <Button text="Right / bottom" />
+                     </Tooltip>
+                  </Div.row>
+
+                  <Text fontWeight="bold">Alignment with arrow (arrow anchored to the center of the trigger)</Text>
+                  <Div.row gap={theme.styles.gap} flexWrap="wrap">
+                     <Tooltip content={<Text>Arrow points at the trigger center</Text>} align="left" withArrow>
+                        <Button text="Bottom / left" />
+                     </Tooltip>
+
+                     <Tooltip content={<Text>Arrow points at the trigger center</Text>} align="center" withArrow>
+                        <Button text="Bottom / center" />
+                     </Tooltip>
+
+                     <Tooltip content={<Text>Arrow points at the trigger center</Text>} align="right" withArrow>
+                        <Button text="Bottom / right" />
+                     </Tooltip>
+
+                     <Tooltip
+                        content={<Text>Arrow points at the trigger center</Text>}
+                        position="top"
+                        align="left"
+                        withArrow
+                     >
+                        <Button text="Top / left" />
+                     </Tooltip>
+
+                     <Tooltip
+                        content={<Text>Arrow points at the trigger center</Text>}
+                        position="top"
+                        align="right"
+                        withArrow
+                     >
+                        <Button text="Top / right" />
+                     </Tooltip>
+
+                     <Tooltip
+                        content={<Text>Arrow points at the trigger center</Text>}
+                        position="right"
+                        align="top"
+                        withArrow
+                     >
+                        <Button text="Right / top" />
+                     </Tooltip>
+
+                     <Tooltip
+                        content={<Text>Arrow points at the trigger center</Text>}
+                        position="left"
+                        align="bottom"
+                        withArrow
+                     >
+                        <Button text="Left / bottom" />
+                     </Tooltip>
+                  </Div.row>
+
+                  <Text fontWeight="bold">
+                     Viewport clamping (tooltips are pushed inside the screen without switching sides)
+                  </Text>
+                  <Div.row justifyContent="space-between" gap={theme.styles.gap}>
+                     <Tooltip
+                        content={<Text>This tooltip would overflow the left edge, so it is pushed to the right</Text>}
+                        contentMinWidth={320}
+                        position="left"
+                        withArrow
+                     >
+                        <Button text="Left edge (position left)" />
+                     </Tooltip>
+
+                     <Tooltip
+                        content={<Text>This tooltip would overflow the right edge, so it is pushed to the left</Text>}
+                        contentMinWidth={320}
+                        position="right"
+                        withArrow
+                     >
+                        <Button text="Right edge (position right)" />
+                     </Tooltip>
+                  </Div.row>
+
+                  <Div.row justifyContent="space-between" gap={theme.styles.gap}>
+                     <Tooltip
+                        content={<Text>Right aligned tooltip near the left edge gets clamped inside the viewport</Text>}
+                        contentMinWidth={320}
+                        align="right"
+                        withArrow
+                     >
+                        <Button text="Left edge (align right)" />
+                     </Tooltip>
+
+                     <Tooltip
+                        content={<Text>Left aligned tooltip near the right edge gets clamped inside the viewport</Text>}
+                        contentMinWidth={320}
+                        align="left"
+                        withArrow
+                     >
+                        <Button text="Right edge (align left)" />
+                     </Tooltip>
+                  </Div.row>
                </Div.column>
             </Tabs.content>
 

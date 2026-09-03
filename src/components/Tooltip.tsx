@@ -28,23 +28,41 @@ type TooltipContainerProps = {
    arrowSize?: number;
    isOpen: boolean;
    gap: number;
+   arrowAnchorOffset: number;
+};
+
+const isStartAlign = (align?: TooltipAlign) => align === "left" || align === "top";
+const isEndAlign = (align?: TooltipAlign) => align === "right" || align === "bottom";
+
+const crossAxisAnchor = (props: TooltipContainerProps, startSide: "left" | "top", endSide: "right" | "bottom") => {
+   if (props.align === "center" || props.arrowAnchorOffset)
+      return isEndAlign(props.align) ? `${endSide}: 50%;` : `${startSide}: 50%;`;
+
+   return isStartAlign(props.align) ? `${startSide}: 0;` : `${endSide}: 0;`;
+};
+
+const crossAxisTranslate = (props: TooltipContainerProps) => {
+   if (props.align === "center") return "-50%";
+   if (!props.arrowAnchorOffset) return "0";
+
+   return isStartAlign(props.align) ? `-${props.arrowAnchorOffset}px` : `${props.arrowAnchorOffset}px`;
 };
 
 const tooltipContainerStyle = (props: TooltipContainerProps): Record<TooltipPosition, RuleSet<object>> => ({
    top: css`
       bottom: calc(100% + ${props.gap}px + ${props.arrowSize}px);
-      ${props.align === "center" ? "left: 50%;" : props.align === "left" ? "left: 0;" : "right: 0;"}
+      ${crossAxisAnchor(props, "left", "right")}
    `,
    bottom: css`
       top: calc(100% + ${props.gap}px + ${props.arrowSize}px);
-      ${props.align === "center" ? "left: 50%;" : props.align === "left" ? "left: 0;" : "right: 0;"};
+      ${crossAxisAnchor(props, "left", "right")}
    `,
    left: css`
-      ${props.align === "center" ? "top: 50%;" : props.align === "top" ? "top: 0;" : "bottom: 0;"};
+      ${crossAxisAnchor(props, "top", "bottom")}
       right: calc(100% + ${props.gap}px + ${props.arrowSize}px);
    `,
    right: css`
-      ${props.align === "center" ? "top: 50%;" : props.align === "top" ? "top: 0;" : "bottom: 0;"};
+      ${crossAxisAnchor(props, "top", "bottom")}
       left: calc(100% + ${props.gap}px + ${props.arrowSize}px);
    `,
 });
@@ -60,41 +78,51 @@ const tooltipPositionStyle = (
 > => ({
    top: {
       opened: css`
-         transform: translateX(${props.align === "center" ? "-50%" : "0"});
+         transform: translateX(${crossAxisTranslate(props)});
       `,
       closed: css`
-         transform: translateX(${props.align === "center" ? "-50%" : "0"}) translateY(${props.theme.styles.gap}px);
+         transform: translateX(${crossAxisTranslate(props)}) translateY(${props.theme.styles.gap}px);
       `,
    },
    bottom: {
       opened: css`
-         transform: translateX(${props.align === "center" ? "-50%" : "0"});
+         transform: translateX(${crossAxisTranslate(props)});
       `,
       closed: css`
-         transform: translateX(${props.align === "center" ? "-50%" : "0"}) translateY(-${props.theme.styles.gap}px);
+         transform: translateX(${crossAxisTranslate(props)}) translateY(-${props.theme.styles.gap}px);
       `,
    },
    left: {
       opened: css`
-         transform: translateY(${props.align === "center" ? "-50%" : "0"});
+         transform: translateY(${crossAxisTranslate(props)});
       `,
       closed: css`
-         transform: translateX(${props.theme.styles.gap}px) translateY(${props.align === "center" ? "-50%" : "0"});
+         transform: translateX(${props.theme.styles.gap}px) translateY(${crossAxisTranslate(props)});
       `,
    },
    right: {
       opened: css`
-         transform: translateY(${props.align === "center" ? "-50%" : "0"});
+         transform: translateY(${crossAxisTranslate(props)});
       `,
       closed: css`
-         transform: translateX(-${props.theme.styles.gap}px) translateY(${props.align === "center" ? "-50%" : "0"});
+         transform: translateX(-${props.theme.styles.gap}px) translateY(${crossAxisTranslate(props)});
       `,
    },
 });
 
 const TooltipContainer = styled.div.withConfig({
    shouldForwardProp: (prop) =>
-      !["theme", "position", "align", "pointerEvents", "withArrow", "arrowSize", "isOpen", "gap"].includes(prop),
+      ![
+         "theme",
+         "position",
+         "align",
+         "pointerEvents",
+         "withArrow",
+         "arrowSize",
+         "isOpen",
+         "gap",
+         "arrowAnchorOffset",
+      ].includes(prop),
 })<TooltipContainerProps>`
    position: absolute;
    opacity: ${(props) => (props.isOpen ? 1 : 0)};
@@ -298,6 +326,8 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
 
    const outsideScreenGap = theme.styles.gap / 2;
    const totalGap = arrowSize + gap;
+   const arrowSideSpace = theme.styles.borderRadius;
+   const arrowAnchorOffset = withArrow ? arrowSideSpace + arrowSize : 0;
 
    const openTooltip = useCallback(() => {
       if (disabled) return;
@@ -350,25 +380,26 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
       const contentWidth = contentRef.current.offsetWidth;
       const contentHeight = contentRef.current.offsetHeight;
 
+      const getCrossAxisStart = (wrapperStart: number, wrapperSize: number, contentSize: number) => {
+         const wrapperCenter = wrapperStart + wrapperSize / 2;
+
+         if (align === "center") return wrapperCenter - contentSize / 2;
+         if (isStartAlign(align)) return arrowAnchorOffset ? wrapperCenter - arrowAnchorOffset : wrapperStart;
+
+         return arrowAnchorOffset
+            ? wrapperCenter + arrowAnchorOffset - contentSize
+            : wrapperStart + wrapperSize - contentSize;
+      };
+
       let expectedLeft: number;
       let expectedTop: number;
 
       if (position === "top" || position === "bottom") {
          expectedTop = position === "top" ? wrapperRect.top - totalGap - contentHeight : wrapperRect.bottom + totalGap;
-         expectedLeft =
-            align === "left"
-               ? wrapperRect.left
-               : align === "right"
-                 ? wrapperRect.right - contentWidth
-                 : wrapperRect.left + wrapperRect.width / 2 - contentWidth / 2;
+         expectedLeft = getCrossAxisStart(wrapperRect.left, wrapperRect.width, contentWidth);
       } else {
          expectedLeft = position === "left" ? wrapperRect.left - totalGap - contentWidth : wrapperRect.right + totalGap;
-         expectedTop =
-            align === "top"
-               ? wrapperRect.top
-               : align === "bottom"
-                 ? wrapperRect.bottom - contentHeight
-                 : wrapperRect.top + wrapperRect.height / 2 - contentHeight / 2;
+         expectedTop = getCrossAxisStart(wrapperRect.top, wrapperRect.height, contentHeight);
       }
 
       const getShift = (start: number, size: number, viewportSize: number) => {
@@ -381,7 +412,7 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
       const shiftY = getShift(expectedTop, contentHeight, window.innerHeight);
 
       contentRef.current.style.transform = shiftX || shiftY ? `translate(${shiftX}px, ${shiftY}px)` : "";
-   }, [position, align, totalGap, outsideScreenGap]);
+   }, [position, align, totalGap, outsideScreenGap, arrowAnchorOffset]);
 
    useEffect(() => {
       if (trigger === "click") {
@@ -436,6 +467,7 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
             withArrow={withArrow}
             arrowSize={arrowSize}
             gap={gap}
+            arrowAnchorOffset={arrowAnchorOffset}
             isOpen={isOpen}
             role="tooltip"
          >
@@ -473,7 +505,7 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
                      <Arrow
                         position={position}
                         align={align}
-                        sideSpace={theme.styles.borderRadius}
+                        sideSpace={arrowSideSpace}
                         size={arrowSize}
                         color={backgroundColor ?? theme.colors.backgroundContent}
                         isOpen={isOpen}
