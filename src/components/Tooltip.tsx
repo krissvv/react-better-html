@@ -9,6 +9,7 @@ import {
    useImperativeHandle,
    useMemo,
 } from "react";
+import { createPortal } from "react-dom";
 import { AnyOtherString, IconName, OmitProps, Theme, useTheme } from "react-better-core";
 import styled, { css, RuleSet } from "styled-components";
 
@@ -22,120 +23,40 @@ import Icon from "./Icon";
 type TooltipContainerProps = {
    theme: Theme;
    position: TooltipPosition;
-   align?: TooltipAlign;
    pointerEvents?: React.CSSProperties["pointerEvents"];
-   withArrow?: boolean;
-   arrowSize?: number;
    isOpen: boolean;
-   gap: number;
-   arrowAnchorOffset: number;
 };
 
 const isStartAlign = (align?: TooltipAlign) => align === "left" || align === "top";
-const isEndAlign = (align?: TooltipAlign) => align === "right" || align === "bottom";
 
-const crossAxisAnchor = (props: TooltipContainerProps, startSide: "left" | "top", endSide: "right" | "bottom") => {
-   if (props.align === "center" || props.arrowAnchorOffset)
-      return isEndAlign(props.align) ? `${endSide}: 50%;` : `${startSide}: 50%;`;
-
-   return isStartAlign(props.align) ? `${startSide}: 0;` : `${endSide}: 0;`;
-};
-
-const crossAxisTranslate = (props: TooltipContainerProps) => {
-   if (props.align === "center") return "-50%";
-   if (!props.arrowAnchorOffset) return "0";
-
-   return isStartAlign(props.align) ? `-${props.arrowAnchorOffset}px` : `${props.arrowAnchorOffset}px`;
-};
-
-const tooltipContainerStyle = (props: TooltipContainerProps): Record<TooltipPosition, RuleSet<object>> => ({
+const tooltipClosedTransform = (props: TooltipContainerProps): Record<TooltipPosition, RuleSet<object>> => ({
    top: css`
-      bottom: calc(100% + ${props.gap}px + ${props.arrowSize}px);
-      ${crossAxisAnchor(props, "left", "right")}
+      transform: translateY(${props.theme.styles.gap}px);
    `,
    bottom: css`
-      top: calc(100% + ${props.gap}px + ${props.arrowSize}px);
-      ${crossAxisAnchor(props, "left", "right")}
+      transform: translateY(-${props.theme.styles.gap}px);
    `,
    left: css`
-      ${crossAxisAnchor(props, "top", "bottom")}
-      right: calc(100% + ${props.gap}px + ${props.arrowSize}px);
+      transform: translateX(${props.theme.styles.gap}px);
    `,
    right: css`
-      ${crossAxisAnchor(props, "top", "bottom")}
-      left: calc(100% + ${props.gap}px + ${props.arrowSize}px);
+      transform: translateX(-${props.theme.styles.gap}px);
    `,
-});
-
-const tooltipPositionStyle = (
-   props: TooltipContainerProps,
-): Record<
-   TooltipPosition,
-   {
-      opened: RuleSet<object>;
-      closed: RuleSet<object>;
-   }
-> => ({
-   top: {
-      opened: css`
-         transform: translateX(${crossAxisTranslate(props)});
-      `,
-      closed: css`
-         transform: translateX(${crossAxisTranslate(props)}) translateY(${props.theme.styles.gap}px);
-      `,
-   },
-   bottom: {
-      opened: css`
-         transform: translateX(${crossAxisTranslate(props)});
-      `,
-      closed: css`
-         transform: translateX(${crossAxisTranslate(props)}) translateY(-${props.theme.styles.gap}px);
-      `,
-   },
-   left: {
-      opened: css`
-         transform: translateY(${crossAxisTranslate(props)});
-      `,
-      closed: css`
-         transform: translateX(${props.theme.styles.gap}px) translateY(${crossAxisTranslate(props)});
-      `,
-   },
-   right: {
-      opened: css`
-         transform: translateY(${crossAxisTranslate(props)});
-      `,
-      closed: css`
-         transform: translateX(-${props.theme.styles.gap}px) translateY(${crossAxisTranslate(props)});
-      `,
-   },
 });
 
 const TooltipContainer = styled.div.withConfig({
-   shouldForwardProp: (prop) =>
-      ![
-         "theme",
-         "position",
-         "align",
-         "pointerEvents",
-         "withArrow",
-         "arrowSize",
-         "isOpen",
-         "gap",
-         "arrowAnchorOffset",
-      ].includes(prop),
+   shouldForwardProp: (prop) => !["theme", "position", "pointerEvents", "isOpen"].includes(prop),
 })<TooltipContainerProps>`
-   position: absolute;
+   position: fixed;
+   top: 0;
+   left: 0;
    opacity: ${(props) => (props.isOpen ? 1 : 0)};
    pointer-events: ${(props) => (props.isOpen ? props.pointerEvents : "none")};
    transition: ${(props) => props.theme.styles.transition};
+   transition-property: opacity, transform;
    z-index: 1000;
 
-   ${(props) => tooltipContainerStyle(props)[props.position]}
-
-   ${(props) =>
-      props.isOpen
-         ? tooltipPositionStyle(props)[props.position].opened
-         : tooltipPositionStyle(props)[props.position].closed}
+   ${(props) => (props.isOpen ? "transform: none;" : tooltipClosedTransform(props)[props.position])}
 `;
 
 type TooltipPosition = "top" | "bottom" | "left" | "right";
@@ -315,6 +236,7 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
    const wrapperRef = useRef<HTMLDivElement>(null);
    const triggerHolderRef = useRef<HTMLDivElement>(null);
    const contentRef = useRef<HTMLDivElement>(null);
+   const tooltipContainerRef = useRef<HTMLDivElement>(null);
 
    const closeTimerRef = useRef<number>(undefined);
 
@@ -373,8 +295,8 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
       },
       [trigger, isOpen, closeTooltip],
    );
-   const clampContentInsideViewport = useCallback(() => {
-      if (!wrapperRef.current || !contentRef.current) return;
+   const updateContainerPosition = useCallback(() => {
+      if (!wrapperRef.current || !contentRef.current || !tooltipContainerRef.current) return;
 
       const wrapperRect = wrapperRef.current.getBoundingClientRect();
       const contentWidth = contentRef.current.offsetWidth;
@@ -411,7 +333,8 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
       const shiftX = getShift(expectedLeft, contentWidth, window.innerWidth);
       const shiftY = getShift(expectedTop, contentHeight, window.innerHeight);
 
-      contentRef.current.style.transform = shiftX || shiftY ? `translate(${shiftX}px, ${shiftY}px)` : "";
+      tooltipContainerRef.current.style.left = `${expectedLeft + shiftX}px`;
+      tooltipContainerRef.current.style.top = `${expectedTop + shiftY}px`;
    }, [position, align, totalGap, outsideScreenGap, arrowAnchorOffset]);
 
    useEffect(() => {
@@ -429,8 +352,18 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
       closeTooltip();
    }, [disabled]);
    useLayoutEffect(() => {
-      if (isOpen) clampContentInsideViewport();
-   }, [isOpen, clampContentInsideViewport]);
+      if (!isOpen) return;
+
+      updateContainerPosition();
+
+      window.addEventListener("scroll", updateContainerPosition, true);
+      window.addEventListener("resize", updateContainerPosition);
+
+      return () => {
+         window.removeEventListener("scroll", updateContainerPosition, true);
+         window.removeEventListener("resize", updateContainerPosition);
+      };
+   }, [isOpen, updateContainerPosition]);
 
    useImperativeHandle(ref, (): TooltipRef => {
       return {
@@ -459,61 +392,60 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
             {children}
          </Div>
 
-         <TooltipContainer
-            theme={theme}
-            position={position}
-            align={align}
-            pointerEvents={contentPointerEvents}
-            withArrow={withArrow}
-            arrowSize={arrowSize}
-            gap={gap}
-            arrowAnchorOffset={arrowAnchorOffset}
-            isOpen={isOpen}
-            role="tooltip"
-         >
-            {(isOpen || isOpenLate) && (
-               <Div position="relative" ref={contentRef}>
-                  <Div.box
-                     position="relative"
-                     width={contentWidth}
-                     minWidth={contentMinWidth}
-                     backgroundColor={backgroundColor ?? theme.colors.backgroundContent}
-                     boxShadow="0px 10px 20px #00000020"
-                     paddingBlock={contentPaddingBlock ?? (isSmall ? theme.styles.gap / 2 : theme.styles.gap)}
-                     paddingInline={
-                        contentPaddingInline ??
-                        (asContextMenu ? 0 : isSmall ? theme.styles.space / 2 : theme.styles.space)
-                     }
-                     overflow={asContextMenu ? "hidden" : undefined}
-                  >
-                     {content}
-                  </Div.box>
+         {createPortal(
+            <TooltipContainer
+               theme={theme}
+               position={position}
+               pointerEvents={contentPointerEvents}
+               isOpen={isOpen}
+               role="tooltip"
+               ref={tooltipContainerRef}
+            >
+               {(isOpen || isOpenLate) && (
+                  <Div position="relative" ref={contentRef}>
+                     <Div.box
+                        position="relative"
+                        width={contentWidth}
+                        minWidth={contentMinWidth}
+                        backgroundColor={backgroundColor ?? theme.colors.backgroundContent}
+                        boxShadow="0px 10px 20px #00000020"
+                        paddingBlock={contentPaddingBlock ?? (isSmall ? theme.styles.gap / 2 : theme.styles.gap)}
+                        paddingInline={
+                           contentPaddingInline ??
+                           (asContextMenu ? 0 : isSmall ? theme.styles.space / 2 : theme.styles.space)
+                        }
+                        overflow={asContextMenu ? "hidden" : undefined}
+                     >
+                        {content}
+                     </Div.box>
 
-                  <Div
-                     position="absolute"
-                     width={position === "left" || position === "right" ? totalGap : "100%"}
-                     height={position === "top" || position === "bottom" ? totalGap : "100%"}
-                     top={position === "top" ? "100%" : position === "bottom" ? undefined : 0}
-                     bottom={position === "bottom" ? "100%" : position === "top" ? undefined : 0}
-                     left={position === "left" ? "100%" : position === "right" ? undefined : 0}
-                     right={position === "right" ? "100%" : position === "left" ? undefined : 0}
-                     borderTopLeftRadius={999}
-                     borderTopRightRadius={999}
-                  />
-
-                  {withArrow && (
-                     <Arrow
-                        position={position}
-                        align={align}
-                        sideSpace={arrowSideSpace}
-                        size={arrowSize}
-                        color={backgroundColor ?? theme.colors.backgroundContent}
-                        isOpen={isOpen}
+                     <Div
+                        position="absolute"
+                        width={position === "left" || position === "right" ? totalGap : "100%"}
+                        height={position === "top" || position === "bottom" ? totalGap : "100%"}
+                        top={position === "top" ? "100%" : position === "bottom" ? undefined : 0}
+                        bottom={position === "bottom" ? "100%" : position === "top" ? undefined : 0}
+                        left={position === "left" ? "100%" : position === "right" ? undefined : 0}
+                        right={position === "right" ? "100%" : position === "left" ? undefined : 0}
+                        borderTopLeftRadius={999}
+                        borderTopRightRadius={999}
                      />
-                  )}
-               </Div>
-            )}
-         </TooltipContainer>
+
+                     {withArrow && (
+                        <Arrow
+                           position={position}
+                           align={align}
+                           sideSpace={arrowSideSpace}
+                           size={arrowSize}
+                           color={backgroundColor ?? theme.colors.backgroundContent}
+                           isOpen={isOpen}
+                        />
+                     )}
+                  </Div>
+               )}
+            </TooltipContainer>,
+            document.body,
+         )}
       </Div>
    );
 }) as any;
