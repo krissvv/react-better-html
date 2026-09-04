@@ -93,6 +93,8 @@ Image.profileImage = forwardRef(function ProfileImage(
 
    const theme = useTheme();
 
+   const lettersSplit = letters?.split(" ") ?? [];
+
    return letters ? (
       <Div.row
          backgroundColor={backgroundColor ?? theme.colors.backgroundSecondary}
@@ -107,7 +109,9 @@ Image.profileImage = forwardRef(function ProfileImage(
          height={size}
       >
          <Text fontSize={size / 2.5} fontWeight={700} color={letterColor ?? theme.colors.textPrimary}>
-            {letters.toUpperCase().slice(0, 2)}
+            {lettersSplit.length > 1
+               ? lettersSplit[0][0] + (lettersSplit.at(-1)?.[0] ?? lettersSplit[0][1] ?? "")
+               : letters.toUpperCase().slice(0, 2)}
          </Text>
       </Div.row>
    ) : (
