@@ -161,6 +161,7 @@ type InternalToggleInputProps<Value> = {
    textAdvanced?: React.ReactNode;
    errorText?: string;
    infoText?: string;
+   infoTextColor?: React.CSSProperties["color"];
    /** @default 26 */
    size?: number;
    value?: Value;
@@ -192,6 +193,7 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
       textAdvanced,
       errorText,
       infoText,
+      infoTextColor,
       size = componentSize,
       value,
       onChange,
@@ -335,7 +337,7 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
                as="span"
                display="block"
                fontSize={14}
-               color={errorText ? theme.colors.error : (labelColor ?? theme.colors.textSecondary)}
+               color={errorText ? theme.colors.error : (infoTextColor ?? labelColor ?? theme.colors.textSecondary)}
             >
                {errorText || infoText}
             </Text>

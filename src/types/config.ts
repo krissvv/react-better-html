@@ -8,6 +8,7 @@ import { HorizontalDividerProps, VerticalDividerProps } from "../components/Divi
 import { LabelProps } from "../components/Label";
 import { ImageProps } from "../components/Image";
 import { ChipProps } from "../components/Chip";
+import { FormProps } from "../components/Form";
 
 type ComponentStyleConfig<ComponentProps, Subcomponents extends string> = {
    [key in Subcomponents]?: Partial<ComponentProps>;
@@ -72,6 +73,9 @@ export type BetterHtmlConfig = {
       };
       chip?: {
          style?: ComponentStyleConfig<ChipProps, "default" | "colored">;
+      };
+      form?: {
+         style?: ComponentStyleConfig<FormProps, "default">;
       };
    };
 };

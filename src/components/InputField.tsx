@@ -287,6 +287,7 @@ export type InputFieldProps = {
    labelGap?: React.CSSProperties["gap"];
    errorText?: string;
    infoText?: string;
+   infoTextColor?: React.CSSProperties["color"];
    leftIcon?: IconName | AnyOtherString;
    rightIcon?: IconName | AnyOtherString;
    prefix?: React.ReactNode;
@@ -386,6 +387,7 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
       labelGap,
       errorText,
       infoText,
+      infoTextColor,
       leftIcon,
       rightIcon,
       prefix,
@@ -582,7 +584,7 @@ const InputFieldComponent: InputFieldComponentType = forwardRef(function InputFi
                as="span"
                display="block"
                fontSize={14}
-               color={errorText ? theme.colors.error : (labelColor ?? theme.colors.textSecondary)}
+               color={errorText ? theme.colors.error : (infoTextColor ?? labelColor ?? theme.colors.textSecondary)}
             >
                {errorText || infoText}
             </Text>

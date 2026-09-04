@@ -63,6 +63,7 @@ export type DropdownProps<Value = unknown, Data = unknown> = {
    labelGap?: React.CSSProperties["gap"];
    errorText?: string;
    infoText?: string;
+   infoTextColor?: React.CSSProperties["color"];
    /** @default false */
    required?: boolean;
    name?: string;
@@ -144,6 +145,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
       labelGap,
       errorText,
       infoText,
+      infoTextColor,
       required,
       name,
       disabled,
@@ -485,6 +487,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
             labelGap={labelGap}
             errorText={errorText}
             infoText={infoText}
+            infoTextColor={infoTextColor}
             required={
                withMultiselect
                   ? (Array.isArray(value) ? value.length > 0 : value !== undefined)

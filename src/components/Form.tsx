@@ -3,11 +3,12 @@ import { AnyOtherString, LoaderName, OmitProps, useTheme } from "react-better-co
 
 import { ComponentMarginProps, ComponentPropWithRef } from "../types/components";
 
-import { useForm } from "../utils/hooks";
+import { useComponentsPropsMerger, useForm } from "../utils/hooks";
 
 import Div from "./Div";
 import Button from "./Button";
 import Divider from "./Divider";
+import { useBetterHtmlContextInternal } from "./BetterHtmlProvider";
 
 export type FormProps = {
    form?: OmitProps<ReturnType<typeof useForm>, "focusField">;
@@ -43,7 +44,11 @@ type FormComponentType = {
 };
 
 const FormComponent: FormComponentType = forwardRef(function Form(
-   {
+   formProps: FormProps,
+   ref: React.ForwardedRef<HTMLFormElement>,
+) {
+   const betterHtmlContextInternal = useBetterHtmlContextInternal();
+   const {
       form,
       name,
       submitButtonText,
@@ -66,9 +71,8 @@ const FormComponent: FormComponentType = forwardRef(function Form(
       id,
       children,
       ...props
-   }: FormProps,
-   ref: React.ForwardedRef<HTMLFormElement>,
-) {
+   } = useComponentsPropsMerger(betterHtmlContextInternal.components.form?.style?.default, formProps);
+
    const theme = useTheme();
 
    const submitButtonIsDisabledInternal = useMemo<boolean>(() => {
@@ -83,6 +87,17 @@ const FormComponent: FormComponentType = forwardRef(function Form(
 
    const SubmitButtonTag = isDestructive ? Button.destructive : Button;
    const submitButtonIsDisabledFinal = submitButtonIsDisabled || submitButtonIsDisabledInternal;
+
+   const cancelButton = (
+      <Button.secondary
+         text={cancelButtonText ?? "Cancel"}
+         isLoading={cancelButtonIsLoading}
+         loaderName={cancelButtonLoaderName}
+         disabled={cancelButtonIsDisabled}
+         id={cancelButtonId}
+         onClick={onClickCancel}
+      />
+   );
 
    return (
       <Div width="100%" {...props}>
@@ -120,18 +135,8 @@ const FormComponent: FormComponentType = forwardRef(function Form(
                   gap={theme.styles.gap}
                   marginTop={theme.styles.space}
                >
-                  {renderActionButtons}
-
-                  {onClickCancel && (
-                     <Button.secondary
-                        text={cancelButtonText ?? "Cancel"}
-                        isLoading={cancelButtonIsLoading}
-                        loaderName={cancelButtonLoaderName}
-                        disabled={cancelButtonIsDisabled}
-                        id={cancelButtonId}
-                        onClick={onClickCancel}
-                     />
-                  )}
+                  {actionButtonsLocation === "right" && renderActionButtons}
+                  {actionButtonsLocation === "right" && onClickCancel ? cancelButton : undefined}
 
                   <SubmitButtonTag
                      text={submitButtonText}
@@ -141,6 +146,9 @@ const FormComponent: FormComponentType = forwardRef(function Form(
                      id={submitButtonId}
                      isSubmit
                   />
+
+                  {actionButtonsLocation === "left" && onClickCancel ? cancelButton : undefined}
+                  {actionButtonsLocation === "left" && renderActionButtons}
                </Div.row>
             )}
          </form>
