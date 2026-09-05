@@ -29,7 +29,10 @@ export type BetterHtmlConfig = {
    language: Language | undefined;
    components: {
       button?: {
-         style?: ComponentStyleConfig<ButtonProps, "default" | "secondary" | "destructive" | "icon" | "upload">;
+         style?: ComponentStyleConfig<
+            ButtonProps,
+            "default" | "secondary" | "destructive" | "text" | "icon" | "upload"
+         >;
          tagReplacement?: ComponentTagReplacementConfig<"buttonComponent" | "linkComponent">;
       };
       inputField?: {

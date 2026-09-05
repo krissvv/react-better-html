@@ -5,6 +5,7 @@ import {
    Color,
    ColorTheme,
    IconName,
+   lightenColor,
    LoaderName,
    OmitProps,
    Theme,
@@ -160,6 +161,7 @@ type ButtonComponent = {
    <Value>(props: ButtonProps<Value>): React.ReactElement;
    secondary: <Value>(props: ButtonProps<Value>) => React.ReactElement;
    destructive: <Value>(props: ButtonProps<Value>) => React.ReactElement;
+   text: <Value>(props: ButtonProps<Value>) => React.ReactElement;
    icon: <Value>(
       props: OmitProps<ButtonProps<Value>, "icon" | "width" | "height" | "isSmall"> & {
          icon: IconName | AnyOtherString;
@@ -361,6 +363,32 @@ ButtonComponent.destructive = function Destructive<Value>(buttonProps: ButtonPro
    );
 } as ButtonComponent["destructive"];
 
+ButtonComponent.text = function Text<Value>(buttonProps: ButtonProps<Value>) {
+   const betterHtmlContextInternal = useBetterHtmlContextInternal();
+   const { color, ...props } = useComponentsPropsMerger(
+      betterHtmlContextInternal.components.button?.style?.text as ButtonProps<Value>,
+      buttonProps,
+   );
+
+   const theme = useTheme();
+
+   const readyColor = color ?? theme.colors.textPrimary;
+
+   return (
+      <ButtonComponent
+         color={readyColor}
+         colorHover={lightenColor(readyColor, 0.3)}
+         backgroundColor="transparent"
+         backgroundColorHover="transparent"
+         borderRadius={0}
+         loaderSize={12}
+         isSmall
+         {...fromSubcomponentProps}
+         {...props}
+      />
+   );
+} as ButtonComponent["text"];
+
 ButtonComponent.icon = function Icon({ size = 16, buttonSize, backgroundButtonColor, ...buttonProps }) {
    const betterHtmlContextInternal = useBetterHtmlContextInternal();
    const { ...props } = useComponentsPropsMerger(
@@ -427,12 +455,14 @@ ButtonComponent.upload = function Upload({ accept, multiple, onUpload, ...button
 const Button = memo(ButtonComponent) as any as typeof ButtonComponent & {
    secondary: typeof ButtonComponent.secondary;
    destructive: typeof ButtonComponent.destructive;
+   text: typeof ButtonComponent.text;
    icon: typeof ButtonComponent.icon;
    upload: typeof ButtonComponent.upload;
 };
 
 Button.secondary = ButtonComponent.secondary;
 Button.destructive = ButtonComponent.destructive;
+Button.text = ButtonComponent.text;
 Button.icon = ButtonComponent.icon;
 Button.upload = ButtonComponent.upload;
 

@@ -1142,6 +1142,7 @@ function Home() {
                      <Button text="Hello there" href="/" />
                      <Button.secondary text="Hello there" href="/" />
                      <Button.destructive text="Hello there" href="/" />
+                     <Button.text text="Hello there" href="/" />
                      <Button.icon icon="XMark" href="/" />
                      <Button.upload href="/" />
                   </Div.row>
@@ -1150,6 +1151,7 @@ function Home() {
                      <Button text="Hello there" />
                      <Button.secondary text="Hello there" />
                      <Button.destructive text="Hello there" />
+                     <Button.text text="Hello there" />
                      <Button.icon icon="XMark" />
                      <Button.upload />
                   </Div.row>
@@ -1159,6 +1161,7 @@ function Home() {
                      <Button.secondary text="Hello there" isSmall />
                      <Button.secondary text="Hello there" isSmall disabled />
                      <Button.destructive text="Hello there" isSmall />
+                     <Button.text text="Hello there" isSmall />
                      <Button.icon icon="XMark" />
                      <Button.upload isSmall />
                   </Div.row>
@@ -1167,6 +1170,7 @@ function Home() {
                      <Button text="Hello there" isLoading />
                      <Button.secondary text="Hello there" isLoading />
                      <Button.destructive text="Hello there" isLoading />
+                     <Button.text text="Hello there" isLoading />
                      <Button.icon icon="XMark" isLoading />
                      <Button.upload isLoading />
                   </Div.row>

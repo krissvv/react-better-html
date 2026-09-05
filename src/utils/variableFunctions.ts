@@ -87,7 +87,10 @@ export const sideMenuControls = {
    },
 };
 
-export const filterHover = (): Record<"z05" | "z1" | "z2" | "z3", React.CSSProperties["filter"]> => {
+export const filterHover = (): Record<
+   "z05" | "z1" | "z2" | "z3" | "b05" | "b1" | "b2" | "b3",
+   React.CSSProperties["filter"]
+> => {
    if (!checkBetterCoreContextValue(externalBetterCoreContextValue, "filterHover")) return undefined as any;
 
    return {
@@ -95,5 +98,10 @@ export const filterHover = (): Record<"z05" | "z1" | "z2" | "z3", React.CSSPrope
       z1: externalBetterCoreContextValue.colorTheme === "dark" ? "brightness(1.3)" : "brightness(0.9)",
       z2: externalBetterCoreContextValue.colorTheme === "dark" ? "brightness(1.6)" : "brightness(0.8)",
       z3: externalBetterCoreContextValue.colorTheme === "dark" ? "brightness(1.9)" : "brightness(0.7)",
+
+      b05: externalBetterCoreContextValue.colorTheme === "dark" ? "brightness(0.8)" : "brightness(1.05)",
+      b1: externalBetterCoreContextValue.colorTheme === "dark" ? "brightness(0.7)" : "brightness(1.1)",
+      b2: externalBetterCoreContextValue.colorTheme === "dark" ? "brightness(0.4)" : "brightness(1.2)",
+      b3: externalBetterCoreContextValue.colorTheme === "dark" ? "brightness(0.1)" : "brightness(1.3)",
    };
 };
