@@ -18,7 +18,19 @@ const switchComponentBallGap = 3;
 const switchComponentMouseDownDifference = 4;
 
 const InputElement = styled.input.withConfig({
-   shouldForwardProp: (prop) => !["theme", "colorTheme", "style", "hoverStyle", "size", "withNoBorder"].includes(prop),
+   shouldForwardProp: (prop) =>
+      ![
+         "theme",
+         "colorTheme",
+         "style",
+         "hoverStyle",
+         "size",
+         "withNoBorder",
+         "inactiveColor",
+         "activeColor",
+         "inactiveBackgroundColor",
+         "activeBackgroundColor",
+      ].includes(prop),
 })<{
    theme: Theme;
    colorTheme?: ColorTheme;
@@ -26,12 +38,16 @@ const InputElement = styled.input.withConfig({
    hoverStyle: ComponentStyle;
    size?: number;
    withNoBorder?: boolean;
+   inactiveColor?: React.CSSProperties["color"];
+   activeColor?: React.CSSProperties["color"];
+   inactiveBackgroundColor?: React.CSSProperties["backgroundColor"];
+   activeBackgroundColor?: React.CSSProperties["backgroundColor"];
 }>`
    position: relative;
    appearance: none;
    width: ${(props) => props.size ?? componentSize}px;
    height: ${(props) => props.size ?? componentSize}px;
-   background-color: ${(props) => props.theme.colors.backgroundContent};
+   background-color: ${(props) => props.inactiveBackgroundColor ?? props.theme.colors.backgroundContent};
    border: ${(props) => props.theme.styles.borderWidth}px solid ${(props) => props.theme.colors.border};
    border-radius: ${(props) => props.theme.styles.borderRadius / 2}px;
    cursor: pointer;
@@ -43,8 +59,8 @@ const InputElement = styled.input.withConfig({
    }
 
    &:checked {
-      background-color: ${(props) => props.theme.colors.primary};
-      border-color: ${(props) => props.theme.colors.primary};
+      background-color: ${(props) => props.activeBackgroundColor ?? props.theme.colors.primary};
+      border-color: ${(props) => props.activeBackgroundColor ?? props.theme.colors.primary};
    }
 
    &:disabled {
@@ -69,7 +85,19 @@ const InputElement = styled.input.withConfig({
 `;
 
 const SwitchElement = styled.div.withConfig({
-   shouldForwardProp: (prop) => !["theme", "checked", "disabled", "isMouseDown", "style", "hoverStyle"].includes(prop),
+   shouldForwardProp: (prop) =>
+      ![
+         "theme",
+         "checked",
+         "disabled",
+         "isMouseDown",
+         "style",
+         "hoverStyle",
+         "activeColor",
+         "inactiveColor",
+         "inactiveBackgroundColor",
+         "activeBackgroundColor",
+      ].includes(prop),
 })<{
    theme: Theme;
    checked: boolean;
@@ -77,6 +105,10 @@ const SwitchElement = styled.div.withConfig({
    isMouseDown: boolean;
    style: ComponentStyle;
    hoverStyle: ComponentStyle;
+   inactiveColor?: React.CSSProperties["color"];
+   activeColor?: React.CSSProperties["color"];
+   inactiveBackgroundColor?: React.CSSProperties["backgroundColor"];
+   activeBackgroundColor?: React.CSSProperties["backgroundColor"];
 }>`
    --width: ${(props) => componentSize * 2 - props.theme.styles.gap / 2}px;
    --ball-size: ${componentSize - switchComponentBallGap * 2}px;
@@ -84,7 +116,10 @@ const SwitchElement = styled.div.withConfig({
    position: relative;
    width: var(--width);
    height: ${componentSize}px;
-   background-color: ${(props) => (props.checked ? props.theme.colors.primary : props.theme.colors.border)};
+   background-color: ${(props) =>
+      props.checked
+         ? (props.activeBackgroundColor ?? props.theme.colors.primary)
+         : (props.inactiveBackgroundColor ?? props.theme.colors.border)};
    border-radius: 999px;
    cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
    opacity: ${(props) => (props.disabled ? 0.5 : 1)};
@@ -96,7 +131,10 @@ const SwitchElement = styled.div.withConfig({
       width: ${(props) =>
          componentSize - switchComponentBallGap * 2 + (props.isMouseDown ? switchComponentMouseDownDifference : 0)}px;
       height: ${componentSize - switchComponentBallGap * 2}px;
-      background-color: ${(props) => props.theme.colors.base};
+      background-color: ${(props) =>
+         props.checked
+            ? (props.activeColor ?? props.theme.colors.base)
+            : (props.inactiveColor ?? props.theme.colors.base)};
       border-radius: 999px;
       top: ${switchComponentBallGap}px;
       left: ${switchComponentBallGap}px;
@@ -120,7 +158,8 @@ const SwitchElement = styled.div.withConfig({
             switchComponentBallGap * 2 +
             (props.isMouseDown ? switchComponentMouseDownDifference : 0)}px;
          height: ${componentSize - switchComponentBallGap * 2}px;
-         background-color: ${(props) => (props.checked ? props.theme.colors.primary : "transparent")};
+         background-color: ${(props) =>
+            props.checked ? (props.activeBackgroundColor ?? props.theme.colors.primary) : "transparent"};
          border-radius: 999px;
          top: ${switchComponentBallGap}px;
          left: ${switchComponentBallGap}px;
@@ -162,6 +201,10 @@ type InternalToggleInputProps<Value> = {
    errorText?: string;
    infoText?: string;
    infoTextColor?: React.CSSProperties["color"];
+   inactiveColor?: React.CSSProperties["color"];
+   activeColor?: React.CSSProperties["color"];
+   inactiveBackgroundColor?: React.CSSProperties["backgroundColor"];
+   activeBackgroundColor?: React.CSSProperties["backgroundColor"];
    /** @default 26 */
    size?: number;
    value?: Value;
@@ -194,6 +237,10 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
       errorText,
       infoText,
       infoTextColor,
+      inactiveColor,
+      activeColor,
+      inactiveBackgroundColor,
+      activeBackgroundColor,
       size = componentSize,
       value,
       onChange,
@@ -259,6 +306,10 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
                   colorTheme={colorTheme}
                   size={size}
                   withNoBorder={theme.styles.borderWidth === 0}
+                  inactiveColor={inactiveColor}
+                  activeColor={activeColor}
+                  inactiveBackgroundColor={inactiveBackgroundColor}
+                  activeBackgroundColor={activeBackgroundColor}
                   type={props.type ?? "checkbox"}
                   checked={checked}
                   onChange={onChangeElement}
@@ -276,7 +327,7 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
                      position="absolute"
                      top="50%"
                      left="50%"
-                     color={theme.colors.base}
+                     color={activeColor ?? theme.colors.base}
                      size={size / 1.8}
                      transform={`translate(-50%, -50%)${checked ? "" : " scale(0.4)"}`}
                      opacity={checked ? 1 : 0}
@@ -290,7 +341,7 @@ const ToggleInputComponent = forwardRef(function ToggleInput<Value>(
                      height={size / 2}
                      top="50%"
                      left="50%"
-                     backgroundColor={theme.colors.base}
+                     backgroundColor={activeColor ?? theme.colors.base}
                      borderRadius={999}
                      transform={`translate(-50%, -50%)${checked ? "" : " scale(0.4)"}`}
                      opacity={checked ? 1 : 0}

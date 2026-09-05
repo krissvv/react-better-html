@@ -170,6 +170,8 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
       withMultiselect,
       id,
       textAlign,
+      backgroundColor,
+      borderRadius,
       ...props
    } = useComponentsPropsMerger(
       betterHtmlContextInternal.components.dropdown?.style?.default as DropdownProps<Value, Data>,
@@ -496,6 +498,8 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
                   : required
             }
             textAlign={textAlign}
+            backgroundColor={backgroundColor}
+            borderRadius={borderRadius}
             name={name}
             disabled={disabled}
             readOnly={!withSearch}

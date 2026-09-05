@@ -1040,6 +1040,7 @@ function Home() {
                <Div.column gap={theme.styles.space}>
                   <ToggleInput.checkbox />
                   <ToggleInput.checkbox label="Label" />
+                  <ToggleInput.checkbox label="Label green" activeColor="green" />
                   <ToggleInput.checkbox text="Some text here" />
                   <ToggleInput.checkbox text="Some text here" required />
                   <ToggleInput.checkbox label="Label" text="Some text here" />
@@ -1052,6 +1053,7 @@ function Home() {
 
                   <ToggleInput.radiobutton />
                   <ToggleInput.radiobutton label="Label" />
+                  <ToggleInput.radiobutton label="Label green" activeColor="green" />
                   <ToggleInput.radiobutton text="Some text here" />
                   <ToggleInput.radiobutton label="Label" text="Some text here" />
                   <ToggleInput.radiobutton label="Label" text="Some text here" errorText="This is an error" />
@@ -1059,6 +1061,10 @@ function Home() {
 
                   <ToggleInput.switch />
                   <ToggleInput.switch label="Label" />
+                  <ToggleInput.switch label="Label green" inactiveBackgroundColor="green" />
+                  <ToggleInput.switch label="Label green" activeBackgroundColor="green" />
+                  <ToggleInput.switch label="Label green" activeColor="green" />
+                  <ToggleInput.switch label="Label green" inactiveColor="green" />
                   <ToggleInput.switch text="Some text here" />
                   <ToggleInput.switch label="Label" text="Some text here" />
                   <ToggleInput.switch label="Label" text="Some text here" errorText="This is an error" />
