@@ -42,6 +42,8 @@ export type PageHeaderProps = {
    rightElement?: React.ReactNode;
    /** @default false */
    lightMode?: boolean;
+   width?: React.CSSProperties["width"];
+   flex?: React.CSSProperties["flex"];
 } & Pick<ComponentMarginProps, "marginBottom">;
 
 type PageHeaderComponentType = {
@@ -70,6 +72,8 @@ const PageHeaderComponent: PageHeaderComponentType = forwardRef(function PageHea
       textAlign,
       rightElement,
       lightMode,
+      width,
+      flex,
       marginBottom,
    }: PageHeaderProps,
    ref: React.ForwardedRef<HTMLDivElement>,
@@ -83,6 +87,8 @@ const PageHeaderComponent: PageHeaderComponentType = forwardRef(function PageHea
 
    return (
       <Div.row
+         width={width}
+         flex={flex}
          alignItems="center"
          gap={imageGap ?? theme.styles.space}
          marginBottom={marginBottom ?? theme.styles.space * 2}

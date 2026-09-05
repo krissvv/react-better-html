@@ -1157,6 +1157,15 @@ function Home() {
                   </Div.row>
 
                   <Div.row alignItems="center" gap={theme.styles.gap} overflowX="auto">
+                     <Button text="Hello there" icon="trash" />
+                     <Button.secondary text="Hello there" icon="trash" />
+                     <Button.destructive text="Hello there" icon="trash" />
+                     <Button.text text="Hello there" icon="trash" />
+                     <Button.icon icon="trash" />
+                     <Button.upload icon="trash" />
+                  </Div.row>
+
+                  <Div.row alignItems="center" gap={theme.styles.gap} overflowX="auto">
                      <Button text="Hello there" isSmall />
                      <Button.secondary text="Hello there" isSmall />
                      <Button.secondary text="Hello there" isSmall disabled />

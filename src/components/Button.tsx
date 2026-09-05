@@ -193,6 +193,7 @@ const ButtonComponent: ButtonComponent = function Button<Value>({
       value,
       download,
       target,
+      gap,
 
       icon,
       iconPosition = "left",
@@ -289,7 +290,7 @@ const ButtonComponent: ButtonComponent = function Button<Value>({
             height={href ? "100%" : undefined}
             alignItems="center"
             justifyContent="center"
-            gap={10}
+            gap={gap ?? (theme.styles.gap + theme.styles.space) / 2}
             pointerEvents="none"
             opacity={isLoadingElement ? 0 : 1}
             transition={theme.styles.transition}
@@ -376,13 +377,16 @@ ButtonComponent.text = function Text<Value>(buttonProps: ButtonProps<Value>) {
 
    return (
       <ButtonComponent
+         fontWeight={700}
          color={readyColor}
          colorHover={lightenColor(readyColor, 0.3)}
          backgroundColor="transparent"
          backgroundColorHover="transparent"
          borderRadius={0}
          loaderSize={12}
-         isSmall
+         gap={theme.styles.gap}
+         paddingInline={theme.styles.gap}
+         paddingBlock={theme.styles.gap / 2}
          {...fromSubcomponentProps}
          {...props}
       />
