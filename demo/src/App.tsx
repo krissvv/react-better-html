@@ -26,6 +26,12 @@ function App() {
                },
                {
                   type: "item",
+                  text: "Developer",
+                  iconName: "check",
+                  href: "/developer-page",
+               },
+               {
+                  type: "item",
                   text: "With submenu",
                   iconName: "filter",
                   children: [

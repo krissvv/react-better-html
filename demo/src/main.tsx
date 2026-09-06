@@ -2,7 +2,7 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
 
 import BetterHtmlProvider from "../../src/components/BetterHtmlProvider";
-import { alertsPlugin, BetterHtmlPlugin, reactRouterDomPlugin } from "../../src/index.ts";
+import { alertsPlugin, BetterHtmlPlugin, DeveloperPage, reactRouterDomPlugin } from "../../src/index.ts";
 
 import vite from "./assets/vite.svg";
 
@@ -34,6 +34,7 @@ createRoot(document.getElementById("root")!).render(
          <Routes>
             <Route path="/" element={<App />}>
                <Route index element={<Home />} />
+               <Route path="/developer-page" element={<DeveloperPage />} />
                <Route path="submenu-item-1">
                   <Route index element={<>submenu-item-1</>} />
                   <Route path="inner" element={<>submenu-item-1 inner</>} />

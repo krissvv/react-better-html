@@ -105,6 +105,7 @@ import Tabs, { type Tab, type TabGroup, type TabsProps, type TabsRef } from "./c
 import Foldable, { type FoldableProps, type FoldableRef } from "./components/Foldable";
 import SideMenu, { type SideMenuProps, type SideMenuItem, type BurgerButtonProps } from "./components/SideMenu";
 import Pagination from "./components/Pagination";
+import DeveloperPage, { type DeveloperPageSection } from "./components/DeveloperPage";
 
 export * from "./plugins";
 
@@ -221,4 +222,6 @@ export {
    SideMenuItem,
    BurgerButtonProps,
    Pagination,
+   DeveloperPage,
+   DeveloperPageSection,
 };
