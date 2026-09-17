@@ -337,6 +337,12 @@ export function useForm<
          return newErrors;
       });
    }, []);
+   const setDefaultFieldsValue = useCallback((values: Partial<FormFields>) => {
+      setInternalDefaultValues((oldValue) => ({
+         ...oldValue,
+         ...values,
+      }));
+   }, []);
    const getInputFieldProps = useCallback(
       <FieldName extends keyof FormFields>(
          field: FieldName,
@@ -536,7 +542,7 @@ export function useForm<
       isSubmitting,
       setFieldValue,
       setFieldsValue,
-      setDefaultFieldsValue: setInternalDefaultValues,
+      setDefaultFieldsValue,
       getInputFieldProps,
       getTextAreaProps,
       getDropdownFieldProps,
