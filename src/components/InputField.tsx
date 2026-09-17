@@ -606,6 +606,7 @@ InputFieldComponent.multiline = forwardRef(function Multiline(inputFieldProps, r
       placeholder,
       errorText,
       infoText,
+      infoTextColor,
       leftIcon,
       rightIcon,
       onChange,
@@ -711,7 +712,7 @@ InputFieldComponent.multiline = forwardRef(function Multiline(inputFieldProps, r
                as="span"
                display="block"
                marginTop={theme.styles.gap / 2}
-               color={errorText ? theme.colors.error : (labelColor ?? theme.colors.textSecondary)}
+               color={errorText ? theme.colors.error : (infoTextColor ?? labelColor ?? theme.colors.textSecondary)}
                fontSize={14}
             >
                {errorText || infoText}
@@ -944,6 +945,7 @@ InputFieldComponent.phoneNumber = forwardRef(function PhoneNumber(inputFieldProp
                placeholder="+00"
                inputFieldClassName="react-better-html-phone-number-holder"
                defaultValue={defaultValue}
+               backgroundColor={props.backgroundColor}
                value={dropdownValue}
                disabled={props.disabled}
                onChange={onChangeDropdown}
