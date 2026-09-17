@@ -532,10 +532,6 @@ export function useForm<
       return isValid && requiredFieldsHaveValues;
    }, [isValid, requiredFields]);
 
-   useEffect(() => {
-      setInternalDefaultValues(defaultValues);
-   }, [defaultValues]);
-
    return {
       values,
       errors,
