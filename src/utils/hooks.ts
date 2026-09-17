@@ -304,7 +304,8 @@ export function useForm<
       {} as Record<keyof FormFields, React.HTMLInputTypeAttribute>,
    );
 
-   const [values, setValues] = useState<FormFields>(defaultValues);
+   const [internalDefaultValues, setInternalDefaultValues] = useState<FormFields>(defaultValues);
+   const [values, setValues] = useState<FormFields>(internalDefaultValues);
    const [errors, setErrors] = useState<PartialRecord<keyof FormFields, string>>({});
    const [isSubmitting, setIsSubmitting] = useBooleanState();
 
@@ -502,14 +503,16 @@ export function useForm<
       [values, validateForm, onSubmit, focusField],
    );
    const reset = useCallback(() => {
-      setValues(defaultValues);
+      setValues(internalDefaultValues);
       setErrors({});
-   }, [defaultValues]);
+   }, [internalDefaultValues]);
 
    const isDirty = useMemo<boolean>(
       () =>
-         Object.keys(defaultValues).some((key) => JSON.stringify(defaultValues[key]) !== JSON.stringify(values[key])),
-      [defaultValues, values],
+         Object.keys(internalDefaultValues).some(
+            (key) => JSON.stringify(internalDefaultValues[key]) !== JSON.stringify(values[key]),
+         ),
+      [internalDefaultValues, values],
    );
    const isValid = useMemo<boolean>(() => {
       const validationErrors = validate?.(values) || {};
@@ -523,12 +526,17 @@ export function useForm<
       return isValid && requiredFieldsHaveValues;
    }, [isValid, requiredFields]);
 
+   useEffect(() => {
+      setInternalDefaultValues(defaultValues);
+   }, [defaultValues]);
+
    return {
       values,
       errors,
       isSubmitting,
       setFieldValue,
       setFieldsValue,
+      setDefaultFieldsValue: setInternalDefaultValues,
       getInputFieldProps,
       getTextAreaProps,
       getDropdownFieldProps,
