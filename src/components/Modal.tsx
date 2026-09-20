@@ -115,6 +115,7 @@ type ModalComponent = {
             /** @default "Continue" */
             continueButtonText?: string;
             continueButtonLoaderName?: LoaderName | AnyOtherString;
+            cancelButtonText?: string;
             onContinue?: () => void;
             onCancel?: () => void;
          }
@@ -130,6 +131,7 @@ type ModalComponent = {
             /** @default "trash" */
             deleteButtonIconName?: IconName | AnyOtherString;
             deleteButtonLoaderName?: LoaderName | AnyOtherString;
+            cancelButtonText?: string;
             onDelete?: () => void;
             onCancel?: () => void;
          }
@@ -369,7 +371,15 @@ export const ModalComponent: ModalComponent = forwardRef(function Modal(
 }) as any;
 
 ModalComponent.confirmation = forwardRef(function Confirmation(
-   { message, continueButtonText = "Continue", continueButtonLoaderName, onContinue, onCancel, ...props },
+   {
+      message,
+      continueButtonText = "Continue",
+      continueButtonLoaderName,
+      cancelButtonText = "Cancel",
+      onContinue,
+      onCancel,
+      ...props
+   },
    ref,
 ) {
    const theme = useTheme();
@@ -399,7 +409,7 @@ ModalComponent.confirmation = forwardRef(function Confirmation(
             gap={theme.styles.gap}
             marginTop={theme.styles.space * 2}
          >
-            <Button.secondary text="Cancel" onClick={onCancelElement} />
+            <Button.secondary text={cancelButtonText} onClick={onCancelElement} />
             <Button text={continueButtonText} loaderName={continueButtonLoaderName} onClick={onContinueElement} />
          </Div.row>
       </ModalComponent>
@@ -412,6 +422,7 @@ ModalComponent.destructive = forwardRef(function Destructive(
       deleteButtonText = "Delete",
       deleteButtonIconName = "trash",
       deleteButtonLoaderName,
+      cancelButtonText = "Cancel",
       onDelete,
       onCancel,
       ...props
@@ -446,7 +457,7 @@ ModalComponent.destructive = forwardRef(function Destructive(
             gap={theme.styles.gap}
             marginTop={theme.styles.space * 2}
          >
-            <Button.secondary text="Cancel" onClick={onCancelElement} />
+            <Button.secondary text={cancelButtonText} onClick={onCancelElement} />
             <Button.destructive
                icon={deleteButtonIconName}
                text={deleteButtonText}
