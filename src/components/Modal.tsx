@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import {
    AnyOtherString,
    ColorTheme,
+   eventStopPropagation,
    IconName,
    LoaderName,
    OmitProps,
@@ -246,6 +247,8 @@ export const ModalComponent: ModalComponent = forwardRef(function Modal(
          opacity={!isOpened ? 0 : 1}
          onClose={onClickClose}
          onKeyDown={onKeyDown}
+         onMouseDown={eventStopPropagation}
+         onPointerDown={eventStopPropagation}
          ref={dialogRef}
       >
          {isOpenedLate ? (
@@ -386,6 +389,15 @@ ModalComponent.confirmation = forwardRef(function Confirmation(
 
    const modalRef = useRef<ModalRef>(null);
 
+   const mergedRef = useCallback(
+      (instance: ModalRef | null) => {
+         modalRef.current = instance;
+
+         if (typeof ref === "function") ref(instance);
+         else if (ref) ref.current = instance;
+      },
+      [ref],
+   );
    const onCancelElement = useCallback(() => {
       onCancel?.();
       modalRef.current?.close();
@@ -395,10 +407,8 @@ ModalComponent.confirmation = forwardRef(function Confirmation(
       modalRef.current?.close();
    }, [onContinue]);
 
-   useImperativeHandle(ref, (): ModalRef => modalRef.current as ModalRef, []);
-
    return (
-      <ModalComponent title="Are you sure?" maxWidth={660} {...props} ref={modalRef}>
+      <ModalComponent title="Are you sure?" maxWidth={660} {...props} ref={mergedRef}>
          <Text color={theme.colors.textSecondary}>
             {message ?? "Do you really want to continue? This action may be irreversible."}
          </Text>
@@ -433,6 +443,15 @@ ModalComponent.destructive = forwardRef(function Destructive(
 
    const modalRef = useRef<ModalRef>(null);
 
+   const mergedRef = useCallback(
+      (instance: ModalRef | null) => {
+         modalRef.current = instance;
+
+         if (typeof ref === "function") ref(instance);
+         else if (ref) ref.current = instance;
+      },
+      [ref],
+   );
    const onCancelElement = useCallback(() => {
       onCancel?.();
       modalRef.current?.close();
@@ -442,10 +461,8 @@ ModalComponent.destructive = forwardRef(function Destructive(
       modalRef.current?.close();
    }, [onDelete]);
 
-   useImperativeHandle(ref, (): ModalRef => modalRef.current as ModalRef, []);
-
    return (
-      <ModalComponent title="Are you sure?" maxWidth={660} {...props} ref={modalRef}>
+      <ModalComponent title="Are you sure?" maxWidth={660} {...props} ref={mergedRef}>
          <Text color={theme.colors.textSecondary}>
             {message ??
                "Do you really want to continue with the deleting of the item? This action may be irreversible."}

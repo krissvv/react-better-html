@@ -274,10 +274,11 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
    }, [trigger, closeTooltip]);
    const onClickHolder = useCallback(
       (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-         if (trigger === "click") {
-            if (!isOpen) openTooltip();
-            else if (triggerHolderRef.current?.contains(event.target as Node)) closeTooltip();
-         }
+         if (trigger !== "click") return;
+         if (!triggerHolderRef.current?.contains(event.target as Node)) return;
+
+         if (!isOpen) openTooltip();
+         else closeTooltip();
       },
       [trigger, openTooltip, isOpen, closeTooltip],
    );
