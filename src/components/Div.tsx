@@ -28,7 +28,7 @@ export type DivProps<Value = unknown> = {
    /** @default false */
    isTabAccessed?: boolean;
    htmlContentTranslate?: React.ComponentProps<"div">["translate"];
-   onClickWithValue?: (value: Value) => void;
+   onClickWithValue?: (value: Value, event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 } & OmitProps<React.ComponentProps<"div">, "style" | "defaultValue" | "translate"> &
    ComponentStyle &
    ComponentHoverStyle;
@@ -90,9 +90,9 @@ const DivComponent: DivComponentType = forwardRef(function Div<Value>(
    const ariaProps = useComponentPropsWithPrefix(restProps, "aria");
 
    const onClickElement = useCallback(
-      (event: React.MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
+      (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
          onClick?.(event);
-         onClickWithValue?.(value as any);
+         onClickWithValue?.(value as any, event);
       },
       [onClick, onClickWithValue, value],
    );

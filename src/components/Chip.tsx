@@ -25,8 +25,8 @@ type InternalChipProps<Value = unknown> = {
    /** @default false */
    isCircle?: boolean;
    value?: Value;
-   onClick?: (event: React.MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => void;
-   onClickWithValue?: (value: Value) => void;
+   onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+   onClickWithValue?: (value: Value, event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 
    fromSubcomponent?: boolean;
 } & Pick<
@@ -76,9 +76,9 @@ const ChipComponent: ChipComponentType = forwardRef(function Chip<Value>(
    const theme = useTheme();
 
    const onClickElement = useCallback(
-      (event: React.MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
+      (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
          onClick?.(event);
-         onClickWithValue?.(value as any);
+         onClickWithValue?.(value as any, event);
       },
       [onClick, onClickWithValue, value],
    );

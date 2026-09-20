@@ -460,8 +460,8 @@ type TooltipItemProps<Value = unknown> = {
    value?: Value;
    id?: string;
    disabled?: boolean;
-   onClick?: () => void;
-   onClickWithValue?: (value: Value) => void;
+   onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+   onClickWithValue?: (value: Value, event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 };
 
 TooltipComponent.item = forwardRef(function Item<Value>(

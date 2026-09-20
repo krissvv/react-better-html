@@ -150,7 +150,7 @@ type InternalButtonProps<Value = unknown> = {
 
    fromSubcomponent?: boolean;
 
-   onClickWithValue?: (value: Value) => void;
+   onClickWithValue?: (value: Value, event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 } & OmitProps<React.ComponentProps<"button">, "style" | "defaultValue" | "translate" | "value"> &
    ComponentStyle &
    ComponentHoverStyle;
@@ -234,7 +234,7 @@ const ButtonComponent: ButtonComponent = function Button<Value>({
    const onClickElement = useCallback(
       (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
          onClick?.(event);
-         onClickWithValue?.(value as any);
+         onClickWithValue?.(value as any, event);
       },
       [onClick, onClickWithValue, value],
    );
