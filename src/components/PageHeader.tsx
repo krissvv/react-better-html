@@ -21,8 +21,11 @@ export type PageHeaderProps = {
    image?: AssetName | AnyOtherString;
    imageUrl?: string;
    imageSize?: number;
+   imageWidth?: React.CSSProperties["width"];
+   imageHeight?: React.CSSProperties["height"];
    /** @default false */
    imageAzProfileImage?: boolean;
+   imageObjectFit?: React.CSSProperties["objectFit"];
    title?: string | React.ReactNode;
    /** @default "h1" */
    titleAs?: TextAs;
@@ -58,7 +61,10 @@ const PageHeaderComponent: PageHeaderComponentType = forwardRef(function PageHea
       image,
       imageUrl,
       imageSize = 60,
+      imageWidth,
+      imageHeight,
       imageAzProfileImage,
+      imageObjectFit,
       title,
       titleAs = "h1",
       titleFontSize,
@@ -99,9 +105,10 @@ const PageHeaderComponent: PageHeaderComponentType = forwardRef(function PageHea
             <ImageTag
                name={image}
                src={imageUrl}
-               width={readyImageSize}
-               height={readyImageSize}
+               width={imageWidth ?? readyImageSize}
+               height={imageHeight ?? readyImageSize}
                size={readyImageSize}
+               objectFit={imageObjectFit}
                flexShrink={0}
             />
          )}
