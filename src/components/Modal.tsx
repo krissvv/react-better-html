@@ -15,7 +15,7 @@ import {
 } from "react-better-core";
 import styled from "styled-components";
 
-import { ComponentPropWithRef } from "../types/components";
+import { ComponentPaddingProps, ComponentPropWithRef } from "../types/components";
 
 import { useUrlQuery } from "../utils/hooks";
 
@@ -96,7 +96,7 @@ type InternalModalProps = {
    onClose?: () => void;
    isAlert?: boolean;
    children?: React.ReactNode;
-};
+} & ComponentPaddingProps;
 
 export type ModalProps = OmitProps<InternalModalProps, "isAlert">;
 
@@ -159,6 +159,7 @@ export const ModalComponent: ModalComponent = forwardRef(function Modal(
       onClose,
       isAlert,
       children,
+      ...props
    }: InternalModalProps,
    ref: React.ForwardedRef<ModalRef>,
 ) {
@@ -273,6 +274,7 @@ export const ModalComponent: ModalComponent = forwardRef(function Modal(
                   borderRadius={theme.styles.borderRadius * 2}
                   padding={!title ? theme.styles.space : undefined}
                   overflow={overflow}
+                  {...props}
                >
                   {title ? (
                      <>
