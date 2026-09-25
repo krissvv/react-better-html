@@ -77,7 +77,7 @@ type InternalModalProps = {
     *
     * @default 30% smaller than app.contentMaxWidth
     * */
-   maxWidth?: number;
+   maxWidth?: React.CSSProperties["maxWidth"];
    icon?: IconName | AnyOtherString;
    title?: string;
    titleColor?: React.CSSProperties["color"];
@@ -86,6 +86,7 @@ type InternalModalProps = {
    headerTextAlign?: PickValue<NonNullable<React.CSSProperties["textAlign"]>, "left" | "center">;
    headerBackgroundColor?: React.CSSProperties["backgroundColor"];
    backgroundColor?: React.CSSProperties["backgroundColor"];
+   transition?: React.CSSProperties["transition"];
    /** @requires ReactRouterDomPlugin */
    name?: string;
    overflow?: React.CSSProperties["overflow"];
@@ -151,6 +152,7 @@ export const ModalComponent: ModalComponent = forwardRef(function Modal(
       headerTextAlign,
       headerBackgroundColor,
       backgroundColor,
+      transition,
       name,
       overflow,
       withoutCloseButton,
@@ -263,7 +265,7 @@ export const ModalComponent: ModalComponent = forwardRef(function Modal(
                marginBlock={theme.styles.space}
                marginInline="auto"
                transform={`translateY(${theme.styles.space}px)`}
-               transition={theme.styles.transition}
+               transition={transition ?? theme.styles.transition}
                animation={isOpened ? "fadeInAnimation 0.2s ease forwards" : "fadeOutAnimation 0.2s ease forwards"}
             >
                <Div
