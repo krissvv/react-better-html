@@ -119,7 +119,12 @@ LoaderComponent.text = function LoaderText({ text = "Loading...", size = 14, ...
          <Loader size={size} {...props} />
 
          {text && (
-            <Text textAlign="center" color={props.color ?? theme.colors.textSecondary}>
+            <Text
+               fontSize={props.fontSize}
+               fontWeight={props.fontWeight}
+               textAlign="center"
+               color={props.color ?? theme.colors.textSecondary}
+            >
                {text}
             </Text>
          )}
