@@ -271,6 +271,8 @@ function Home() {
    const modalWithTitleRef = useRef<ModalRef>(null);
    const modalWithFoldableRef = useRef<ModalRef>(null);
    const modalWithoutCloseRef = useRef<ModalRef>(null);
+   const modalWithOutsideElementRef = useRef<ModalRef>(null);
+   const modalDarkRef = useRef<ModalRef>(null);
    const confirmationModalRef = useRef<ModalRef>(null);
    const destructiveModalRef = useRef<ModalRef>(null);
 
@@ -1198,6 +1200,11 @@ function Home() {
                   <Button text="Open modal with title" onClick={() => modalWithTitleRef.current?.open()} />
                   <Button text="Open modal with foldable" onClick={() => modalWithFoldableRef.current?.open()} />
                   <Button text="Open modal without close " onClick={() => modalWithoutCloseRef.current?.open()} />
+                  <Button
+                     text="Open modal with outsideElement"
+                     onClick={() => modalWithOutsideElementRef.current?.open()}
+                  />
+                  <Button text="Open modal dark" onClick={() => modalDarkRef.current?.open()} />
                   <Button text="Open confirmation modal" onClick={() => confirmationModalRef.current?.open()} />
                   <Button text="Open destructive modal" onClick={() => destructiveModalRef.current?.open()} />
                </Div.column>
@@ -1247,6 +1254,22 @@ function Home() {
                >
                   Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae cumque tempore qui?
                   <Button text="Close" onClick={() => modalWithoutCloseRef.current?.close()} />
+               </Modal>
+
+               <Modal name="awd" outsideComponentAbove={<Div.box>awd</Div.box>} ref={modalWithOutsideElementRef}>
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae cumque tempore qui?
+               </Modal>
+
+               <Modal
+                  title="My Modal"
+                  titleColor={theme.colors.base}
+                  backgroundColor={theme.colors.label}
+                  closeButtonLight
+                  ref={modalDarkRef}
+               >
+                  <Text color={theme.colors.base}>
+                     Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae cumque tempore qui?
+                  </Text>
                </Modal>
 
                <Modal.confirmation ref={confirmationModalRef} />

@@ -91,11 +91,14 @@ type InternalModalProps = {
    name?: string;
    overflow?: React.CSSProperties["overflow"];
    withoutCloseButton?: boolean;
+   closeButtonLight?: boolean;
    /** @default false */
    defaultIsOpened?: boolean;
    onOpen?: () => void;
    onClose?: () => void;
    isAlert?: boolean;
+   outsideComponentAbove?: React.ReactNode;
+   outsideComponentBellow?: React.ReactNode;
    children?: React.ReactNode;
 } & ComponentPaddingProps;
 
@@ -156,10 +159,13 @@ export const ModalComponent: ModalComponent = forwardRef(function Modal(
       name,
       overflow,
       withoutCloseButton,
+      closeButtonLight,
       defaultIsOpened = false,
       onOpen,
       onClose,
       isAlert,
+      outsideComponentAbove,
+      outsideComponentBellow,
       children,
       ...props
    }: InternalModalProps,
@@ -254,6 +260,12 @@ export const ModalComponent: ModalComponent = forwardRef(function Modal(
          onPointerDown={eventStopPropagation}
          ref={dialogRef}
       >
+         {outsideComponentBellow ? (
+            <Div position="absolute" width="100%" height="100%" bottom={0} left={0}>
+               {outsideComponentBellow}
+            </Div>
+         ) : undefined}
+
          {isOpenedLate ? (
             <Div.column
                position="relative"
@@ -349,6 +361,9 @@ export const ModalComponent: ModalComponent = forwardRef(function Modal(
                                  icon="XMark"
                                  marginTop={1}
                                  iconColor={titleColor}
+                                 color={closeButtonLight ? theme.colors.base : undefined}
+                                 backgroundColor={closeButtonLight ? theme.colors.label + "60" : undefined}
+                                 backgroundColorHover={closeButtonLight ? theme.colors.label + "80" : undefined}
                                  onClick={onClickClose}
                                  transition={theme.styles.transition}
                                  zIndex={10}
@@ -362,7 +377,14 @@ export const ModalComponent: ModalComponent = forwardRef(function Modal(
                      <>
                         {!withoutCloseButton && (
                            <Div position="absolute" top={theme.styles.space} right={theme.styles.space} zIndex={10}>
-                              <Button.icon icon="XMark" iconColor={titleColor} onClick={onClickClose} />
+                              <Button.icon
+                                 icon="XMark"
+                                 iconColor={titleColor}
+                                 color={closeButtonLight ? theme.colors.base : undefined}
+                                 backgroundColor={closeButtonLight ? theme.colors.label + "60" : undefined}
+                                 backgroundColorHover={closeButtonLight ? theme.colors.label + "80" : undefined}
+                                 onClick={onClickClose}
+                              />
                            </Div>
                         )}
                      </>
@@ -371,6 +393,12 @@ export const ModalComponent: ModalComponent = forwardRef(function Modal(
                   <Div padding={title ? theme.styles.space : undefined}>{children}</Div>
                </Div>
             </Div.column>
+         ) : undefined}
+
+         {outsideComponentAbove ? (
+            <Div position="absolute" width="100%" height="100%" top={0} left={0} pointerEvents="none">
+               <Div pointerEvents="all">{outsideComponentAbove}</Div>
+            </Div>
          ) : undefined}
       </DialogStylesElement>,
       document.body,
