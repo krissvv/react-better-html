@@ -42,6 +42,11 @@ createRoot(document.getElementById("root")!).render(
                <Route path="submenu-item-2" element={<>submenu-item-2</>} />
                <Route path="submenu-item-3" element={<>submenu-item-3</>} />
                <Route path="submenu-item-4" element={<>submenu-item-4</>} />
+               <Route path="parent">
+                  <Route index element={<>parent</>} />
+                  <Route path="12" element={<>12</>} />
+                  <Route path="create" element={<>create</>} />
+               </Route>
                <Route path="main-2" element={<>main-2</>} />
             </Route>
          </Routes>

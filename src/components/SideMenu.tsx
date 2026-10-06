@@ -80,6 +80,9 @@ export type SideMenuItem = {
 
 export type SideMenuPosition = "left" | "right";
 
+const getItemKey = (item: SideMenuItem, index: number) =>
+   `${item.type}-${item.text}-${item.type === "item" ? (item.href ?? "") : ""}-${index}`;
+
 type MenuItemTypeItemProps = {
    item: Extract<SideMenuItem, { type: "item" }>;
    backgroundColor?: React.CSSProperties["backgroundColor"];
@@ -261,14 +264,20 @@ const MenuItemTypeItem = memo(function MenuItemTypeItem({
 
       if (!isActive) return;
 
-      setActiveItem((oldValue) =>
-         item.href && item.href !== oldValue?.href
-            ? {
-                 href: item.href,
-                 length: item.href.length,
-              }
-            : oldValue,
-      );
+      setActiveItem((oldValue) => {
+         const oldValueStillActive = oldValue
+            ? location.pathname === "/"
+               ? location.pathname === oldValue.href
+               : location.pathname.startsWith(oldValue.href) && oldValue.href !== "/"
+            : false;
+
+         if (oldValue && oldValueStillActive && oldValue.length >= item.href!.length) return oldValue;
+
+         return {
+            href: item.href!,
+            length: item.href!.length,
+         };
+      });
    }, [location.pathname]);
    useEffect(() => {
       if (!item.children) return;
@@ -319,13 +328,13 @@ const MenuItemTypeItem = memo(function MenuItemTypeItem({
                overflow="hidden"
                transition={`max-height ${theme.styles.transition}, margin-top ${theme.styles.transition}`}
             >
-               {item.children.map((child) => (
+               {item.children.map((child, index) => (
                   <MenuItemComponent
                      item={child}
                      backgroundColor={readyBackgroundColor}
                      location={location}
                      onClick={onClick}
-                     key={child.text}
+                     key={getItemKey(child, index)}
                   />
                ))}
 
@@ -561,7 +570,7 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
          }
       >
          <Div.column gap={theme.styles.gap / 2}>
-            {readyItems.map((item) => (
+            {readyItems.map((item, index) => (
                <MenuItemComponent
                   item={item}
                   backgroundColor={readyBackgroundColor}
@@ -569,7 +578,7 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
                   hoverItemColor={hoverItemColor}
                   location={location}
                   onClick={onClickXButton}
-                  key={item.type + item.text}
+                  key={getItemKey(item, index)}
                />
             ))}
          </Div.column>
@@ -592,7 +601,7 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
                : undefined
          }
       >
-         {readyBottomItems?.map((item) => (
+         {readyBottomItems?.map((item, index) => (
             <MenuItemComponent
                item={item}
                backgroundColor={readyBackgroundColor}
@@ -600,7 +609,7 @@ const SideMenuComponent: SideMenuComponentType = function SideMenu({
                hoverItemColor={hoverItemColor}
                location={location}
                onClick={onClickXButton}
-               key={item.type + item.text}
+               key={getItemKey(item, index)}
             />
          ))}
       </Div.column>

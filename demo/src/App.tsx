@@ -70,6 +70,24 @@ function App() {
                   ],
                },
                {
+                  type: "item",
+                  text: "With submenu and href",
+                  iconName: "filter",
+                  href: "/parent",
+                  children: [
+                     {
+                        type: "item",
+                        text: "Submenu item 3",
+                        href: "/parent/12",
+                     },
+                     {
+                        type: "item",
+                        text: "Submenu item 4",
+                        href: "/parent/create",
+                     },
+                  ],
+               },
+               {
                   type: "divider",
                   text: "My divider",
                   // shortText: "My",
