@@ -1,15 +1,17 @@
 {
    "name": "react-better-html",
-   "version": "1.1.302",
+   "version": "1.1.303",
    "description": "A component library for react that is as close to plane html as possible",
-   "main": "dist/index.js",
+   "main": "./dist/index.mjs",
+   "types": "./dist/index.d.mts",
    "files": [
-      "dist"
+      "dist/index.mjs",
+      "dist/index.d.mts"
    ],
    "exports": {
       ".": {
-         "types": "./dist/index.d.ts",
-         "default": "./dist/index.js"
+         "types": "./dist/index.d.mts",
+         "default": "./dist/index.mjs"
       }
    },
    "repository": {
