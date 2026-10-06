@@ -62,7 +62,8 @@ export type SideMenuItem = {
 } & (
    | {
         type: "item";
-        iconName: IconName | AnyOtherString;
+        iconName?: IconName | AnyOtherString;
+        leftElement?: ((item: SideMenuItem, isActive: boolean) => React.ReactNode) | React.ReactNode;
         href?: string;
         disabled?: boolean;
         withDot?: boolean;
@@ -114,13 +115,25 @@ const MenuItemTypeItem = memo(function MenuItemTypeItem({
 
       if (item.children) {
          setSideMenuIsCollapsed.setFalse();
-         if (isCollapsed) setTimeout(setIsOpened.setTrue, 0.1 * 1000);
-         else setIsOpened.toggle();
+
+         if (isCollapsed) {
+            setTimeout(setIsOpened.setTrue, 0.1 * 1000);
+         } else if (item.href) {
+            const isOnPage =
+               location.pathname === "/"
+                  ? location.pathname === item.href
+                  : location.pathname.startsWith(item.href) && item.href !== "/";
+
+            if (isOnPage) setIsOpened.toggle();
+            else setIsOpened.setTrue();
+         } else {
+            setIsOpened.toggle();
+         }
       } else {
          if (item.onClickCloseSideMenu !== false) onClick?.();
          item.onClick?.(item);
       }
-   }, [onClick, item, isCollapsed]);
+   }, [onClick, item, isCollapsed, location.pathname]);
 
    const childrenHaveDot = useMemo<boolean>(
       () => item.children?.some((child) => child.type === "item" && child.withDot) ?? false,
@@ -184,12 +197,18 @@ const MenuItemTypeItem = memo(function MenuItemTypeItem({
             opacity={item.disabled ? 0.6 : undefined}
             onClick={onClickElement}
          >
-            <Icon
-               name={item.iconName}
-               color={isActive && backgroundColorContrast < 7 ? theme.colors.base : theme.colors.primary}
-               size={iconSize}
-               flexShrink={0}
-            />
+            {item.iconName ? (
+               <Icon
+                  name={item.iconName}
+                  color={isActive && backgroundColorContrast < 7 ? theme.colors.base : theme.colors.primary}
+                  size={iconSize}
+                  flexShrink={0}
+               />
+            ) : typeof item.leftElement === "function" ? (
+               item.leftElement?.(item, !!isActive)
+            ) : (
+               item.leftElement
+            )}
 
             <Text
                flex={1}
@@ -254,18 +273,24 @@ const MenuItemTypeItem = memo(function MenuItemTypeItem({
    useEffect(() => {
       if (!item.children) return;
 
-      const toBeOpened = item.children.some((child) =>
-         child.type === "item"
-            ? child.href
-               ? location.pathname === "/"
-                  ? location.pathname === child.href
-                  : location.pathname.startsWith(child.href) && child.href !== "/"
-               : false
-            : false,
-      );
+      const toBeOpened =
+         (item.href
+            ? location.pathname === "/"
+               ? location.pathname === item.href
+               : location.pathname.startsWith(item.href) && item.href !== "/"
+            : false) ||
+         item.children.some((child) =>
+            child.type === "item"
+               ? child.href
+                  ? location.pathname === "/"
+                     ? location.pathname === child.href
+                     : location.pathname.startsWith(child.href) && child.href !== "/"
+                  : false
+               : false,
+         );
 
-      if (!isCollapsed) setIsOpened.setState(toBeOpened);
-   }, [item, isCollapsed]);
+      if (!isCollapsed && toBeOpened) setIsOpened.setTrue();
+   }, [item, isCollapsed, location.pathname]);
    useEffect(() => {
       if (!isCollapsed) return;
 

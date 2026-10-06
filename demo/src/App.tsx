@@ -51,6 +51,25 @@ function App() {
                   ],
                },
                {
+                  type: "item",
+                  text: "With submenu and href",
+                  iconName: "filter",
+                  href: "/",
+                  children: [
+                     {
+                        type: "item",
+                        text: "Submenu item 3",
+                        href: "/submenu-item-3",
+                     },
+                     {
+                        type: "item",
+                        text: "Submenu item 4",
+                        leftElement: "Awd",
+                        href: "/submenu-item-4",
+                     },
+                  ],
+               },
+               {
                   type: "divider",
                   text: "My divider",
                   // shortText: "My",

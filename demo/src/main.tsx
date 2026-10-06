@@ -40,6 +40,8 @@ createRoot(document.getElementById("root")!).render(
                   <Route path="inner" element={<>submenu-item-1 inner</>} />
                </Route>
                <Route path="submenu-item-2" element={<>submenu-item-2</>} />
+               <Route path="submenu-item-3" element={<>submenu-item-3</>} />
+               <Route path="submenu-item-4" element={<>submenu-item-4</>} />
                <Route path="main-2" element={<>main-2</>} />
             </Route>
          </Routes>
