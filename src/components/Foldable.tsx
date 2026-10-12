@@ -23,7 +23,7 @@ export type FoldableProps = {
    onOpenChange?: (isOpen: boolean) => void;
    children?: React.ReactNode;
 } & OmitProps<PageHeaderProps, "marginBottom"> &
-   OmitProps<DivProps, "ref">;
+   OmitProps<DivProps, "ref" | "children" | "title">;
 
 export type FoldableRef = {
    isOpen: boolean;

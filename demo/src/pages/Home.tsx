@@ -275,6 +275,7 @@ function Home() {
    const modalDarkRef = useRef<ModalRef>(null);
    const confirmationModalRef = useRef<ModalRef>(null);
    const destructiveModalRef = useRef<ModalRef>(null);
+   const modalWithTooltipRef = useRef<ModalRef>(null);
 
    const [bigHeight, setBigHeight] = useBooleanState();
 
@@ -1205,6 +1206,7 @@ function Home() {
                      onClick={() => modalWithOutsideElementRef.current?.open()}
                   />
                   <Button text="Open modal dark" onClick={() => modalDarkRef.current?.open()} />
+                  <Button text="Open modal ith tooltip" onClick={() => modalWithTooltipRef.current?.open()} />
                   <Button text="Open confirmation modal" onClick={() => confirmationModalRef.current?.open()} />
                   <Button text="Open destructive modal" onClick={() => destructiveModalRef.current?.open()} />
                </Div.column>
@@ -1270,6 +1272,12 @@ function Home() {
                   <Text color={theme.colors.base}>
                      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae cumque tempore qui?
                   </Text>
+               </Modal>
+
+               <Modal title="My Modal" ref={modalWithTooltipRef}>
+                  <Tooltip content="hello there">
+                     <Text>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae cumque tempore qui?</Text>
+                  </Tooltip>
                </Modal>
 
                <Modal.confirmation ref={confirmationModalRef} />

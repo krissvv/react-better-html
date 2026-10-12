@@ -242,6 +242,7 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
 
    const [isOpen, setIsOpen] = useState<boolean>(false);
    const [isOpenLate, setIsOpenLate] = useState<boolean>(false);
+   const [portalTarget, setPortalTarget] = useState<HTMLElement>();
 
    const arrowSize = withArrow ? theme.styles.gap : 0;
    const gap = theme.styles.gap / 2;
@@ -366,6 +367,10 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
       };
    }, [isOpen, updateContainerPosition]);
 
+   useLayoutEffect(() => {
+      setPortalTarget((wrapperRef.current?.closest("dialog") as HTMLElement | null) ?? document.body);
+   }, []);
+
    useImperativeHandle(ref, (): TooltipRef => {
       return {
          isOpen,
@@ -393,60 +398,61 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
             {children}
          </Div>
 
-         {createPortal(
-            <TooltipContainer
-               theme={theme}
-               position={position}
-               pointerEvents={contentPointerEvents}
-               isOpen={isOpen}
-               role="tooltip"
-               ref={tooltipContainerRef}
-            >
-               {(isOpen || isOpenLate) && (
-                  <Div position="relative" ref={contentRef}>
-                     <Div.box
-                        position="relative"
-                        width={contentWidth}
-                        minWidth={contentMinWidth}
-                        backgroundColor={backgroundColor ?? theme.colors.backgroundContent}
-                        boxShadow="0px 10px 20px #00000020"
-                        paddingBlock={contentPaddingBlock ?? (isSmall ? theme.styles.gap / 2 : theme.styles.gap)}
-                        paddingInline={
-                           contentPaddingInline ??
-                           (asContextMenu ? 0 : isSmall ? theme.styles.space / 2 : theme.styles.space)
-                        }
-                        overflow={asContextMenu ? "hidden" : undefined}
-                     >
-                        {content}
-                     </Div.box>
+         {portalTarget &&
+            createPortal(
+               <TooltipContainer
+                  theme={theme}
+                  position={position}
+                  pointerEvents={contentPointerEvents}
+                  isOpen={isOpen}
+                  role="tooltip"
+                  ref={tooltipContainerRef}
+               >
+                  {(isOpen || isOpenLate) && (
+                     <Div position="relative" ref={contentRef}>
+                        <Div.box
+                           position="relative"
+                           width={contentWidth}
+                           minWidth={contentMinWidth}
+                           backgroundColor={backgroundColor ?? theme.colors.backgroundContent}
+                           boxShadow="0px 10px 20px #00000020"
+                           paddingBlock={contentPaddingBlock ?? (isSmall ? theme.styles.gap / 2 : theme.styles.gap)}
+                           paddingInline={
+                              contentPaddingInline ??
+                              (asContextMenu ? 0 : isSmall ? theme.styles.space / 2 : theme.styles.space)
+                           }
+                           overflow={asContextMenu ? "hidden" : undefined}
+                        >
+                           {content}
+                        </Div.box>
 
-                     <Div
-                        position="absolute"
-                        width={position === "left" || position === "right" ? totalGap : "100%"}
-                        height={position === "top" || position === "bottom" ? totalGap : "100%"}
-                        top={position === "top" ? "100%" : position === "bottom" ? undefined : 0}
-                        bottom={position === "bottom" ? "100%" : position === "top" ? undefined : 0}
-                        left={position === "left" ? "100%" : position === "right" ? undefined : 0}
-                        right={position === "right" ? "100%" : position === "left" ? undefined : 0}
-                        borderTopLeftRadius={999}
-                        borderTopRightRadius={999}
-                     />
-
-                     {withArrow && (
-                        <Arrow
-                           position={position}
-                           align={align}
-                           sideSpace={arrowSideSpace}
-                           size={arrowSize}
-                           color={backgroundColor ?? theme.colors.backgroundContent}
-                           isOpen={isOpen}
+                        <Div
+                           position="absolute"
+                           width={position === "left" || position === "right" ? totalGap : "100%"}
+                           height={position === "top" || position === "bottom" ? totalGap : "100%"}
+                           top={position === "top" ? "100%" : position === "bottom" ? undefined : 0}
+                           bottom={position === "bottom" ? "100%" : position === "top" ? undefined : 0}
+                           left={position === "left" ? "100%" : position === "right" ? undefined : 0}
+                           right={position === "right" ? "100%" : position === "left" ? undefined : 0}
+                           borderTopLeftRadius={999}
+                           borderTopRightRadius={999}
                         />
-                     )}
-                  </Div>
-               )}
-            </TooltipContainer>,
-            document.body,
-         )}
+
+                        {withArrow && (
+                           <Arrow
+                              position={position}
+                              align={align}
+                              sideSpace={arrowSideSpace}
+                              size={arrowSize}
+                              color={backgroundColor ?? theme.colors.backgroundContent}
+                              isOpen={isOpen}
+                           />
+                        )}
+                     </Div>
+                  )}
+               </TooltipContainer>,
+               portalTarget,
+            )}
       </Div>
    );
 }) as any;
