@@ -1275,7 +1275,7 @@ function Home() {
                </Modal>
 
                <Modal title="My Modal" ref={modalWithTooltipRef}>
-                  <Tooltip content="hello there">
+                  <Tooltip content="hello there" trigger="click">
                      <Text>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae cumque tempore qui?</Text>
                   </Tooltip>
                </Modal>

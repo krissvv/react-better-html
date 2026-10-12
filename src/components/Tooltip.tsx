@@ -341,10 +341,10 @@ const TooltipComponent: TooltipComponent = forwardRef(function Tooltip(
 
    useEffect(() => {
       if (trigger === "click") {
-         document.addEventListener("mousedown", onClickOutside);
+         document.addEventListener("mousedown", onClickOutside, true);
 
          return () => {
-            document.removeEventListener("mousedown", onClickOutside);
+            document.removeEventListener("mousedown", onClickOutside, true);
          };
       }
    }, [trigger, onClickOutside]);
