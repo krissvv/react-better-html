@@ -359,7 +359,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
                const isFocused = index === focusedOptionIndex;
 
                return (
-                  <Fragment key={JSON.stringify(option)}>
+                  <Fragment key={JSON.stringify(option.value)}>
                      <Div
                         color={
                            isDisabled
@@ -573,7 +573,7 @@ const DropdownComponent: DropdownComponentType = forwardRef(function Dropdown<Va
                                     ? option.chipProps
                                     : [])}
                                  withWhiteBackground={option.renderType === "chip.colored"}
-                                 key={JSON.stringify(option)}
+                                 key={JSON.stringify(option.value)}
                               />
                            );
                         })}
