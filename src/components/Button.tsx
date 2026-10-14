@@ -88,7 +88,7 @@ const ButtonElement = styled.button.withConfig({
                            filter: ${props.hoverStyle.filter ?? filterHover().z1};
                         `
                       : css`
-                           border-color: ${props.theme.colors.primary};
+                           border-color: ${props.hoverStyle.borderColor ?? props.theme.colors.primary};
                         `}
                 }
              `
@@ -152,8 +152,8 @@ type InternalButtonProps<Value = unknown> = {
 
    onClickWithValue?: (value: Value, event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 } & OmitProps<React.ComponentProps<"button">, "style" | "defaultValue" | "translate" | "value"> &
-   ComponentStyle &
-   ComponentHoverStyle;
+   OmitProps<ComponentStyle, "accentColor"> &
+   OmitProps<ComponentHoverStyle, "accentColorHover">;
 
 export type ButtonProps<Value = unknown> = OmitProps<InternalButtonProps<Value>, "fromSubcomponent">;
 
