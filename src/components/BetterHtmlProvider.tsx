@@ -68,6 +68,8 @@ export type BetterHtmlInternalConfig = BetterHtmlConfig & {
    setLanguages: React.Dispatch<React.SetStateAction<Record<Language, LanguageData<object>>>>;
    setSideMenuIsCollapsed: ReturnType<typeof useBooleanState>[1];
    setSideMenuIsOpenMobile: ReturnType<typeof useBooleanState>[1];
+   openedModalDialogs: HTMLDialogElement[];
+   setOpenedModalDialogs: React.Dispatch<React.SetStateAction<HTMLDialogElement[]>>;
    plugins: BetterHtmlPlugin[];
    componentsState: {
       tabs: TabsComponentState;
@@ -95,6 +97,8 @@ export const useBetterHtmlContext = (): BetterHtmlConfig & BetterCoreConfig => {
       setLanguages,
       setSideMenuIsCollapsed,
       setSideMenuIsOpenMobile,
+      openedModalDialogs,
+      setOpenedModalDialogs,
       plugins,
       componentsState,
       ...rest
@@ -208,6 +212,8 @@ function BetterHtmlProviderInternal({ config, plugins, children }: BetterHtmlPro
    const [tabGroups, setTabGroups] = useState<TabGroup[]>([]);
    const [tabsWithDots, setTabsWithDots] = useState<string[]>([]);
 
+   const [openedModalDialogs, setOpenedModalDialogs] = useState<HTMLDialogElement[]>([]);
+
    const readyConfig = useMemo<BetterHtmlInternalConfig>(
       () => ({
          app: {
@@ -224,6 +230,8 @@ function BetterHtmlProviderInternal({ config, plugins, children }: BetterHtmlPro
          setSideMenuIsCollapsed,
          sideMenuIsOpenMobile,
          setSideMenuIsOpenMobile,
+         openedModalDialogs,
+         setOpenedModalDialogs,
          components: {
             ...config?.components,
          },
@@ -244,6 +252,7 @@ function BetterHtmlProviderInternal({ config, plugins, children }: BetterHtmlPro
          languages,
          sideMenuIsCollapsed,
          sideMenuIsOpenMobile,
+         openedModalDialogs,
          plugins,
          tabGroups,
          tabsWithDots,

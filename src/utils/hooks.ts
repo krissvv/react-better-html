@@ -10,7 +10,7 @@ import { ComponentHoverStyle, ComponentPropWithRef, ComponentStyle } from "../ty
 import { InputFieldProps, TextareaFieldProps } from "../components/InputField";
 import { DropdownProps } from "../components/Dropdown";
 import { ToggleInputProps, ToggleInputRef } from "../components/ToggleInput";
-import { usePlugin } from "../components/BetterHtmlProvider";
+import { useBetterHtmlContextInternal, usePlugin } from "../components/BetterHtmlProvider";
 
 export function useComponentPropsGrouper<Props extends object = {}>(
    props: ComponentStyle & ComponentHoverStyle,
@@ -627,5 +627,27 @@ export function useUrlQuery() {
       setQuery,
       getQuery,
       removeQuery,
+   };
+}
+
+export function useModalDialogs() {
+   const { openedModalDialogs, setOpenedModalDialogs } = useBetterHtmlContextInternal();
+
+   const registerModalDialog = useCallback((dialog: HTMLDialogElement) => {
+      setOpenedModalDialogs((oldValue) => [...oldValue.filter((item) => item !== dialog), dialog]);
+   }, []);
+   const unregisterModalDialog = useCallback((dialog: HTMLDialogElement) => {
+      setOpenedModalDialogs((oldValue) =>
+         oldValue.includes(dialog) ? oldValue.filter((item) => item !== dialog) : oldValue,
+      );
+   }, []);
+
+   const topmostModalDialog: HTMLDialogElement | undefined = openedModalDialogs[openedModalDialogs.length - 1];
+
+   return {
+      openedModalDialogs,
+      topmostModalDialog,
+      registerModalDialog,
+      unregisterModalDialog,
    };
 }

@@ -17,7 +17,7 @@ import styled from "styled-components";
 
 import { ComponentPaddingProps, ComponentPropWithRef } from "../types/components";
 
-import { useUrlQuery } from "../utils/hooks";
+import { useModalDialogs, useUrlQuery } from "../utils/hooks";
 
 import Div from "./Div";
 import Button from "./Button";
@@ -177,6 +177,7 @@ export const ModalComponent: ModalComponent = forwardRef(function Modal(
    const theme = useTheme();
    const { app } = useBetterHtmlContextInternal();
    const { colorTheme } = useBetterCoreContext();
+   const { registerModalDialog, unregisterModalDialog } = useModalDialogs();
 
    const dialogRef = useRef<HTMLDialogElement>(null);
 
@@ -191,6 +192,7 @@ export const ModalComponent: ModalComponent = forwardRef(function Modal(
 
    const onClickOpen = useCallback(() => {
       dialogRef.current?.showModal();
+      if (dialogRef.current) registerModalDialog(dialogRef.current);
 
       setIsOpened.setTrue();
       setIsOpenedLate.setTrue();
@@ -211,6 +213,7 @@ export const ModalComponent: ModalComponent = forwardRef(function Modal(
          event?.stopPropagation();
 
          setIsOpened.setFalse();
+         if (dialogRef.current) unregisterModalDialog(dialogRef.current);
          onCloseRef.current?.();
 
          if (urlQuery && name) urlQuery.removeQuery(`${name}-modal`, false);
@@ -237,6 +240,13 @@ export const ModalComponent: ModalComponent = forwardRef(function Modal(
       if (!defaultIsOpened) return;
 
       onClickOpen();
+   }, []);
+   useEffect(() => {
+      const dialog = dialogRef.current;
+
+      return () => {
+         if (dialog) unregisterModalDialog(dialog);
+      };
    }, []);
 
    useImperativeHandle(ref, (): ModalRef => {
