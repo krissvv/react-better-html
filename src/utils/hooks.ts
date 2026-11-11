@@ -489,8 +489,10 @@ export function useForm<
       return validationErrors;
    }, [validate, values]);
    const onSubmitFunction = useCallback(
-      async (event?: React.FormEvent<HTMLFormElement>) => {
+      async (event?: React.SubmitEvent<HTMLFormElement>) => {
          event?.preventDefault();
+         event?.stopPropagation();
+
          setIsSubmitting.setTrue();
 
          try {

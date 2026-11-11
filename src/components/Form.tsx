@@ -1,4 +1,4 @@
-import { Children, forwardRef, Fragment, memo, useMemo } from "react";
+import { Children, forwardRef, Fragment, memo, useCallback, useMemo } from "react";
 import { AnyOtherString, LoaderName, OmitProps, useTheme } from "react-better-core";
 
 import { ComponentMarginProps, ComponentPropWithRef } from "../types/components";
@@ -34,7 +34,7 @@ export type FormProps = {
    withDividers?: boolean;
    renderActionButtons?: React.ReactNode;
    onClickCancel?: () => void;
-   onSubmit?: (event: React.FormEvent<HTMLFormElement>) => void;
+   onSubmit?: (event: React.SubmitEvent<HTMLFormElement>) => void;
    id?: React.ComponentProps<"form">["id"];
    children?: React.ReactNode;
 } & ComponentMarginProps;
@@ -88,6 +88,15 @@ const FormComponent: FormComponentType = forwardRef(function Form(
    const SubmitButtonTag = isDestructive ? Button.destructive : Button;
    const submitButtonIsDisabledFinal = submitButtonIsDisabled || submitButtonIsDisabledInternal;
 
+   const onSubmitElement = useCallback(
+      (event: React.SubmitEvent<HTMLFormElement>) => {
+         event.stopPropagation();
+
+         (onSubmit ?? form?.onSubmit)?.(event);
+      },
+      [onSubmit, form?.onSubmit],
+   );
+
    const cancelButton = (
       <Button.secondary
          text={cancelButtonText ?? "Cancel"}
@@ -101,7 +110,7 @@ const FormComponent: FormComponentType = forwardRef(function Form(
 
    return (
       <Div width="100%" {...props}>
-         <form name={name} onSubmit={onSubmit ?? form?.onSubmit} id={id} ref={ref}>
+         <form name={name} onSubmit={onSubmitElement} id={id} ref={ref}>
             {gap !== undefined || withDividers ? (
                <Div.column gap={gap ?? (withDividers ? theme.styles.space : theme.styles.gap)}>
                   {withDividers
