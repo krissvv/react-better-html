@@ -1,4 +1,14 @@
-import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
+import {
+   forwardRef,
+   memo,
+   useCallback,
+   useEffect,
+   useImperativeHandle,
+   useLayoutEffect,
+   useMemo,
+   useRef,
+   useState,
+} from "react";
 import { Color, useTheme } from "react-better-core";
 
 import { ComponentMarginProps, ComponentPropWithRef } from "../types/components";
@@ -16,6 +26,7 @@ const defaultTabName = "tab";
 
 export type Tab = {
    id: string;
+   hidden?: boolean;
    label?: string;
 };
 
@@ -82,8 +93,10 @@ const TabsComponent: TabsComponent = forwardRef(function Tabs(
 
    const tabsGap = gap ?? (style === "box" || style === "bubble" ? theme.styles.gap / 2 : 0);
 
+   const readyTabs = useMemo(() => tabs.filter((tab) => !tab.hidden), [tabs]);
+
    const [selectedTabId, setSelectedTabId] = useState<Tab["id"]>(() => {
-      const selectedTabId = tabs[0];
+      const selectedTabId = readyTabs[0];
 
       if (!selectedTabId) return "";
 
@@ -92,13 +105,15 @@ const TabsComponent: TabsComponent = forwardRef(function Tabs(
 
          if (!tabQueryValue) return selectedTabId.id;
 
-         const queryTab = tabs.find((tab) => tab.id === tabQueryValue);
+         const queryTab = readyTabs.find((tab) => tab.id === tabQueryValue);
          if (queryTab) return queryTab.id;
       }
 
       return selectedTabId.id;
    });
    const [rerenderState, setRerenderState] = useState<number>(0);
+   const [width, setWidth] = useState<number>(0);
+   const [leftSpacing, setLeftSpacing] = useState<number>(0);
 
    const onClickTab = useCallback(
       (tabId: Tab["id"]) => {
@@ -117,21 +132,6 @@ const TabsComponent: TabsComponent = forwardRef(function Tabs(
       [onChange, name, urlQuery, keepUrlHistory],
    );
 
-   const width = useMemo<number>(
-      () => tabsRef.current[selectedTabId]?.getBoundingClientRect().width ?? 0,
-      [rerenderState, selectedTabId],
-   );
-   const leftSpacing = useMemo<number>(() => {
-      const selectedTabIndex = tabs.findIndex((tab) => tab.id === selectedTabId);
-
-      let spacing = 0;
-      Object.values(tabsRef.current).forEach((tab, index) => {
-         if (index < selectedTabIndex) spacing += (tab?.getBoundingClientRect().width ?? 0) + tabsGap;
-      });
-
-      return spacing;
-   }, [rerenderState, selectedTabId, tabs, tabsGap]);
-
    useEffect(() => {
       const timeout = setTimeout(() => {
          setRerenderState(Math.random());
@@ -142,6 +142,11 @@ const TabsComponent: TabsComponent = forwardRef(function Tabs(
          clearTimeout(timeout);
       };
    }, [language]);
+   useEffect(() => {
+      if (readyTabs.length === 0 || readyTabs.some((tab) => tab.id === selectedTabId)) return;
+
+      onClickTab(readyTabs[0].id);
+   }, [readyTabs, selectedTabId, onClickTab]);
    useEffect(() => {
       componentsState.tabs.setTabGroups((oldValue) => {
          const thisTabGroup = oldValue.find((item) => item.name === (name ?? defaultTabName));
@@ -183,6 +188,25 @@ const TabsComponent: TabsComponent = forwardRef(function Tabs(
       onChange?.(selectedTabId);
    }, []);
 
+   useLayoutEffect(() => {
+      let left = 0;
+      let width = 0;
+
+      for (const tab of readyTabs) {
+         const currentTabWidth = tabsRef.current[tab.id]?.getBoundingClientRect().width ?? 0;
+
+         if (tab.id === selectedTabId) {
+            width = currentTabWidth;
+            break;
+         }
+
+         left += currentTabWidth + tabsGap;
+      }
+
+      setWidth(width);
+      setLeftSpacing(left);
+   }, [rerenderState, selectedTabId, readyTabs, tabsGap]);
+
    useImperativeHandle(ref, (): TabsRef => {
       return {
          selectedTab: selectedTabId,
@@ -196,7 +220,7 @@ const TabsComponent: TabsComponent = forwardRef(function Tabs(
       <Div.column width="100%" gap={theme.styles.space} {...props}>
          <Div position="relative" className="react-better-html-no-scrollbar" overflowY="auto">
             <Div.row position="relative" width="fit-content" gap={tabsGap} userSelect="none" zIndex={2}>
-               {tabs.map((tab) => {
+               {readyTabs.map((tab) => {
                   const selected = tab.id === selectedTabId;
 
                   return (
@@ -231,7 +255,8 @@ const TabsComponent: TabsComponent = forwardRef(function Tabs(
                         isTabAccessed
                         onClickWithValue={onClickTab}
                         ref={(ref) => {
-                           tabsRef.current[tab.id] = ref;
+                           if (ref) tabsRef.current[tab.id] = ref;
+                           else delete tabsRef.current[tab.id];
                         }}
                         key={tab.id}
                      >

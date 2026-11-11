@@ -277,6 +277,7 @@ function Home() {
    const destructiveModalRef = useRef<ModalRef>(null);
    const modalWithTooltipRef = useRef<ModalRef>(null);
 
+   const [withHiddenTab, setWithHiddenTab] = useBooleanState();
    const [bigHeight, setBigHeight] = useBooleanState();
 
    const form = useForm({
@@ -319,6 +320,11 @@ function Home() {
       <>
          <Tabs
             tabs={[
+               {
+                  id: "testHiddenTab",
+                  hidden: !withHiddenTab,
+                  label: "Test Hidden Tab",
+               },
                {
                   id: "sideMenu",
                   label: t((l) => l.sideMenu.sideMenu),
@@ -408,6 +414,10 @@ function Home() {
             // style="box"
             // accentColor="red"
          >
+            <Tabs.content tabId="testHiddenTab">
+               <Text>Test Hidden Content</Text>
+            </Tabs.content>
+
             <Tabs.content tabId="sideMenu" tabWithDot>
                <Div.column gap={theme.styles.space}>
                   <SideMenu.burgerButton onClick={(isOpened) => console.log(isOpened)} />
@@ -2056,6 +2066,8 @@ function Home() {
             <ColorThemeSwitch />
             <ColorThemeSwitch.withText />
             <ColorThemeSwitch.withText withMoon />
+
+            <Button text="Togle Hidden Tab" onClick={setWithHiddenTab.toggle} />
          </Div.column>
       </>
    );
