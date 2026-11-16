@@ -34,18 +34,22 @@ type FormRowComponentType = {
          HTMLDivElement,
          FormRowProps & {
             icon?: IconName | AnyOtherString;
-            title?: string;
+            title?: React.ReactNode;
             /** @default "h3" */
             titleAs?: TextAs;
             titleFontSize?: React.CSSProperties["fontSize"];
-            description?: string;
+            description?: React.ReactNode;
             descriptionFontSize?: React.CSSProperties["fontSize"];
             required?: boolean;
             alignChildren?: React.CSSProperties["justifyContent"];
             isLoading?: boolean;
             withActions?: boolean;
             saveButtonLoaderName?: LoaderName | AnyOtherString;
+            /** @default "submit" */
+            saveButtonType?: React.ComponentProps<typeof Button>["type"];
             resetButtonLoaderName?: LoaderName | AnyOtherString;
+            /** @default "button" */
+            resetButtonType?: React.ComponentProps<typeof Button>["type"];
             onClickSave?: () => void;
             onClickReset?: () => void;
          }
@@ -86,7 +90,9 @@ FormRowComponent.withTitle = forwardRef(function WithTitle(
       isLoading,
       withActions,
       saveButtonLoaderName,
+      saveButtonType = "submit",
       resetButtonLoaderName,
+      resetButtonType = "button",
       onClickSave,
       onClickReset,
       children,
@@ -105,21 +111,27 @@ FormRowComponent.withTitle = forwardRef(function WithTitle(
             {icon && <Icon name={icon} />}
 
             <Div.column flex={1} gap={theme.styles.gap / 2}>
-               <Text as={titleAs} fontSize={titleFontSize}>
-                  {title}
+               {typeof title === "string" || typeof title === "number" ? (
+                  <Text as={titleAs} fontSize={titleFontSize}>
+                     {title}
 
-                  {required && (
-                     <Text as="span" fontSize={theme.styles.fontSize} color={theme.colors.error}>
-                        {" "}
-                        *
-                     </Text>
-                  )}
-               </Text>
+                     {required && (
+                        <Text as="span" fontSize={theme.styles.fontSize} color={theme.colors.error}>
+                           {" "}
+                           *
+                        </Text>
+                     )}
+                  </Text>
+               ) : (
+                  title
+               )}
 
-               {description && (
+               {typeof description === "string" || typeof description === "number" ? (
                   <Text fontSize={descriptionFontSize ?? theme.styles.fontSize} color={theme.colors.textSecondary}>
                      {description}
                   </Text>
+               ) : (
+                  description
                )}
             </Div.column>
 
@@ -149,9 +161,19 @@ FormRowComponent.withTitle = forwardRef(function WithTitle(
             {withActions && (
                <Div.row alignItems="center" gap={theme.styles.gap}>
                   {onClickReset && (
-                     <Button.icon icon="XMark" loaderName={resetButtonLoaderName} onClick={onClickReset} />
+                     <Button.icon
+                        icon="XMark"
+                        type={resetButtonType}
+                        loaderName={resetButtonLoaderName}
+                        onClick={onClickReset}
+                     />
                   )}
-                  <Button.icon icon="check" loaderName={saveButtonLoaderName} onClick={onClickSave} />
+                  <Button.icon
+                     icon="check"
+                     type={saveButtonType}
+                     loaderName={saveButtonLoaderName}
+                     onClick={onClickSave}
+                  />
                </Div.row>
             )}
          </Div.row>
