@@ -16,8 +16,10 @@ This document describes the `theme` for the application's theme configuration. I
 type Styles = {
    space: number;
    gap: number;
+   borderWidth: number;
    borderRadius: number;
    fontFamily: string;
+   fontSize: number;
    transition: string;
 };
 ```
@@ -26,8 +28,10 @@ This type defines the structure of the application's general styles
 
 - **`space`** - A number representing the default space value (e.g., for padding or margins).
 - **`gap`** - A number representing the default gap value (e.g., for spacing between elements in a grid or flex layout).
+- **`borderWidth`** - A number representing the default border width. Set it to `0` for a borderless design - the components switch their hover effects accordingly.
 - **`borderRadius`** - A number representing the default border radius.
 - **`fontFamily`** - A string representing the default font family.
+- **`fontSize`** - A number representing the default font size.
 - **`transition`** - A string representing the default CSS transition.
 
 ### `Color`

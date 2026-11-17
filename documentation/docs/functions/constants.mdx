@@ -19,3 +19,17 @@ Returns a string value of type `BrowserName` based on the environment the app is
 ```ts
 export type BrowserName = "firefox" | "chrome" | "safari" | "edge" | "opera";
 ```
+
+## `countries`
+
+A list of all countries. It is used by [`<Dropdown.countries>`](../components/form/dropdown#dropdowncountries) and [`<InputField.phoneNumber>`](../components/form/input-field#inputfieldphonenumber).
+
+```ts
+type Country = {
+   code: string; // "BG"
+   name: string; // "Bulgaria"
+   timeZone: string;
+   phoneNumberExtension: string; // "359"
+   phoneNumberFormat?: string;
+};
+```

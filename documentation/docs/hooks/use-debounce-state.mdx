@@ -1,0 +1,56 @@
+---
+title: useDebounceState
+description: A state with a debounced copy of its value.
+sidebar_position: 11
+---
+
+# useDebounceState Hook
+
+The `useDebounceState` hook returns a state together with a copy of its value that updates only after the value has stopped changing for the given delay. It is useful for search fields that call an API.
+
+## Usage
+
+```jsx
+import { useEffect } from "react";
+import { InputField, Loader, useDebounceState } from "react-better-html";
+
+function Search() {
+   // highlight-next-line
+   const [query, debouncedQuery, setQuery, isLoading] = useDebounceState("", 0.5);
+
+   useEffect(() => {
+      if (!debouncedQuery) return;
+
+      searchUsers(debouncedQuery);
+   }, [debouncedQuery]);
+
+   return (
+      <>
+         <InputField.search value={query} onChangeValue={setQuery} />
+
+         {isLoading && <Loader.text text="Searching..." />}
+      </>
+   );
+}
+```
+
+### Return Value
+
+```typescript
+[
+   value: Value,
+   debouncedValue: Value,
+   setValue: React.Dispatch<React.SetStateAction<Value>>,
+   isLoading: boolean
+]
+```
+
+- **`value`** - the current value
+- **`debouncedValue`** - the value after the delay has passed without changes
+- **`setValue`** - changes the value
+- **`isLoading`** - `true` while waiting for the delay after a change
+
+## Notes
+
+- The delay is in seconds (defaults to `0.5`).
+- [`<InputField>`](../components/form/input-field#with-debounce) and [`<Dropdown>`](../components/form/dropdown#with-debounce) have a built-in `withDebounce` prop.

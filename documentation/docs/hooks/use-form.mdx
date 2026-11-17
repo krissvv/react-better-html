@@ -65,10 +65,15 @@ All of the field names and value type are TypeScript safe and will suggest an au
 - **`getRadioButtonProps`** - a function that takes a field name and a specific value for the radio button and returns the necessary props to be spread onto a `<ToggleInput.radiobutton>` component.
 - **`getSwitchProps`** - a function that takes a field name and returns the necessary props to be spread onto a `<ToggleInput.switch>` component.
 - **`focusField`** - a function that takes a field name and focuses the corresponding input field (if it exists and is a standard HTML input element).
-- **`onSubmit`** - an event handler function that should be attached to the `<form>` element's `onSubmit` event. It prevents the default form submission, triggers validation, and calls the `onSubmit` callback if validation passes.
+- **`onSubmit`** - an event handler function that should be attached to the `<form>` element's `onSubmit` event. It prevents the default form submission, triggers validation, and calls the `onSubmit` callback if validation passes. If there are errors, the first field with an error is focused.
 - **`reset`** - a function to reset the form values to their `defaultValues` and clear any errors.
 - **`requiredFields`** - the array of required fields passed to the hook.
-- **`isDirty`** - a boolean indicating if the user changed something from teh initialValues.
+- **`isDirty`** - a boolean indicating if the user changed something from the `defaultValues`.
+- **`isValid`** - a boolean indicating if the `validate` function returns no errors for the current values.
+- **`canSubmit`** - a boolean indicating if the form is valid and all required fields have values.
+- **`validate`** - runs the `validate` function, sets the `errors` and returns them.
+- **`setDefaultFieldsValue`** - changes the `defaultValues` (used by `reset` and `isDirty`). Useful when the initial data is loaded from an API.
+- **`inputFieldRefs`**, **`textAreaRefs`**, **`dropdownRefs`**, **`toggleInputRefs`** - the refs of the registered fields.
 
 ## Usage Notes
 

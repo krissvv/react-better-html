@@ -1,0 +1,25 @@
+---
+title: Logger
+description: Colored console logs that are visible only in dev mode.
+sidebar_position: 11
+---
+
+## `log`
+
+Colored console logs that are printed only when `devMode` is enabled in the [`<BetterHtmlProvider>`](../getting-started/configuration#developer-mode) config, so they can stay in production code.
+
+```ts
+import { log } from "react-better-html";
+
+log.success("User created");
+log.info("Fetching users...", true); // bold
+log.warn("Token expires soon");
+log.error("Request failed");
+
+log.log("Custom", { color: "magenta", backgroundColor: "black", bold: true });
+log.json({ id: 1, name: "John" });
+log.divider();
+log.trace();
+```
+
+The available colors are `black`, `red`, `green`, `yellow`, `blue`, `magenta`, `cyan` and `white`.

@@ -1,0 +1,89 @@
+---
+title: API
+description: A fully typed fetch client for your backend endpoints.
+sidebar_position: 8
+---
+
+## `generateApi`
+
+It takes the base URL with the headers and a config of all endpoints, and returns a typed `api` function. The generic type describes the `body`, `response`, `path` and `query` of every endpoint.
+
+```ts title="utils/api.ts"
+import { generateApi } from "react-better-html";
+
+type User = { id: number; name: string };
+
+export const api = generateApi<{
+   getUsers: {
+      body: undefined;
+      response: User[];
+      query: { page: number; search?: string };
+   };
+   getUser: {
+      body: undefined;
+      response: User;
+      path: [number];
+   };
+   createUser: {
+      body: { name: string };
+      response: User;
+   };
+}>(
+   {
+      baseUrl: "https://api.example.com", // without a trailing slash
+      getHeaders: {
+         Authorization: () => `Bearer ${localStorage.getItem("token")}`,
+      },
+   },
+   {
+      getUsers: { method: "GET", path: "/users", includeHeaders: ["Authorization"] },
+      getUser: { method: "GET", path: "/users", includeHeaders: ["Authorization"] },
+      createUser: { method: "POST", path: "/users", includeHeaders: ["Authorization"] },
+   },
+);
+```
+
+We advice to create an `api.ts` file inside a `utils` folder and export the `api` function from it.
+
+### Calling an endpoint
+
+```ts
+const { data: users } = await api("getUsers", { query: { page: 1 } }); // GET /users?page=1
+const { data: user } = await api("getUser", { path: [12] }); // GET /users/12
+await api("createUser", { body: { name: "John" } }); // POST /users
+```
+
+The response contains `data`, `statusCode`, `statusText`, `headers`, `url`, `ok` and `redirected`.
+
+### Endpoint options
+
+- **`method`** - the HTTP method
+- **`path`** - the path of the endpoint. The `path` array from the call is appended with `/`
+- **`includeHeaders`** - which of the `getHeaders` are sent with this endpoint
+- **`headers`** - static headers for this endpoint
+- **`bodyWithFormData`** - sends the body as `FormData` (for file uploads)
+- **`responseIsOctetStream`** - returns the response as a `Blob` (for file downloads)
+- **`meta`** - any data, available in `getAdditionalHeaders`
+
+`getAdditionalHeaders` receives the endpoint config and returns headers for every request. Headers can also be passed per call with the `headers` key.
+
+## `isApiError`
+
+When the response is not `ok` (or the request fails) the promise is rejected with an `APIError` object. `isApiError` checks if a caught error is one.
+
+```ts
+import { isApiError } from "react-better-html";
+
+try {
+   await api("createUser", { body: { name: "" } });
+} catch (error) {
+   // highlight-next-line
+   if (isApiError<{ message: string }>(error)) {
+      console.log(error.statusCode, error.data.message);
+   }
+}
+```
+
+:::tip
+When `devMode` is enabled every request and response is logged in the console.
+:::

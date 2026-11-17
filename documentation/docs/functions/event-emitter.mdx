@@ -1,0 +1,46 @@
+---
+title: Event Emitter
+description: A typed event emitter for communication between unrelated parts of the app.
+sidebar_position: 9
+---
+
+## `generateEventEmitter`
+
+It takes a generic type with the event names and their data, and returns `emit` and `listen` functions.
+
+```ts title="utils/events.ts"
+import { generateEventEmitter } from "react-better-html";
+
+export const events = generateEventEmitter<{
+   userLoggedOut: never;
+   cartUpdated: { itemsCount: number };
+}>();
+```
+
+### `emit`
+
+```ts
+events.emit("cartUpdated", { itemsCount: 3 });
+events.emit("userLoggedOut", undefined);
+```
+
+### `listen`
+
+Returns an unsubscribe function - return it from `useEffect` to clean up.
+
+```tsx
+import { useEffect, useState } from "react";
+import { Chip } from "react-better-html";
+import { events } from "./utils/events";
+
+function CartBadge() {
+   const [count, setCount] = useState(0);
+
+   useEffect(() => {
+      // highlight-next-line
+      return events.listen("cartUpdated", (data) => setCount(data.itemsCount));
+   }, []);
+
+   return <Chip text={count.toString()} isCircle />;
+}
+```

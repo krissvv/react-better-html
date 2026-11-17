@@ -1,0 +1,47 @@
+---
+title: useBooleanState
+description: A boolean state with ready setTrue, setFalse and toggle actions.
+sidebar_position: 10
+---
+
+# useBooleanState Hook
+
+The `useBooleanState` hook is a `useState` for booleans that returns stable action functions, so they can be passed directly to event props without creating new callbacks.
+
+## Usage
+
+```jsx
+import { Button, Text, useBooleanState } from "react-better-html";
+
+function App() {
+   // highlight-next-line
+   const [isVisible, setIsVisible] = useBooleanState();
+
+   return (
+      <>
+         // highlight-next-line
+         <Button text={isVisible ? "Hide" : "Show"} onClick={setIsVisible.toggle} />
+
+         {isVisible && <Text>Hidden content</Text>}
+      </>
+   );
+}
+```
+
+### Return Value
+
+```typescript
+[
+   state: boolean,
+   actions: {
+      setState: React.Dispatch<React.SetStateAction<boolean>>;
+      setTrue: () => void;
+      setFalse: () => void;
+      toggle: () => void;
+   }
+]
+```
+
+## Notes
+
+- The initial value defaults to `false`. Pass `true` as the first argument to change it.

@@ -13,7 +13,7 @@ Welcome to the installation guide for `react-better-html`. This guide will help 
 
 - [React](https://react.dev) version 19.0 or above.
 
-The library uses [styles-components](https://styled-components.com) under the hood to create all of the components in the library. `styles-components` is a peer dependency and will be installed automatically when downloading the `react-better-html`.
+The library uses [styled-components](https://styled-components.com) under the hood to create all of the components in the library. `styled-components` is a peer dependency and will be installed automatically when downloading the `react-better-html`.
 
 ## Installation
 
@@ -21,9 +21,51 @@ To install `react-better-html` run the following command in your project directo
 
 <Tabs>
    <TabItem value="npm" label="npm" default>
-      ```bash npm install react-better-html ```
+
+      ```bash
+      npm install react-better-html
+      ```
+
    </TabItem>
 </Tabs>
+
+## Quick start
+
+Wrap your app with the [`<BetterHtmlProvider>`](./configuration) and start using the components.
+
+```jsx title="main.tsx"
+import { createRoot } from "react-dom/client";
+import { BetterHtmlProvider } from "react-better-html";
+
+import App from "./App";
+
+createRoot(document.getElementById("root")).render(
+   // highlight-next-line
+   <BetterHtmlProvider>
+      <App />
+      // highlight-next-line
+   </BetterHtmlProvider>
+);
+```
+
+```jsx title="App.tsx"
+import { PageHolder, PageHeader, Div, Button } from "react-better-html";
+
+function App() {
+   return (
+      <PageHolder>
+         <PageHeader title="Hello" description="My first react-better-html page" />
+
+         <Div.row gap={10}>
+            <Button text="Get started" />
+            <Button.secondary text="Read more" />
+         </Div.row>
+      </PageHolder>
+   );
+}
+
+export default App;
+```
 
 ## Problems?
 
@@ -40,4 +82,8 @@ When reporting an issue, please include:
 - Your `react-better-html` version.
 - Any relevant error messages.
 - A code snippet that reproduces the issue.
-  :::
+:::
+
+## Using AI assistants
+
+The documentation is available for AI assistants ([`llms.txt`](pathname:///llms.txt) and [`llms-full.txt`](pathname:///llms-full.txt)) and there is a ready rule you can add to your editor. Check out the [AI Assistants](./ai-assistants) page.

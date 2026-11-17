@@ -1,0 +1,27 @@
+---
+title: Events
+description: Shortcuts for common DOM event handling.
+sidebar_position: 7
+---
+
+Small handlers that can be passed directly to event props.
+
+- **`eventPreventDefault`** - calls `event.preventDefault()`
+- **`eventStopPropagation`** - calls `event.stopPropagation()`
+- **`eventPreventStop`** - calls both
+
+```tsx
+import { Div, Button, eventStopPropagation } from "react-better-html";
+
+function Row() {
+   return (
+      <Div.row onClick={openDetails}>
+         ...
+         // highlight-next-line
+         <Div onClick={eventStopPropagation}>
+            <Button.icon icon="trash" onClick={deleteRow} />
+         </Div>
+      </Div.row>
+   );
+}
+```

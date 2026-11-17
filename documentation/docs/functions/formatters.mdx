@@ -12,3 +12,14 @@ It takes one param `phoneNumber` and return a formatted version of it. The phone
 formatPhoneNumber("+393401234567"); // Returns +39 340 123 4567
 formatPhoneNumber("+16205298875"); // Returns +1 (620)529-8875
 ```
+
+## `getPluralWord`
+
+It takes a `word` and a `count` and returns the word in plural when the count is not `1`.
+
+```ts
+getPluralWord("item", 1); // Returns item
+getPluralWord("item", 3); // Returns items
+getPluralWord("category", 2); // Returns categories
+getPluralWord("address", 0); // Returns addresses
+```

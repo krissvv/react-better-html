@@ -1,0 +1,60 @@
+---
+title: Controls
+description: Control loaders, alerts, the color theme and the side menu from anywhere.
+sidebar_position: 10
+---
+
+The controls do the same as their hooks, but can be called from anywhere - API helpers, event handlers, stores and other code outside of React components.
+
+:::note
+The controls work only after `<BetterHtmlProvider>` has been rendered.
+:::
+
+## `loaderControls`
+
+The same as the [`useLoaderControls`](../hooks/use-loader-controls) hook.
+
+```ts
+import { loaderControls } from "react-better-html";
+
+loaderControls.startLoading("savingUser");
+loaderControls.stopLoading("savingUser");
+loaderControls.toggleLoading("savingUser");
+```
+
+## `alertControls`
+
+The same as the [`useAlertControls`](../hooks/use-alert-controls) hook. Requires the [`alertsPlugin`](../plugins#alerts).
+
+```ts
+import { alertControls } from "react-better-html";
+
+const alert = alertControls.createAlert({ type: "success", message: "User saved" });
+alertControls.removeAlert(alert.id);
+```
+
+## `colorThemeControls`
+
+Changes the color theme. Without an argument it toggles between `light` and `dark`.
+
+```ts
+import { colorThemeControls } from "react-better-html";
+
+colorThemeControls.toggleTheme();
+colorThemeControls.toggleTheme("dark");
+```
+
+:::tip
+For a ready UI use the [`<ColorThemeSwitch>`](../components/Other/color-theme-switch) component.
+:::
+
+## `sideMenuControls`
+
+Controls the [`<SideMenu>`](../components/structure/side-menu) component.
+
+```ts
+import { sideMenuControls } from "react-better-html";
+
+sideMenuControls.collapse(); // expand(), toggleExpanded()
+sideMenuControls.open(); // close(), toggleOpened() - mobile only
+```

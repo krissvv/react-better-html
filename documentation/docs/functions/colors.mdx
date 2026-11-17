@@ -1,0 +1,60 @@
+---
+title: Colors
+description: Functions to transform colors and calculate contrast.
+sidebar_position: 6
+---
+
+## `lightenColor` / `darkenColor`
+
+They take a hex color and an `amount` between `0` and `1` and return a new hex color.
+
+```ts
+lightenColor("#6d466b", 0.5); // Mixes the color 50% with white
+darkenColor("#6d466b", 0.2); // Mixes the color 20% with black
+```
+
+## `saturateColor` / `desaturateColor`
+
+They take a hex color and an `amount` between `0` and `1` and change the saturation of the color.
+
+```ts
+saturateColor("#6d466b", 0.3);
+desaturateColor("#6d466b", 0.3);
+```
+
+## `calculateColorContrast`
+
+Returns the contrast ratio between two colors - a number between `1` and `21`. A ratio of `4.5` or more is readable for normal text ([WCAG AA](https://www.w3.org/TR/WCAG21/#contrast-minimum)).
+
+```tsx
+import { Text, calculateColorContrast, useTheme } from "react-better-html";
+
+function Badge({ backgroundColor }: { backgroundColor: string }) {
+   const theme = useTheme();
+
+   // highlight-next-line
+   const isDark = calculateColorContrast(backgroundColor, "#ffffff") > 4.5;
+
+   return <Text color={isDark ? theme.colors.base : theme.colors.textPrimary}>New</Text>;
+}
+```
+
+## `filterHover`
+
+Returns ready `filter` values for hover effects that work in both color themes - the element gets darker in light mode and lighter in dark mode.
+
+```tsx
+import { Div, filterHover } from "react-better-html";
+
+function Card() {
+   // highlight-next-line
+   return <Div.box filterHover={filterHover().z1}>Hover me</Div.box>;
+}
+```
+
+- **`z05`**, **`z1`**, **`z2`**, **`z3`** - increasing contrast with the background (darker in light mode, lighter in dark mode)
+- **`b05`**, **`b1`**, **`b2`**, **`b3`** - the opposite direction
+
+:::note
+`filterHover` must be called inside a component rendered within `<BetterHtmlProvider>`.
+:::
