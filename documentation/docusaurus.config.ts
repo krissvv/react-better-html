@@ -2,10 +2,15 @@ import { themes as prismThemes } from "prism-react-renderer";
 import type { Config } from "@docusaurus/types";
 import type * as Preset from "@docusaurus/preset-classic";
 
+// This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
+
 const config: Config = {
    title: "react-better-html",
    tagline: "A component library for react that is as close to plane html as possible",
    favicon: "img/favicon.ico",
+   future: {
+      v4: true,
+   },
    url: "https://krissvv.github.io",
    baseUrl: "/react-better-html",
    organizationName: "krissvv",
@@ -23,7 +28,7 @@ const config: Config = {
          {
             docs: {
                sidebarPath: "./sidebars.ts",
-               editUrl: "https://github.com/krissvv/react-better-html/tree/main/documentation/",
+               editUrl: "https://github.com/krissvv/react-better-html/tree/main/documentation",
             },
             blog: {
                showReadingTime: true,
@@ -31,7 +36,7 @@ const config: Config = {
                   type: ["rss", "atom"],
                   xslt: true,
                },
-               editUrl: "https://github.com/krissvv/react-better-html/tree/main/documentation/",
+               editUrl: "https://github.com/krissvv/react-better-html/tree/main/documentation",
                onInlineTags: "warn",
                onInlineAuthors: "warn",
                onUntruncatedBlogPosts: "warn",
@@ -44,6 +49,10 @@ const config: Config = {
    ],
    themeConfig: {
       image: "img/docusaurus-social-card.jpg",
+      colorMode: {
+         defaultMode: "dark",
+         respectPrefersColorScheme: true,
+      },
       navbar: {
          title: "react-better-html",
          logo: {
@@ -53,9 +62,9 @@ const config: Config = {
          items: [
             {
                type: "docSidebar",
-               label: "Docs",
                sidebarId: "tutorialSidebar",
                position: "left",
+               label: "Docs",
             },
             {
                to: "/blog",
@@ -112,9 +121,7 @@ const config: Config = {
       },
       prism: {
          theme: prismThemes.dracula,
-      },
-      colorMode: {
-         defaultMode: "dark",
+         darkTheme: prismThemes.dracula,
       },
    } satisfies Preset.ThemeConfig,
 };

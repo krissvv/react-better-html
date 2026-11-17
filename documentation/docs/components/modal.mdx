@@ -90,15 +90,15 @@ The modal can be controlled imperatively using a `ref`.
 
 ## Common Props
 
--  **`maxWidth`** - the maximum width of the modal. Defaults to 30% smaller than `app.contentMaxWidth` from the [`<BetterHtmlContext>`](../getting-started/configuration#app-configuration) config.
--  **`title`** - this prop enables the header of the modal and renders a title for the modal.
--  **`titleColor`** - the color of the title text.
--  **`description`** - this prop requires `text` prop and renders a description text underneath it.
--  **`descriptionColor`** - the color of the description text.
--  **`headerBackgroundColor`** - the background color of the modal's header.
--  **`onOpen`** - a callback function that is called when the modal is opened.
--  **`onClose`** - a callback function that is called when the modal is closed.
--  **`children`** - the content of the modal.
+- **`maxWidth`** - the maximum width of the modal. Defaults to 30% smaller than `app.contentMaxWidth` from the [`<BetterHtmlContext>`](../getting-started/configuration#app-configuration) config.
+- **`title`** - this prop enables the header of the modal and renders a title for the modal.
+- **`titleColor`** - the color of the title text.
+- **`description`** - this prop requires `text` prop and renders a description text underneath it.
+- **`descriptionColor`** - the color of the description text.
+- **`headerBackgroundColor`** - the background color of the modal's header.
+- **`onOpen`** - a callback function that is called when the modal is opened.
+- **`onClose`** - a callback function that is called when the modal is closed.
+- **`children`** - the content of the modal.
 
 ## Ref API
 
@@ -112,9 +112,9 @@ type ModalRef = {
 };
 ```
 
--  **`open()`** - opens the modal
--  **`close()`** - closes the modal
--  **`isOpened`** - a boolean indicating whether the modal is currently opened or not
+- **`open()`** - opens the modal
+- **`close()`** - closes the modal
+- **`isOpened`** - a boolean indicating whether the modal is currently opened or not
 
 ## Subcomponents
 
@@ -129,7 +129,7 @@ import { useRef } from "react";
 import { Div, Button, Modal, ModalRef } from "react-better-html";
 
 function App() {
-   const confirmationModalRef = useRef<ModalRef>(null);
+   const confirmationModalRef = useRef < ModalRef > null;
 
    return (
       <Div>
@@ -160,7 +160,7 @@ import { useRef } from "react";
 import { Div, Button, Modal, ModalRef } from "react-better-html";
 
 function App() {
-   const deleteModalRef = useRef<ModalRef>(null);
+   const deleteModalRef = useRef < ModalRef > null;
 
    return (
       <Div>

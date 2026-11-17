@@ -44,16 +44,16 @@ function SearchPage() {
 
 ## Hook Return Values
 
--  **`getQuery`** - gets the value of a specific query parameter by name. Returns `null` if the parameter doesn't exist.
--  **`setQuery`** - sets one or more query parameters. The `keepHistory` parameter determines whether to keep the current URL in the browser history.
--  **`removeQuery`** - removes a specific query parameter by name. The `keepHistory` parameter determines whether to keep the current URL in the browser history.
+- **`getQuery`** - gets the value of a specific query parameter by name. Returns `null` if the parameter doesn't exist.
+- **`setQuery`** - sets one or more query parameters. The `keepHistory` parameter determines whether to keep the current URL in the browser history.
+- **`removeQuery`** - removes a specific query parameter by name. The `keepHistory` parameter determines whether to keep the current URL in the browser history.
 
 ## Usage Notes
 
--  Changes to query parameters will update the URL in the browser's address bar.
--  When `keepHistory` is set to `true` (default), browser back/forward navigation will work as expected.
--  When `keepHistory` is set to `false`, the current URL will be replaced in the browser history and going back will not work.
--  Query parameters are always stored as strings in the URL. If you need to store numbers or other data types, you'll need to handle the conversion yourself.
+- Changes to query parameters will update the URL in the browser's address bar.
+- When `keepHistory` is set to `true` (default), browser back/forward navigation will work as expected.
+- When `keepHistory` is set to `false`, the current URL will be replaced in the browser history and going back will not work.
+- Query parameters are always stored as strings in the URL. If you need to store numbers or other data types, you'll need to handle the conversion yourself.
 
 ## Examples
 
