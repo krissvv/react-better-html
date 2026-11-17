@@ -1,0 +1,86 @@
+---
+title: AI Assistants
+description: Use react-better-html with Cursor, Claude Code, GitHub Copilot and other AI tools.
+sidebar_position: 3
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import AiRule from "@site/src/components/AiRule";
+
+# AI Assistants
+
+AI assistants write much better code with `react-better-html` when they know its conventions - which components exist, that styles are passed as props, which subcomponents to use and which plugins a feature needs. The documentation is published in formats made for them, and you can add a ready rule to your editor.
+
+## Documentation for AI
+
+The documentation follows the [llms.txt](https://llmstxt.org) standard:
+
+- [`llms.txt`](pathname:///llms.txt) - a short overview of the library, the rules for writing code with it and a link to every page
+- [`llms-full.txt`](pathname:///llms-full.txt) - the whole documentation in one file. Useful to paste into a chat or to add as a documentation source in your editor
+- **Markdown pages** - every docs page is available as clean markdown by adding `.md` to its URL, for example [`/docs/components/button.md`](pathname:///docs/components/button.md)
+
+:::tip
+Most AI editors can index documentation from a URL (for example Cursor `@Docs` → `Add new doc`). Add `https://krissvv.github.io/react-better-html/llms-full.txt` there and reference it in your prompts.
+:::
+
+## Editor rule
+
+Save the rule below in your project and the assistant will follow the library conventions every time it writes code with it. The rule contains the most important conventions and tells the assistant where to read the documentation for everything else.
+
+Pick your editor - the header at the top of each rule makes it load only when it is needed instead of in every conversation.
+
+<Tabs>
+   <TabItem value="cursor" label="Cursor" default>
+
+      Save as `.cursor/rules/react-better-html.mdc`. Cursor attaches it when the task is about the library, or you can mention it with `@react-better-html` in the chat.
+
+      <AiRule
+         fileName=".cursor/rules/react-better-html.mdc"
+         frontMatter={"---\ndescription: Rules for building UI with the react-better-html component library. Use when writing or editing React components that import from react-better-html.\nalwaysApply: false\n---"}
+      />
+
+   </TabItem>
+
+   <TabItem value="claudeCode" label="Claude Code">
+
+      Save as `.claude/skills/react-better-html/SKILL.md`. Claude Code loads the skill when the task is about the library, or you can ask for it directly (`use the react-better-html skill`).
+
+      <AiRule
+         fileName=".claude/skills/react-better-html/SKILL.md"
+         frontMatter={"---\nname: react-better-html\ndescription: Rules for building UI with the react-better-html component library. Use when writing or editing React components that import from react-better-html.\n---"}
+      />
+
+   </TabItem>
+
+   <TabItem value="copilot" label="GitHub Copilot">
+
+      Save as `.github/instructions/react-better-html.instructions.md`. Copilot applies it to the matching files, and you can also attach it in the chat with `#react-better-html.instructions.md`.
+
+      <AiRule
+         fileName=".github/instructions/react-better-html.instructions.md"
+         frontMatter={"---\napplyTo: \"**/*.tsx,**/*.jsx\"\n---"}
+      />
+
+   </TabItem>
+
+   <TabItem value="windsurf" label="Windsurf">
+
+      Save as `.windsurf/rules/react-better-html.md` and mention it with `@react-better-html` in the chat when needed.
+
+      <AiRule fileName=".windsurf/rules/react-better-html.md" frontMatter={"---\ntrigger: manual\n---"} />
+
+   </TabItem>
+
+   <TabItem value="other" label="Other">
+
+      For any other tool, save the rule as a markdown file in your project (for example `docs/react-better-html.md`) and reference it in your prompts, or paste it in your `AGENTS.md`.
+
+      <AiRule fileName="react-better-html.md" />
+
+   </TabItem>
+</Tabs>
+
+:::note
+The rule is generated from the latest documentation. Copy it again after updating the library to get the newest conventions.
+:::

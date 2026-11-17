@@ -1,0 +1,110 @@
+# react-better-html
+
+> A React 19 component library that stays as close to plain HTML as possible. Every component accepts all of its HTML element's attributes plus every CSS property as a prop (with a `Hover` variant), and common variations are exposed as dot subcomponents like `Div.row` or `Button.secondary`. It is built on styled-components and themed through a single `<BetterHtmlProvider>`.
+
+The full documentation in one file: https://krissvv.github.io/react-better-html/llms-full.txt
+
+Every page below is also available as clean markdown by appending `.md` to its docs URL.
+
+Rules for writing code with react-better-html:
+
+- Install with `npm install react-better-html`. Everything (components, hooks, functions and types) is imported from `"react-better-html"`.
+- Wrap the app once in `<BetterHtmlProvider>`. Hooks, controls and most components throw or render incorrectly without it. Plugins are passed with `<BetterHtmlProvider plugins={[...]}>` and must never change at runtime.
+- Use `<Div>` and `<Text>` instead of raw `<div>`, `<p>`, `<h1>`, etc. Change the rendered tag with `as` (`<Text as="h1">`, `<Div as="main">`). Use `Div.row`, `Div.column` and `Div.grid` instead of writing `display: flex` by hand.
+- Style with props, not `style` or CSS files: `<Div padding={16} backgroundColor="#fff" borderRadius={10}>`. Numbers are pixels. Every CSS prop has a hover version with the `Hover` suffix: `backgroundColorHover`, `colorHover`, `filterHover`.
+- Take spacing and colors from the theme instead of hardcoding: `const theme = useTheme();` then `theme.styles.space` (16), `theme.styles.gap` (8), `theme.styles.borderRadius` (10), `theme.colors.primary`, `theme.colors.textPrimary`, `theme.colors.textSecondary`, `theme.colors.backgroundContent`, `theme.colors.border`. Colors follow the current light or dark theme automatically.
+- Subcomponents are presets: `Button.secondary`, `Button.destructive`, `Button.text`, `Button.icon`, `Button.upload`, `Text.unknown`, `Text.oneLine`, `Div.box`, `InputField.email`, `InputField.password`, `InputField.search`, `InputField.date`, `Modal.confirmation`, `Modal.destructive`, `Tabs.content`, `Tooltip.item` and more. `ToggleInput` and `Divider` can only be used as subcomponents (`ToggleInput.checkbox`, `ToggleInput.radiobutton`, `ToggleInput.switch`, `Divider.horizontal`, `Divider.vertical`).
+- Prefer the value-based callbacks: `onChangeValue={(value) => ...}` on `InputField`, `onChange={(value) => ...}` on `Dropdown`, `onChange={(checked, value) => ...}` on `ToggleInput`, and `value` + `onClickWithValue={(value) => ...}` on `Div`, `Button` and `Chip`.
+- Imperative components are controlled with a ref: `const modalRef = useRef<ModalRef>(null); modalRef.current?.open();` (also `TooltipRef`, `TabsRef`, `FoldableRef`, `TableRef`).
+- Build forms with `useForm({ defaultValues, requiredFields, validate, onSubmit })` and `<Form form={form} submitButtonText="Save">`, then spread `form.getInputFieldProps("field")`, `form.getDropdownFieldProps(...)`, `form.getCheckboxProps(...)`, `form.getRadioButtonProps(field, value)`, `form.getSwitchProps(...)` or `form.getTextAreaProps(...)` onto the fields. Use `FormRow` to put two fields on one line.
+- Icon names (`<Icon name>`, `icon` props) must exist in `config.icons` and asset names (`<Image name>`, `image` props) in `config.assets`. Built-in icons: `XMark`, `uploadCloud`, `trash`, `chevronDown`, `chevronLeft`, `chevronRight`, `doubleChevronLeft`, `doubleChevronRight`, `eye`, `eyeDashed`, `magnifyingGlass`, `check`, `infoI`, `warningTriangle`, `filter`. The `logo` asset is an empty placeholder meant to be overridden. Use `src` for image URLs.
+- Global loading states use named loaders: `useLoader("name")` to read, `useLoaderControls()` or `loaderControls` to start and stop, `loaderName="name"` on `Button`.
+- Alerts need `alertsPlugin()` and are created with `useAlertControls().createAlert({ type, title, message })` or `alertControls.createAlert(...)`. `Modal` `name` and `Tabs` URL sync need `reactRouterDomPlugin()`. `generateLocalStorage` needs `localStoragePlugin()`.
+- Make layouts responsive with `useMediaQuery()` (`mediaQuery.size600`, `size900`, `size1000`, ... are `true` at or below that width) combined with `invertFlexDirection` on `Div.row` / `Div.column`.
+- Default component styles can be set app-wide in `config.components` (for example `components.button.style.default`). Set `components.button.tagReplacement.linkComponent` to the router `Link` so `Button href` and `SideMenu` items navigate client-side.
+
+## Getting started
+
+- [Introduction](https://krissvv.github.io/react-better-html/docs/introduction.md): What the library is and its key features
+- [Installation](https://krissvv.github.io/react-better-html/docs/getting-started/instalation.md): Requirements and installation
+- [Configuration](https://krissvv.github.io/react-better-html/docs/getting-started/configuration.md): `BetterHtmlProvider` config for the app, theme, icons, assets, loaders, component defaults, dev mode and the default values
+- [AI Assistants](https://krissvv.github.io/react-better-html/docs/getting-started/ai-assistants.md): The llms.txt files and a ready rule for Cursor, Claude Code, GitHub Copilot and other AI tools
+- [Plugins](https://krissvv.github.io/react-better-html/docs/plugins.md): `reactRouterDomPlugin`, `alertsPlugin` and `localStoragePlugin` setup and options
+
+## Components
+
+- [Div](https://krissvv.github.io/react-better-html/docs/components/div.md): The base container with style props, `onClickWithValue`, `isTabAccessed`, `as`, and `Div.row`, `Div.column`, `Div.grid`, `Div.box`
+- [Text](https://krissvv.github.io/react-better-html/docs/components/text.md): The base text element with `as`, and `Text.unknown`, `Text.oneLine`
+- [Button](https://krissvv.github.io/react-better-html/docs/components/button.md): Buttons and links with icons, images, loading state, and `secondary`, `destructive`, `text`, `icon`, `upload` variants
+- [Image](https://krissvv.github.io/react-better-html/docs/components/image.md): Images from assets or URLs, and `Image.profileImage` with letter avatars
+- [Icon](https://krissvv.github.io/react-better-html/docs/components/icon.md): SVG icons from the icons config
+- [Loader](https://krissvv.github.io/react-better-html/docs/components/loader.md): Spinner, and `Loader.box`, `Loader.text`
+- [Modal](https://krissvv.github.io/react-better-html/docs/components/modal.md): Dialogs controlled with a ref, and `Modal.confirmation`, `Modal.destructive`
+- [Foldable](https://krissvv.github.io/react-better-html/docs/components/foldable.md): Collapsible section, controlled or uncontrolled, and `Foldable.box`
+- [Table](https://krissvv.github.io/react-better-html/docs/components/table.md): Data table with text, element, image, checkbox and expand columns, filters, pagination and a ref
+- [Tabs](https://krissvv.github.io/react-better-html/docs/components/tabs.md): Tabs with four styles, `Tabs.content`, dots and URL sync
+- [Tooltip](https://krissvv.github.io/react-better-html/docs/components/tooltip.md): Hover or click tooltips and menus with `Tooltip.item`, `Tooltip.sectionTitle`, `Tooltip.divider`
+
+## Form components
+
+- [Form](https://krissvv.github.io/react-better-html/docs/components/form.md): Form layout with submit and cancel buttons that integrates with `useForm`
+- [FormRow](https://krissvv.github.io/react-better-html/docs/components/form/form-row.md): Responsive row of fields, and `FormRow.withTitle` for settings pages
+- [InputField](https://krissvv.github.io/react-better-html/docs/components/form/input-field.md): Text input with label, icons, prefix/suffix, debounce, and `multiline`, `email`, `password`, `search`, `phoneNumber`, `date`, `time`, `dateTime`, `color` variants
+- [Dropdown](https://krissvv.github.io/react-better-html/docs/components/form/dropdown.md): Select with search, multiselect, chip options, debounce, and `Dropdown.countries`, `Dropdown.language`
+- [ToggleInput](https://krissvv.github.io/react-better-html/docs/components/form/toggleInput.md): `ToggleInput.checkbox`, `ToggleInput.radiobutton` and `ToggleInput.switch`
+- [Label](https://krissvv.github.io/react-better-html/docs/components/form/label.md): Form label with required and error states
+
+## Structure components
+
+- [PageHolder](https://krissvv.github.io/react-better-html/docs/components/structure/page-holder.md): The `<main>` page wrapper with max width, and `PageHolder.center` for login-like pages
+- [PageHeader](https://krissvv.github.io/react-better-html/docs/components/structure/page-header.md): Page or section header with icon or image, title, description and actions
+- [SideMenu](https://krissvv.github.io/react-better-html/docs/components/structure/side-menu.md): Navigation side menu with nested items, collapsing, mobile mode, `SideMenu.pageHolder`, `SideMenu.burgerButton` and `sideMenuControls`
+
+## Other components
+
+- [Divider](https://krissvv.github.io/react-better-html/docs/components/Other/divider.md): `Divider.horizontal` (with optional text) and `Divider.vertical`
+- [Chip](https://krissvv.github.io/react-better-html/docs/components/Other/chip.md): Tags and badges, and `Chip.colored`
+- [ColorThemeSwitch](https://krissvv.github.io/react-better-html/docs/components/Other/color-theme-switch.md): Light/dark theme switch, and `ColorThemeSwitch.withText`
+- [Pagination](https://krissvv.github.io/react-better-html/docs/components/Other/pagination.md): Page navigation
+- [DeveloperPage](https://krissvv.github.io/react-better-html/docs/components/Other/developer-page.md): Preview of all configured icons and assets in dev mode
+
+## Hooks
+
+- [useTheme](https://krissvv.github.io/react-better-html/docs/hooks/use-theme.md): The current theme colors and styles
+- [useLoader](https://krissvv.github.io/react-better-html/docs/hooks/use-loader.md): Read a named loader
+- [useLoaderControls](https://krissvv.github.io/react-better-html/docs/hooks/use-loader-controls.md): Start and stop named loaders
+- [useAlertControls](https://krissvv.github.io/react-better-html/docs/hooks/use-alert-controls.md): Create and remove alerts
+- [useMediaQuery](https://krissvv.github.io/react-better-html/docs/hooks/use-media-query.md): Responsive breakpoints
+- [usePageResize](https://krissvv.github.io/react-better-html/docs/hooks/use-page-resize.md): Window width and height
+- [usePageScroll](https://krissvv.github.io/react-better-html/docs/hooks/use-page-scroll.md): Window scroll position
+- [useForm](https://krissvv.github.io/react-better-html/docs/hooks/use-form.md): Form state, validation, submission and field props
+- [useUrlQuery](https://krissvv.github.io/react-better-html/docs/hooks/use-url-query.md): Read and write URL query parameters
+- [useBooleanState](https://krissvv.github.io/react-better-html/docs/hooks/use-boolean-state.md): Boolean state with `setTrue`, `setFalse`, `toggle`
+- [useDebounceState](https://krissvv.github.io/react-better-html/docs/hooks/use-debounce-state.md): State with a debounced copy
+
+## Functions
+
+- [API](https://krissvv.github.io/react-better-html/docs/functions/api.md): `generateApi` typed fetch client and `isApiError`
+- [Controls](https://krissvv.github.io/react-better-html/docs/functions/controls.md): `loaderControls`, `alertControls`, `colorThemeControls`, `sideMenuControls` for use outside components
+- [i18n](https://krissvv.github.io/react-better-html/docs/functions/i18n.md): `generateI18n` typed translations and language switching
+- [LocalStorage](https://krissvv.github.io/react-better-html/docs/functions/localStorage.md): `generateLocalStorage` typed and optionally encrypted storage
+- [Colors](https://krissvv.github.io/react-better-html/docs/functions/colors.md): `lightenColor`, `darkenColor`, `saturateColor`, `desaturateColor`, `calculateColorContrast`, `filterHover`
+- [Event Emitter](https://krissvv.github.io/react-better-html/docs/functions/event-emitter.md): `generateEventEmitter` typed events
+- [Events](https://krissvv.github.io/react-better-html/docs/functions/events.md): `eventPreventDefault`, `eventStopPropagation`, `eventPreventStop`
+- [Constants](https://krissvv.github.io/react-better-html/docs/functions/constants.md): `isMobileDevice`, `getBrowser`, `countries`
+- [Formatters](https://krissvv.github.io/react-better-html/docs/functions/formatters.md): `formatPhoneNumber`, `getPluralWord`
+- [Generators](https://krissvv.github.io/react-better-html/docs/functions/generators.md): `generateRandomString`
+- [Logger](https://krissvv.github.io/react-better-html/docs/functions/logger.md): `log` colored console logs in dev mode
+
+## Types
+
+- [Theme](https://krissvv.github.io/react-better-html/docs/types/theme.md): `Theme`, `Styles`, `Colors`, `Color`, `ColorTheme`
+- [IconConfig](https://krissvv.github.io/react-better-html/docs/types/icon-config.md): Custom icon definitions
+- [AssetConfig](https://krissvv.github.io/react-better-html/docs/types/asset-config.md): Custom asset definitions
+- [LoaderConfig](https://krissvv.github.io/react-better-html/docs/types/loader-config.md): Named loader definitions
+- [Alert](https://krissvv.github.io/react-better-html/docs/types/alert.md): `Alert`, `AlertType`, `AlertDuration`, `AlertDisplay`
+
+## Optional
+
+- [GitHub repository](https://github.com/krissvv/react-better-html): Source code and issues
+- [npm package](https://www.npmjs.com/package/react-better-html): Published versions

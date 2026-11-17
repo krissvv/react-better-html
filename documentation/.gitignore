@@ -6,6 +6,9 @@
 
 # Generated files
 .docusaurus
+/static/docs
+/static/llms-full.txt
+/src/generated
 .cache-loader
 
 # Misc
