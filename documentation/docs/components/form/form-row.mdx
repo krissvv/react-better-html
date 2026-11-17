@@ -57,13 +57,20 @@ The component arranges its children in a row, with responsive gap behavior.
 The component is responsive and will render on two lines if in mobile mode.
 :::
 
+## Common Props
+
+- **`oneItemOnly`** - renders an empty element after the children so a single field takes only half of the row
+- **`noBreakingPoint`** - keeps the items on the same line on mobile
+- **`asColumn`** - always renders the items one under another
+- **`gap`** - the gap between the items
+
 ## Subcomponents
 
 A number of components in the library have a _subcomponent_ feature witch is like a preset of the same component that is frequently used.
 
 ### FormRow.withTitle
 
-Renders a form row with an optional icon, title, and description at the beginning of the row, followed by the one element inside.
+Renders a form row with an optional icon, title, and description at the beginning of the row, followed by the one element inside. It is mostly used for settings pages.
 
 ```jsx
 import { FormRow, InputField } from "react-better-html";
@@ -78,6 +85,13 @@ function App() {
    );
 }
 ```
+
+- **`icon`** - an icon rendered before the title
+- **`title`** / **`titleAs`** / **`titleFontSize`** - the title and its tag (defaults to `h3`)
+- **`description`** / **`descriptionFontSize`** - the text underneath the title
+- **`required`** - renders a red asterisk after the title
+- **`alignChildren`** - the `justify-content` of the children (defaults to `flex-start`)
+- **`isLoading`** - renders a loader before the children
 
 The component has the option to render `save` and `clear` buttons if the value is changed. You can pass `withActions` prop that will render the `save` button. To capture the events `onClickSave` and `onClickReset` props can be passed. The `onClickReset` will render `clear` button.
 
@@ -102,3 +116,5 @@ function App() {
    );
 }
 ```
+
+The buttons are `submit` and `button` types by default. This can be changed with `saveButtonType` and `resetButtonType`. Loading state can be shown on them with `saveButtonLoaderName` and `resetButtonLoaderName`.

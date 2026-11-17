@@ -64,14 +64,42 @@ All of the `React.CSSProperties` are valid props with the benefit of passing jus
       }
       ```
 
-      When hovering the component the text inside will change to red.
+      When hovering the component the border will change to red.
+
+   </TabItem>
+
+   <TabItem value="multiselect" label="Multiselect">
+
+      ```jsx
+      import { Dropdown } from "react-better-html";
+
+      function App() {
+         return (
+            <Dropdown
+               label="Tags"
+               options={[
+                  { value: "react", label: "React" },
+                  { value: "vue", label: "Vue" },
+                  { value: "svelte", label: "Svelte" },
+               ]}
+               // highlight-next-line
+               withMultiselect
+               onChange={(values) => {
+                  console.log("Selected values:", values); // ["react", "vue"]
+               }}
+            />
+         );
+      }
+      ```
+
+      The selected options are rendered as chips inside the field and the `value`, `defaultValue` and `onChange` work with arrays.
 
    </TabItem>
 </Tabs>
 
 ## Common Props
 
-All standard `<div>` attributes are valid props for this component.
+All standard `<div>` attributes are valid props for this component. The component can be controlled with `value` or uncontrolled with `defaultValue`.
 
 ```jsx
 import { Dropdown } from "react-better-html";
@@ -87,6 +115,7 @@ function App() {
          ]}
          value={1}
          placeholder="Choose an option"
+         leftIcon="magnifyingGlass"
          required
          disabled
          errorText="Please select an option"
@@ -110,6 +139,8 @@ type DropdownOption<Value, Data = unknown> = {
    disabled?: boolean;
    searchValues?: string[];
    data?: Data;
+   renderType?: "default" | "chip" | "chip.colored";
+   chipProps?: ChipProps;
 };
 ```
 
@@ -118,6 +149,27 @@ type DropdownOption<Value, Data = unknown> = {
 - **`disabled`** - Whether the option is disabled.
 - **`searchValues`** - Additional search terms for the option.
 - **`data`** - Any data that need to be passed down and used in the `renderOption` prop.
+- **`renderType`** - Renders the option as a [`<Chip>`](../Other/chip) or [`<Chip.colored>`](../Other/chip#chipcolored) both in the list and when selected.
+- **`chipProps`** - Props passed to the chip when `renderType` is `chip` or `chip.colored`.
+
+```jsx
+import { Dropdown } from "react-better-html";
+
+function App() {
+   return (
+      <Dropdown
+         label="Status"
+         options={[
+            // highlight-start
+            { value: "active", label: "Active", renderType: "chip.colored", chipProps: { color: "#28a745" } },
+            { value: "pending", label: "Pending", renderType: "chip.colored", chipProps: { color: "#ffc107" } },
+            { value: "blocked", label: "Blocked", renderType: "chip.colored", chipProps: { color: "#dc3545" } },
+            // highlight-end
+         ]}
+      />
+   );
+}
+```
 
 ### Search Functionality
 
@@ -199,12 +251,42 @@ function App() {
 }
 ```
 
+### Option Dividers
+
+The `renderOptionDivider` prop renders an element between every two options (and before the first one). It receives the previous and the next option with their indexes, so it is useful for grouping.
+
+```jsx
+import { Dropdown, Text } from "react-better-html";
+
+function App() {
+   return (
+      <Dropdown
+         label="City"
+         options={[
+            { value: "sofia", label: "Sofia", data: { country: "Bulgaria" } },
+            { value: "plovdiv", label: "Plovdiv", data: { country: "Bulgaria" } },
+            { value: "berlin", label: "Berlin", data: { country: "Germany" } },
+         ]}
+         // highlight-start
+         renderOptionDivider={(previousOption, nextOption) =>
+            nextOption && previousOption?.data?.country !== nextOption.data?.country ? (
+               <Text fontSize={12} fontWeight={700} paddingInline={16} paddingTop={8}>
+                  {nextOption.data?.country}
+               </Text>
+            ) : undefined
+         }
+         // highlight-end
+      />
+   );
+}
+```
+
 ### With Debounce
 
 The prop `withDebounce` is required to turn on that feature. When `true`, the `onChangeSearch` event will be called with a delay (debounce). You can change the delay by passing the `debounceDelay` prop. The default value for it is `0.5s` and it works for the most part.
 
 ```jsx
-import { InputField } from "react-better-html";
+import { Dropdown } from "react-better-html";
 
 function App() {
    return (
@@ -217,8 +299,9 @@ function App() {
             { value: 3, label: "Address 3" }
          ]}
          // highlight-start
+         withSearch
          withDebounce
-         onChangeValue={(value) => {
+         onChange={(value) => {
             console.log("Searched address:", value); // Will fire immediately when the user selects an option
          }}
          onChangeSearch={(value) => {
@@ -232,9 +315,14 @@ function App() {
 
 The component can also be configured to show loading of the components when the debounce is active ond/or `debounceIsLoading` prop is passed. This is especially useful when the content of the options is rendered dynamically from an API, for example. A `debounceMinimumSymbolsRequired` can also be passed for a required minimum length of the search query.
 
-### Remove the clear button
+### Other props
 
-the prop `withoutClearButton` will remove the render of the `X` button inside the dropdown and will prevent the value to get back as `undefined` ones an option is selected.
+- **`withoutClearButton`** - removes the `X` button inside the dropdown and prevents the value to get back to `undefined` ones an option is selected.
+- **`withoutArrow`** - removes the arrow on the right side of the field.
+- **`withoutRenderingOptionsWhenClosed`** - the options are not rendered in the DOM while the dropdown is closed. Useful for long lists.
+- **`inputFieldClassName`** - a class name passed to the inner input field.
+- **`labelColor`**, **`labelFontSize`**, **`labelFontFamily`**, **`labelLetterSpacing`**, **`labelTextTransform`**, **`labelGap`** - customize the label.
+- **`infoTextColor`** - the color of the `infoText`.
 
 ## Keyboard Navigation
 
@@ -264,3 +352,37 @@ function App() {
    );
 }
 ```
+
+### Dropdown.language
+
+This component renders a dropdown with the languages defined with [`generateI18n`](../../functions/i18n) and changes the current language when an option is selected. The selected language is saved in the `localStorage`.
+
+<Tabs>
+   <TabItem value="default" label="Default" default>
+
+      ```jsx
+      import { Dropdown } from "react-better-html";
+
+      function App() {
+         // highlight-next-line
+         return <Dropdown.language />;
+      }
+      ```
+
+   </TabItem>
+
+   <TabItem value="small" label="Small">
+
+      ```jsx
+      import { Dropdown } from "react-better-html";
+
+      function App() {
+         // highlight-next-line
+         return <Dropdown.language isSmall />;
+      }
+      ```
+
+      Renders only the flags - suitable for headers and navigation bars.
+
+   </TabItem>
+</Tabs>

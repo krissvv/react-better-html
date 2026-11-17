@@ -102,21 +102,99 @@ The Table component accepts the following props:
 - **`columns`** - array of column definitions
 - **`data`** - array of data objects
 - **`isStriped`** - whether to display alternating row colors
+- **`isLoading`** - renders a loader instead of the rows
 - **`withStickyHeader`** - whether to make the header stick to the top when scrolling
-- **`noDataItemsMessage`** - message to display when there's no data
+- **`noDataItemsMessage`** - message to display when there's no data (defaults to `No data available`)
+- **`getRowStyle`** - function that returns style props for a specific row
+- **`containsOverflowComponents`** - set it when cells contain elements that need to overflow the table (dropdowns, tooltips, ...)
 - **`onClickRow`** - callback function when a row is clicked
-- **`onClickAllCheckboxes`** - callback function when the header checkbox is clicked
+- **`onClickAllCheckboxes`** - callback function when the header checkbox is clicked. Receives the new `checked` state
 - **`pageSize`** - the number of items to display per page
 - **`pageCount`** - the total number of pages. Used for when the rest of the items in the table are not present.
 - **`onChangePage`** - callback function when the page changes. Used together with `pageSize` and `pageCount`.
 - **`onChangeFilter`** - callback function when the filter changes
 - **`onChangeFilterDataValue`** - callback function when the filter are applied and the data array is filtered.
+- **`defaultFilterData`** - the filters applied on mount. The keys are the indexes of the columns.
+
+<Tabs>
+   <TabItem value="loading" label="Loading" default>
+
+      ```jsx
+      import { Table } from "react-better-html";
+
+      function App() {
+         return (
+            <Table
+               columns={[{ type: "text", label: "Name", keyName: "name" }]}
+               data={[]}
+               // highlight-next-line
+               isLoading
+            />
+         );
+      }
+      ```
+
+   </TabItem>
+
+   <TabItem value="rowStyle" label="Row Style">
+
+      ```jsx
+      import { Table } from "react-better-html";
+
+      function App() {
+         return (
+            <Table
+               columns={[
+                  { type: "text", label: "Name", keyName: "name" },
+                  { type: "text", label: "Status", keyName: "status" },
+               ]}
+               data={[
+                  { name: "John Doe", status: "Active" },
+                  { name: "Jane Smith", status: "Blocked" },
+               ]}
+               // highlight-start
+               getRowStyle={(item) => ({
+                  opacity: item.status === "Blocked" ? 0.5 : undefined,
+               })}
+               // highlight-end
+            />
+         );
+      }
+      ```
+
+   </TabItem>
+
+   <TabItem value="pagination" label="Pagination">
+
+      ```jsx
+      import { Table } from "react-better-html";
+
+      function App() {
+         return (
+            <Table
+               columns={[{ type: "text", label: "Name", keyName: "name" }]}
+               data={users}
+               // highlight-start
+               pageSize={10}
+               onChangePage={(page) => console.log("Current page:", page)}
+               // highlight-end
+            />
+         );
+      }
+      ```
+
+      For server side pagination pass `pageCount` and load the data for the page in `onChangePage`.
+
+   </TabItem>
+</Tabs>
 
 ## Column Props & Types
 
 All column types support the following properties:
 
+- **`hidden`** - hides the column
 - **`label`** - the column header text
+- **`renderLabel`** - function to render a custom header. Receives the `label`
 - **`width`** - the width of the column (in pixels)
 - **`minWidth`** - the minimum width of the column (in pixels)
 - **`maxWidth`** - the maximum width of the column (in pixels)
@@ -150,7 +228,7 @@ function App() {
                label: "Age",
                // highlight-start
                keyName: "age",
-               format: (value) => `${value} years old`,
+               format: (item) => `${item.age} years old`,
                getTextProps: {
                   color: "#ff0000"
                }
@@ -170,7 +248,7 @@ Text columns support the following props:
 
 - **`type`** - must be set to `"text"`
 - **`keyName`** - the key in your data object to display
-- **`format`** - optional function to format the value before display
+- **`format`** - optional function that receives the item and its index and returns the text to display
 - **`getTextProps`** - optional object or function to get props for the rendered text component inside the table cell. All props from the [`<Text>`](./text) component are supported
 
 ### Element Column
@@ -262,7 +340,7 @@ Image columns support the following props:
 
 ### Checkbox Column
 
-The checkbox column displays checkboxes that can be toggled.
+The checkbox column displays checkboxes that can be toggled. The checked state is kept inside the table and can be read/changed with the `onChange` from `getToggleInputProps` and the [`setCheckedItems`](#ref-api) ref method.
 
 ```jsx
 import { Table } from "react-better-html";
@@ -274,7 +352,9 @@ function App() {
             {
                // highlight-start
                type: "checkbox",
-               keyName: "isSelected"
+               getToggleInputProps: {
+                  onChange: (checked, item) => console.log(item.name, checked)
+               }
                // highlight-end
             },
             {
@@ -284,11 +364,11 @@ function App() {
             }
          ]}
          data={[
-            { name: "John Doe", isSelected: true },
-            { name: "Jane Smith", isSelected: false }
+            { name: "John Doe" },
+            { name: "Jane Smith" }
          ]}
          // highlight-next-line
-         onClickAllCheckboxes={() => console.log("Toggle all checkboxes")}
+         onClickAllCheckboxes={(checked) => console.log("All checked:", checked)}
       />
    );
 }
@@ -403,11 +483,12 @@ function App() {
             },
             {
                type: "text",
-               label: "Age",
-               keyName: "age",
+               label: "Date born",
+               keyName: "dateBorn",
                // highlight-start
                filter: "date",
-               getValue: (item) => item.age
+               presets: ["thisYear", "lastYear"],
+               getValue: (item) => new Date(item.dateBorn)
                // highlight-end
             }
          ]}
@@ -424,7 +505,7 @@ Date and Date-Time filters support the following props:
 
 - **`filter`** - must be set to either `"date"` or `"date-time"`
 - **`getValue`** - function to get the value for the filter check
-- **`presets`** - optional array of presets to be displayed in the filter modal UI
+- **`presets`** - optional array of presets to be displayed in the filter modal UI. Available presets: `today`, `yesterday`, `tomorrow`, `thisWeek`, `thisMonth`, `thisYear`, `lastWeek`, `lastMonth`, `lastYear`, `nextWeek`, `nextMonth`, `nextYear`
 
 ### List filter
 
@@ -474,3 +555,37 @@ List filter support the following props:
 - **`withTotalNumber`** - whether to show the total number of items in the filter modal
 - **`withSearch`** - whether to render a search input in the filter modal
 - **`list`** - the array of items to be displayed in the list as possible filter values
+- **`getItemValue`** - optional function to get the value of the item to compare against the list values (defaults to the value of `keyName`)
+
+## Memoized Filters
+
+When `memoizeFilters` is passed together with a `name`, the applied filters are saved and restored the next time the table is rendered. The `memoizeFiltersLifespan` prop sets how long (in milliseconds) the filters are kept (defaults to 2 hours). The time resets every time the filters change.
+
+```jsx
+<Table
+   // highlight-start
+   name="users"
+   memoizeFilters
+   // highlight-end
+   columns={columns}
+   data={users}
+/>
+```
+
+## Ref API
+
+The table can be controlled using a ref:
+
+```typescript
+type TableRef = {
+   currentPage: number;
+   setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+   pagesCount: number;
+   setCheckedItems: React.Dispatch<React.SetStateAction<boolean[]>>;
+};
+```
+
+- **`currentPage`** - the current page
+- **`setCurrentPage`** - changes the current page
+- **`pagesCount`** - the total number of pages
+- **`setCheckedItems`** - changes the checked state of the rows (used with the [Checkbox Column](#checkbox-column))

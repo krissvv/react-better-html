@@ -9,38 +9,111 @@ import TabItem from "@theme/TabItem";
 
 # Form Component
 
-The `<Form>` component provides a structured layout for forms, seamlessly integrating with the [`useForm`](../hooks/use-form) hook. It handles the form submission, displays submit and optional cancel buttons.
+The `<Form>` component provides a structured layout for forms, seamlessly integrating with the [`useForm`](../../hooks/use-form.mdx) hook. It handles the form submission, displays submit and optional cancel buttons.
 
 ## Basic Usage
 
 The component renders a `<form>` element. Wrap your form fields within the `<Form>` component.
 
-```jsx
-import { Form, InputField } from "react-better-html";
+<Tabs>
+   <TabItem value="basic" label="Basic" default>
 
-function LoginForm() {
-   return (
-      // highlight-next-line
-      <Form submitButtonText="Login" gap={10} onSubmit={(event) => {}}>
-         <InputField label="Username" name="username" />
-         <InputField.password label="Password" name="password" />
-         // highlight-next-line
-      </Form>
-   );
-}
-```
+      ```jsx
+      import { Form, InputField } from "react-better-html";
+
+      function LoginForm() {
+         return (
+            // highlight-next-line
+            <Form submitButtonText="Login" gap={10} onSubmit={(event) => {}}>
+               <InputField label="Username" name="username" />
+               <InputField.password label="Password" name="password" />
+               // highlight-next-line
+            </Form>
+         );
+      }
+      ```
+
+   </TabItem>
+
+   <TabItem value="useForm" label="With useForm">
+
+      ```jsx
+      import { Form, InputField, useForm } from "react-better-html";
+
+      function LoginForm() {
+         const form = useForm({
+            defaultValues: {
+               username: "",
+               password: "",
+            },
+            requiredFields: ["username", "password"],
+            onSubmit: async (values) => {
+               await login(values);
+            },
+         });
+
+         return (
+            // highlight-next-line
+            <Form form={form} submitButtonText="Login" gap={10}>
+               <InputField label="Username" {...form.getInputFieldProps("username")} />
+               <InputField.password label="Password" {...form.getInputFieldProps("password")} />
+            </Form>
+         );
+      }
+      ```
+
+      The submit button is disabled while a required field is empty and is in loading state while the `onSubmit` promise is pending.
+
+   </TabItem>
+
+   <TabItem value="withCancel" label="With Cancel">
+
+      ```jsx
+      import { Form, InputField } from "react-better-html";
+
+      function EditForm() {
+         return (
+            <Form
+               submitButtonText="Save"
+               // highlight-start
+               cancelButtonText="Discard"
+               onClickCancel={() => {}}
+               // highlight-end
+               withDividers
+            >
+               <InputField label="First name" />
+               <InputField label="Last name" />
+            </Form>
+         );
+      }
+      ```
+
+   </TabItem>
+</Tabs>
 
 ## Common Props
 
-- **`form`** - the object returned by the [`useForm`](../hooks/use-form) hook.
+- **`form`** - the object returned by the [`useForm`](../../hooks/use-form.mdx) hook.
+- **`name`** / **`id`** - passed to the `<form>` element.
+- **`gap`** - the gap between the child elements within the form.
+- **`withDividers`** - if `true`, a [`<Divider.horizontal />`](../Other/divider.mdx) will be rendered between the child elements.
+- **`actionButtonsLocation`** - controls the horizontal alignment of the action buttons - `left`, `center` or `right` (default).
+- **`isDestructive`** - if `true`, the submit button will be rendered using the [`Button.destructive`](../button.mdx#buttondestructive) variant.
+- **`renderActionButtons`** - additional elements rendered next to the action buttons.
+- **`onSubmit`** - a `onSubmit` handler for the form. If provided, this will be used instead of the `onSubmit` function from the `form` prop.
+
+### Submit button
+
 - **`submitButtonText`** - the text to display on the submit button. If provided, a submit button will be rendered.
 - **`submitButtonLoaderName`** - the name of the loader to display on the submit button.
+- **`submitButtonIsLoading`** - renders the submit button in loading state. When the `form` prop is passed, its `isSubmitting` state is used as well.
+- **`submitButtonIsDisabled`** - a boolean to manually disable the submit button. It is also disabled automatically when a required field from the `form` prop is empty.
 - **`submitButtonId`** - the `id` attribute for the submit button.
-- **`submitButtonIsDisabled`** - a boolean to manually disable the submit button. This prop takes precedence over the automatic disabling based on required fields.
-- **`actionButtonsLocation`** - controls the horizontal alignment of the action buttons (submit and cancel).
-- **`gap`** - the gap between the child elements within the form.
-- **`isSubmitting`** - a boolean to manually control the loading state of the submit button. This is typically managed by the `isSubmitting` state returned by the `useForm` hook.
-- **`isDestructive`** - if `true`, the submit button will be rendered using the `Button.destructive` variant.
-- **`withDividers`** - if `true`, a [`<Divider.horizontal />`](../other/divider.md) will be rendered between the child elements.
-- **`onClickCancel`** - if provided, a "Cancel" button will be rendered. The callback function will be called when the button is clicked.
-- **`onSubmit`** - a `onSubmit` handler for the form. If provided, this will be used instead of the `onSubmit` function from the `form` prop.
+
+### Cancel button
+
+- **`onClickCancel`** - if provided, a cancel button will be rendered. The callback function will be called when the button is clicked.
+- **`cancelButtonText`** - the text of the cancel button (defaults to `Cancel`).
+- **`cancelButtonLoaderName`** / **`cancelButtonIsLoading`** - the loading state of the cancel button.
+- **`cancelButtonIsDisabled`** - disables the cancel button.
+- **`cancelButtonId`** - the `id` attribute for the cancel button.

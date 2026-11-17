@@ -45,7 +45,7 @@ There are some configuration properties for the whole app that can be set from t
       ...
       // highlight-start
       app: {
-         contentMaxWidth: 1200
+         contentMaxWidth: 1100
       },
       // highlight-end
       ...
@@ -57,7 +57,7 @@ There are some configuration properties for the whole app that can be set from t
 
 | Key             | Value Type | Default Value | Description                                                                                          |
 | --------------- | ---------- | ------------- | ---------------------------------------------------------------------------------------------------- |
-| contentMaxWidth | `number`   | 1200          | Sets the max content width of the [`<PageContent />`](../components/structure/page-holder) component |
+| contentMaxWidth | `number`   | 1100          | Sets the max content width of the [`<PageHolder />`](../components/structure/page-holder) component |
 
 ### Theme configuration
 
@@ -202,9 +202,54 @@ An example can be seen below where the `button` component is having the default 
 </BetterHtmlProvider>
 ```
 
-:::note
-Currently only the `button` component is supported. But we plan to add more components in the future.
+The `style` object sets default props for the component and its subcomponents. Props passed directly to a component always take precedence.
+
+| Component                                               | Style keys                                                                                             | Other options                                         |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------- |
+| [`button`](../components/button)                        | `default`, `secondary`, `destructive`, `text`, `icon`, `upload`                                        | `tagReplacement`: `buttonComponent`, `linkComponent`  |
+| [`inputField`](../components/form/input-field)          | `default`, `multiline`, `email`, `password`, `search`, `phoneNumber`, `date`, `dateTime`, `time`, `color` |                                                       |
+| [`dropdown`](../components/form/dropdown)               | `default`, `countries`, `language`                                                                     |                                                       |
+| [`toggleInput`](../components/form/toggleInput)         | `checkbox`, `radiobutton`, `switch`                                                                    |                                                       |
+| [`label`](../components/form/label)                     | `default`                                                                                              |                                                       |
+| [`form`](../components/form/form.mdx)                       | `default`                                                                                              |                                                       |
+| [`divider`](../components/Other/divider)                | `vertical`, `horizontal`                                                                               |                                                       |
+| [`image`](../components/image)                          | `default`, `profileImage`                                                                              |                                                       |
+| [`chip`](../components/Other/chip)                      | `default`, `colored`                                                                                   |                                                       |
+| [`sideMenu`](../components/structure/side-menu)         |                                                                                                        | `width` (defaults to `300`), `sidebarWidth` (defaults to `80`) |
+
+:::tip
+Set `tagReplacement.linkComponent` to the `Link` component of your router so every [`<Button>`](../components/button#link) with `href` and every [`<SideMenu>`](../components/structure/side-menu) item navigates without a page reload.
 :::
+
+```jsx
+import { Link } from "react-router-dom";
+
+<BetterHtmlProvider
+   config={{
+      components: {
+         // highlight-start
+         button: {
+            tagReplacement: {
+               linkComponent: Link,
+            },
+         },
+         // highlight-end
+      },
+   }}
+>
+   <App />
+</BetterHtmlProvider>
+```
+
+### Developer mode
+
+When `devMode` is `true` the [`<DeveloperPage>`](../components/Other/developer-page) component is rendered.
+
+```jsx
+<BetterHtmlProvider config={{ devMode: true }}>
+   <App />
+</BetterHtmlProvider>
+```
 
 ## Default Configuration
 

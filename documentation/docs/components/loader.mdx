@@ -27,6 +27,37 @@ function App() {
 
 All standard `<div>` attributes are valid props for this component as it uses the [`<Div>`](./div) component internally.
 
+- **`size`** - the inner size of the loader (defaults to `16`)
+- **`width`** - the thickness of the loader ring (defaults to `size / 3`)
+- **`color`** - the color of the loader (defaults to `textPrimary`)
+- **`disabled`** - stops the spinning animation
+
+<Tabs>
+   <TabItem value="thin" label="Thin" default>
+
+      ```jsx
+      import { Loader } from "react-better-html";
+
+      function App() {
+         return <Loader size={32} width={3} />;
+      }
+      ```
+
+   </TabItem>
+
+   <TabItem value="disabled" label="Disabled">
+
+      ```jsx
+      import { Loader } from "react-better-html";
+
+      function App() {
+         return <Loader size={32} disabled />;
+      }
+      ```
+
+   </TabItem>
+</Tabs>
+
 ## Subcomponents
 
 ### Loader.box

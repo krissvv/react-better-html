@@ -134,12 +134,62 @@ function App() {
 }
 ```
 
+### Prefix and Suffix
+
+The `prefix` and `suffix` props render an element attached to the left or the right side of the input. Their background can be changed with `prefixBackgroundColor` and `suffixBackgroundColor`.
+
+<Tabs>
+   <TabItem value="prefix" label="Prefix" default>
+
+      ```jsx
+      import { InputField } from "react-better-html";
+
+      function App() {
+         return (
+            <InputField
+               label="Website"
+               placeholder="example.com"
+               // highlight-next-line
+               prefix="https://"
+            />
+         );
+      }
+      ```
+
+   </TabItem>
+
+   <TabItem value="suffix" label="Suffix">
+
+      ```jsx
+      import { InputField } from "react-better-html";
+
+      function App() {
+         return (
+            <InputField
+               label="Price"
+               type="number"
+               placeholder="0.00"
+               // highlight-next-line
+               suffix="EUR"
+            />
+         );
+      }
+      ```
+
+   </TabItem>
+</Tabs>
+
+:::tip
+For elements rendered inside the input field holder (e.g. a custom dropdown) use `insideInputFieldBeforeComponent` and `insideInputFieldAfterComponent`. The holder element can be accessed with `holderRef`.
+:::
+
 ### Validation States
 
 The component supports various validation states:
 
 - **`errorText`** - Text to display when there's an error
 - **`infoText`** - Text to display as additional information
+- **`infoTextColor`** - The color of the info text
 - **`required`** - Whether the field is required or not
 
 ```jsx
@@ -153,6 +203,30 @@ function App() {
          // highlight-start
          required
          errorText="Please enter a valid username"
+         // highlight-end
+      />
+   );
+}
+```
+
+### Label
+
+The label can be customized with the following props:
+
+- **`labelColor`**, **`labelFontSize`**, **`labelFontFamily`**, **`labelLetterSpacing`**, **`labelTextTransform`** - the style of the label
+- **`labelGap`** - the space between the label and the input
+
+```jsx
+import { InputField } from "react-better-html";
+
+function App() {
+   return (
+      <InputField
+         label="Username"
+         // highlight-start
+         labelFontSize={12}
+         labelTextTransform="uppercase"
+         labelLetterSpacing={1}
          // highlight-end
       />
    );
@@ -280,7 +354,7 @@ function App() {
 
 ### InputField.date
 
-This component renders an input field with calendar to pick a date.
+This component renders an input field with calendar to pick a date. The value is in `YYYY-MM-DD` format.
 
 ```jsx
 import { InputField } from "react-better-html";
@@ -289,6 +363,10 @@ function App() {
    return (
       // highlight-next-line
       <InputField.date
+         // highlight-start
+         minDate={new Date()}
+         dropdownPosition="right"
+         // highlight-end
          onChangeValue={(value) => {
             console.log("Ready date:", value);
          }}
@@ -297,9 +375,16 @@ function App() {
 }
 ```
 
+- **`minDate`** / **`maxDate`** - the range of dates that can be picked
+- **`dropdownPosition`** - align the calendar to the `left` (default) or to the `right` side of the field
+
+:::note
+On iOS Safari the native date picker is used.
+:::
+
 ### InputField.time
 
-This component renders an input field with time picker to pick a time.
+This component renders an input field with time picker to pick a time. The value is in `HH:mm` format.
 
 ```jsx
 import { InputField } from "react-better-html";
@@ -308,6 +393,11 @@ function App() {
    return (
       // highlight-next-line
       <InputField.time
+         // highlight-start
+         minTime="09:00"
+         maxTime="18:00"
+         minutesToRender={[0, 15, 30, 45]}
+         // highlight-end
          onChangeValue={(value) => {
             console.log("Ready time:", value);
          }}
@@ -315,6 +405,10 @@ function App() {
    );
 }
 ```
+
+- **`minTime`** / **`maxTime`** - the range of time that can be picked (defaults to `00:00` - `23:59`)
+- **`hoursToRender`** / **`minutesToRender`** - the hours and minutes rendered in the picker
+- **`dropdownPosition`** - align the picker to the `left` (default) or to the `right` side of the field
 
 ### InputField.dateTime
 
@@ -327,6 +421,10 @@ function App() {
    return (
       // highlight-next-line
       <InputField.dateTime
+         // highlight-start
+         minutesToRender={[0, 30]}
+         defaultTimeAfterDatePick="09:00"
+         // highlight-end
          onChangeValue={(value) => {
             console.log("Ready date and time:", value);
          }}
@@ -334,6 +432,12 @@ function App() {
    );
 }
 ```
+
+- **`minDate`** / **`maxDate`** - the range of dates that can be picked
+- **`hoursToRender`** / **`minutesToRender`** - the hours and minutes rendered in the picker
+- **`defaultTimeAfterDatePick`** - the time that is set when only a date is picked (defaults to `00:00`)
+- **`defaultDateAfterTimePick`** - the date that is set when only a time is picked (defaults to today)
+- **`dropdownPosition`** - align the picker to the `left` (default) or to the `right` side of the field
 
 ### InputField.color
 

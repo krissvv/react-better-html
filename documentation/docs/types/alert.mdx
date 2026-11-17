@@ -16,6 +16,7 @@ This document describes the `Alert` which contains data for one alert object.
 type Alert = {
    id: string;
    type: AlertType;
+   display?: AlertDisplay;
    title?: string;
    message?: string;
    duration?: AlertDuration;
@@ -47,3 +48,14 @@ export type AlertDuration = number | "auto";
 
 - The `number` value needs to be in milliseconds.
 - The `auto` value will calculate the duration depending on the length of the `message`.
+
+### `AlertDisplay`
+
+```typescript
+export type AlertDisplay = "default" | "prominent";
+```
+
+- **`default`**: A small alert in the corner of the screen (from the [`alertsPlugin`](../plugins#alerts) `position` and `align`).
+- **`prominent`**: A modal in the center of the screen with a `Close` button. It does not close automatically. Useful for errors that the user should not miss.
+
+The default value per alert type can be set with the `defaultDisplay` option of the [`alertsPlugin`](../plugins#alerts).

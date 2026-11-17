@@ -1,0 +1,70 @@
+---
+title: Pagination
+description: A component to render page navigation.
+sidebar_position: 4
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# Pagination Component
+
+The `<Pagination>` component renders previous/next buttons and the page numbers between them. It is the same pagination used in the footer of the [`<Table>`](../table) component.
+
+## Basic Usage
+
+The number of pages is calculated from `itemsLength` and `itemsPerPage`, or can be passed directly with `pageCount`.
+
+<Tabs>
+   <TabItem value="items" label="From Items" default>
+
+      ```jsx
+      import { Pagination } from "react-better-html";
+
+      function App() {
+         return (
+            <Pagination
+               // highlight-start
+               itemsLength={240}
+               itemsPerPage={20}
+               // highlight-end
+               onChangePage={(page) => console.log("Current page:", page)}
+            />
+         );
+      }
+      ```
+
+   </TabItem>
+
+   <TabItem value="pageCount" label="Page Count">
+
+      ```jsx
+      import { useState } from "react";
+      import { Pagination } from "react-better-html";
+
+      function App() {
+         const [page, setPage] = useState(1);
+
+         return (
+            <Pagination
+               // highlight-start
+               pageCount={50}
+               currentPage={page}
+               // highlight-end
+               onChangePage={setPage}
+            />
+         );
+      }
+      ```
+
+   </TabItem>
+</Tabs>
+
+## Common Props
+
+- **`currentPage`** - the selected page (defaults to `1`). Changing it from outside updates the component
+- **`itemsLength`** / **`itemsPerPage`** - used to calculate the number of pages
+- **`pageCount`** - the number of pages (takes precedence over `itemsLength` and `itemsPerPage`)
+- **`maximumVisiblePages`** - how many page numbers are visible at once (defaults to `11`)
+- **`onChangePage`** - called with the new page every time it changes
+- **`onClickPreviousPage`** / **`onClickNextPage`** - called with the new page when the arrow buttons are clicked

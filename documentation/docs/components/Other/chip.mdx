@@ -44,6 +44,26 @@ The component renders a chip with text and customizable styling.
 
    </TabItem>
 
+   <TabItem value="beforeAfter" label="Before & After">
+
+      ```jsx
+      import { Chip, Icon } from "react-better-html";
+
+      function App() {
+         return (
+            <Chip
+               text="Verified"
+               // highlight-start
+               beforeText={<Icon name="check" size={12} />}
+               afterText={<Icon name="XMark" size={12} />}
+               // highlight-end
+            />
+         );
+      }
+      ```
+
+   </TabItem>
+
    <TabItem value="custom" label="Custom">
 
       ```jsx
@@ -58,6 +78,37 @@ The component renders a chip with text and customizable styling.
 
    </TabItem>
 </Tabs>
+
+## Common Props
+
+- **`text`** - the content of the chip. Can be a string or any element
+- **`beforeText`** / **`afterText`** - elements rendered before and after the text
+- **`isCircle`** - fully rounded corners
+- **`color`** / **`backgroundColor`** - the colors of the text and the background
+- **`onClick`** / **`onClickWithValue`** - makes the chip clickable (with hover effect). `onClickWithValue` is used together with the `value` prop like in the [`<Div>`](../div#value-click) component
+
+Border, padding, font and `height` props are also supported.
+
+```jsx
+import { Div, Chip } from "react-better-html";
+
+function App() {
+   return (
+      <Div.row gap={8}>
+         {["React", "Vue", "Svelte"].map((tag) => (
+            <Chip
+               text={tag}
+               // highlight-start
+               value={tag}
+               onClickWithValue={(value) => console.log("Clicked:", value)}
+               // highlight-end
+               key={tag}
+            />
+         ))}
+      </Div.row>
+   );
+}
+```
 
 ## Subcomponents
 
@@ -74,3 +125,5 @@ function App() {
    return <Chip.colored text="Colored Text" color="#ff0000" />;
 }
 ```
+
+The text color is automatically lightened or darkened from `color` depending on the color theme. Use `withWhiteBackground` when the chip is placed on a colored background so the transparent fill does not mix with it.

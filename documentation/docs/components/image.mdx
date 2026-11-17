@@ -128,12 +128,44 @@ function App() {
 }
 ```
 
-Alternatively, you can use the `letters` prop to render an avatar for users without a profile image.
+Alternatively, you can use the `letters` prop to render an avatar for users without a profile image. When a full name is passed, the first letters of the first and the last word are used (`"John Michael Doe"` renders `JD`).
 
-```jsx
-import { Image } from "react-better-html";
+<Tabs>
+   <TabItem value="letters" label="Letters" default>
 
-function App() {
-   return <Image.profileImage letters="AB" />;
-}
-```
+      ```jsx
+      import { Image } from "react-better-html";
+
+      function App() {
+         return <Image.profileImage letters="John Doe" />;
+      }
+      ```
+
+   </TabItem>
+
+   <TabItem value="custom" label="Custom">
+
+      ```jsx
+      import { Image } from "react-better-html";
+
+      function App() {
+         return (
+            <Image.profileImage
+               letters="John Doe"
+               // highlight-start
+               size={60}
+               letterColor="#ffffff"
+               backgroundColor="#6d466b"
+               // highlight-end
+            />
+         );
+      }
+      ```
+
+   </TabItem>
+</Tabs>
+
+- **`size`** - the width and height of the image (defaults to `40`)
+- **`letters`** - text to render instead of an image
+- **`letterColor`** - the color of the letters (defaults to `textPrimary`)
+- **`backgroundColor`** - the background color behind the letters (defaults to `backgroundSecondary`)

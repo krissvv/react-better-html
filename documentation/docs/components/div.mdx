@@ -230,3 +230,66 @@ function App() {
 That renders to:
 
 <div className="divBox">This is a Div component.</div>
+
+<br />
+
+The box can also render a header with a divider underneath it. It accepts all the props of the [`<PageHeader>`](./structure/page-header) component (`icon`, `image`, `title`, `description`, `rightElement` and more).
+
+<Tabs>
+   <TabItem value="withHeader" label="With Header" default>
+
+      ```jsx
+      import { Div, Text, Button } from "react-better-html";
+
+      function App() {
+         return (
+            <Div.box
+               // highlight-start
+               title="Addresses"
+               titleAs="h3"
+               description="All saved addresses"
+               rightElement={<Button.secondary text="Add" isSmall />}
+               // highlight-end
+            >
+               <Text>Content of the box</Text>
+            </Div.box>
+         );
+      }
+      ```
+
+      Use `headerBackgroundColor` to give the header area its own background.
+
+   </TabItem>
+
+   <TabItem value="active" label="Selectable">
+
+      ```jsx
+      import { useState } from "react";
+      import { Div, Text } from "react-better-html";
+
+      function App() {
+         const [plan, setPlan] = useState("monthly");
+
+         return (
+            <Div.row gap={10}>
+               {["monthly", "yearly"].map((item) => (
+                  <Div.box
+                     value={item}
+                     // highlight-start
+                     isActive={plan === item}
+                     onClickWithValue={setPlan}
+                     // highlight-end
+                     key={item}
+                  >
+                     <Text>{item}</Text>
+                  </Div.box>
+               ))}
+            </Div.row>
+         );
+      }
+      ```
+
+      When the box is clickable its border is highlighted on hover. When `isActive` is passed it is filled with the `activeColor` (defaults to `primary`).
+
+   </TabItem>
+</Tabs>

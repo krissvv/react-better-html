@@ -65,10 +65,25 @@ The component renders a label with optional required indicator and error styling
 type LabelProps = {
    text?: string;
    required?: boolean;
+   requiredSize?: React.CSSProperties["fontSize"];
    isError?: boolean;
+   fontFamily?: React.CSSProperties["fontFamily"];
+   fontSize?: React.CSSProperties["fontSize"];
+   letterSpacing?: React.CSSProperties["letterSpacing"];
+   textTransform?: React.CSSProperties["textTransform"];
+   color?: React.CSSProperties["color"];
+   htmlFor?: string;
 };
 ```
 
 - **`text`** - the text to display in the label
 - **`required`** - if `true`, an asterisk is appended to the label to indicate it is required
+- **`requiredSize`** - the font size of the asterisk (defaults to `16`)
 - **`isError`** - if `true`, the label is styled with an error color
+- **`fontSize`** - the font size of the label (defaults to `14`)
+- **`color`** - the color of the label (defaults to `textSecondary`)
+- **`htmlFor`** - the `id` of the input the label belongs to
+
+:::tip
+The default style of all labels in the app (including the ones in [`<InputField>`](./input-field), [`<Dropdown>`](./dropdown) and [`<ToggleInput>`](./toggleInput)) can be changed from the [components configuration](../../getting-started/configuration#components-configuration).
+:::

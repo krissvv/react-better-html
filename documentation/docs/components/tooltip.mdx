@@ -1,0 +1,204 @@
+---
+title: Tooltip
+description: A tooltip and popover component that can also be used as a context menu.
+sidebar_position: 11
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# Tooltip Component
+
+The `<Tooltip>` component renders floating content next to its children. It can be opened on hover or on click, stays inside the screen and can be used as a simple tooltip, a popover or a menu.
+
+## Basic Usage
+
+The component requires a `content` prop. The `children` are the element the tooltip is attached to.
+
+<Tabs>
+   <TabItem value="basic" label="Basic" default>
+
+      ```jsx
+      import { Tooltip, Button } from "react-better-html";
+
+      function App() {
+         return (
+            // highlight-next-line
+            <Tooltip content="Deletes the item permanently">
+               <Button.destructive text="Delete" />
+            </Tooltip>
+         );
+      }
+      ```
+
+   </TabItem>
+
+   <TabItem value="withArrow" label="With Arrow">
+
+      ```jsx
+      import { Tooltip, Icon } from "react-better-html";
+
+      function App() {
+         return (
+            <Tooltip
+               content="More information"
+               // highlight-start
+               position="right"
+               withArrow
+               isSmall
+               // highlight-end
+            >
+               <Icon name="infoI" />
+            </Tooltip>
+         );
+      }
+      ```
+
+   </TabItem>
+
+   <TabItem value="click" label="Click Trigger">
+
+      ```jsx
+      import { Tooltip, Button, Div, Text } from "react-better-html";
+
+      function App() {
+         return (
+            <Tooltip
+               // highlight-next-line
+               trigger="click"
+               content={
+                  <Div.column gap={8}>
+                     <Text fontWeight={700}>Share</Text>
+                     <Text>Copy the link to share this page.</Text>
+                  </Div.column>
+               }
+               contentWidth={240}
+            >
+               <Button.secondary text="Share" />
+            </Tooltip>
+         );
+      }
+      ```
+
+      Opens on click and closes when clicking outside.
+
+   </TabItem>
+
+   <TabItem value="menu" label="Menu">
+
+      ```jsx
+      import { Tooltip, Button } from "react-better-html";
+
+      function App() {
+         return (
+            <Tooltip
+               trigger="click"
+               align="right"
+               // highlight-next-line
+               asContextMenu
+               content={
+                  <>
+                     // highlight-start
+                     <Tooltip.sectionTitle text="Account" />
+                     <Tooltip.item icon="eye" text="View profile" onClick={() => {}} />
+                     <Tooltip.item icon="filter" text="Preferences" description="Theme, language" onClick={() => {}} />
+                     <Tooltip.divider />
+                     <Tooltip.item icon="trash" text="Delete account" textColor="#dc3545" iconColor="#dc3545" />
+                     // highlight-end
+                  </>
+               }
+               contentMinWidth={220}
+            >
+               <Button.icon icon="chevronDown" />
+            </Tooltip>
+         );
+      }
+      ```
+
+      `asContextMenu` removes the inline padding of the content so the items fill the whole width.
+
+   </TabItem>
+</Tabs>
+
+## Common Props
+
+- **`content`** - the content of the tooltip. Can be a string or any element
+- **`position`** - `top`, `bottom` (default), `left` or `right`. The tooltip is shifted to stay inside the screen
+- **`align`** - the alignment along the side - `left`, `center` (default) or `right` for `top`/`bottom` positions and `top`, `center` or `bottom` for `left`/`right` positions
+- **`trigger`** - `hover` (default) or `click`
+- **`withArrow`** - renders an arrow pointing to the children
+- **`isSmall`** - smaller padding of the content
+- **`backgroundColor`** - the background color of the content
+- **`asContextMenu`** - styles the content as a menu
+- **`disabled`** - the tooltip is not opened
+- **`isTabAccessed`** - the children can be focused with the `Tab` key
+- **`contentWidth`** / **`contentMinWidth`** - the size of the content
+- **`contentPaddingBlock`** / **`contentPaddingInline`** - the padding of the content
+- **`contentPointerEvents`** - the `pointer-events` of the content (pass `none` for tooltips that should not be hovered)
+- **`childrenWrapperWidth`** / **`childrenWrapperHeight`** - the size of the element that wraps the children (width defaults to `fit-content`)
+- **`onOpen`** / **`onClose`** - callbacks when the tooltip is opened or closed
+
+## Ref API
+
+The tooltip can be controlled using a ref:
+
+```typescript
+type TooltipRef = {
+   isOpen: boolean;
+   open: () => void;
+   close: () => void;
+};
+```
+
+```jsx
+import { useRef } from "react";
+import { Tooltip, TooltipRef, Button } from "react-better-html";
+
+function App() {
+   // highlight-next-line
+   const tooltipRef = useRef<TooltipRef>(null);
+
+   return (
+      <Tooltip
+         trigger="click"
+         asContextMenu
+         content={
+            <Tooltip.item
+               text="Duplicate"
+               onClick={() => {
+                  duplicateItem();
+                  // highlight-next-line
+                  tooltipRef.current?.close();
+               }}
+            />
+         }
+         ref={tooltipRef}
+      >
+         <Button.secondary text="Actions" />
+      </Tooltip>
+   );
+}
+```
+
+## Subcomponents
+
+The subcomponents are building blocks for the `content` of the tooltip.
+
+### Tooltip.item
+
+A clickable row with an optional icon and description.
+
+- **`text`** / **`textColor`** - the text of the item
+- **`description`** - a smaller text underneath
+- **`icon`** / **`iconColor`** - an icon before the text
+- **`isActive`** - renders the text in bold
+- **`disabled`** - the item can not be clicked
+- **`onClick`** / **`onClickWithValue`** - click handlers. `onClickWithValue` is used together with the `value` prop
+
+### Tooltip.sectionTitle
+
+A small uppercase title for a group of items. Accepts all [`<Text>`](./text) props.
+
+### Tooltip.divider
+
+A horizontal line between items. Accepts all [`<Divider.horizontal>`](./Other/divider) props.

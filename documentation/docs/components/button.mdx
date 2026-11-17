@@ -180,6 +180,44 @@ function App() {
 Keep in mind that `onClick` and `onClickWithValue` will both fire if passed.
 :::
 
+### Link
+
+When the `href` prop is passed the button renders as an `<a>` tag (or the `linkComponent` from the [components configuration](../getting-started/configuration#components-configuration), e.g. the `Link` from `react-router-dom`). The `target` and `download` props are passed to the link.
+
+```jsx
+import { Button } from "react-better-html";
+
+function App() {
+   return (
+      <Button
+         text="Open docs"
+         // highlight-start
+         href="https://github.com/krissvv/react-better-html"
+         target="_blank"
+         // highlight-end
+      />
+   );
+}
+```
+
+### Small and Submit
+
+- **`isSmall`** - renders the button with smaller padding
+- **`isSubmit`** - sets the button `type` to `submit` so it can submit the parent `<form>`
+
+```jsx
+import { Button } from "react-better-html";
+
+function App() {
+   return (
+      <form>
+         // highlight-next-line
+         <Button text="Save" isSmall isSubmit />
+      </form>
+   );
+}
+```
+
 ### Icon
 
 The `icon` prop allows you to specify an icon to display on the button.
@@ -220,7 +258,7 @@ There are props to control the image style:
 
 ### Loading State
 
-The `isLoading` prop allows you to display a loading indicator on the button. You can take advantage of the internal component state and pass a `loaderName` prop. it is controlled by the
+The `isLoading` prop allows you to display a loading indicator on the button. You can also pass a `loaderName` prop and the button will be in loading state while the global loader with that name is `true`. The size of the loader can be changed with `loaderSize`. Clicks are ignored while the button is loading.
 
 <Tabs>
    <TabItem value="isLoading" label="isLoading" default>
@@ -322,9 +360,27 @@ function App() {
 }
 ```
 
+### Button.text
+
+This component renders like a bold text link - no background, no padding and a lighter color on hover.
+
+```jsx
+import { Div, Button } from "react-better-html";
+
+function App() {
+   return (
+      <Div.row gap={10}>
+         <Button text="Sign up" />
+         // highlight-next-line
+         <Button.text text="I already have an account" />
+      </Div.row>
+   );
+}
+```
+
 ### Button.icon
 
-This component is with an icon only and has e a circular chape.
+This component is with an icon only and has a circular shape.
 
 ```jsx
 import { Button } from "react-better-html";
@@ -334,6 +390,12 @@ function App() {
    return <Button.icon icon="XMark" />;
 }
 ```
+
+There are props to control the icon button style:
+
+- **`size`** - the size of the icon (defaults to `16`)
+- **`buttonSize`** - the size of the circular button (defaults to `size` + `theme.styles.space`)
+- **`backgroundButtonColor`** - the color of the circle on hover (defaults to `textPrimary` with transparency)
 
 ### Button.upload
 
@@ -346,8 +408,10 @@ function App() {
    return (
       // highlight-next-line
       <Button.upload
-         text="Pick file"
+         text="Pick images"
          // highlight-start
+         accept="image/*"
+         multiple
          onUpload={(files) => {
             console.log("Selected files:", files);
          }}
@@ -356,3 +420,6 @@ function App() {
    );
 }
 ```
+
+- **`accept`** - the file types the picker allows (same as the `accept` attribute of `<input type="file">`)
+- **`multiple`** - whether multiple files can be selected

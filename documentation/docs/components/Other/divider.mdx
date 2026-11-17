@@ -62,3 +62,30 @@ The component offers two types of dividers: `vertical` and `horizontal`. You can
 
    </TabItem>
 </Tabs>
+
+## Common Props
+
+- **`width`** - the thickness of the line (defaults to `1`)
+- **`backgroundColor`** - the color of the line (defaults to `border`)
+- **`height`** - the height of the vertical divider (defaults to `100%`)
+- All margin props (`margin`, `marginBlock`, ...)
+
+The text of the horizontal divider can be customized with `textColor`, `textFontSize`, `textFontWeight`, `textFontFamily`, `textTransform` and `textLetterSpacing`.
+
+```jsx
+import { Divider } from "react-better-html";
+
+function App() {
+   return (
+      <Divider.horizontal
+         text="Or continue with"
+         // highlight-start
+         textFontSize={12}
+         textTransform="uppercase"
+         textLetterSpacing={1}
+         // highlight-end
+         marginBlock={20}
+      />
+   );
+}
+```

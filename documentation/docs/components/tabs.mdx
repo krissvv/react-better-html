@@ -1,0 +1,208 @@
+---
+title: Tabs
+description: A tabs component with different styles and URL sync.
+sidebar_position: 10
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# Tabs Component
+
+The `<Tabs>` component renders a list of tabs with an animated indicator and shows the content of the selected tab with the `<Tabs.content>` subcomponent.
+
+## Basic Usage
+
+The component requires a `tabs` prop. Every tab is rendered with its `label` (or `id` if there is no label). The content of each tab is wrapped in `<Tabs.content>` with the matching `tabId`.
+
+<Tabs>
+   <TabItem value="basic" label="Basic" default>
+
+      ```jsx
+      import { Tabs, Text } from "react-better-html";
+
+      function App() {
+         return (
+            <Tabs
+               // highlight-start
+               tabs={[
+                  { id: "profile", label: "Profile" },
+                  { id: "security", label: "Security" },
+                  { id: "billing", label: "Billing" },
+               ]}
+               // highlight-end
+            >
+               // highlight-next-line
+               <Tabs.content tabId="profile">
+                  <Text>Profile settings</Text>
+               </Tabs.content>
+               <Tabs.content tabId="security">
+                  <Text>Security settings</Text>
+               </Tabs.content>
+               <Tabs.content tabId="billing">
+                  <Text>Billing settings</Text>
+               </Tabs.content>
+            </Tabs>
+         );
+      }
+      ```
+
+   </TabItem>
+
+   <TabItem value="borderRadiusTop" label="Border Radius Top">
+
+      ```jsx
+      import { Tabs } from "react-better-html";
+
+      function App() {
+         return (
+            <Tabs
+               tabs={[
+                  { id: "profile", label: "Profile" },
+                  { id: "security", label: "Security" },
+               ]}
+               // highlight-next-line
+               style="borderRadiusTop"
+            />
+         );
+      }
+      ```
+
+   </TabItem>
+
+   <TabItem value="box" label="Box">
+
+      ```jsx
+      import { Tabs } from "react-better-html";
+
+      function App() {
+         return (
+            <Tabs
+               tabs={[
+                  { id: "profile", label: "Profile" },
+                  { id: "security", label: "Security" },
+               ]}
+               // highlight-next-line
+               style="box"
+            />
+         );
+      }
+      ```
+
+   </TabItem>
+
+   <TabItem value="bubble" label="Bubble">
+
+      ```jsx
+      import { Tabs } from "react-better-html";
+
+      function App() {
+         return (
+            <Tabs
+               tabs={[
+                  { id: "profile", label: "Profile" },
+                  { id: "security", label: "Security" },
+               ]}
+               // highlight-next-line
+               style="bubble"
+            />
+         );
+      }
+      ```
+
+      The selected tab background slides between the tabs.
+
+   </TabItem>
+</Tabs>
+
+## Common Props
+
+- **`tabs`** - array of tabs. Every tab has an `id`, an optional `label` and an optional `hidden` flag
+- **`style`** - `default`, `borderRadiusTop`, `box` or `bubble`
+- **`accentColor`** - the color of the indicator and the selected tab (defaults to `primary`)
+- **`name`** - the name of the tab group. Required when there is more than one `<Tabs>` on the page
+- **`gap`** - the space between the tabs
+- **`borderRadius`** - the border radius of the tabs
+- **`noBottomLine`** - hides the indicator line
+- **`onChange`** - called with the `id` of the newly selected tab (also called on mount)
+- All margin props (`margin`, `marginBottom`, ...)
+
+### Hidden tabs
+
+A tab with `hidden: true` is not rendered. If the selected tab gets hidden, the first visible tab is selected.
+
+```jsx
+import { Tabs } from "react-better-html";
+
+function App({ isAdmin }) {
+   return (
+      <Tabs
+         tabs={[
+            { id: "overview", label: "Overview" },
+            // highlight-next-line
+            { id: "admin", label: "Admin", hidden: !isAdmin },
+         ]}
+      />
+   );
+}
+```
+
+### Multiple tab groups
+
+`<Tabs.content>` is connected to its `<Tabs>` by the group `name`. It does not need to be a child of the `<Tabs>` component - it can be anywhere in the tree.
+
+```jsx
+import { Div, Tabs, Text } from "react-better-html";
+
+function App() {
+   return (
+      <Div.column gap={20}>
+         // highlight-next-line
+         <Tabs name="period" tabs={[{ id: "week" }, { id: "month" }]} />
+
+         // highlight-next-line
+         <Tabs.content tabsGroupName="period" tabId="week" isInitialTab>
+            <Text>This week</Text>
+         </Tabs.content>
+         <Tabs.content tabsGroupName="period" tabId="month">
+            <Text>This month</Text>
+         </Tabs.content>
+      </Div.column>
+   );
+}
+```
+
+## Tabs.content
+
+- **`tabId`** - the `id` of the tab this content belongs to
+- **`tabsGroupName`** - the `name` of the `<Tabs>` group
+- **`tabWithDot`** - renders a small dot on the tab (e.g. for unread items or errors inside the tab)
+- **`isInitialTab`** - renders the content before the `<Tabs>` group has registered (avoids a flash of empty content)
+
+```jsx
+<Tabs.content
+   tabId="security"
+   // highlight-next-line
+   tabWithDot={hasSecurityWarnings}
+>
+   ...
+</Tabs.content>
+```
+
+## Ref API
+
+The tabs can be controlled using a ref:
+
+```typescript
+type TabsRef = {
+   selectedTab: string;
+   selectTab: (tabId: string) => void;
+};
+```
+
+- **`selectedTab`** - the `id` of the selected tab
+- **`selectTab()`** - selects a tab by its `id`
+
+## Used With Plugins
+
+With the [`react-router-dom`](../plugins#react-router-dom) plugin the selected tab is saved in the URL as a query parameter (`?tab=security` or `?{name}=security` when `name` is passed) and restored when the page is opened. Pass `keepUrlHistory={false}` to replace the URL instead of adding a new history entry on every tab change.

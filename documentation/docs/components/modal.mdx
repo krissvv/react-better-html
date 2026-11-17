@@ -48,7 +48,7 @@ The modal can be controlled imperatively using a `ref`.
 
    </TabItem>
 
-   <TabItem value="custom" label="Customizable" default>
+   <TabItem value="custom" label="Customizable">
 
       ```jsx
       import { useRef } from "react";
@@ -70,11 +70,14 @@ The modal can be controlled imperatively using a `ref`.
 
                // highlight-start
                <Modal
+                  icon="infoI"
                   headerBackgroundColor="#0000ff"
                   title="My Modal"
-                  titleColor="#ff0000"
+                  titleColor="#ffffff"
                   description="This is my modal for reference"
-                  descriptionColor="#00ff00"
+                  descriptionColor="#e8e8e8"
+                  headerTextAlign="center"
+                  closeButtonLight
                   ref={myModalRef}
                >
                   <Text>Modal content here</Text>
@@ -86,19 +89,65 @@ The modal can be controlled imperatively using a `ref`.
       ```
 
    </TabItem>
+
+   <TabItem value="outside" label="Outside Components">
+
+      ```jsx
+      import { useRef } from "react";
+      import { Div, Text, Button, Modal, ModalRef } from "react-better-html";
+
+      function App() {
+         const myModalRef = useRef<ModalRef>(null);
+
+         return (
+            <Div>
+               <Button text="Open Modal" onClick={() => myModalRef.current?.open()} />
+
+               <Modal
+                  title="Image preview"
+                  // highlight-start
+                  outsideComponentAbove={<Text color="#ffffff">1 / 12</Text>}
+                  outsideComponentBellow={<Button.secondary text="Download" />}
+                  // highlight-end
+                  ref={myModalRef}
+               >
+                  <Text>Modal content here</Text>
+               </Modal>
+            </Div>
+         );
+      }
+      ```
+
+      Elements rendered outside of the modal box, above and bellow it.
+
+   </TabItem>
 </Tabs>
 
 ## Common Props
 
-- **`maxWidth`** - the maximum width of the modal. Defaults to 30% smaller than `app.contentMaxWidth` from the [`<BetterHtmlContext>`](../getting-started/configuration#app-configuration) config.
+- **`maxWidth`** - the maximum width of the modal. Defaults to 30% smaller than `app.contentMaxWidth` from the [`<BetterHtmlProvider>`](../getting-started/configuration#app-configuration) config. `660` looks good for small modals.
+- **`icon`** - an icon rendered before the title.
 - **`title`** - this prop enables the header of the modal and renders a title for the modal.
 - **`titleColor`** - the color of the title text.
-- **`description`** - this prop requires `text` prop and renders a description text underneath it.
+- **`description`** - this prop requires `title` prop and renders a description text underneath it.
 - **`descriptionColor`** - the color of the description text.
+- **`headerTextAlign`** - aligns the header content to the `left` (default) or to the `center`.
 - **`headerBackgroundColor`** - the background color of the modal's header.
+- **`backgroundColor`** - the background color of the modal.
+- **`withoutCloseButton`** - hides the `X` button.
+- **`closeButtonLight`** - renders the `X` button in a light color (useful with a dark `headerBackgroundColor`).
+- **`defaultIsOpened`** - opens the modal on mount.
+- **`overflow`** - the overflow of the modal's body.
+- **`outsideComponentAbove`** / **`outsideComponentBellow`** - elements rendered outside of the modal box.
 - **`onOpen`** - a callback function that is called when the modal is opened.
 - **`onClose`** - a callback function that is called when the modal is closed.
 - **`children`** - the content of the modal.
+
+All padding props (`padding`, `paddingInline`, ...) are applied to the modal's body.
+
+:::tip
+The modal closes when the `Escape` key is pressed.
+:::
 
 ## Ref API
 
@@ -122,14 +171,14 @@ A number of components in the library have a _subcomponent_ feature witch is lik
 
 ### Modal.confirmation
 
-This component is a confirmation modal with `Confirm` and `Cancel` buttons.
+This component is a confirmation modal with `Continue` and `Cancel` buttons. It closes when any of the buttons is clicked.
 
 ```jsx {5,16-21}
 import { useRef } from "react";
 import { Div, Button, Modal, ModalRef } from "react-better-html";
 
 function App() {
-   const confirmationModalRef = useRef < ModalRef > null;
+   const confirmationModalRef = useRef<ModalRef>(null);
 
    return (
       <Div>
@@ -141,7 +190,7 @@ function App() {
          />
 
          <Modal.confirmation
-            onConfirm={() => {
+            onContinue={() => {
                console.log("Confirmed!");
             }}
             ref={confirmationModalRef}
@@ -150,6 +199,13 @@ function App() {
    );
 }
 ```
+
+- **`message`** - the text inside the modal (has a default value)
+- **`continueButtonText`** - the text of the continue button (defaults to `Continue`)
+- **`continueButtonLoaderName`** - the loader name for the continue button
+- **`cancelButtonText`** - the text of the cancel button (defaults to `Cancel`)
+- **`onContinue`** - called when the continue button is clicked
+- **`onCancel`** - called when the cancel button is clicked
 
 ### Modal.destructive
 
@@ -160,7 +216,7 @@ import { useRef } from "react";
 import { Div, Button, Modal, ModalRef } from "react-better-html";
 
 function App() {
-   const deleteModalRef = useRef < ModalRef > null;
+   const deleteModalRef = useRef<ModalRef>(null);
 
    return (
       <Div>
@@ -182,6 +238,23 @@ function App() {
 }
 ```
 
-### Used With Plugins
+- **`message`** - the text inside the modal (has a default value)
+- **`deleteButtonText`** - the text of the delete button (defaults to `Delete`)
+- **`deleteButtonIconName`** - the icon of the delete button (defaults to `trash`)
+- **`deleteButtonLoaderName`** - the loader name for the delete button
+- **`cancelButtonText`** - the text of the cancel button (defaults to `Cancel`)
+- **`onDelete`** - called when the delete button is clicked
+- **`onCancel`** - called when the cancel button is clicked
+
+## Used With Plugins
 
 The `<Modal>` component can be used with the [`react-router-dom`](../plugins#react-router-dom) plugin to set a query parameter when the modal is opened. This is especially useful when you want the path to changed when a modal is opened for analytics purposes. The only thing you need to do beside applying the plugin is to pass a `name` prop to the modal.
+
+```jsx
+// highlight-next-line
+<Modal title="Edit user" name="edit-user" ref={editUserModalRef}>
+   ...
+</Modal>
+```
+
+While the modal is opened the URL contains the `?edit-user-modal=opened` query parameter.

@@ -45,8 +45,8 @@ The component does not have a parent element. That means you can use the compone
    <TabItem value="radio" label="Radio Button">
 
       ```jsx
-      import { Div, Text, useState } from "react";
-      import { ToggleInput } from "react-better-html";
+      import { useState } from "react";
+      import { Div, Text, ToggleInput } from "react-better-html";
 
       function App() {
          const [selectedFruit, setSelectedFruit] = useState("apple");
@@ -101,4 +101,78 @@ The component does not have a parent element. That means you can use the compone
 
 ## Common Props
 
-All standard `<input>` attributes are valid props for this component.
+All standard `<input>` attributes are valid props for this component. The component works both controlled (with `checked`) and uncontrolled. The `onChange` callback receives the new `checked` state and the `value` prop.
+
+- **`label`** - text rendered above the input (like the label of an [`<InputField>`](./input-field))
+- **`text`** - clickable text rendered next to the input (checkbox and radio button only)
+- **`textAdvanced`** - a custom element rendered next to the input instead of `text` (checkbox and radio button only)
+- **`size`** - the size of the checkbox and the radio button (defaults to `26`)
+- **`activeColor`** / **`inactiveColor`** - the color of the check mark, the dot or the switch ball
+- **`activeBackgroundColor`** / **`inactiveBackgroundColor`** - the background color of the input
+- **`errorText`** / **`infoText`** - text rendered underneath the input
+- **`required`** - renders a red asterisk after the label or the text
+
+<Tabs>
+   <TabItem value="textAdvanced" label="Text Advanced" default>
+
+      ```jsx
+      import { Text, ToggleInput } from "react-better-html";
+
+      function App() {
+         return (
+            <ToggleInput.checkbox
+               // highlight-start
+               textAdvanced={
+                  <Text>
+                     I agree with the <a href="/terms">terms and conditions</a>
+                  </Text>
+               }
+               // highlight-end
+               required
+            />
+         );
+      }
+      ```
+
+   </TabItem>
+
+   <TabItem value="colors" label="Custom Colors">
+
+      ```jsx
+      import { ToggleInput } from "react-better-html";
+
+      function App() {
+         return (
+            <ToggleInput.switch
+               label="Notifications"
+               // highlight-start
+               activeBackgroundColor="#28a745"
+               inactiveBackgroundColor="#dc3545"
+               // highlight-end
+            />
+         );
+      }
+      ```
+
+   </TabItem>
+
+   <TabItem value="error" label="With Error">
+
+      ```jsx
+      import { ToggleInput } from "react-better-html";
+
+      function App() {
+         return (
+            <ToggleInput.checkbox
+               text="Accept the privacy policy"
+               // highlight-next-line
+               errorText="You need to accept the privacy policy"
+            />
+         );
+      }
+      ```
+
+   </TabItem>
+</Tabs>
+
+The label and the text can be customized with `labelColor`, `labelFontSize`, `labelFontFamily`, `labelLetterSpacing`, `labelTextTransform`, `labelGap` and `textFontSize`, `textFontFamily`, `textLetterSpacing`, `textTextTransform`.

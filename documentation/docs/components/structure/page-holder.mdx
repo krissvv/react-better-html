@@ -61,4 +61,91 @@ The component wraps the main content of a page inside a `<main>` tag, ensuring t
 
 ## Common Props
 
-- **`noMaxContentWidth`** - If `true`, the content will not be constrained by the maximum width defined in the [`<BetterHtmlContext>`](../getting-started/configuration#app-configuration) config
+- **`noMaxContentWidth`** - If `true`, the content will not be constrained by the maximum width defined in the [`<BetterHtmlProvider>`](../../getting-started/configuration#app-configuration) config
+- **`backgroundColor`** / **`backgroundImage`** - the background of the holder
+- All padding props (`padding`, `paddingInline`, ...). Defaults to `theme.styles.space`
+
+## Subcomponents
+
+A number of components in the library have a _subcomponent_ feature witch is like a preset of the same component that is frequently used.
+
+### PageHolder.center
+
+This component centers its content vertically and horizontally on the screen inside a [`<Div.box>`](../div#divbox). It is perfect for login, register and other single-card pages.
+
+<Tabs>
+   <TabItem value="basic" label="Basic" default>
+
+      ```jsx
+      import { PageHolder, PageHeader, Form, InputField } from "react-better-html";
+
+      function LoginPage() {
+         return (
+            // highlight-next-line
+            <PageHolder.center>
+               <PageHeader title="Welcome back" titleAs="h2" />
+
+               <Form submitButtonText="Login" gap={10}>
+                  <InputField.email />
+                  <InputField.password />
+               </Form>
+               // highlight-next-line
+            </PageHolder.center>
+         );
+      }
+      ```
+
+   </TabItem>
+
+   <TabItem value="sideComponent" label="With Side Component">
+
+      ```jsx
+      import { PageHolder, Image } from "react-better-html";
+
+      function LoginPage() {
+         return (
+            <PageHolder.center
+               // highlight-start
+               sideComponent={<Image src="/login-cover.jpg" width="100%" height="100%" objectFit="cover" />}
+               sideComponentPosition="left"
+               // highlight-end
+            >
+               ...
+            </PageHolder.center>
+         );
+      }
+      ```
+
+      The side component takes half of the screen and is hidden on small screens.
+
+   </TabItem>
+
+   <TabItem value="behindComponent" label="With Behind Component">
+
+      ```jsx
+      import { PageHolder, Div } from "react-better-html";
+
+      function LoginPage() {
+         return (
+            <PageHolder.center
+               // highlight-next-line
+               behindComponent={<Div width="100%" height="100%" backgroundImage="linear-gradient(#6d466b, #412234)" />}
+            >
+               ...
+            </PageHolder.center>
+         );
+      }
+      ```
+
+      An element rendered behind the content box (backgrounds, animations, ...).
+
+   </TabItem>
+</Tabs>
+
+- **`contentMaxWidth`** - the max width of the box (defaults to half of `app.contentMaxWidth`)
+- **`contentInsideBox`** - set to `false` to render the content without the box styles
+- **`height`** - the height of the box
+- **`pageBackgroundColor`** / **`pageBackgroundImage`** - the background of the whole page
+- **`sideComponent`** / **`sideComponentPosition`** - an element fixed on one half of the screen (`right` by default)
+- **`behindComponent`** - an element rendered behind the content
+- **`border`**, **`borderRadius`**, **`boxShadow`** and all margin and padding props are applied to the box

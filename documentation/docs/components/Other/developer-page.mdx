@@ -1,0 +1,55 @@
+---
+title: Developer Page
+description: A page that previews all configured icons and assets.
+sidebar_position: 5
+---
+
+# DeveloperPage Component
+
+The `<DeveloperPage>` component renders a preview of all icons and assets from the [configuration](../../getting-started/configuration) with their names. It is useful to quickly find the name of an icon or to check if a custom one looks right.
+
+## Basic Usage
+
+The component renders only when `devMode` is enabled in the `<BetterHtmlProvider>` config. Otherwise it renders nothing, so it is safe to keep the route in production.
+
+```jsx
+import { BetterHtmlProvider, DeveloperPage, PageHolder } from "react-better-html";
+
+function App() {
+   return (
+      // highlight-next-line
+      <BetterHtmlProvider config={{ devMode: import.meta.env.DEV }}>
+         <PageHolder>
+            // highlight-next-line
+            <DeveloperPage />
+         </PageHolder>
+      </BetterHtmlProvider>
+   );
+}
+```
+
+## Common Props
+
+- **`iconSize`** - the size of the icons in the preview (defaults to `24`)
+- **`assetSize`** - the size of the assets in the preview (defaults to `120`)
+- **`sections`** - additional sections rendered after the icons and the assets
+
+```jsx
+import { DeveloperPage, Button } from "react-better-html";
+
+function DevPage() {
+   return (
+      <DeveloperPage
+         // highlight-start
+         sections={[
+            {
+               title: "Buttons",
+               description: "All button variants",
+               children: <Button text="Primary" />,
+            },
+         ]}
+         // highlight-end
+      />
+   );
+}
+```

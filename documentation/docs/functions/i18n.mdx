@@ -1,0 +1,93 @@
+---
+title: i18n
+description: Translations and language switching.
+sidebar_position: 5
+---
+
+## `generateI18n`
+
+It takes the default language and all of the languages with their translations. The words object is fully typed so the translation keys are suggested and checked by TypeScript.
+
+```tsx title="utils/i18n.ts"
+import { generateI18n } from "react-better-html";
+
+const en = {
+   templates: {
+      terms: "terms and conditions"
+   },
+   home: {
+      title: "Welcome",
+      agree: "I agree with the {terms}"
+   }
+};
+
+const bg: typeof en = {
+   templates: {
+      terms: "общите условия"
+   },
+   home: {
+      title: "Добре дошли",
+      agree: "Съгласен съм с {terms}"
+   }
+};
+
+export const i18n = generateI18n({
+   defaultLanguage: "en",
+   languages: {
+      en: { name: "English", code: "en", flagCode: "gb", words: en },
+      bg: { name: "Български", code: "bg", flagCode: "bg", words: bg }
+   }
+});
+```
+
+- **`name`** - the name of the language rendered in [`<Dropdown.language>`](../components/form/dropdown#dropdownlanguage)
+- **`code`** - the code of the language
+- **`flagCode`** - the country code used to render the flag
+- **`words`** - the translations. The `templates` key is required (it can be an empty object)
+
+The selected language is saved in the `localStorage` and restored on the next visit.
+
+We advice to create an `i18n.ts` file inside a `utils` folder and export the `i18n` object from it.
+
+### `useI18n` - translate inside components
+
+The hook rerenders the component when the language changes.
+
+```tsx
+import { Div, Text, Button } from "react-better-html";
+import { i18n } from "./utils/i18n";
+
+function Home() {
+   // highlight-next-line
+   const { t, language, setLanguage } = i18n.useI18n();
+
+   return (
+      <Div.column gap={10}>
+         // highlight-next-line
+         <Text as="h1">{t((words) => words.home.title)}</Text>
+         <Button text="Български" onClick={() => setLanguage("bg")} />
+      </Div.column>
+   );
+}
+```
+
+### Templates
+
+When a translation contains `{key}` placeholders, a second argument can be passed to `t` with a render function per key. The function receives the text from `templates[key]` for the current language.
+
+```tsx
+<Text>
+   {t((words) => words.home.agree, {
+      // highlight-next-line
+      terms: (text) => <a href="/terms">{text}</a>
+   })}
+</Text>
+```
+
+### Outside of components
+
+`i18n.t`, `i18n.language` and `i18n.setLanguage` can be used outside of React components. They do not rerender anything when the language changes.
+
+:::note
+If a translation is not found, `t` returns the `missingTranslation` constant (`"MISSING_TRANSLATION"`).
+:::

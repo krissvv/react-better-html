@@ -110,6 +110,34 @@ The Foldable component can be used in both controlled and uncontrolled modes, an
    </TabItem>
 </Tabs>
 
+## Common Props
+
+The header accepts all the props of the [`<PageHeader>`](./structure/page-header) component (`icon`, `image`, `title`, `description`, `rightElement` and more). All `<Div>` style props are applied to the holder.
+
+- **`defaultOpen`** - whether the foldable is opened on mount (uncontrolled mode)
+- **`arrowPosition`** - render the arrow on the `left` or on the `right` (default) side of the header
+- **`withoutLine`** - removes the divider between the header and the content when opened
+- **`headerPaddingBlock`** / **`headerPaddingInline`** - the padding of the header
+
+```jsx
+import { Foldable, Text } from "react-better-html";
+
+function App() {
+   return (
+      <Foldable
+         title="Shipping details"
+         // highlight-start
+         defaultOpen
+         arrowPosition="left"
+         withoutLine
+         // highlight-end
+      >
+         <Text>Delivery in 2-3 business days.</Text>
+      </Foldable>
+   );
+}
+```
+
 ## Controlled Mode
 
 You can control the Foldable component's open/closed state externally:
@@ -129,7 +157,7 @@ function App() {
             title="Controlled Foldable"
             // highlight-start
             isOpen={isOpen}
-            onOpenChange={setIsOpen.toggle}
+            onOpenChange={(isOpen) => (isOpen ? setIsOpen.setTrue() : setIsOpen.setFalse())}
             // highlight-end
          >
             <Text>This foldable's state is controlled by the button above.</Text>

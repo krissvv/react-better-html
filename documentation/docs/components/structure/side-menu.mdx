@@ -1,0 +1,219 @@
+---
+title: SideMenu
+description: A navigation side menu with nested items, collapsing and mobile support.
+sidebar_position: 3
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# SideMenu Component
+
+The `<SideMenu>` component renders a fixed navigation menu on the side of the screen. It supports nested items, dividers, a collapsed mode on desktop and a sliding menu on mobile. The active item is detected from the current `location`.
+
+## Basic Usage
+
+The page content is rendered inside `<SideMenu.pageHolder>` as a child of the menu, so it gets the correct space next to it.
+
+<Tabs>
+   <TabItem value="basic" label="Basic" default>
+
+      ```jsx
+      import { useLocation } from "react-router-dom";
+      import { SideMenu } from "react-better-html";
+
+      function Layout({ children }) {
+         const location = useLocation();
+
+         return (
+            <SideMenu
+               // highlight-start
+               items={[
+                  { type: "item", text: "Dashboard", iconName: "chevronRight", href: "/" },
+                  { type: "item", text: "Users", iconName: "eye", href: "/users" },
+                  { type: "divider", text: "Settings" },
+                  { type: "item", text: "Preferences", iconName: "filter", href: "/preferences" },
+               ]}
+               // highlight-end
+               location={location}
+               logoAssetName="logo"
+               logoText="My App"
+            >
+               // highlight-next-line
+               <SideMenu.pageHolder>{children}</SideMenu.pageHolder>
+            </SideMenu>
+         );
+      }
+      ```
+
+   </TabItem>
+
+   <TabItem value="nested" label="Nested Items">
+
+      ```jsx
+      import { SideMenu } from "react-better-html";
+
+      function Layout({ children }) {
+         return (
+            <SideMenu
+               items={[
+                  {
+                     type: "item",
+                     text: "Products",
+                     iconName: "filter",
+                     // highlight-start
+                     children: [
+                        { type: "item", text: "All products", href: "/products" },
+                        { type: "item", text: "Categories", href: "/products/categories", withDot: true },
+                     ],
+                     // highlight-end
+                  },
+               ]}
+               location={location}
+            >
+               <SideMenu.pageHolder>{children}</SideMenu.pageHolder>
+            </SideMenu>
+         );
+      }
+      ```
+
+      The group opens automatically when one of its children is active.
+
+   </TabItem>
+
+   <TabItem value="collapsable" label="Collapsable">
+
+      ```jsx
+      import { SideMenu } from "react-better-html";
+
+      function Layout({ children }) {
+         return (
+            <SideMenu
+               items={items}
+               bottomItems={[{ type: "item", text: "Log out", iconName: "XMark", onClick: logout }]}
+               location={location}
+               // highlight-next-line
+               collapsable
+            >
+               <SideMenu.pageHolder>{children}</SideMenu.pageHolder>
+            </SideMenu>
+         );
+      }
+      ```
+
+      Renders a button that collapses the menu to icons only. The item texts are shown as tooltips while collapsed.
+
+   </TabItem>
+</Tabs>
+
+## Items
+
+```typescript
+type SideMenuItem = {
+   text: string;
+   hidden?: boolean;
+} & (
+   | {
+        type: "item";
+        iconName?: IconName;
+        leftElement?: ((item: SideMenuItem, isActive: boolean) => React.ReactNode) | React.ReactNode;
+        href?: string;
+        disabled?: boolean;
+        withDot?: boolean;
+        children?: SideMenuItem[];
+        onClickCloseSideMenu?: boolean;
+        onClick?: (item: SideMenuItem) => void;
+     }
+   | {
+        type: "divider";
+        shortText?: string;
+     }
+);
+```
+
+- **`text`** - the text of the item or the divider
+- **`hidden`** - the item is not rendered
+- **`iconName`** - an icon before the text
+- **`leftElement`** - a custom element instead of the icon
+- **`href`** - the link of the item. The item is active when the current path starts with it
+- **`disabled`** - the item can not be clicked
+- **`withDot`** - renders a small dot on the item
+- **`children`** - nested items
+- **`onClickCloseSideMenu`** - whether clicking the item closes the menu on mobile (defaults to `true`)
+- **`onClick`** - a click handler
+- **`shortText`** - the text of the divider while the menu is collapsed. Without it a line is rendered
+
+:::tip
+Links are rendered with the `linkComponent` from the [components configuration](../../getting-started/configuration#components-configuration), so you can pass the `Link` component from `react-router-dom` there.
+:::
+
+## Common Props
+
+- **`items`** - the items at the top of the menu
+- **`bottomItems`** - the items at the bottom of the menu
+- **`location`** - the current location (`window.location` or the one from `useLocation()`)
+- **`position`** - the side of the screen - `left` (default) or `right`
+- **`topSpace`** - space above the menu (e.g. for a fixed header)
+- **`logoAssetName`** / **`logoUrl`** - the logo at the top of the menu
+- **`logoText`** / **`logoFontFamily`** - text next to the logo
+- **`collapsable`** - renders the collapse button on desktop
+- **`withCloseButton`** - renders an `X` button on mobile
+- **`widthMobileHandle`** - renders a handle on mobile to open the menu
+- **`mobileFoldToPosition`** - the side the menu slides to on mobile when closed
+- **`isLoading`** - renders a loader instead of the items
+- **`backgroundColor`** - the background of the menu (defaults to `backgroundContent`)
+- **`activeItemColor`** / **`hoverItemColor`** - the background of the active and the hovered item
+- **`border`** - the border of the menu
+- **`gap`**, **`paddingTop`**, **`paddingBottom`** - spacing of the items
+- **`sideBar`** - an additional narrow bar rendered next to the menu (e.g. for workspace switching)
+- **`itemsAdditionalComponent`**, **`betweenItemsAdditionalComponent`**, **`bottomItemsAdditionalComponent`** - custom elements after the items, between the items and the bottom items and after the bottom items
+- **`absoluteComponent`** - an element positioned absolutely at the top of the menu
+- **`renderItemsHolder`** / **`renderBottomItemsHolder`** - wrap the rendered items with a custom element
+
+The width of the menu can be changed from the `sideMenu` key of the [components configuration](../../getting-started/configuration#components-configuration) (defaults to `300`).
+
+## Subcomponents
+
+### SideMenu.pageHolder
+
+A [`<PageHolder>`](./page-holder) with the correct space for the side menu. It must be rendered as a child of `<SideMenu>`. All `<PageHolder>` props are supported as well as `additionalTopComponent` and `additionalBottomComponent` that are rendered outside of the page holder (e.g. a header or a footer).
+
+### SideMenu.burgerButton
+
+An animated burger button that opens and closes the menu on mobile.
+
+```jsx
+import { Div, SideMenu, useMediaQuery } from "react-better-html";
+
+function Header() {
+   const mediaQuery = useMediaQuery();
+
+   return (
+      <Div.row alignItems="center" padding={16}>
+         // highlight-next-line
+         {mediaQuery.size1000 && <SideMenu.burgerButton />}
+      </Div.row>
+   );
+}
+```
+
+- **`position`** - the alignment of the lines - `left` (default), `center` or `right`
+- **`color`** - the color of the lines (defaults to `border`)
+- **`onClick`** - called with the new opened state
+
+## Controls
+
+The menu can be controlled from anywhere (even outside of React components) with `sideMenuControls`.
+
+```jsx
+import { sideMenuControls } from "react-better-html";
+
+sideMenuControls.collapse();
+```
+
+- **`expand()`** / **`collapse()`** / **`toggleExpanded()`** - the collapsed state on desktop
+- **`open()`** / **`close()`** / **`toggleOpened()`** - the opened state on mobile
+
+:::note
+The menu switches to the mobile mode on screens smaller than `1000px`.
+:::
