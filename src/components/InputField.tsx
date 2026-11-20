@@ -1011,7 +1011,7 @@ InputFieldComponent.date = forwardRef(function Date(
                   top="100%"
                   left={dropdownPosition === "left" ? 0 : undefined}
                   right={dropdownPosition === "right" ? 0 : undefined}
-                  width="fit-content"
+                  width="max-content"
                   backgroundColor={theme.colors.backgroundContent}
                   borderBottomLeftRadius={theme.styles.borderRadius}
                   borderBottomRightRadius={theme.styles.borderRadius}
@@ -1195,7 +1195,7 @@ InputFieldComponent.dateTime = forwardRef(function DateTime(
                   top="100%"
                   left={dropdownPosition === "left" ? 0 : undefined}
                   right={dropdownPosition === "right" ? 0 : undefined}
-                  width="fit-content"
+                  width="max-content"
                   backgroundColor={theme.colors.backgroundContent}
                   borderBottomLeftRadius={theme.styles.borderRadius}
                   borderBottomRightRadius={theme.styles.borderRadius}
